@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d08a3bf518dbbb3478d7419de50253d3, type: 3}
+  m_Name: 1
+  m_EditorClassIdentifier: 
+  sprite:
+  - {fileID: -855298285791758126, guid: 094ffbc5c638cd544992c44fc5c5fdde, type: 3}
+  - {fileID: 9180251791023625898, guid: 094ffbc5c638cd544992c44fc5c5fdde, type: 3}
+  - {fileID: -549789443665989942, guid: 094ffbc5c638cd544992c44fc5c5fdde, type: 3}
+  purchased: 0
+  cost:
+  - mineralID: 14
+    amount: 1
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  wingID: 1
+  shopScale: 6

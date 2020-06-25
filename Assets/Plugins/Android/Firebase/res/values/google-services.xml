@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources tools:keep="@string/firebase_database_url,@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_android_client_id,@string/default_web_client_id" xmlns:tools="http://schemas.android.com/tools">
+  <string name="firebase_database_url" translatable="false">https://flatterfogel-2.firebaseio.com</string>
+  <string name="gcm_defaultSenderId" translatable="false">979461977393</string>
+  <string name="google_storage_bucket" translatable="false">flatterfogel-2.appspot.com</string>
+  <string name="project_id" translatable="false">flatterfogel-2</string>
+  <string name="google_api_key" translatable="false">AIzaSyB3pEyLgly1fuLQ9Hkc2k2KX1VNb5azeL8</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyB3pEyLgly1fuLQ9Hkc2k2KX1VNb5azeL8</string>
+  <string name="google_app_id" translatable="false">1:979461977393:android:669a2a7f937cee567e6c10</string>
+  <string name="default_android_client_id" translatable="false">979461977393-nboc26f70oo13rsvdq9g9crnfbcr5ngk.apps.googleusercontent.com</string>
+  <string name="default_web_client_id" translatable="false">979461977393-hcds1nk2ilb7rnj0k4pfi7tpk4unded6.apps.googleusercontent.com</string>
+</resources>

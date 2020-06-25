@@ -1,0 +1,127 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: DayAtlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 0
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 2
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    - serializedVersion: 3
+      m_BuildTarget: iPhone
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 47
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    - serializedVersion: 3
+      m_BuildTarget: Android
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 48
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+    - {fileID: 2800000, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+    - {fileID: 2800000, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+    - {fileID: 2800000, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+    totalSpriteSurfaceArea: 246240
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 5088316998373936774, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+  - {fileID: 8745284039982918138, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+  - {fileID: -1495796495427720775, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+  - {fileID: -82757199298946268, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+  - {fileID: 2590185811940133651, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+  - {fileID: 5961413574744084474, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+  - {fileID: 5088316998373936774, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+  - {fileID: 8745284039982918138, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+  - {fileID: -1495796495427720775, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+  - {fileID: -82757199298946268, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+  - {fileID: 2590185811940133651, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+  - {fileID: 5961413574744084474, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+  - {fileID: 5088316998373936774, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+  - {fileID: 8745284039982918138, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+  - {fileID: -1495796495427720775, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+  - {fileID: -82757199298946268, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+  - {fileID: 2590185811940133651, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+  - {fileID: 5961413574744084474, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+  - {fileID: 5088316998373936774, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+  - {fileID: 8745284039982918138, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+  - {fileID: -1495796495427720775, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+  - {fileID: -82757199298946268, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+  - {fileID: 2590185811940133651, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+  - {fileID: 5961413574744084474, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - 0_0
+  - 0_1
+  - 0_2
+  - 0_3
+  - 0_4
+  - 0_5
+  - 0_0
+  - 0_1
+  - 0_2
+  - 0_3
+  - 0_4
+  - 0_5
+  - 0_0
+  - 0_1
+  - 0_2
+  - 0_3
+  - 0_4
+  - 0_5
+  - 0_0
+  - 0_1
+  - 0_2
+  - 0_3
+  - 0_4
+  - 0_5
+  m_Tag: DayAtlas
+  m_IsVariant: 0

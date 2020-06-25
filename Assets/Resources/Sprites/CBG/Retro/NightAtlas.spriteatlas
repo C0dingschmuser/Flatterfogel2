@@ -1,0 +1,127 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: NightAtlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 0
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 2
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    - serializedVersion: 3
+      m_BuildTarget: Android
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 48
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    - serializedVersion: 3
+      m_BuildTarget: iPhone
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 47
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+    - {fileID: 2800000, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+    - {fileID: 2800000, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+    - {fileID: 2800000, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+    totalSpriteSurfaceArea: 246240
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 5088316998373936774, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+  - {fileID: 8745284039982918138, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+  - {fileID: -1495796495427720775, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+  - {fileID: -82757199298946268, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+  - {fileID: 2590185811940133651, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+  - {fileID: 5961413574744084474, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+  - {fileID: 5088316998373936774, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+  - {fileID: 8745284039982918138, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+  - {fileID: -1495796495427720775, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+  - {fileID: -82757199298946268, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+  - {fileID: 2590185811940133651, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+  - {fileID: 5961413574744084474, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+  - {fileID: 5088316998373936774, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+  - {fileID: 8745284039982918138, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+  - {fileID: -1495796495427720775, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+  - {fileID: -82757199298946268, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+  - {fileID: 2590185811940133651, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+  - {fileID: 5961413574744084474, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+  - {fileID: 5088316998373936774, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+  - {fileID: 8745284039982918138, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+  - {fileID: -1495796495427720775, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+  - {fileID: -82757199298946268, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+  - {fileID: 2590185811940133651, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+  - {fileID: 5961413574744084474, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - 0_0
+  - 0_1
+  - 0_2
+  - 0_3
+  - 0_4
+  - 0_5
+  - 0_0
+  - 0_1
+  - 0_2
+  - 0_3
+  - 0_4
+  - 0_5
+  - 0_0
+  - 0_1
+  - 0_2
+  - 0_3
+  - 0_4
+  - 0_5
+  - 0_0
+  - 0_1
+  - 0_2
+  - 0_3
+  - 0_4
+  - 0_5
+  m_Tag: NightAtlas
+  m_IsVariant: 0

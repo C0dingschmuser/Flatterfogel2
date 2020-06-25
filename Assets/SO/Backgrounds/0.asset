@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f30511519cc92b46aeaffebd5aefb5e, type: 3}
+  m_Name: 0
+  m_EditorClassIdentifier: 
+  layer0:
+  - {fileID: 5088316998373936774, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+  - {fileID: 8745284039982918138, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+  - {fileID: -1495796495427720775, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+  - {fileID: -82757199298946268, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+  - {fileID: 2590185811940133651, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+  - {fileID: 5961413574744084474, guid: 01c51aec748e9f340971792f12010d66, type: 3}
+  layer1:
+  - {fileID: 5088316998373936774, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+  - {fileID: 8745284039982918138, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+  - {fileID: -1495796495427720775, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+  - {fileID: -82757199298946268, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+  - {fileID: 2590185811940133651, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+  - {fileID: 5961413574744084474, guid: a685f28649bb1a84785c28ace19ff6cb, type: 3}
+  layer2:
+  - {fileID: 5088316998373936774, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+  - {fileID: 8745284039982918138, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+  - {fileID: -1495796495427720775, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+  - {fileID: -82757199298946268, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+  - {fileID: 2590185811940133651, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+  - {fileID: 5961413574744084474, guid: ef0eec05fdef26a4b93869fa8692bb48, type: 3}
+  layer3:
+  - {fileID: 5088316998373936774, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+  - {fileID: 8745284039982918138, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+  - {fileID: -1495796495427720775, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+  - {fileID: -82757199298946268, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+  - {fileID: 2590185811940133651, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+  - {fileID: 5961413574744084474, guid: dc43bcc16dc0fe34cafb7a38769ca207, type: 3}
+  layer0L:
+  - {fileID: 5088316998373936774, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+  - {fileID: 8745284039982918138, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+  - {fileID: -1495796495427720775, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+  - {fileID: -82757199298946268, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+  - {fileID: 2590185811940133651, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+  - {fileID: 5961413574744084474, guid: 5ae0accabdc097142aefccadecf3fd4d, type: 3}
+  layer1L:
+  - {fileID: 5088316998373936774, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+  - {fileID: 8745284039982918138, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+  - {fileID: -1495796495427720775, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+  - {fileID: -82757199298946268, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+  - {fileID: 2590185811940133651, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+  - {fileID: 5961413574744084474, guid: b9fcb3d1b7f8afd428f906859f5be7d0, type: 3}
+  layer2L:
+  - {fileID: 5088316998373936774, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+  - {fileID: 8745284039982918138, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+  - {fileID: -1495796495427720775, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+  - {fileID: -82757199298946268, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+  - {fileID: 2590185811940133651, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+  - {fileID: 5961413574744084474, guid: 85706b0724025ad4e8f382eef0dd6520, type: 3}
+  layer3L:
+  - {fileID: 5088316998373936774, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+  - {fileID: 8745284039982918138, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+  - {fileID: -1495796495427720775, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+  - {fileID: -82757199298946268, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+  - {fileID: 2590185811940133651, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+  - {fileID: 5961413574744084474, guid: f8d69f7c317cf7f4798d8466ca464e2b, type: 3}
+  cover: {fileID: 21300000, guid: c6c3705a6240e504f897078f5efe4275, type: 3}
+  nonScrollingSprite: {fileID: 0}
+  supportedColors:
+  - {r: 1, g: 1, b: 1, a: 1}
+  topExtentColor: {r: 0.5058824, g: 0.5294118, b: 0.7372549, a: 1}
+  topExtentSprite: {fileID: 21300000, guid: 2ec648e6a353637489fb71c34a4de9df, type: 3}
+  scale:
+  - {x: 635, y: 711.1}
+  - {x: 635, y: 711.1}
+  - {x: 635, y: 711.1}
+  - {x: 635, y: 711.1}
+  purchased: 1
+  supportsColor: 0
+  scrolling: 1
+  supportsDayNight: 1
+  lightLayerSpeedLvl: 1
+  cost: 0
+  bgID: 0

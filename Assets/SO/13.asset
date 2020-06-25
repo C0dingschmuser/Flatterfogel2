@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36a3e23a0a8255748b35062920d5a172, type: 3}
+  m_Name: 13
+  m_EditorClassIdentifier: 
+  itemName: Fliesizin!
+  meltable: 0
+  meltingResult: {fileID: 0}
+  id: 13
+  sprite: {fileID: 21300000, guid: 0f38a1a5052a0af45a33d7582179bead, type: 3}
+  weight: 0
+  sellPrice: 0
+  fuelAmount: -50

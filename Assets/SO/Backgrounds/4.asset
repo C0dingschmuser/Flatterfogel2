@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f30511519cc92b46aeaffebd5aefb5e, type: 3}
+  m_Name: 4
+  m_EditorClassIdentifier: 
+  layer0:
+  - {fileID: 5088316998373936774, guid: e1c11d3c3e6f54d429dca18d18cda6ce, type: 3}
+  - {fileID: 8745284039982918138, guid: e1c11d3c3e6f54d429dca18d18cda6ce, type: 3}
+  - {fileID: -1495796495427720775, guid: e1c11d3c3e6f54d429dca18d18cda6ce, type: 3}
+  - {fileID: -82757199298946268, guid: e1c11d3c3e6f54d429dca18d18cda6ce, type: 3}
+  - {fileID: -1495796495427720775, guid: e1c11d3c3e6f54d429dca18d18cda6ce, type: 3}
+  - {fileID: -82757199298946268, guid: e1c11d3c3e6f54d429dca18d18cda6ce, type: 3}
+  layer1:
+  - {fileID: 5088316998373936774, guid: abd68aae108979040b92f555bf6f0671, type: 3}
+  - {fileID: 8745284039982918138, guid: abd68aae108979040b92f555bf6f0671, type: 3}
+  - {fileID: -1495796495427720775, guid: abd68aae108979040b92f555bf6f0671, type: 3}
+  - {fileID: -82757199298946268, guid: abd68aae108979040b92f555bf6f0671, type: 3}
+  - {fileID: 2590185811940133651, guid: abd68aae108979040b92f555bf6f0671, type: 3}
+  - {fileID: 5961413574744084474, guid: abd68aae108979040b92f555bf6f0671, type: 3}
+  layer2:
+  - {fileID: 5088316998373936774, guid: abb0050bf37bc514e988636cd06f5ca6, type: 3}
+  - {fileID: 8745284039982918138, guid: abb0050bf37bc514e988636cd06f5ca6, type: 3}
+  - {fileID: -1495796495427720775, guid: abb0050bf37bc514e988636cd06f5ca6, type: 3}
+  - {fileID: -82757199298946268, guid: abb0050bf37bc514e988636cd06f5ca6, type: 3}
+  - {fileID: 2590185811940133651, guid: abb0050bf37bc514e988636cd06f5ca6, type: 3}
+  - {fileID: 5961413574744084474, guid: abb0050bf37bc514e988636cd06f5ca6, type: 3}
+  cover: {fileID: 21300000, guid: 302026b551b89eb43b2e26be457dd780, type: 3}
+  nonScrollingSprite: {fileID: 0}
+  supportedColors: []
+  topExtentColor: {r: 0.5058824, g: 0.5294118, b: 0.7372549, a: 1}
+  topExtentSprite: {fileID: 21300000, guid: 2ec648e6a353637489fb71c34a4de9df, type: 3}
+  scale:
+  - {x: 635, y: 711.1}
+  - {x: 635, y: 711.1}
+  - {x: 635, y: 711.1}
+  purchased: 1
+  supportsColor: 0
+  scrolling: 1
+  supportsDayNight: 1
+  cost: 0
+  bgID: 4

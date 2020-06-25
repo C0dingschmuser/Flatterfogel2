@@ -1,0 +1,15 @@
+version: 2
+importPivots: 1
+tpsheetFileNames:
+- Assets/codeandweb.com/Example/SpriteSheet/sprites.tpsheet
+- Assets/Resources/Sprites/Flatterfogel/clouds/clouds.tpsheet
+- Assets/Resources/Sprites/Flatterfogel/tileset/Flatterfogel.tpsheet
+textureFileNames:
+- Assets/codeandweb.com/Example/SpriteSheet/sprites.png
+- Assets/Resources/Sprites/Flatterfogel/clouds/clouds.png
+- Assets/Resources/Sprites/Flatterfogel/tileset/Flatterfogel.png
+normalmapFileNames:
+- Assets/codeandweb.com/Example/SpriteSheet/sprites_n.png
+- Assets/Resources/Sprites/Flatterfogel/clouds/clouds_n.png
+- Assets/Resources/Sprites/Flatterfogel/tileset/Flatterfogel_n.png
+enableDebugOutput: 0

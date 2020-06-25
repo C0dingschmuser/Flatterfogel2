@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c070d30c1c41b6b40854fdccf444c90b, type: 3}
+  m_Name: 1
+  m_EditorClassIdentifier: 
+  shieldName: Schild 1
+  shieldSprite: {fileID: 21300000, guid: 7d5069ea32bd840428005c5b57ec8b2f, type: 3}
+  purchased: 0
+  heatMultiplier: 1.1
+  shopScale: 1.75
+  id: 1
+  cost:
+  - mineralID: 0
+    amount: 10
+  - mineralID: 1
+    amount: 12
+  - mineralID: 5
+    amount: 5
+  - mineralID: 7
+    amount: 15

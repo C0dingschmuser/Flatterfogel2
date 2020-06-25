@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16566e6842e101f448948503740fb70b, type: 3}
+  m_Name: 1
+  m_EditorClassIdentifier: 
+  id: 1
+  cost:
+  - mineralID: 0
+    amount: 0
+  - mineralID: 1
+    amount: 0
+  - mineralID: 0
+    amount: 15
+  - mineralID: 1
+    amount: 20
+  mineTime: 650
+  shopScale: 2.0498
+  purchased: 1
+  main: {fileID: 21300000, guid: d380b6f300450b642be103e11d04114d, type: 3}
+  effect: {fileID: 21300000, guid: 339faaceafc906541b3373e7b420c649, type: 3}
+  full: {fileID: 21300000, guid: d57c863912b471d4baca5e43679c872c, type: 3}
+  laserColor: {r: 1, g: 0.6, b: 0, a: 1}

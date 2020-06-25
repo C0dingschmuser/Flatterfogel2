@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36a3e23a0a8255748b35062920d5a172, type: 3}
+  m_Name: 3
+  m_EditorClassIdentifier: 
+  itemName: Ediumerz
+  meltable: 1
+  meltingResult: {fileID: 11400000, guid: 2269b41235abf084db4a563bc94dd111, type: 2}
+  id: 3
+  sprite: {fileID: 21300000, guid: 4ab5b27aecb1b224d814b3d467044d93, type: 3}
+  weight: 0
+  sellPrice: 0

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3d04b9d1b1dd14c95883dfc5cb5ee6, type: 3}
+  m_Name: Royale
+  m_EditorClassIdentifier: 
+  previewSprite: {fileID: 21300000, guid: e9bb6a00d0680df4c82b643b4e7d3478, type: 3}
+  modeName: Battle Royale
+  modeDescription: "Battle Royale so wie mans kennt. Du gegen mehrere Gegner. Wer
+    als letzter noch \xFCbrig ist hat gewonnen."

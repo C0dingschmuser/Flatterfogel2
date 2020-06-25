@@ -1,0 +1,106 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PipeHolder : MonoBehaviour
+{
+    private bool isMoving = false;
+    private int mode = 0;
+    private float maxY = 0, minY = 0, speed = 0;
+    private GameObject assignedBlus, topPipe, bottomPipe;
+
+    public GameObject movingEffect;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        topPipe = transform.GetChild(0).gameObject;
+        bottomPipe = transform.GetChild(1).gameObject;
+    }
+
+    public void SetAssignedBlus(GameObject blus)
+    {
+        assignedBlus = blus;
+    }
+
+    public void StartMove(float minY, float maxY, float speed)
+    {
+        isMoving = true;
+
+        this.minY = minY;
+        this.maxY = maxY;
+        this.speed = speed;
+
+        movingEffect.transform.GetChild(0).position = new Vector3(-195, 228.47f, -500); //bottom
+        movingEffect.transform.GetChild(1).position = new Vector3(-195, 1427, -500); //top
+
+        if (OptionHandler.particleEffects == 1)
+        {
+            movingEffect.SetActive(true);
+        }
+
+        mode = Random.Range(0, 2);
+    }
+
+    public GameObject GetAssignedBlus()
+    {
+        return assignedBlus;
+    }
+
+    public void StopMove()
+    {
+        isMoving = false;
+        movingEffect.SetActive(false);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(isMoving)
+        {
+            if(!transform.GetChild(0).gameObject.activeSelf &&
+                !transform.GetChild(1).gameObject.activeSelf)
+            {
+                StopMove();
+                return;
+            }
+
+            Vector3 pos = transform.position;
+            Vector3 blusPos = assignedBlus.transform.position;
+
+            if(mode == 0)
+            { //runter
+                pos.y -= speed * Time.deltaTime;
+                if(pos.y < minY)
+                {
+                    pos.y = minY;
+                    mode = 1;
+                }
+
+            } else
+            { //hoch
+                pos.y += speed * Time.deltaTime;
+
+                if(pos.y > maxY)
+                {
+                    pos.y = maxY;
+                    mode = 0;
+                }
+            }
+
+            transform.position = pos;
+
+            blusPos.y = pos.y;
+            assignedBlus.transform.position = blusPos;
+
+            pos.y = 228.47f;
+            pos.x = blusPos.x;
+
+            movingEffect.transform.GetChild(0).position = pos;
+
+            pos.y = 1427;
+
+            movingEffect.transform.GetChild(1).position = pos;
+        }
+    }
+}

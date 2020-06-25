@@ -1,0 +1,3 @@
+ID;Type(0 Day, 1 Sunset, 2 Nacht);RGB Normal;Sunset;Night;Supported Layer2s,;Supported Layer3s,|
+0;0;255,255,255;255,61,42;56,56,56;0,3,7,9;0,3,5,7|
+3;0;255,255,255;255,61,42;56,56,56;0,3,7,9;0,3,5,7
