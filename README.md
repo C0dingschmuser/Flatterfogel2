@@ -4,7 +4,7 @@ Complete Sourcecode of Flatterfogel 2 Mobile Game.
 
 The use of no License is intentional.
 
-You are, under all circumstances, **not permitted** to compile*/distribute**/sell this Code or Project.
+You are, under all circumstances, **not permitted** to compile* or modify/distribute**/sell this Code or Project.
 
 `*`even under private use
 
