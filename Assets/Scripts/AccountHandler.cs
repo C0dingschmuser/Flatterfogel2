@@ -38,7 +38,7 @@ public class AccountHandler : MonoBehaviour
     public static string[] tempNames = 
         new string[] { "Hans", "Max", "Peter", "Gustav", "Anna" };
 
-    public static string authKey = "2498695259818402"; //Removed on Commit
+    public static string authKey = ""; //Removed on Commit
     private int restoreStep = 0;
 
     public void Initialize()
