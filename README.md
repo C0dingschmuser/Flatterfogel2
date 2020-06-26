@@ -6,7 +6,7 @@ The use of no License is intentional.
 
 You are, under all circumstances, **not permitted** to compile or modify*/distribute**/sell this Code or Project.
 
-`*`even under private use
+`*`even for private use
 
 `**`you can share a link to this Repo
 

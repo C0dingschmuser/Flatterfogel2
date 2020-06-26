@@ -29,6 +29,21 @@ public class BlusData : MonoBehaviour
     [SerializeField] private GameObject destroyedBlusPartPrefab = null;
     [SerializeField] private Transform destroyedBlusParent = null, imageObj = null, blusLight = null;
 
+    public void SpawnCoin(Vector3 newPos, Sprite[] animationSprites)
+    {
+        ResetBlus();
+
+        blusAnimation = animationSprites;
+        isCoin = true;
+
+        transform.position = newPos;
+
+        imageObj.gameObject.SetActive(true);
+        imageObj.GetComponent<SpriteRenderer>().sprite = animationSprites[0];
+
+        DestroyBlus(1, 1);
+    }
+
     public void SetSprites(Sprite[] animationSprites)
     {
         blusAnimation = animationSprites;
@@ -194,9 +209,12 @@ public class BlusData : MonoBehaviour
         lightObj.intensity = newIntensity;
     }
 
-    public void DestroyBlus(int effectCode = 3)
+    public void DestroyBlus(int effectCode = 3, float time = 1f)
     {
-        StopCoroutine(animationRoutine);
+        if(animationRoutine != null)
+        {
+            StopCoroutine(animationRoutine);
+        }
 
         imageObj.GetComponent<BoxCollider2D>().enabled = false;
         //destroyedBlusParent.gameObject.SetActive(true);
@@ -211,7 +229,7 @@ public class BlusData : MonoBehaviour
 
         if(isCoin)
         {
-            StartCoroutine(DisableBlus(1f));
+            StartCoroutine(DisableBlus(time));
         } else
         {
             imageObj.gameObject.SetActive(false);

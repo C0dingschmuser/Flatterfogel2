@@ -32,6 +32,7 @@ public class ShopHandler : MonoBehaviour
 
     public List<Skin> allSkins = new List<Skin>();
     public List<Wing> allWings = new List<Wing>();
+    public List<Hat> allHats = new List<Hat>();
     public List<MinerTool> allMiners = new List<MinerTool>();
     public List<HeatShield> allHeatShields = new List<HeatShield>();
     public List<MineItem> allMineItems = new List<MineItem>();
@@ -59,7 +60,7 @@ public class ShopHandler : MonoBehaviour
 
     private int currentPage = 0, currentType = 0, wingAnimationCount = 0, wingAnimationDir = 0;
     private int colorFadeID = 0, lastSlotID = -1, minerType = 0, selectedSkin = 0, selectedWing = 0, selectedMiner = 0,
-        selectedPipe = 0, selectedBackground = 0, selectedHeatShield = 0;
+        selectedPipe = 0, selectedBackground = 0, selectedHeatShield = 0, selectedHat = 0;
     private bool shopActive = false;
 
     private void Awake()
@@ -98,6 +99,13 @@ public class ShopHandler : MonoBehaviour
         return allWings[wingID].sprite[0];
     }
 
+    public Sprite GetHatSprite(int hatID)
+    {
+        hatID = CheckSelected(CustomizationType.Hat, hatID);
+
+        return allHats[hatID].sprite;
+    }
+
     public Sprite GetMinerSprite(int minerID)
     {
         return allMiners[minerID].main;
@@ -123,6 +131,11 @@ public class ShopHandler : MonoBehaviour
     public int GetSelectedWing()
     {
         return selectedWing;
+    }
+
+    public int GetSelectedHat()
+    {
+        return selectedHat;
     }
 
     public int GetSelectedMiner()
@@ -165,6 +178,10 @@ public class ShopHandler : MonoBehaviour
                 if (id < 0) id = allPipes.Count + id;
                 if (id >= allPipes.Count) id = id - allPipes.Count;
                 break;
+            case CustomizationType.Hat:
+                if (id < 0) id = allHats.Count + id;
+                if (id >= allHats.Count) id = id - allHats.Count;
+                break;
         }
 
         return id;
@@ -183,6 +200,9 @@ public class ShopHandler : MonoBehaviour
                 break;
             case CustomizationType.Pipe:
                 max = allPipes.Count;
+                break;
+            case CustomizationType.Hat:
+                max = allHats.Count;
                 break;
         }
 
@@ -230,6 +250,9 @@ public class ShopHandler : MonoBehaviour
                 break;
             case CustomizationType.Pipe:
                 cost = allPipes[id].cost;
+                break;
+            case CustomizationType.Hat:
+                cost = allHats[id].cost;
                 break;
         }
 
@@ -287,6 +310,19 @@ public class ShopHandler : MonoBehaviour
             case CustomizationType.PipeColor:
                 code = 2;
                 break;
+            case CustomizationType.Hat:
+                if (allHats[id].purchased)
+                {
+                    code = 2;
+                }
+                else
+                {
+                    if (IsAffordable(allHats[id].cost))
+                    {
+                        code = 1;
+                    }
+                }
+                break;
         }
 
         return code;
@@ -308,6 +344,9 @@ public class ShopHandler : MonoBehaviour
             case CustomizationType.PipeColor:
                 pipeColorID = id;
                 break;
+            case CustomizationType.Hat:
+                selectedHat = id;
+                break;
         }
     }
 
@@ -321,6 +360,11 @@ public class ShopHandler : MonoBehaviour
     public bool HasWingSupport(int id)
     {
         return allSkins[id].wingSupport;
+    }
+
+    public bool HasHatSupport(int id)
+    {
+        return allSkins[id].hatSupport;
     }
 
     public float GetWingScale(int id)
@@ -471,6 +515,11 @@ public class ShopHandler : MonoBehaviour
         {
             allMineItems[i].amount = 0;
         }
+
+        for(int i = 1; i < allHats.Count; i++)
+        {
+            allHats[i].purchased = false;
+        }
     }
 
     private void LoadPurchasedItems()
@@ -479,6 +528,7 @@ public class ShopHandler : MonoBehaviour
 
         selectedSkin = ObscuredPrefs.GetInt("SelectedSkin", 0);
         selectedWing = ObscuredPrefs.GetInt("SelectedWing", 0);
+        selectedHat = ObscuredPrefs.GetInt("SelectedHat", 0);
         selectedMiner = ObscuredPrefs.GetInt("SelectedMiner", 0);
 
         selectedPipe = ObscuredPrefs.GetInt("SelectedPipe", 0);
@@ -597,6 +647,21 @@ public class ShopHandler : MonoBehaviour
                     }
                 }
             }
+            if(types.Length > 8)
+            {
+                if (types[8].Contains(","))
+                {
+                    string[] hatData = types[8].Split(',');
+                    for (int i = 0; i < hatData.Length; i++)
+                    {
+                        if (hatData[i].Length > 0)
+                        {
+                            int id = Int32.Parse(hatData[i]);
+                            allHats[id].purchased = true;
+                        }
+                    }
+                }
+            }
         }
 
         PlayerMiner.currentMiner = allMiners[selectedMiner];
@@ -676,6 +741,15 @@ public class ShopHandler : MonoBehaviour
         }
         data += "|";
 
+        for (int i = 0; i < allHats.Count; i++)
+        {
+            if (allHats[i].purchased)
+            {
+                data += i.ToString() + ",";
+            }
+        }
+        data += "|";
+
         ObscuredPrefs.SetString("ShopPurchasedItems", data);
         ObscuredPrefs.SetULong("Blus", blus);
         ObscuredPrefs.SetInt("SelectedSkin", selectedSkin);
@@ -684,6 +758,7 @@ public class ShopHandler : MonoBehaviour
         ObscuredPrefs.SetInt("SelectedBackground", selectedBackground);
         ObscuredPrefs.SetInt("SelectedMiner", selectedMiner);
         ObscuredPrefs.SetInt("SelectedHeatShield", selectedHeatShield);
+        ObscuredPrefs.SetInt("SelectedHat", selectedHat);
     }
 
     private void OnApplicationPause(bool pause)
@@ -729,6 +804,11 @@ public class ShopHandler : MonoBehaviour
     public bool HeatShieldPurchased(int id)
     {
         return allHeatShields[id].purchased;
+    }
+
+    public bool HatPurchased(int id)
+    {
+        return allHats[id].purchased;
     }
 
     public int GetLatestMiner()
@@ -1803,6 +1883,10 @@ public class ShopHandler : MonoBehaviour
                 price = allPipes[id].cost;
                 allPipes[id].purchased = true;
                 break;
+            case CustomizationType.Hat:
+                price = allHats[id].cost;
+                allHats[id].purchased = true;
+                break;
         }
 
         PurchaseMinerItem(price);
@@ -1827,6 +1911,9 @@ public class ShopHandler : MonoBehaviour
                     break;
                 case CustomizationType.Pipe:
                     selectedPipe = id;
+                    break;
+                case CustomizationType.Hat:
+                    selectedHat = id;
                     break;
                 case CustomizationType.PipeColor:
                     pipeColorID = id;

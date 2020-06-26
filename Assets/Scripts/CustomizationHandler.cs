@@ -13,6 +13,7 @@ public enum CustomizationType
     Wing = 1,
     Pipe = 2,
     PipeColor = 3,
+    Hat = 4,
 }
 
 public class CustomizationHandler : MonoBehaviour
@@ -30,8 +31,10 @@ public class CustomizationHandler : MonoBehaviour
     [SerializeField]
     private Transform buyButton = null,
         wingDisabled = null,
+        hatDisabled = null,
         skinPreview = null,
         wingPreview = null,
+        hatPreview = null,
         typeParent = null,
         smallPreviewParent = null;
 
@@ -39,7 +42,7 @@ public class CustomizationHandler : MonoBehaviour
     private GameObject priceText, priceImage;
 
     private CustomizationType type = CustomizationType.Skin;
-    private float time = 0.25f;
+    private float time = 0.25f, hatMiddleY = 847;
     private int middleID = 1;
     private bool switchRunning = false, changeApplied = false, interaction = false;
     private ObscuredInt selectedID = 0;
@@ -72,6 +75,9 @@ public class CustomizationHandler : MonoBehaviour
                 break;
             case CustomizationType.Wing:
                 selectedID = shop.GetSelectedWing();
+                break;
+            case CustomizationType.Hat:
+                selectedID = shop.GetSelectedHat();
                 break;
         }
 
@@ -119,7 +125,17 @@ public class CustomizationHandler : MonoBehaviour
         Sprite left = null, middle = null, right = null;
         int id = 0;
 
-        previewImages[middleID].localScale = new Vector3(3.333f, 3.333f, 3.333f);
+        previewImages[middleID].localScale = new Vector3(2.5f, 2.5f, 2.5f);
+
+        if(type == CustomizationType.Hat)
+        {
+            Vector3 pos = previewImages[middleID].transform.position;
+            pos.y = hatMiddleY;
+            previewImages[middleID].transform.position = pos;
+        } else
+        {
+            previewImages[middleID].transform.position = previewPositions[1];
+        }
 
         CostData[] cost = null;
         bool purchased = false;
@@ -154,6 +170,19 @@ public class CustomizationHandler : MonoBehaviour
 
                 wingPreview.localScale = new Vector3(scale, scale, scale);
                 previewImages[middleID].localScale = new Vector3(scale, scale, scale);
+
+                break;
+            case CustomizationType.Hat:
+                id = shop.GetSelectedHat();
+
+                cost = shop.allHats[id].cost;
+                purchased = shop.allHats[id].purchased;
+
+                left = shop.GetHatSprite(id - 1);
+                middle = shop.GetHatSprite(id);
+                right = shop.GetHatSprite(id + 1);
+
+                hatPreview.GetComponent<Image>().sprite = middle;
 
                 break;
             case CustomizationType.Pipe:
@@ -233,6 +262,25 @@ public class CustomizationHandler : MonoBehaviour
             wingPreview.gameObject.SetActive(false);
         }
 
+        if(newType != CustomizationType.Hat)
+        {
+            hatPreview.GetComponent<Image>().sprite =
+                shop.GetHatSprite(shop.GetSelectedHat());
+            hatPreview.gameObject.SetActive(true);
+
+            if (shop.HasHatSupport(shop.GetSelectedSkin()))
+            {
+                hatPreview.gameObject.SetActive(true);
+            }
+            else
+            {
+                hatPreview.gameObject.SetActive(false);
+            }
+        } else
+        {
+            hatPreview.gameObject.SetActive(false);
+        }
+
         type = newType;
         UpdateDisplay(newType);
         UpdateSmallPreviews();
@@ -269,6 +317,9 @@ public class CustomizationHandler : MonoBehaviour
                         break;
                     case CustomizationType.Wing:
                         newSprite = shop.GetWingSprite(newID);
+                        break;
+                    case CustomizationType.Hat:
+                        newSprite = shop.GetHatSprite(newID);
                         break;
                 }
 
@@ -308,7 +359,7 @@ public class CustomizationHandler : MonoBehaviour
 
         Sprite newLeft = null, newMiddle = null, newRight = null;
 
-        float bigScale = 3.333f;
+        float bigScale = 2.5f;
 
         switch (type)
         {
@@ -324,6 +375,11 @@ public class CustomizationHandler : MonoBehaviour
 
                 bigScale = shop.GetWingScale(selectedID);
                 break;
+            case CustomizationType.Hat:
+                newLeft = shop.GetHatSprite(selectedID - 1);
+                newMiddle = shop.GetHatSprite(selectedID);
+                newRight = shop.GetHatSprite(selectedID + 1);
+                break;
         }
 
         previewImages[GetNewID(middleID - 1)].GetComponent<Image>().sprite = newLeft;
@@ -335,8 +391,20 @@ public class CustomizationHandler : MonoBehaviour
         previewImages[GetNewID(middleID + 1)].GetComponent<Image>().sprite = newRight;
         previewImages[GetNewID(middleID + 1)].localScale = Vector3.one;
 
+        if (type == CustomizationType.Hat)
+        {
+            Vector3 pos = previewImages[middleID].transform.position;
+            pos.y = hatMiddleY;
+            previewImages[middleID].transform.position = pos;
+        }
+        else
+        {
+            previewImages[middleID].transform.position = previewPositions[1];
+        }
+
         FetchPurchased(type, selectedID);
         CheckWingSupport();
+        CheckHatSupport();
     }
 
     public void SwipeDetector_OnSwipe(SwipeData data)
@@ -400,7 +468,7 @@ public class CustomizationHandler : MonoBehaviour
 
         Sprite newLeft = null, newRight = null;
 
-        float bigScale = 3.333f;
+        float bigScale = 2.5f;
 
         if(type == CustomizationType.Wing)
         {
@@ -416,11 +484,18 @@ public class CustomizationHandler : MonoBehaviour
 
         changeApplied = false;
 
+        Vector3 middlePos = previewPositions[1];
+
+        if(type == CustomizationType.Hat)
+        {
+            middlePos.y = hatMiddleY;
+        }
+
         if(dir == 0)
         { //nach links -> previews nach rechts
 
             //linkes preview in mitte bewegen & upscalen
-            previewImages[GetNewID(middleID - 1)].transform.DOMove(previewPositions[1], time);
+            previewImages[GetNewID(middleID - 1)].transform.DOMove(middlePos, time);
             previewImages[GetNewID(middleID - 1)].transform.DOScale(bigScale, time);
 
             //mittleres preview nach rechts & runterscalen
@@ -449,6 +524,9 @@ public class CustomizationHandler : MonoBehaviour
                 case CustomizationType.Wing:
                     newLeft = shop.GetWingSprite(selectedID - 2);
                     break;
+                case CustomizationType.Hat:
+                    newLeft = shop.GetHatSprite(selectedID - 2);
+                    break;
             }
 
             selectedID = shop.CheckSelected(type, selectedID - 1);
@@ -463,7 +541,7 @@ public class CustomizationHandler : MonoBehaviour
         { //nach rechts -> previews nach links
 
           //rechtes preview in mitte bewegen & upscalen
-            previewImages[GetNewID(middleID + 1)].transform.DOMove(previewPositions[1], time);
+            previewImages[GetNewID(middleID + 1)].transform.DOMove(middlePos, time);
             previewImages[GetNewID(middleID + 1)].transform.DOScale(bigScale, time);
 
             //mittleres preview nach links & runterscalen
@@ -492,6 +570,9 @@ public class CustomizationHandler : MonoBehaviour
                 case CustomizationType.Wing:
                     newRight = shop.GetWingSprite(selectedID + 2);
                     break;
+                case CustomizationType.Hat:
+                    newRight = shop.GetHatSprite(selectedID + 2);
+                    break;
             }
 
             selectedID = shop.CheckSelected(type, selectedID + 1);
@@ -504,8 +585,27 @@ public class CustomizationHandler : MonoBehaviour
         }
 
         CheckWingSupport();
+        CheckHatSupport();
 
         StartCoroutine(EndSwitch());
+    }
+
+    private void CheckHatSupport()
+    {
+        if(type == CustomizationType.Skin)
+        {
+            if(shop.HasHatSupport(selectedID))
+            {
+                hatDisabled.gameObject.SetActive(false);
+                hatDisabled.parent.GetChild(0).GetComponent<Button>().interactable = true;
+                hatPreview.gameObject.SetActive(true);
+            } else
+            {
+                hatDisabled.gameObject.SetActive(true);
+                hatDisabled.parent.GetChild(0).GetComponent<Button>().interactable = false;
+                hatPreview.gameObject.SetActive(false);
+            }
+        }
     }
 
     private void CheckWingSupport()

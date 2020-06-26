@@ -17,5 +17,14 @@ MonoBehaviour:
   - {fileID: 8745284039982918138, guid: 2232bc495a247cd4faf303a5e5b71dec, type: 3}
   - {fileID: -1495796495427720775, guid: 2232bc495a247cd4faf303a5e5b71dec, type: 3}
   purchased: 1
-  cost: 0
+  cost:
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
   wingID: 0
+  shopScale: 2.5

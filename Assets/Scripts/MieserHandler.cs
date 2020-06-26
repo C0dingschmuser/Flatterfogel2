@@ -11,7 +11,7 @@ public class MieserHandler : MonoBehaviour
     [SerializeField]
     private BossHandler bossHandler = null;
 
-    private float currentAlpha = 1;
+    private float currentAlpha = 1, aliveTime = 0;
     private bool fadeRunning = false, isDead = false;
 
     private int health = 15;
@@ -39,6 +39,8 @@ public class MieserHandler : MonoBehaviour
     {
         fadeRunning = false;
         isDead = false;
+
+        aliveTime = 0;
 
         deathEffect.SetActive(false);
         mieser.GetComponent<SpriteRenderer>().color = Color.white;
@@ -68,11 +70,42 @@ public class MieserHandler : MonoBehaviour
     {
         float timeTillDeath = 3f;
 
+        Debug.Log(aliveTime);
+
+        int coins = 3;
+
+        if(aliveTime < 11)
+        {
+            coins = 7;
+        } else if(aliveTime < 16)
+        {
+            coins = 5;
+        }
+
+        float stepTime = 1.5f / coins;
+
+        StartCoroutine(SpawnEndCoins(stepTime, coins));
+
         isDead = true;
 
         deathEffect.SetActive(true);
         mieser.GetComponent<SpriteRenderer>().DOColor(Color.red, timeTillDeath);
         Invoke("EndDeath", timeTillDeath);
+    }
+
+    private IEnumerator SpawnEndCoins(float time, int coins)
+    {
+        while(coins > 0)
+        {
+            Vector3 newPos = transform.position;
+            newPos.x += Random.Range(-100, 100);
+            newPos.y += Random.Range(-100, 100);
+
+            FlatterFogelHandler.Instance.SpawnCoin(newPos);
+
+            coins--;
+            yield return new WaitForSeconds(time);
+        }
     }
 
     private void EndDeath()
@@ -95,6 +128,8 @@ public class MieserHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        aliveTime += Time.deltaTime;
+
         if(fadeRunning)
         {
             currentAlpha -= 4 * Time.deltaTime;

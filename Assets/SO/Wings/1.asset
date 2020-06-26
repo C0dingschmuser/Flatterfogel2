@@ -27,4 +27,4 @@ MonoBehaviour:
   - mineralID: 0
     amount: 0
   wingID: 1
-  shopScale: 6
+  shopScale: 4.5

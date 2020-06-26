@@ -1777,6 +1777,34 @@ public class FlatterFogelHandler : MonoBehaviour
         return modeChangeBlus;
     }
 
+    public void SpawnCoin(Vector3 pos)
+    {
+        GameObject newBlus = null;
+
+        bool duplicate = true;
+        while (duplicate)
+        {
+            duplicate = false;
+
+            newBlus = objectPooler.SpawnFromPoolCheck("Blus");
+            if (otherObjs.Contains(newBlus))
+            {
+                duplicate = true;
+            }
+        }
+
+        newBlus = objectPooler.SpawnFromPoolEnd(newBlus, pos, Quaternion.identity);
+
+        newBlus.transform.SetParent(particleParent.transform);
+
+        BlusData bData = newBlus.GetComponent<BlusData>();
+
+        bData.SpawnCoin(pos, coinSprites);
+        ShopHandler.Instance.UpdateBlus(1, 1, true);
+
+        otherObjs.Add(newBlus);
+    }
+
     public void PlayerDeath()
     {
         state = (int)FF_States.End;
