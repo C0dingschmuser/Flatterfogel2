@@ -27,7 +27,8 @@ public class FF_PlayerData : MonoBehaviour
     public UnityEngine.Experimental.Rendering.Universal.Light2D playerLightObj, playerHardcoreLightObj;
 
     public GameObject deadParent, playerLight, playerCollider2, deadPlayerPart,
-                wing, minerTool, staminaText, itemHolder, fuelParent, mineItemParent;
+                wing, minerTool, staminaText, itemHolder, fuelParent, mineItemParent,
+                hatObj;
     public Camera mainCamera;
     public bool dead = false, isJumping = false, isGrounded = false, heatPaused = false;
     private bool goLocked = false, landing = false;
@@ -204,6 +205,19 @@ public class FF_PlayerData : MonoBehaviour
         currentWing = newWing;
 
         LoadPlayerSkin(newSkin, newWing, physicsRes);
+    }
+
+    public void LoadHat(Hat newHat)
+    {
+        if(newHat.hatID == 0)
+        { //kein hut
+            hatObj.SetActive(false);
+        } else
+        {
+            hatObj.SetActive(true);
+        }
+
+        hatObj.GetComponent<SpriteRenderer>().sprite = newHat.sprite;
     }
 
     public void LoadPlayerSkin(Skin newSkin, Wing newWing, bool physicsResolution = false)
@@ -600,6 +614,13 @@ public class FF_PlayerData : MonoBehaviour
 
         dead = false;
 
+        Vector3 pos = transform.position;
+        pos.y += 31.005f;
+
+        hatObj.transform.position = pos;
+        hatObj.GetComponent<Rigidbody2D>().simulated = false;
+        hatObj.transform.rotation = Quaternion.identity;
+
         playerLight.SetActive(true);
         playerCollider2.SetActive(true);
         transform.parent.GetChild(0).gameObject.SetActive(true); //enable itemholder
@@ -670,6 +691,13 @@ public class FF_PlayerData : MonoBehaviour
                 deadChilds[i].GetComponent<DeadData>().originalPos, 0.7f);
             deadChilds[i].transform.DORotate(new Vector3(0, 0, 0), 0.7f);
         }
+
+        hatObj.GetComponent<Rigidbody2D>().simulated = false;
+        Vector3 pos = ffHandler.playerStartPos;
+        pos.y += 31.005f;
+
+        hatObj.transform.DOMove(pos, 0.7f);
+        hatObj.transform.DORotate(new Vector3(0, 0, 0), 0.7f);
 
         Invoke("ResetImage", 0.7f);
     }
@@ -960,6 +988,8 @@ public class FF_PlayerData : MonoBehaviour
             Debug.LogWarning("Second Death invoked: " + type);
             return;
         }
+
+        hatObj.GetComponent<Rigidbody2D>().simulated = true;
 
         BackgroundHandler.Instance.EnableBackground(true);
 

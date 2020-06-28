@@ -667,6 +667,7 @@ public class ShopHandler : MonoBehaviour
         PlayerMiner.currentMiner = allMiners[selectedMiner];
 
         playerData.LoadPlayerSkin(allSkins[selectedSkin], allWings[selectedWing]);
+        playerData.LoadHat(allHats[selectedHat]);
     }
 
     public void SavePurchasedItems()
@@ -1930,6 +1931,9 @@ public class ShopHandler : MonoBehaviour
                 case CustomizationType.Skin:
                 case CustomizationType.Wing:
                     playerData.LoadPlayerSkin(allSkins[selectedSkin], allWings[selectedWing]);
+                    break;
+                case CustomizationType.Hat:
+                    playerData.LoadHat(allHats[selectedHat]);
                     break;
                 case CustomizationType.Pipe:
                     FF_PlayerData.Instance.LoadPipe();

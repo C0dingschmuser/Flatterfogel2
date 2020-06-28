@@ -16,9 +16,10 @@ MonoBehaviour:
   animated: 0
   purchased: 0
   wingSupport: 1
+  hatSupport: 1
   cost:
   - mineralID: 14
-    amount: 1
+    amount: 3
   - mineralID: 0
     amount: 0
   - mineralID: 0

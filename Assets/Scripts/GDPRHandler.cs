@@ -8,6 +8,9 @@ using UnityEditor;
 
 public class GDPRHandler : MonoBehaviour
 {
+    public static string privacyLinkDE = "https://pastebin.com/HsEfaLCt";
+    public static string usageLinkDE = "https://pastebin.com/BQcicxpA";
+
     public static bool isActive = false;
     public int gdpr_accepted = 0, alpha_unlocked = 0;
     public GraphicRaycaster raycaster;
@@ -29,6 +32,15 @@ public class GDPRHandler : MonoBehaviour
             full += a + "\n";
         }
         EditorGUIUtility.systemCopyBuffer = full;*/
+
+        float currentVersion =
+            float.Parse(Application.version, System.Globalization.CultureInfo.InvariantCulture);
+
+        if(currentVersion < 0.6f)
+        { //Complete Reset
+            PlayerPrefs.DeleteAll();
+            ObscuredPrefs.DeleteAll();
+        }
 
         gdpr_accepted = ObscuredPrefs.GetInt("GDPR_ACCEPTED", 0);
         if (gdpr_accepted == 0)
@@ -69,11 +81,11 @@ public class GDPRHandler : MonoBehaviour
     {
         if (type == 0)
         { //Nutzungsbedingungen
-            Application.OpenURL("https://pastebin.com/BQcicxpA");
+            OptionHandler.Instance.OpenTOS();
         }
         else
         { //Datenschutzerklärung
-            Application.OpenURL("https://pastebin.com/HsEfaLCt");
+            OptionHandler.Instance.OpenDataPrivacy();
         }
     }
 

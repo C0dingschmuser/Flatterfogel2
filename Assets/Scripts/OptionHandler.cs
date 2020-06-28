@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.Localization;
 using UnityEngine.UI;
 using UnityEngine.Experimental.Rendering.Universal;
+using UnityEngine.Localization.Settings;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using CodeStage.AntiCheat.Storage;
 #if UNITY_ANDROID
 using UnityEngine.SocialPlatforms;
 using Firebase.Analytics;
@@ -31,6 +35,7 @@ public class OptionHandler : MonoBehaviour
     public GameObject graphicsObj;
     public GameObject soundObj;
     [Header("Allgemein")]
+    public GameObject languageButton;
     public GameObject difficultyButton;
     public GameObject introButton;
     public GameObject kreuzPosButton;
@@ -80,6 +85,15 @@ public class OptionHandler : MonoBehaviour
     private static int difficulty = 1;
     private bool closing = false, optionsActive = false, ingame = false;
 
+    private List<Locale> allLocales = new List<Locale>();
+    private int selectedLocaleIndex = -1;
+
+    public LocalizedString mineHalten, mineGesten, mineKreuz;
+    public LocalizedString mineItemLeft, mineItemRight;
+    public LocalizedString normal, gross, hoch;
+    public LocalizedString yes, no, on, off, language;
+    public LocalizedString tosLink, privacyLink;
+
     [Header("Handler")]
     [SerializeField]
     FlatterFogelHandler ffHandler = null;
@@ -115,6 +129,8 @@ public class OptionHandler : MonoBehaviour
     {
         UpdateAll();
 
+        StartCoroutine(LoadLocalization());
+
         versionDisplay.GetComponent<TextMeshProUGUI>().text = 
             "BETA " + Application.version;
         startVersionDisplay.GetComponent<TextMeshProUGUI>().text =
@@ -125,6 +141,43 @@ public class OptionHandler : MonoBehaviour
 #else
         introParent.SetActive(true);
 #endif
+    }
+
+    IEnumerator LoadLocalization()
+    {
+        yield return LocalizationSettings.InitializationOperation;
+
+        selectedLocaleIndex = -1;
+
+        string selectedLocaleName = PlayerPrefs.GetString("SelectedLocale", "English (en)");
+
+        for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
+        {
+            Locale locale = LocalizationSettings.AvailableLocales.Locales[i];
+            allLocales.Add(locale);
+
+            if(locale.name.Contains(selectedLocaleName))
+            {
+                selectedLocaleIndex = i;
+            }
+        }
+
+        StartCoroutine(SetLocalization(selectedLocaleIndex));
+    }
+
+    private IEnumerator SetLocalization(int index)
+    {
+        selectedLocaleIndex = index;
+        string localeName = allLocales[index].name;
+
+        PlayerPrefs.SetString("SelectedLocale", localeName);
+
+        LocalizationSettings.SelectedLocale = allLocales[index];
+        yield return LocalizationSettings.InitializationOperation;
+
+        Debug.Log("LOADED LOCALE: " + localeName);
+
+        UpdateAll();
     }
 
     public static int GetDifficulty()
@@ -162,24 +215,30 @@ public class OptionHandler : MonoBehaviour
     public void UpdateAll(bool excludeEnergy = false)
     {
         LoadOptions();
-        UpdatePhysics();
+        StartCoroutine(UpdateLanguageText());
+        StartCoroutine(UpdateLight());
         UpdateResolution();
-        UpdateLight();
-        UpdateParallax();
-        UpdateDestruction();
+
+        if (energySaveMode == 0)
+        {
+            StartCoroutine(UpdatePhysics());
+            StartCoroutine(UpdateParallax());
+            StartCoroutine(UpdateDestruction());
+            StartCoroutine(UpdateEnhancedFramerate());
+        }
+
         UpdateJumpEffect();
-        UpdatePush();
-        UpdateKreuzPos();
-        UpdateKreuzSize();
+        StartCoroutine(UpdatePush());
+        StartCoroutine(UpdateKreuzPos());
+        StartCoroutine(UpdateKreuzSize());
         UpdateDifficulty();
-        UpdateEnhancedFramerate();
         UpdateVSync();
-        UpdateMineMode();
+        StartCoroutine(UpdateMineMode());
         UpdateMusicVolume();
 
         if(!excludeEnergy)
         {
-            UpdateEnergySaveMode();
+            StartCoroutine(UpdateEnergySaveMode(true));
         }
     }
 
@@ -271,6 +330,68 @@ public class OptionHandler : MonoBehaviour
         }
     }
 
+    public void SetButtonText(Transform button, string text)
+    {
+        TextMeshProUGUI textObj = button.GetComponent<TextMeshProUGUI>();
+
+        if(text.Length > 7)
+        {
+            textObj.fontSize = 28;
+        } else
+        {
+            textObj.fontSize = 36;
+        }
+
+        textObj.text = text;
+    }
+
+    public void LanguageClicked()
+    {
+        selectedLocaleIndex++;
+
+        if(selectedLocaleIndex >= allLocales.Count)
+        {
+            selectedLocaleIndex = 0;
+        }
+
+        StartCoroutine(SetLocalization(selectedLocaleIndex));
+    }
+
+    private IEnumerator UpdateLanguageText()
+    {
+        AsyncOperationHandle handle;
+
+        yield return handle = language.GetLocalizedString();
+
+        SetButtonText(languageButton.transform.GetChild(0).GetChild(0), (string)handle.Result);
+    }
+
+    public void OpenDataPrivacy()
+    {
+        StartCoroutine(OpenPrivacyLink());
+    }
+
+    public void OpenTOS()
+    {
+        StartCoroutine(OpenTOSLink());
+    }
+
+    private IEnumerator OpenPrivacyLink()
+    {
+        AsyncOperationHandle handle;
+        yield return handle = privacyLink.GetLocalizedString();
+
+        Application.OpenURL((string)handle.Result);
+    }
+
+    private IEnumerator OpenTOSLink()
+    {
+        AsyncOperationHandle handle;
+        yield return handle = tosLink.GetLocalizedString();
+
+        Application.OpenURL((string)handle.Result);
+    }
+
     #region EnergySaveMode
     public void EnergySaveModeClicked()
     {
@@ -283,12 +404,14 @@ public class OptionHandler : MonoBehaviour
         }
 
         PlayerPrefs.SetInt("Player_EnergySave", energySaveMode);
-        UpdateEnergySaveMode();
+        StartCoroutine(UpdateEnergySaveMode());
     }
 
-    public void UpdateEnergySaveMode()
+    public IEnumerator UpdateEnergySaveMode(bool updateAll = false)
     {
         bool enable = false;
+
+        AsyncOperationHandle handle;
 
         if(energySaveMode == 1)
         {
@@ -299,27 +422,29 @@ public class OptionHandler : MonoBehaviour
             parallaxMode = 0; //bewegende hintergründe deaktiveren
 
             UpdateResolution();
-            UpdateDestruction();
-            UpdateEnhancedFramerate();
-            UpdatePhysics();
-            UpdateParallax();
+            StartCoroutine(UpdateDestruction());
+            StartCoroutine(UpdateEnhancedFramerate());
+            StartCoroutine(UpdatePhysics());
+            StartCoroutine(UpdateParallax());
 
             BackgroundHandler.Instance.SetNewBackground(
                 ShopHandler.Instance.GetCurrentBackground());
 
-            energySaveButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "An";
-
+            yield return handle = on.GetLocalizedString();
         } else
         {
             enable = true;
 
-            LoadOptions();
-            UpdateAll(true);
+            if(!updateAll)
+            {
+                LoadOptions();
+                UpdateAll(true);
+            }
 
-            energySaveButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Aus";
+            yield return handle = off.GetLocalizedString();
         }
+
+        SetButtonText(energySaveButton.transform.GetChild(0).GetChild(0), (string)handle.Result);
 
         renderButton.transform.GetChild(0).GetComponent<Button>().interactable = enable;
         destructionButton.transform.GetChild(0).GetComponent<Button>().interactable = enable;
@@ -336,38 +461,39 @@ public class OptionHandler : MonoBehaviour
         if (physicsResolution == 0)
         { //auf hoch setzen
             physicsResolution = 1;
-            physicButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Hoch";
         }
         else
         { //auf normal setzen
             physicsResolution = 0;
-            physicButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Normal";
         }
 
         PlayerPrefs.SetInt("Player_PhysicsResolution", physicsResolution);
 
         shopHandler.SavePurchasedItems();
-        UpdatePhysics();
+        StartCoroutine(UpdatePhysics());
         //SceneManager.LoadScene(0);
     }
 
-    private void UpdatePhysics()
+    private IEnumerator UpdatePhysics()
     {
         bool high = false;
 
+        AsyncOperationHandle handle;
+
         if (physicsResolution == 0)
-        { 
-            physicButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Normal";
+        {
+            yield return handle = normal.GetLocalizedString();
         }
         else
-        { 
-            physicButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Hoch";
+        {
+            yield return handle = hoch.GetLocalizedString();
+
             high = true;
         }
+
+        physicButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
+            (string)handle.Result;
+
         ffHandler.ChangePhysicsResolution(high);
     }
 #endregion
@@ -408,7 +534,7 @@ public class OptionHandler : MonoBehaviour
         bool overrideOrtho = false;
 
         aspectRatioForcer.SetActive(false);
-        if (defAspect < 1.7778f)
+        if (defAspect < 1.8f)
         {
             if(defAspect < 1.5f)
             {
@@ -578,21 +704,27 @@ public class OptionHandler : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
-    private void UpdateLight()
+    private IEnumerator UpdateLight()
     {
+        AsyncOperationHandle handle;
+
         if(lightEnabled == 1)
         {
             backgroundHandler.moonLight.enabled = true;
             backgroundHandler.sunLight.enabled = true;
             ffPlayerData.playerLightObj.enabled = true;
-            lightButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = "An";
+
+            yield return handle = on.GetLocalizedString();
         } else
         {
             backgroundHandler.moonLight.enabled = false;
             backgroundHandler.sunLight.enabled = false;
             ffPlayerData.playerLightObj.enabled = false;
-            lightButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = "Aus";
+
+            yield return handle = off.GetLocalizedString();
         }
+
+        SetButtonText(lightButton.transform.GetChild(0).GetChild(0), (string)handle.Result);
     }
 #endregion
 
@@ -613,19 +745,23 @@ public class OptionHandler : MonoBehaviour
         BackgroundHandler.Instance.SetNewBackground(
             ShopHandler.Instance.GetCurrentBackground());
 
-        UpdateParallax();
+        StartCoroutine(UpdateParallax());
     }
 
-    private void UpdateParallax()
+    private IEnumerator UpdateParallax()
     {
+        AsyncOperationHandle handle;
+
         if (parallaxMode == 0)
         {
-            backgroundButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = "Aus";
+            yield return handle = off.GetLocalizedString();
         }
         else
         {
-            backgroundButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = "An";
+            yield return handle = on.GetLocalizedString();
         }
+
+        SetButtonText(backgroundButton.transform.GetChild(0).GetChild(0), (string)handle.Result);
     }
 #endregion
 
@@ -642,19 +778,23 @@ public class OptionHandler : MonoBehaviour
         }
 
         PlayerPrefs.SetInt("Player_EnhancedDestruction", enhancedPipeDestruction);
-        UpdateDestruction();
+        StartCoroutine(UpdateDestruction());
     }
 
-    private void UpdateDestruction()
+    private IEnumerator UpdateDestruction()
     {
+        AsyncOperationHandle handle;
+
         if (enhancedPipeDestruction == 0)
         {
-            destructionButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = "Aus";
+            yield return handle = off.GetLocalizedString();
         }
         else
         {
-            destructionButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = "An";
+            yield return handle = on.GetLocalizedString();
         }
+
+        SetButtonText(destructionButton.transform.GetChild(0).GetChild(0), (string)handle.Result);
     }
 #endregion
 
@@ -748,20 +888,23 @@ public class OptionHandler : MonoBehaviour
         }
 
         PlayerPrefs.SetInt("Player_NoPush", noPush);
-        UpdatePush();
+        StartCoroutine(UpdatePush());
     }
 
-    private void UpdatePush()
+    private IEnumerator UpdatePush()
     {
-        if(noPush == 0)
+        AsyncOperationHandle handle;
+
+        if (noPush == 0)
         {
-            introButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Ja";
+            yield return handle = yes.GetLocalizedString();
         } else
         {
-            introButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Nein";
+            yield return handle = no.GetLocalizedString();
         }
+
+        introButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
+            (string)handle.Result;
     }
 #endregion
 
@@ -778,21 +921,25 @@ public class OptionHandler : MonoBehaviour
         }
 
         PlayerPrefs.SetInt("Player_KreuzPos", kreuzPos);
-        UpdateKreuzPos();
+        StartCoroutine(UpdateKreuzPos());
     }
 
-    private void UpdateKreuzPos()
+    private IEnumerator UpdateKreuzPos()
     {
+        AsyncOperationHandle handle;
+
         if (kreuzPos == 0)
         {
-            kreuzPosButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Links";
+            yield return handle = mineItemLeft.GetLocalizedString();
         }
         else
         {
-            kreuzPosButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Rechts";
+            yield return handle = mineItemRight.GetLocalizedString();
         }
+
+        string text = (string)handle.Result;
+
+        SetButtonText(kreuzPosButton.transform.GetChild(0).GetChild(0), text);
 
         mineHandler.UpdateMovementSizePos();
     }
@@ -810,21 +957,24 @@ public class OptionHandler : MonoBehaviour
         }
 
         PlayerPrefs.SetInt("Player_KreuzSize", kreuzSize);
-        UpdateKreuzSize();
+        StartCoroutine(UpdateKreuzSize());
     }
 
-    private void UpdateKreuzSize()
+    private IEnumerator UpdateKreuzSize()
     {
+        AsyncOperationHandle handle;
+
         if (kreuzSize == 0)
         {
-            kreuzSizeButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Normal";
+            yield return handle = normal.GetLocalizedString();
         }
         else
         {
-            kreuzSizeButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Gross";
+            yield return handle = gross.GetLocalizedString();
         }
+
+        kreuzSizeButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
+            (string)handle.Result;
 
         mineHandler.UpdateMovementSizePos();
     }
@@ -847,23 +997,31 @@ public class OptionHandler : MonoBehaviour
         }
 
         PlayerPrefs.SetInt("Player_MineMode", mineMode);
-        UpdateMineMode();
+        StartCoroutine(UpdateMineMode());
     }
 
-    private void UpdateMineMode()
+    private IEnumerator UpdateMineMode()
     {
-        string text = "Halten";
+        string text;
+
+        AsyncOperationHandle handle;
+
         switch(mineMode)
         {
+            default:
+                yield return handle = mineHalten.GetLocalizedString();
+                break;
             case 1:
-                text = "Gesten";
+                yield return handle = mineGesten.GetLocalizedString();
                 break;
             case 2:
-                text = "Kreuz";
+                yield return handle = mineKreuz.GetLocalizedString();
                 break;
         }
 
-        mineModeButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = text;
+        text = (string)handle.Result;
+
+        SetButtonText(mineModeButton.transform.GetChild(0).GetChild(0), text);
     }
 
 #endregion
@@ -881,19 +1039,20 @@ public class OptionHandler : MonoBehaviour
         }
 
         PlayerPrefs.SetInt("Player_EnhancedFramerate", enhancedFramerate);
-        UpdateEnhancedFramerate();
+        StartCoroutine(UpdateEnhancedFramerate());
     }
 
-    private void UpdateEnhancedFramerate()
+    private IEnumerator UpdateEnhancedFramerate()
     {
 #if UNITY_STANDALONE_WIN
         return;
 #endif
 
+        AsyncOperationHandle handle;
+
         if (enhancedFramerate == 0)
         {
-            framerateButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "An";
+            yield return handle = on.GetLocalizedString();
 
 #if UNITY_ANDROID
             QualitySettings.vSyncCount = 2;
@@ -903,8 +1062,7 @@ public class OptionHandler : MonoBehaviour
         }
         else
         {
-            framerateButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Aus";
+            yield return handle = off.GetLocalizedString();
 
 #if UNITY_ANDROID
             QualitySettings.vSyncCount = 1;
@@ -912,6 +1070,8 @@ public class OptionHandler : MonoBehaviour
             Application.targetFrameRate = 60;
 #endif
         }
+
+        SetButtonText(framerateButton.transform.GetChild(0).GetChild(0), (string)handle.Result);
     }
 #endregion
 
@@ -978,7 +1138,7 @@ public class OptionHandler : MonoBehaviour
             QualitySettings.vSyncCount = 0;
         }
 
-        UpdateEnhancedFramerate();
+        StartCoroutine(UpdateEnhancedFramerate());
     }
     #endregion
 
@@ -1039,23 +1199,13 @@ public class OptionHandler : MonoBehaviour
     public void ExtendGraphicsClicked()
     {
         bool enable = true;
-        string text;
 
         if(extendParent.activeSelf)
         {
             enable = false;
         }
 
-        if(enable)
-        {
-            text = "Erweiterte Optionen einklappen";
-        } else
-        {
-            text = "Erweiterte Optionen aufklappen";
-        }
-
         extendParent.SetActive(enable);
-        extendParent.transform.parent.GetChild(0).GetComponent<TextMeshProUGUI>().text = text;
 
     }
 

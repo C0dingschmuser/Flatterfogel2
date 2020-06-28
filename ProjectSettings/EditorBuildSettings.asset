@@ -14,4 +14,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FF.unity
     guid: e02e905cb9d54d540a9e11bbefcf864a
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: f5abcb2c68d0f6a44bab8a825ee0c41f,
+      type: 2}
+    com.unity.localization.settings: {fileID: 11400000, guid: 2d1508543666cb9419f3cdaac930f525,
+      type: 2}
