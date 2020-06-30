@@ -1,0 +1,162 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Highscore Shared Data
+  m_EditorClassIdentifier: 
+  m_NextAvailableId: 37
+  m_TableCollectionName: Highscore
+  m_TableCollectionNameGuidString: 614091ffcac63de42b77c1c78fd1cf6b
+  m_Entries:
+  - m_Id: 1
+    m_Key: Title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2
+    m_Key: WelcomeInfo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Key: WelcomeInfo2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Key: WelcomeRegister
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Key: WelcomeLogin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Key: LoginTop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Key: LoginUsername
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Key: LoginEnterName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Key: LoginPassword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Key: LoginEnterPassword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Key: ForgotPassword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Key: Connect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Key: RegistrationEMail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Key: EnterEMail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Key: RequestBackupCode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17
+    m_Key: BackupInfo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18
+    m_Key: EnterCode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19
+    m_Key: NewPassword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20
+    m_Key: EnterNewPassword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21
+    m_Key: Registration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22
+    m_Key: Register
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23
+    m_Key: FIrstTimeLogin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 24
+    m_Key: ConnectionFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25
+    m_Key: InvalidName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26
+    m_Key: InvalidPassword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27
+    m_Key: Checking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28
+    m_Key: Length
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29
+    m_Key: InvalidEMail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30
+    m_Key: NameExists
+    m_Metadata:
+      m_Items: []
+  - m_Id: 31
+    m_Key: EmailRegistered
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32
+    m_Key: LoginFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33
+    m_Key: WrongCode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34
+    m_Key: LookInSpam
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35
+    m_Key: ResetPassword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36
+    m_Key: Name
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  references:
+    version: 1

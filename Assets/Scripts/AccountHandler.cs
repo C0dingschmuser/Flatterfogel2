@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeStage.AntiCheat.Storage;
 using UnityEngine.Networking;
+using UnityEngine.Localization;
+using UnityEngine.ResourceManagement.AsyncOperations;
 #if UNITY_ANDROID
 using UnityEngine.SocialPlatforms;
 using GooglePlayGames;
@@ -31,6 +33,14 @@ public class AccountHandler : MonoBehaviour
 
     public AccountStates accountState = AccountStates.LoggedOut;
     public string username = "";
+
+    public LocalizedString connecting, connectingFailed, invalidName, invalidPassword, checking,
+        length, invalidEmail, nameExists, emailRegistered, loginFailed, invalidCode,
+        lookInSpam, resetPassword;
+    public string connectionString, connectionFailedString, invalidNameString,
+        invalidPasswordString, checkingString, lengthString, invalidEmailString,
+        nameExistsString, emailRegisteredString, loginFailedString, invalidCodeString,
+        lookInSpamString, resetPasswordString;
 
     public static bool running = false;
     public static AccountHandler Instance = null;
@@ -116,7 +126,7 @@ public class AccountHandler : MonoBehaviour
         if(signIn)
         {
             signInfo.GetComponent<TextMeshProUGUI>().color = Color.black;
-            signInfo.GetComponent<TextMeshProUGUI>().text = "Verbinde mit Server...";
+            signInfo.GetComponent<TextMeshProUGUI>().text = connectionString;//"Verbinde mit Server...";
             EnablePage(5);
         }
 
@@ -275,7 +285,7 @@ public class AccountHandler : MonoBehaviour
         if (www.isNetworkError || www.isHttpError)
         {
             signInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            signInfo.GetComponent<TextMeshProUGUI>().text = "Verbindung fehlgeschlagen!";
+            signInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString; //"Verbindung fehlgeschlagen!";
         } else
         {
             string response = www.downloadHandler.text;
@@ -322,9 +332,9 @@ public class AccountHandler : MonoBehaviour
         if(!userOk)
         {
             regInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            regInfo.GetComponent<TextMeshProUGUI>().text = "Name unzulässig!\n" +
+            regInfo.GetComponent<TextMeshProUGUI>().text = invalidNameString + "\n" +
                                                             "(a-z A-Z 0-9 .,-_)\n" +
-                                                            "2-20 Zeichen";
+                                                            "2-20 " + lengthString;
             return;
         }
 
@@ -333,9 +343,9 @@ public class AccountHandler : MonoBehaviour
         if (!pwOk)
         {
             regInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            regInfo.GetComponent<TextMeshProUGUI>().text = "Passwort unzulässig!\n" +
+            regInfo.GetComponent<TextMeshProUGUI>().text = invalidPasswordString + "\n" +
                                                             "(a-z A-Z 0-9 .,-_)\n" +
-                                                            "4-20 Zeichen";
+                                                            "4-20 " + lengthString;
             return;
         }
 
@@ -344,12 +354,12 @@ public class AccountHandler : MonoBehaviour
         if(!emailOk)
         {
             regInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            regInfo.GetComponent<TextMeshProUGUI>().text = "E-Mail unzulässig!";
+            regInfo.GetComponent<TextMeshProUGUI>().text = invalidEmailString;
             return;
         }
 
         regInfo.GetComponent<TextMeshProUGUI>().color = Color.black;
-        regInfo.GetComponent<TextMeshProUGUI>().text = "Überprüfe...";
+        regInfo.GetComponent<TextMeshProUGUI>().text = checkingString;
 
         StartCoroutine(RegisterUser(username, passwort, email));
     }
@@ -389,7 +399,7 @@ public class AccountHandler : MonoBehaviour
         if (www.isNetworkError || www.isHttpError)
         {
             regInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            regInfo.GetComponent<TextMeshProUGUI>().text = "Verbindung fehlgeschlagen!";
+            regInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
         } else
         {
             string response = www.downloadHandler.text;
@@ -407,10 +417,10 @@ public class AccountHandler : MonoBehaviour
 
                 if(split[1].Equals("0"))
                 {
-                    regInfo.GetComponent<TextMeshProUGUI>().text = "Name bereits vorhanden!";
+                    regInfo.GetComponent<TextMeshProUGUI>().text = nameExistsString;
                 } else
                 {
-                    regInfo.GetComponent<TextMeshProUGUI>().text = "E-Mail bereits registriert!";
+                    regInfo.GetComponent<TextMeshProUGUI>().text = emailRegisteredString;
                 }
             }
         }
@@ -429,18 +439,18 @@ public class AccountHandler : MonoBehaviour
         if(!CheckUsername(username))
         {
             loginInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            loginInfo.GetComponent<TextMeshProUGUI>().text = "Name unzulässig!\n" +
+            loginInfo.GetComponent<TextMeshProUGUI>().text = invalidNameString + "\n" +
                                                             "(a-z A-Z 0-9 .,-_)\n" +
-                                                            "2-20 Zeichen";
+                                                            "2-20 " + lengthString;
             return;
         }
 
         if(!CheckPasswort(passwort))
         {
             loginInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            loginInfo.GetComponent<TextMeshProUGUI>().text = "Passwort unzulässig!\n" +
+            loginInfo.GetComponent<TextMeshProUGUI>().text = invalidPasswordString + "\n" +
                                                             "(a-z A-Z 0-9 .,-_)\n" +
-                                                            "4-20 Zeichen";
+                                                            "4-20 " + lengthString;
             return;
         }
 
@@ -462,7 +472,7 @@ public class AccountHandler : MonoBehaviour
         if (www.isNetworkError || www.isHttpError)
         {
             loginInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            loginInfo.GetComponent<TextMeshProUGUI>().text = "Verbindung fehlgeschlagen!";
+            loginInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
         } else
         {
             string response = www.downloadHandler.text;
@@ -475,7 +485,7 @@ public class AccountHandler : MonoBehaviour
             } else
             { 
                 loginInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-                loginInfo.GetComponent<TextMeshProUGUI>().text = "Login fehlerhaft!";
+                loginInfo.GetComponent<TextMeshProUGUI>().text = loginFailedString;
             }
         }
 
@@ -494,7 +504,7 @@ public class AccountHandler : MonoBehaviour
         if(!CheckEmail(email))
         {
             restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            restoreInfo.GetComponent<TextMeshProUGUI>().text = "E-Mail unzulässig!";
+            restoreInfo.GetComponent<TextMeshProUGUI>().text = invalidEmailString;
 
             return;
         }
@@ -504,16 +514,16 @@ public class AccountHandler : MonoBehaviour
             if (!CheckPasswort(passwort))
             {
                 restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-                restoreInfo.GetComponent<TextMeshProUGUI>().text = "Passwort unzulässig!\n" +
-                                                                "(a-z A-Z 0-9 .,-_)\n" +
-                                                                "4-20 Zeichen";
+                restoreInfo.GetComponent<TextMeshProUGUI>().text = invalidPasswordString + "\n" +
+                                                            "(a-z A-Z 0-9 .,-_)\n" +
+                                                            "4-20 " + lengthString;
                 return;
             }
 
             if (!CheckRestoreCode(code))
             {
                 restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-                restoreInfo.GetComponent<TextMeshProUGUI>().text = "Code unzulässig!";
+                restoreInfo.GetComponent<TextMeshProUGUI>().text = invalidCodeString;
 
                 return;
             }
@@ -551,7 +561,7 @@ public class AccountHandler : MonoBehaviour
             if (www.isNetworkError || www.isHttpError)
             {
                 restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-                restoreInfo.GetComponent<TextMeshProUGUI>().text = "Verbindung fehlgeschlagen!";
+                restoreInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
             }
             else
             {
@@ -561,11 +571,9 @@ public class AccountHandler : MonoBehaviour
                 restoreCode.transform.parent.gameObject.SetActive(true);
 
                 restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.blue;
-                restoreInfo.GetComponent<TextMeshProUGUI>().text = "Bitte schaue auch in\n" +
-                    "deinem Spam Ordner nach\n" +
-                    "der E-Mail";
+                restoreInfo.GetComponent<TextMeshProUGUI>().text = lookInSpamString;
 
-                restoreButton.GetComponent<TextMeshProUGUI>().text = "Passwort zurücksetzen";
+                restoreButton.GetComponent<TextMeshProUGUI>().text = resetPasswordString;
             }
         }
         else
@@ -579,7 +587,7 @@ public class AccountHandler : MonoBehaviour
             if (www.isNetworkError || www.isHttpError)
             {
                 restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-                restoreInfo.GetComponent<TextMeshProUGUI>().text = "Verbindung fehlgeschlagen!";
+                restoreInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
             } else
             {
                 string response = www.downloadHandler.text;
@@ -591,7 +599,7 @@ public class AccountHandler : MonoBehaviour
                     if (split[0].Equals("0"))
                     { //failed
                         restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-                        restoreInfo.GetComponent<TextMeshProUGUI>().text = "Code inkorrekt!";
+                        restoreInfo.GetComponent<TextMeshProUGUI>().text = invalidCodeString;
                     }
                     else if (split[0].Equals("1"))
                     { //success
@@ -603,7 +611,7 @@ public class AccountHandler : MonoBehaviour
                 } else
                 {
                     restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-                    restoreInfo.GetComponent<TextMeshProUGUI>().text = "Verbindung fehlgeschlagen!";
+                    restoreInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
                 }
             }
         }
@@ -624,25 +632,25 @@ public class AccountHandler : MonoBehaviour
         if(!CheckUsername(newName))
         {
             alphaInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            alphaInfo.GetComponent<TextMeshProUGUI>().text = "Name unzulässig!\n" +
+            alphaInfo.GetComponent<TextMeshProUGUI>().text = invalidNameString + "\n" +
                                                             "(a-z A-Z 0-9 .,-_)\n" +
-                                                            "2-20 Zeichen";
+                                                            "2-20 " + lengthString;
             return;
         }
 
         if(!CheckPasswort(passwort))
         {
             alphaInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            alphaInfo.GetComponent<TextMeshProUGUI>().text = "Passwort unzulässig!\n" +
-                                                                "(a-z A-Z 0-9 .,-_)\n" +
-                                                                "4-20 Zeichen";
+            alphaInfo.GetComponent<TextMeshProUGUI>().text = invalidPasswordString + "\n" +
+                                                            "(a-z A-Z 0-9 .,-_)\n" +
+                                                            "4-20 " + lengthString;
             return;
         }
 
         if(!CheckEmail(email))
         {
             alphaInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            alphaInfo.GetComponent<TextMeshProUGUI>().text = "E-Mail unzulässig!";
+            alphaInfo.GetComponent<TextMeshProUGUI>().text = invalidEmailString;
 
             return;
         }
@@ -666,7 +674,7 @@ public class AccountHandler : MonoBehaviour
         if (www.isNetworkError || www.isHttpError)
         {
             alphaInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            alphaInfo.GetComponent<TextMeshProUGUI>().text = "Verbindung fehlgeschlagen!";
+            alphaInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
         } else
         {
             string response = www.downloadHandler.text;
@@ -679,10 +687,10 @@ public class AccountHandler : MonoBehaviour
 
                 if (split[1].Equals("0"))
                 { //name bereits vorhanden
-                    alphaInfo.GetComponent<TextMeshProUGUI>().text = "Name bereits vorhanden!";
+                    alphaInfo.GetComponent<TextMeshProUGUI>().text = nameExistsString;
                 } else
                 {
-                    alphaInfo.GetComponent<TextMeshProUGUI>().text = "E-Mail bereits registriert!";
+                    alphaInfo.GetComponent<TextMeshProUGUI>().text = emailRegisteredString;
                 }
             } else
             {

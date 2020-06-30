@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: Royale
   m_EditorClassIdentifier: 
   previewSprite: {fileID: 21300000, guid: e9bb6a00d0680df4c82b643b4e7d3478, type: 3}
-  modeName: Battle Royale
-  modeDescription: "Battle Royale so wie mans kennt. Du gegen mehrere Gegner. Wer
-    als letzter noch \xFCbrig ist hat gewonnen."
+  modeName: Classique
+  modeNameLocalized:
+    m_TableReference:
+      m_TableCollectionName: GUID:8b1c0bf9100fe06438781f6ffd3c2d39
+    m_TableEntryReference:
+      m_KeyId: 1
+      m_Key: 
+  modeID: 0

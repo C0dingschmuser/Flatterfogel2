@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Localization;
 using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
 using UnityEditor;
@@ -35,12 +36,6 @@ public class GDPRHandler : MonoBehaviour
 
         float currentVersion =
             float.Parse(Application.version, System.Globalization.CultureInfo.InvariantCulture);
-
-        if(currentVersion < 0.6f)
-        { //Complete Reset
-            PlayerPrefs.DeleteAll();
-            ObscuredPrefs.DeleteAll();
-        }
 
         gdpr_accepted = ObscuredPrefs.GetInt("GDPR_ACCEPTED", 0);
         if (gdpr_accepted == 0)

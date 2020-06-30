@@ -1,15 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
 using CodeStage.AntiCheat.Storage;
 using CodeStage.AntiCheat.ObscuredTypes;
 using DG.Tweening;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class LevelHandler : MonoBehaviour
 {
     public static LevelHandler Instance;
+
+    public LocalizedString levelLocalized;
+    private string levelString;
+
     private int effectID = 0;
     private ObscuredInt defaultDiff = 50, currentPrestige = 0;
     private ObscuredLong currentXP, currentLVL = 1, currentLVLDiff = 50, newXP = 0;
@@ -27,6 +33,20 @@ public class LevelHandler : MonoBehaviour
         currentPrestige = ObscuredPrefs.GetInt("CurrentPrestige", 0);
         newXP = ObscuredPrefs.GetLong("NewXP", 0);
         currentLVLDiff = ObscuredPrefs.GetLong("CurrentDiff", defaultDiff);
+    }
+
+    public void StartLoadLocalization()
+    {
+        StartCoroutine(LoadLocalization());
+    }
+
+    private IEnumerator LoadLocalization()
+    {
+        AsyncOperationHandle handle;
+
+        yield return handle = levelLocalized.GetLocalizedString();
+
+        levelString = (string)handle.Result;
     }
 
     private void SaveXP()
@@ -202,7 +222,7 @@ public class LevelHandler : MonoBehaviour
         parent.transform.GetChild(0).GetComponent<Slider>().value = currentXP / (float)currentLVLDiff;
         parent.transform.GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>().text =
             currentXP.ToString() + "/" + currentLVLDiff.ToString();
-        parent.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Level " + currentLVL.ToString();
+        parent.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = levelString + " " + currentLVL.ToString();
 
         MenuData.Instance.UpdatePlayerLevelText();
     }

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be51871efa6c3e4eae1703925c8f5ac, type: 3}
+  m_Name: ZigZag
+  m_EditorClassIdentifier: 
+  m_SharedTableData: {fileID: 11400000, guid: 6dc24f2556b80d846b6f73a0b2d4269a, type: 2}
+  m_Tables:
+  - {fileID: 11400000, guid: 67ba7440aa5301b45a365818818c286f, type: 2}
+  - {fileID: 11400000, guid: a74bf44353c2d4f45b0f024a4f909e7d, type: 2}
+  - {fileID: 11400000, guid: ee91352752f17a34ab0d070242ba977d, type: 2}
+  - {fileID: 11400000, guid: 47ab0b70b2fb4914f9b70cb496b02389, type: 2}
+  m_Extensions: []
+  references:
+    version: 1

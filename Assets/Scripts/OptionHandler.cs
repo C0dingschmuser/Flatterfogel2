@@ -20,7 +20,7 @@ public class OptionHandler : MonoBehaviour
     public IngameMenuHandler ingameMenu;
     public Canvas menuCanvas, windowCanvas;
     public GameObject mainCamera;
-    public GameObject introParent;
+    public GameObject introParent, introHold;
     public GameObject aspectRatioForcer;
     public GameObject versionDisplay;
     public GameObject startVersionDisplay;
@@ -136,10 +136,12 @@ public class OptionHandler : MonoBehaviour
         startVersionDisplay.GetComponent<TextMeshProUGUI>().text =
             "v" + Application.version;
 
-#if UNITY_EDITOR
         introParent.SetActive(false);
+
+#if UNITY_EDITOR
+        introHold.SetActive(false);
 #else
-        introParent.SetActive(true);
+        introHold.SetActive(true);
 #endif
     }
 
@@ -149,7 +151,12 @@ public class OptionHandler : MonoBehaviour
 
         selectedLocaleIndex = -1;
 
-        string selectedLocaleName = PlayerPrefs.GetString("SelectedLocale", "English (en)");
+        string selectedLocaleName = PlayerPrefs.GetString("SelectedLocale", "");
+
+        if(selectedLocaleName.Length == 0)
+        { //system default
+            selectedLocaleName = LocalizationSettings.SelectedLocale.name;
+        }
 
         for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
         {
@@ -177,7 +184,19 @@ public class OptionHandler : MonoBehaviour
 
         Debug.Log("LOADED LOCALE: " + localeName);
 
+        //intro erst starten wenn laden fertig
+#if UNITY_EDITOR
+        introParent.SetActive(false);
+#else
+        introParent.SetActive(true);
+#endif
+
         UpdateAll();
+        ModeManager.Instance.StartLoadLocalization();
+        LevelHandler.Instance.StartLoadLocalization();
+        ScoreHandler.Instance.StartLoadLocalization();
+        ShopHandler.Instance.StartLoadLocalization();
+        //AccountHandler.Instance.StartLoadLocalization();
     }
 
     public static int GetDifficulty()
@@ -392,7 +411,7 @@ public class OptionHandler : MonoBehaviour
         Application.OpenURL((string)handle.Result);
     }
 
-    #region EnergySaveMode
+#region EnergySaveMode
     public void EnergySaveModeClicked()
     {
         if(energySaveMode == 0)
@@ -453,9 +472,9 @@ public class OptionHandler : MonoBehaviour
         backgroundButton.transform.GetChild(0).GetComponent<Button>().interactable = enable;
         lightButton.transform.GetChild(0).GetComponent<Button>().interactable = enable;
     }
-    #endregion
+#endregion
 
-    #region Physics
+#region Physics
     public void PhysicsClicked()
     {
         if (physicsResolution == 0)
@@ -601,6 +620,7 @@ public class OptionHandler : MonoBehaviour
             cameraBounds = new Bounds(defaultCameraPos, new Vector3(1137.8f, 640f));
         }
 
+        ShopHandler.Instance.UIScaleFinished();
         //DestructionEnlarge();
     }
 
@@ -1140,9 +1160,9 @@ public class OptionHandler : MonoBehaviour
 
         StartCoroutine(UpdateEnhancedFramerate());
     }
-    #endregion
+#endregion
 
-    #region normalmap
+#region normalmap
     public void NormalMapClicked()
     {
         if(normalMaps == 0)
@@ -1174,7 +1194,7 @@ public class OptionHandler : MonoBehaviour
             //allLights[i].ble
         }
     }
-    #endregion
+#endregion
 
     public void UpdateCategory(int id)
     {

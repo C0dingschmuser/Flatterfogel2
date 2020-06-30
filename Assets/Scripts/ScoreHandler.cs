@@ -6,9 +6,11 @@ using DG.Tweening;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using UnityEngine.Localization;
 using CodeStage.AntiCheat.Storage;
 using CodeStage.AntiCheat.ObscuredTypes;
 using System;
+using UnityEngine.ResourceManagement.AsyncOperations;
 #if UNITY_ANDROID
 using UnityEngine.SocialPlatforms;
 using Firebase.Analytics;
@@ -29,7 +31,8 @@ public class ScoreHandler : MonoBehaviour
     public Slider progressSlider;
 
     public Color[] prestigeColors;
-    public Transform nameParent, scoreParent, postParent, levelParent, highscoreDataParent, updateParent;
+    public Transform nameParent, scoreParent, postParent, levelParent, highscoreDataParent, updateParent,
+        positionParent;
     public GraphicRaycaster raycaster;
 
     public TMP_InputField nameInput, backupInput;
@@ -74,6 +77,55 @@ public class ScoreHandler : MonoBehaviour
         personalCoins = ObscuredPrefs.GetInt("Coins", 0); //CoinPers gefarmte spendencoins
 
         StartCoroutine(GetStatus());
+    }
+
+    public void StartLoadLocalization()
+    {
+        StartCoroutine(LoadLocalization());
+    }
+
+    private IEnumerator LoadLocalization()
+    {
+        AsyncOperationHandle handle;
+
+        yield return handle = accountHandler.connecting.GetLocalizedString();
+        accountHandler.connectionString = (string)handle.Result;
+
+        yield return handle = accountHandler.connectingFailed.GetLocalizedString();
+        accountHandler.connectionFailedString = (string)handle.Result;
+
+        yield return handle = accountHandler.invalidName.GetLocalizedString();
+        accountHandler.invalidNameString = (string)handle.Result;
+
+        yield return handle = accountHandler.invalidPassword.GetLocalizedString();
+        accountHandler.invalidPasswordString = (string)handle.Result;
+
+        yield return handle = accountHandler.checking.GetLocalizedString();
+        accountHandler.checkingString = (string)handle.Result;
+
+        yield return handle = accountHandler.length.GetLocalizedString();
+        accountHandler.lengthString = (string)handle.Result;
+
+        yield return handle = accountHandler.invalidEmail.GetLocalizedString();
+        accountHandler.invalidEmailString = (string)handle.Result;
+
+        yield return handle = accountHandler.nameExists.GetLocalizedString();
+        accountHandler.nameExistsString = (string)handle.Result;
+
+        yield return handle = accountHandler.emailRegistered.GetLocalizedString();
+        accountHandler.emailRegisteredString = (string)handle.Result;
+
+        yield return handle = accountHandler.loginFailed.GetLocalizedString();
+        accountHandler.loginFailedString = (string)handle.Result;
+
+        yield return handle = accountHandler.invalidCode.GetLocalizedString();
+        accountHandler.invalidCodeString = (string)handle.Result;
+
+        yield return handle = accountHandler.lookInSpam.GetLocalizedString();
+        accountHandler.lookInSpamString = (string)handle.Result;
+
+        yield return handle = accountHandler.resetPassword.GetLocalizedString();
+        accountHandler.resetPasswordString = (string)handle.Result;
     }
 
     private void ReactivateEventSystem()
@@ -186,98 +238,6 @@ public class ScoreHandler : MonoBehaviour
         Invoke("ReactivateEventSystem", moveTime + 0.01f);
     }
 
-    public void NameClicked()
-    {
-        if(registerRunning)
-        {
-            return;
-        }
-
-        string username = nameInput.text;
-        string backupCode = backupInput.text;
-
-        bool isBackup = false;
-
-        if(backupCode.Length > 0)
-        {
-            isBackup = true;
-        }
-
-        if(!isBackup)
-        {
-            bool ok = false;
-            for (int i = 0; i < username.Length; i++)
-            { //prüfen ob name zulässig
-                if ((username[i] >= 'a' && username[i] <= 'z') ||
-                    (username[i] >= 'A' && username[i] <= 'Z') ||
-                    username[i] == '.' ||
-                    username[i] == ',' ||
-                    username[i] == '_' ||
-                    username[i] == '-' ||
-                    (username[i] >= '0' && username[i] <= '9'))
-                {
-                    ok = true;
-                } else
-                {
-                    ok = false;
-                    break;
-                }
-            }
-
-            if (username.Length < 2)
-            {
-                ok = false;
-            }
-
-            if (!ok)
-            {
-                nameInfoText.color = Color.red;
-                nameInfoText.text = "Name unzulässig! (a-z A-Z 0-9 .,-_)";
-                return;
-            }
-
-            nameInfoText.color = Color.white;
-            nameInfoText.text = "Prüfe ob Name bereits vorhanden...";
-
-            registerRunning = true;
-            StartCoroutine(SetName(username, false));
-        } else
-        {
-            bool ok = false;
-
-            for(int i = 0; i < backupCode.Length; i++)
-            {
-                if((backupCode[i] >= 'a' && backupCode[i] <= 'z') ||
-                    (backupCode[i] >= 'A' && backupCode[i] <= 'Z') ||
-                    (backupCode[i] >= '0' && backupCode[i] <= '9'))
-                {
-                    ok = true;
-                } else
-                {
-                    ok = false;
-                }
-            }
-
-            if(backupCode.Length != 16)
-            {
-                ok = false;
-            }
-
-            if(!ok)
-            {
-                nameInfoText.color = Color.red;
-                nameInfoText.text = "Code unzulässig!";
-                return;
-            }
-
-            nameInfoText.color = Color.white;
-            nameInfoText.text = "Überprüfe Code...";
-
-            registerRunning = true;
-            StartCoroutine(SetName(backupCode, true));
-        }
-    }
-
     public void NameTextChanged()
     {
         backupInput.text = "";
@@ -306,86 +266,6 @@ public class ScoreHandler : MonoBehaviour
         }
 
         return b;
-    }
-
-    IEnumerator SetName(string newName, bool isBackup = false)
-    {
-        string backup = GenerateBackup();
-        string link = "https://bruh.games/main.php?register=1&name=" + newName +
-            "&backupKey=" + backup;
-
-        if(isBackup)
-        {
-            link = "https://bruh.games/main.php?restore=1&backupKey=" + newName;
-        }
-
-        UnityWebRequest www = UnityWebRequest.Get(link);
-        yield return www.SendWebRequest();
-
-        if (www.isNetworkError || www.isHttpError)
-        {
-            nameInfoText.color = Color.red;
-            nameInfoText.text = "Verbindung zum Server fehlgeschlagen!";
-        }
-        else
-        {
-            string wwwData = www.downloadHandler.text;
-            int success = -1;
-
-            string[] splitData = wwwData.Split('#');
-            success = Int32.Parse(splitData[0]);
-
-            if(!isBackup)
-            {
-                if (success == 0)
-                { //name bereits vorhanden
-                    nameInfoText.color = Color.red;
-                    nameInfoText.text = "Name bereits vorhanden!";
-                }
-                else if (success == 1)
-                { //erfolgreich registriert
-                    nameInfoText.color = Color.green;
-                    nameInfoText.text = "Erfolgreich registriert!";
-
-                    //this.username = newName;
-                    //ObscuredPrefs.SetString("Player_Username", username);
-
-                    okButton.SetActive(true);
-                    backupText.gameObject.SetActive(true);
-                    backupText.text = "Dein Backup-Code falls du dein Handy\n" +
-                                        "neu aufsetzt: " + backup + "\n" +
-                                        "Bitte mache einen Screenshot davon.";
-
-                    //inputParent.SetActive(false);
-                }
-                else
-                {
-                    nameInfoText.color = Color.red;
-                    nameInfoText.text = "Fehlerhafte Serverantwort";
-                }
-            } else
-            {
-                if(success == 0)
-                { //falscher code
-                    nameInfoText.color = Color.red;
-                    nameInfoText.text = "Falscher Code!";
-                } else if(success == 1)
-                { //code bestätigt -> name übernehmen
-                    nameInfoText.color = Color.green;
-                    nameInfoText.text = "Wilkommen zurück, " + splitData[1];
-
-                    okButton.SetActive(true);
-
-                    //this.username = splitData[1];
-                    //ObscuredPrefs.SetString("Player_Username", splitData[1]);
-                } else
-                {
-                    nameInfoText.color = Color.red;
-                    nameInfoText.text = "Fehlerhafte Serverantwort";
-                }
-            }
-        }
-        registerRunning = false;
     }
 
     public void SetHSDiff(int diff)
@@ -467,10 +347,11 @@ public class ScoreHandler : MonoBehaviour
             }
             scoreParent.GetChild(i).gameObject.SetActive(false);
             levelParent.GetChild(i).gameObject.SetActive(false);
+            positionParent.GetChild(i).gameObject.SetActive(false);
         }
 
         nameParent.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-            "       Verbinde..."; 
+            accountHandler.connectionString; 
 
         string mName = ModeManager.Instance.mainModes[modeSelected - 1].modeName;
         highscoreModeText.text = mName;
@@ -510,7 +391,7 @@ public class ScoreHandler : MonoBehaviour
         {
             Debug.Log(www.error);
             nameParent.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "       Verbindung fehlgeschlagen!";
+                AccountHandler.Instance.connectionFailedString;
             //nameList.text = "Verbindung fehlgeschlagen!";
         }
         else
@@ -522,7 +403,7 @@ public class ScoreHandler : MonoBehaviour
             if (!wwwData.Contains("#") || !wwwData.Contains(","))
             {
                 nameParent.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                    "       Fehler beim Parsen:\n" + wwwData;
+                    "Error while Parsing:\n" + wwwData;
 
                 fetchRunning = false;
 
@@ -536,11 +417,14 @@ public class ScoreHandler : MonoBehaviour
             nameParent.GetChild(0).gameObject.SetActive(true);
             scoreParent.GetChild(0).gameObject.SetActive(true);
             levelParent.GetChild(0).gameObject.SetActive(true);
+            positionParent.GetChild(0).gameObject.SetActive(true);
 
             string[] rawData = wwwData.Split('#');
 
             for(int i = 0; i < nameParent.childCount; i++)
             {
+                positionParent.GetChild(i).GetComponent<TextMeshProUGUI>().text = "";
+                positionParent.GetChild(i).GetComponent<TextMeshProUGUI>().color = Color.black;
                 nameParent.GetChild(i).GetComponent<TextMeshProUGUI>().text = "";
                 nameParent.GetChild(i).GetComponent<TextMeshProUGUI>().color = Color.black;
                 scoreParent.GetChild(i).GetComponent<TextMeshProUGUI>().text = "";
@@ -571,12 +455,14 @@ public class ScoreHandler : MonoBehaviour
                             Color.red;
                         scoreParent.GetChild(i).GetComponent<TextMeshProUGUI>().color =
                             Color.red;
+                        positionParent.GetChild(i).GetComponent<TextMeshProUGUI>().color =
+                            Color.red;
                     }
 
-                    if (num < 10) s = " ";
-
+                    positionParent.GetChild(i).GetComponent<TextMeshProUGUI>().text =
+                        num.ToString() + ".";
                     nameParent.GetChild(i).GetComponent<TextMeshProUGUI>().text = 
-                        num.ToString() + ".    " + s + tName;
+                        tName;
 
                     scoreParent.GetChild(i).GetComponent<TextMeshProUGUI>().text =
                         scoreData[0];
@@ -591,7 +477,7 @@ public class ScoreHandler : MonoBehaviour
             if(!userInHS)
             { //name nicht in top 15 -> unten anzeigen
                 nameParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().text =
-                    "       " + username;
+                    username;
                 nameParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().color =
                     Color.red;
 
@@ -614,6 +500,7 @@ public class ScoreHandler : MonoBehaviour
             nameParent.GetChild(nameParent.childCount - 1).gameObject.SetActive(false);
             scoreParent.GetChild(nameParent.childCount - 1).gameObject.SetActive(false);
             levelParent.GetChild(levelParent.childCount - 1).gameObject.SetActive(false);
+            positionParent.GetChild(levelParent.childCount - 1).gameObject.SetActive(false);
 
             highscoreAnimationRoutine = StartCoroutine(HighscoreAnimation(userInHS));
         }
@@ -629,6 +516,7 @@ public class ScoreHandler : MonoBehaviour
             nameParent.GetChild(i).gameObject.SetActive(true);
             scoreParent.GetChild(i).gameObject.SetActive(true);
             levelParent.GetChild(i).gameObject.SetActive(true);
+            positionParent.GetChild(i).gameObject.SetActive(true);
             yield return new WaitForSeconds(0.025f);
         }
 
@@ -637,6 +525,7 @@ public class ScoreHandler : MonoBehaviour
             nameParent.GetChild(max).gameObject.SetActive(true);
             scoreParent.GetChild(max).gameObject.SetActive(true);
             levelParent.GetChild(max).gameObject.SetActive(true);
+            positionParent.GetChild(max).gameObject.SetActive(true);
         }
 
         yield return null;

@@ -1,0 +1,163 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Highscore_es
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: es
+  m_SharedData: {fileID: 11400000, guid: 614091ffcac63de42b77c1c78fd1cf6b, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1
+    m_Localized: HIGHSCORES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2
+    m_Localized: Necesitas crear una cuenta para comparar tus puntuaciones con las
+      de otros jugadores.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Localized: "S\xF3lo tienes que registrarte una vez"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: Registrar una nueva cuenta
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: Ingresar con la cuenta existente
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Acceso
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: Nombre de usuario
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: Introduce el nombre...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: "Contrase\xF1a"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: "Introduzca la contrase\xF1a"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: "Contrase\xF1a olvidada"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: Conecta
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Localized: E-mail de registro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Localized: Ingresa el e-mail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Localized: "Solicite el c\xF3digo de respaldo"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17
+    m_Localized: "El c\xF3digo de respaldo que fue enviado a tu e-mail"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18
+    m_Localized: "Introduzca el c\xF3digo"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19
+    m_Localized: "Nueva contrase\xF1a"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20
+    m_Localized: "Introduzca una nueva contrase\xF1a"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21
+    m_Localized: Registro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22
+    m_Localized: Registrarse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23
+    m_Localized: Conectando con el servidor...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 24
+    m_Localized: "\xA1La conexi\xF3n fall\xF3!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25
+    m_Localized: "\xA1Nombre inv\xE1lido!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26
+    m_Localized: "\xA1Contrase\xF1a inv\xE1lida!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28
+    m_Localized: Personajes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27
+    m_Localized: Comprobando...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29
+    m_Localized: "\xA1E-mail inv\xE1lido!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30
+    m_Localized: "\xA1El nombre ya existe!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 31
+    m_Localized: "\xA1E-mail ya registrado!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32
+    m_Localized: "\xA1El ingreso fall\xF3!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33
+    m_Localized: "\xA1C\xF3digo inv\xE1lido!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34
+    m_Localized: "Por favor, compruebe tambi\xE9n su carpeta de Spam"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35
+    m_Localized: "Restablecer la contrase\xF1a"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36
+    m_Localized: Nombre
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

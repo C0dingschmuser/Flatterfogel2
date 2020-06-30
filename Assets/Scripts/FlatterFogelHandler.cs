@@ -126,6 +126,8 @@ public class FlatterFogelHandler : MonoBehaviour
         objectPooler = ObjectPooler.Instance;
         Instance = this;
 
+
+
         SetScoreColor(defaultColors[Random.Range(0, defaultColors.Length)]);
         ModeManager.modeColor = currentColor;
     }
@@ -757,31 +759,40 @@ public class FlatterFogelHandler : MonoBehaviour
 #endif
 
 #if UNITY_ANDROID || UNITY_IOS
-        if (!hardcore && !destructionMode && !miningMode && !battleRoyale && !zigZag)
+        if(fullReset)
         {
-            FirebaseAnalytics.SetCurrentScreen("Classic", "UnityPlayerActivity");
-            FirebaseAnalytics.LogEvent("ClassicPlayed");
-        } else if(hardcore && !destructionMode && !miningMode && !battleRoyale && !zigZag)
-        {
-            FirebaseAnalytics.SetCurrentScreen("Hardcore", "UnityPlayerActivity");
-            FirebaseAnalytics.LogEvent("HardcorePlayed");
-        } else if(!hardcore && destructionMode && !miningMode && !battleRoyale && !zigZag)
-        {
-            FirebaseAnalytics.SetCurrentScreen("Destruction", "UnityPlayerActivity");
-            FirebaseAnalytics.LogEvent("DestructionPlayed");
-        } else if(!hardcore && !destructionMode && miningMode && !battleRoyale && !zigZag)
-        {
-            FirebaseAnalytics.SetCurrentScreen("Mining", "UnityPlayerActivity");
-            FirebaseAnalytics.LogEvent("MiningPlayed");
-        }
-        else if (!hardcore && !destructionMode && !miningMode && battleRoyale && !zigZag)
-        {
-            FirebaseAnalytics.SetCurrentScreen("Royale", "UnityPlayerActivity");
-            FirebaseAnalytics.LogEvent("RoyalePlayed");
-        } else if(!hardcore && !destructionMode && !miningMode && !battleRoyale && zigZag)
-        {
-            FirebaseAnalytics.SetCurrentScreen("ZigZag", "UnityPlayerActivity");
-            FirebaseAnalytics.LogEvent("ZigZagPlayed");
+            if (!hardcore && !destructionMode && !miningMode && !battleRoyale && !zigZag)
+            {
+                StatHandler.classicCount++;
+
+                FirebaseAnalytics.SetCurrentScreen("Classic", "UnityPlayerActivity");
+                FirebaseAnalytics.LogEvent("ClassicPlayed");
+            }
+            else if (hardcore && !destructionMode && !miningMode && !battleRoyale && !zigZag)
+            {
+                FirebaseAnalytics.SetCurrentScreen("Hardcore", "UnityPlayerActivity");
+                FirebaseAnalytics.LogEvent("HardcorePlayed");
+            }
+            else if (!hardcore && destructionMode && !miningMode && !battleRoyale && !zigZag)
+            {
+                FirebaseAnalytics.SetCurrentScreen("Destruction", "UnityPlayerActivity");
+                FirebaseAnalytics.LogEvent("DestructionPlayed");
+            }
+            else if (!hardcore && !destructionMode && miningMode && !battleRoyale && !zigZag)
+            {
+                FirebaseAnalytics.SetCurrentScreen("Mining", "UnityPlayerActivity");
+                FirebaseAnalytics.LogEvent("MiningPlayed");
+            }
+            else if (!hardcore && !destructionMode && !miningMode && battleRoyale && !zigZag)
+            {
+                FirebaseAnalytics.SetCurrentScreen("Royale", "UnityPlayerActivity");
+                FirebaseAnalytics.LogEvent("RoyalePlayed");
+            }
+            else if (!hardcore && !destructionMode && !miningMode && !battleRoyale && zigZag)
+            {
+                FirebaseAnalytics.SetCurrentScreen("ZigZag", "UnityPlayerActivity");
+                FirebaseAnalytics.LogEvent("ZigZagPlayed");
+            }
         }
 #endif
 
@@ -1504,6 +1515,7 @@ public class FlatterFogelHandler : MonoBehaviour
         GameObject middleObj = pipeHolder.transform.GetChild(3).gameObject;
         middleObj.GetComponent<SpriteRenderer>().size = new Vector2(1,  2 + (abstand / 75f));
         middleObj.GetComponent<SpriteRenderer>().color = ShopHandler.Instance.pipeColor;
+
         middleObj.GetComponent<PipeMiddleHandler>().abstand = abstand;
 
         pipeTop.GetComponent<PipeData>().middleObj = middleObj;
@@ -1760,7 +1772,8 @@ public class FlatterFogelHandler : MonoBehaviour
             modeChangeBlus = true;
         }
 
-        if(Random.Range(0, 12) == 0 && !modeChangeBlus)
+        if((Random.Range(0, 20) == 0 && !modeChangeBlus) ||
+            (StatHandler.classicCount == 1 && pipes.Count == 2))
         { //coin spawnen
             bData.isCoin = true;
             bData.SetSprites(coinSprites);

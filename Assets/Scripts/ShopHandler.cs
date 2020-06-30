@@ -9,6 +9,8 @@ using CodeStage.AntiCheat.Storage;
 using System;
 using Random = UnityEngine.Random;
 using Object = System.Object;
+using UnityEngine.Localization;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class ShopHandler : MonoBehaviour
 {
@@ -50,6 +52,10 @@ public class ShopHandler : MonoBehaviour
 
     public FF_PlayerData playerData;
     public BackgroundHandler bgHandler;
+
+    public LocalizedString buy, select, bought;
+    public string buyString, selectString, boughtString;
+
     public static ShopHandler Instance;
 
 #if UNITY_EDITOR
@@ -57,6 +63,8 @@ public class ShopHandler : MonoBehaviour
 #else
     private ObscuredULong blus = 0;
 #endif
+
+    private Vector3 originalBlusTextPos;
 
     private int currentPage = 0, currentType = 0, wingAnimationCount = 0, wingAnimationDir = 0;
     private int colorFadeID = 0, lastSlotID = -1, minerType = 0, selectedSkin = 0, selectedWing = 0, selectedMiner = 0,
@@ -71,11 +79,9 @@ public class ShopHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //GenerateMinerSprites();
         LoadPurchasedItems();
         TypeClicked(0, true);
 
-        pipeColorID = PlayerPrefs.GetInt("Pipe_Color", 0);
         pipeColor =
             colorSlotParent.transform.GetChild(pipeColorID).GetChild(0).GetComponent<Image>().color;
 
@@ -83,6 +89,25 @@ public class ShopHandler : MonoBehaviour
         fadeMat.DOColor(Color.blue, 0.5f).SetEase(Ease.Linear);
         InvokeRepeating("NextColorStep", 0.51f, 0.251f);
         InvokeRepeating("HandleWingAnimation", 0.25f, 0.25f);
+    }
+
+    public void StartLoadLocalization()
+    {
+        StartCoroutine(LoadLocalization());
+    }
+
+    private IEnumerator LoadLocalization()
+    {
+        AsyncOperationHandle handle;
+
+        yield return handle = buy.GetLocalizedString();
+        buyString = (string)handle.Result;
+
+        yield return handle = select.GetLocalizedString();
+        selectString = (string)handle.Result;
+
+        yield return handle = bought.GetLocalizedString();
+        boughtString = (string)handle.Result;
     }
 
     public Sprite GetSkinSprite(int skinID)
@@ -449,12 +474,16 @@ public class ShopHandler : MonoBehaviour
                 }
             }
 
-            blusText.transform.parent.position = new Vector3(-669.3f, 1359.3f, 100);
+            Vector3 bottomPos = originalBlusTextPos;
+            bottomPos.y -= 36.7f;
+            bottomPos.x += 41;
+
+            blusText.transform.parent.position = bottomPos;//new Vector3(-669.3f, 1359.3f, 100);
             blusText.transform.parent.localScale = new Vector3(2.5f, 2.5f, 2.5f);
             blusText.GetComponent<TextMeshProUGUI>().color = Color.white;
 
-            coinEffectPosition = 
-                blusText.transform.parent.DOMove(new Vector3(-710.3f, 1396, 100), 0.5f);
+            coinEffectPosition = //zurück zu original Pos
+                blusText.transform.parent.DOMove(originalBlusTextPos, 0.5f); //new Vector3(-710.3f, 1396, 100)
 
             coinEffectScale =
                 blusText.transform.parent.DOScale(1, 0.5f);
@@ -462,6 +491,11 @@ public class ShopHandler : MonoBehaviour
             coinColorTween =
                 blusText.GetComponent<TextMeshProUGUI>().DOColor(new Color32(192, 115, 0, 255), 0.5f);
         }
+    }
+
+    public void UIScaleFinished()
+    {
+        originalBlusTextPos = blusText.transform.parent.position;
     }
 
     public void BuyInfoOkayClicked()
@@ -532,6 +566,9 @@ public class ShopHandler : MonoBehaviour
         selectedMiner = ObscuredPrefs.GetInt("SelectedMiner", 0);
 
         selectedPipe = ObscuredPrefs.GetInt("SelectedPipe", 0);
+        pipeColorID = ObscuredPrefs.GetInt("SelectedPipeColorID", 1);
+
+        pipeCustomizationHandler.GetPipeColor(pipeColorID); //Pipe Color laden
         FF_PlayerData.Instance.LoadPipe();
 
         selectedBackground = 0; //ObscuredPrefs.GetInt("SelectedBackground", 0); OVERRIDE
@@ -760,6 +797,7 @@ public class ShopHandler : MonoBehaviour
         ObscuredPrefs.SetInt("SelectedMiner", selectedMiner);
         ObscuredPrefs.SetInt("SelectedHeatShield", selectedHeatShield);
         ObscuredPrefs.SetInt("SelectedHat", selectedHat);
+        ObscuredPrefs.SetInt("SelectedPipeColorID", pipeColorID);
     }
 
     private void OnApplicationPause(bool pause)
@@ -930,7 +968,7 @@ public class ShopHandler : MonoBehaviour
 
         buyButton.GetComponent<Image>().color = Color.white;
         buyButton.GetComponent<Button>().interactable = false;
-        buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Wählen";
+        buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = selectString;
     }
 
     private void HandleSlotColor(int id)
@@ -952,6 +990,8 @@ public class ShopHandler : MonoBehaviour
     public void ColorChangeSlotClicked(int id)
     {
         pipeColorID = id;
+
+        Debug.Log("call");
 
         pipeColor = 
             colorSlotParent.transform.GetChild(id).GetChild(0).GetComponent<Image>().color;
@@ -1330,7 +1370,7 @@ public class ShopHandler : MonoBehaviour
         }
         else
         {
-            bgPreis.text = "Gekauft";
+            bgPreis.text = boughtString;
         }
 
         string typeText = "Parralax";
@@ -1413,10 +1453,10 @@ public class ShopHandler : MonoBehaviour
 
             DeactivatePurchaseInfo();
 
-            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Wählen";
+            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = selectString;
         } else
         {
-            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Kaufen";
+            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = buyString;
 
             SetMinePrices(allMiners[id].cost);
         }
@@ -1542,11 +1582,11 @@ public class ShopHandler : MonoBehaviour
 
             DeactivatePurchaseInfo();
 
-            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Wählen";
+            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = selectString;
         }
         else
         {
-            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Kaufen";
+            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = buyString;
 
             SetMinePrices(allHeatShields[id].cost);
         }
@@ -1898,10 +1938,11 @@ public class ShopHandler : MonoBehaviour
 
     public void ApplyCustom(CustomizationType type, int id, bool reload = true)
     {
-        Debug.Log("Apply: " + type + " " + id + " " + reload);
+        Debug.Log("Try Apply: " + type + " " + id + " " + reload);
 
         if(HasPurchased(type, id) == 2)
         { //selected nur ändern wenn gekauft
+
             switch (type)
             {
                 case CustomizationType.Skin:
@@ -1920,7 +1961,12 @@ public class ShopHandler : MonoBehaviour
                     pipeColorID = id;
                     break;
             }
+        } else
+        {
+            Debug.Log("Apply Failed: " + type + " " + id + " " + reload);
         }
+
+        pipeColor = PipeCustomizationHandler.Instance.GetPipeColor(pipeColorID);
 
         SavePurchasedItems();
 

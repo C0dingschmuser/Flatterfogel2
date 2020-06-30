@@ -1,0 +1,163 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Highscore_fr
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: fr
+  m_SharedData: {fileID: 11400000, guid: 614091ffcac63de42b77c1c78fd1cf6b, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1
+    m_Localized: HIGHSCORES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2
+    m_Localized: "Vous devez cr\xE9er un compte pour comparer vos Highscores avec
+      ceux des autres joueurs"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Localized: Vous ne devez vous inscrire qu'une seule fois.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: Enregistrer un nouveau compte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: Se connecter avec un compte existant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Connexion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: Nom d'utilisateur
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: Entrez le nom...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: Mot de passe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: Entrez votre mot de passe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: "Mot de passe oubli\xE9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: Connexion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Localized: E-mail d'inscription
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Localized: Entrez votre e-mail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Localized: Demande de code de sauvegarde
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17
+    m_Localized: "Code de sauvegarde qui a \xE9t\xE9 envoy\xE9 \xE0 votre e-mail"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18
+    m_Localized: Entrez le code
+    m_Metadata:
+      m_Items: []
+  - m_Id: 19
+    m_Localized: Nouveau mot de passe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 20
+    m_Localized: Entrez un nouveau mot de passe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21
+    m_Localized: Inscription
+    m_Metadata:
+      m_Items: []
+  - m_Id: 22
+    m_Localized: Registre
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23
+    m_Localized: Connexion au serveur...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 24
+    m_Localized: "La connexion a \xE9chou\xE9 !"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 25
+    m_Localized: Nom invalide !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 26
+    m_Localized: Mot de passe invalide !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 28
+    m_Localized: Personnages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27
+    m_Localized: "V\xE9rification..."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29
+    m_Localized: E-mail non valide !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30
+    m_Localized: "Le nom existe d\xE9j\xE0 !"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 31
+    m_Localized: "E-mail d\xE9j\xE0 enregistr\xE9 !"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32
+    m_Localized: "Connexion \xE9chou\xE9e !"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33
+    m_Localized: Code invalide !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34
+    m_Localized: "Veuillez \xE9galement v\xE9rifier votre dossier spam"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35
+    m_Localized: "R\xE9initialisation du mot de passe"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 36
+    m_Localized: NOM
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

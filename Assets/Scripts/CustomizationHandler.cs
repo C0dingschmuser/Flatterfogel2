@@ -42,10 +42,12 @@ public class CustomizationHandler : MonoBehaviour
     private GameObject priceText, priceImage;
 
     private CustomizationType type = CustomizationType.Skin;
-    private float time = 0.25f, hatMiddleY = 847;
+    private float time = 0.25f, hatMiddleY = 847; //0.25 original
     private int middleID = 1;
-    private bool switchRunning = false, changeApplied = false, interaction = false;
+    private bool changeApplied = false, interaction = false;
     private ObscuredInt selectedID = 0;
+
+    public bool switchRunning = false;
 
     private Tween[] priceTextTween = new Tween[4];
     private Tween[] priceImageTween = new Tween[4];
@@ -64,9 +66,14 @@ public class CustomizationHandler : MonoBehaviour
         changeApplied = true;
     }
 
-    public void SetType(CustomizationType newType)
+    public void SetType(CustomizationType newType, bool start = false)
     {
         this.type = newType;
+
+        if(start)
+        {
+            switchRunning = false;
+        }
 
         switch(type)
         {
@@ -210,7 +217,7 @@ public class CustomizationHandler : MonoBehaviour
             buyButton.GetComponent<Image>().color = Color.white;
             buyButton.GetComponent<Button>().interactable = false;
             buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Gekauft";
+                ShopHandler.Instance.boughtString;
         } else
         {
             priceImage.SetActive(true);
@@ -325,6 +332,14 @@ public class CustomizationHandler : MonoBehaviour
 
                 smallPreviewParent.GetChild(i).GetComponent<IDHolder>().realID = newID;
 
+                if(newID == selectedID)
+                {
+                    smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.green;
+                } else
+                {
+                    smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.white;
+                }
+
                 smallPreviewParent.GetChild(i).GetChild(0).gameObject.SetActive(true);
                 smallPreviewParent.GetChild(i).GetChild(0).GetComponent<Image>().sprite =
                     newSprite;
@@ -333,7 +348,6 @@ public class CustomizationHandler : MonoBehaviour
                 smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.white;
                 smallPreviewParent.GetChild(i).GetChild(0).gameObject.SetActive(false);
             }
-
         }
     }
 
@@ -426,7 +440,7 @@ public class CustomizationHandler : MonoBehaviour
 
         buyButton.GetComponent<Button>().interactable = false;
         buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-            "Kaufen";
+            ShopHandler.Instance.buyString;
 
         switch (code)
         {
@@ -441,7 +455,7 @@ public class CustomizationHandler : MonoBehaviour
             case 2: //schon gekauft
                 buyButton.GetComponent<Image>().color = Color.white;
                 buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                    "Gekauft";
+                    ShopHandler.Instance.boughtString;
                 buyButton.GetComponent<Button>().interactable = false;
                 break;
         }
@@ -749,7 +763,7 @@ public class CustomizationHandler : MonoBehaviour
         buyButton.GetComponent<Image>().color = Color.white;
         buyButton.GetComponent<Button>().interactable = false;
         buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-            "Gekauft";
+            ShopHandler.Instance.boughtString;
 
         shop.BuyCustom(type, selectedID);
     }

@@ -19,7 +19,7 @@ MonoBehaviour:
   purchased: 0
   cost:
   - mineralID: 14
-    amount: 3
+    amount: 40
   - mineralID: 0
     amount: 0
   - mineralID: 0

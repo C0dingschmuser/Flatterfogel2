@@ -19,7 +19,7 @@ MonoBehaviour:
   hatSupport: 1
   cost:
   - mineralID: 14
-    amount: 8
+    amount: 100
   - mineralID: 0
     amount: 0
   - mineralID: 0

@@ -39,9 +39,12 @@ public class PipeCustomizationHandler : MonoBehaviour
     private bool switchRunning = false, changeApplied = false, interaction = false;
     private ObscuredInt selectedID = 0;
 
+    public static PipeCustomizationHandler Instance;
+
     private void Awake()
     {
         SwipeDetector.OnSwipe += SwipeDetector_OnSwipe;
+        Instance = this;
     }
 
     // Start is called before the first frame update
@@ -53,11 +56,16 @@ public class PipeCustomizationHandler : MonoBehaviour
         changeApplied = true;
     }
 
-    public void SetType(CustomizationType newType)
+    public void SetType(CustomizationType newType, bool start = false)
     {
         this.type = newType;
 
-        switch(type)
+        if (start)
+        {
+            switchRunning = false;
+        }
+
+        switch (type)
         {
             case CustomizationType.Pipe:
                 selectedID = shop.GetSelectedPipe();
@@ -106,7 +114,7 @@ public class PipeCustomizationHandler : MonoBehaviour
         return id;
     }
 
-    private Color GetPipeColor(int id)
+    public Color GetPipeColor(int id)
     {
         if (id < 0) id = allColors.Length + id;
         if (id >= allColors.Length) id = id - allColors.Length;
@@ -244,7 +252,7 @@ public class PipeCustomizationHandler : MonoBehaviour
             buyButton.GetComponent<Image>().color = Color.white;
             buyButton.GetComponent<Button>().interactable = false;
             buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                "Gekauft";
+                ShopHandler.Instance.boughtString;
         }
         else
         {
@@ -310,6 +318,15 @@ public class PipeCustomizationHandler : MonoBehaviour
                 }
 
                 smallPreviewParent.GetChild(i).GetComponent<IDHolder>().realID = newID;
+
+                if (newID == selectedID)
+                {
+                    smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.green;
+                }
+                else
+                {
+                    smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.white;
+                }
 
                 smallPreviewParent.GetChild(i).GetChild(0).gameObject.SetActive(true);
                 smallPreviewParent.GetChild(i).GetChild(0).GetComponent<Image>().sprite =
@@ -431,7 +448,7 @@ public class PipeCustomizationHandler : MonoBehaviour
 
         buyButton.GetComponent<Button>().interactable = false;
         buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-            "Kaufen";
+            ShopHandler.Instance.buyString;
 
         switch (code)
         {
@@ -446,7 +463,7 @@ public class PipeCustomizationHandler : MonoBehaviour
             case 2: //schon gekauft
                 buyButton.GetComponent<Image>().color = Color.white;
                 buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                    "Gekauft";
+                    ShopHandler.Instance.boughtString;
                 break;
         }
 
@@ -808,7 +825,7 @@ public class PipeCustomizationHandler : MonoBehaviour
         buyButton.GetComponent<Image>().color = Color.white;
         buyButton.GetComponent<Button>().interactable = false;
         buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-            "Gekauft";
+            ShopHandler.Instance.boughtString;
 
         shop.BuyCustom(type, selectedID);
     }

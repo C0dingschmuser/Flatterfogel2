@@ -42,14 +42,14 @@ public class ShopMenuHandler : MonoBehaviour
         switch(id)
         {
             case 0: //skins
-                customizationHandler.SetType(CustomizationType.Skin);
+                customizationHandler.SetType(CustomizationType.Skin, true);
                 customizationHandler.gameObject.SetActive(true);
                 break;
             case 1: //mining
                 shop.TypeClicked(2);
                 break;
             case 2: //pipes
-                pipeCustomizationHandler.SetType(CustomizationType.Pipe);
+                pipeCustomizationHandler.SetType(CustomizationType.Pipe, true);
                 pipeCustomizationHandler.gameObject.SetActive(true);
                 //shop.TypeClicked(3);
                 break;

@@ -192,12 +192,22 @@ public class FF_PlayerData : MonoBehaviour
 
     public void LoadPlayerSkin(Skin newSkin, Wing newWing)
     {
+
         if(currentSkin != null && newSkin != null)
         {
             if (currentSkin.skinID == newSkin.skinID
                     && currentWing.wingID == newWing.wingID)
             { //skin bereits ausgewählt
                 return;
+            }
+        } else
+        {
+            if(newSkin == null)
+            {
+                Debug.LogWarning("Trying to Load NULL Skin!");
+            } else if(newWing == null)
+            {
+                Debug.LogWarning("Trying to Load NULL Wing!");
             }
         }
 

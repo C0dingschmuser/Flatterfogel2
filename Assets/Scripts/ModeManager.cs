@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using DG.Tweening;
 using CodeStage.AntiCheat.Storage;
 using UnityEngine.Video;
+using UnityEngine.Localization;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public enum GameModes
 {
@@ -62,6 +64,27 @@ public class ModeManager : MonoBehaviour
         modeSprites[4].sprites = Resources.LoadAll<Sprite>("ModeAnimations/Destruction");*/
 
         Invoke("DisableSwipe", 0.25f);
+    }
+
+    public void StartLoadLocalization()
+    {
+        StartCoroutine(LoadLocalization());
+    }
+
+    private IEnumerator LoadLocalization()
+    {
+        AsyncOperationHandle handle;
+
+        for (int i = 0; i < mainModes.Length; i++)
+        {
+            if(mainModes[i].modeNameLocalized != null)
+            {
+                yield return handle = mainModes[i].modeNameLocalized.GetLocalizedString();
+                mainModes[i].modeName = (string)handle.Result;
+            }
+        }
+
+        SetModeText(mainModes[currentIndex].modeName, modeColor);
     }
 
     private void DisableSwipe()
@@ -178,10 +201,6 @@ public class ModeManager : MonoBehaviour
             prepareDone = true;
         }
 
-        oldModeText.text = modeText.text;
-        oldModeText.color = modeColor;
-        oldModeBGText.text = modeText.text;
-
         //oldDescriptionText.color = FlatterFogelHandler.currentColor;
         oldDescriptionText.text = descriptionText.text;
 
@@ -192,12 +211,10 @@ public class ModeManager : MonoBehaviour
 
         //previewImage.sprite = mainModes[currentIndex].previewSprite;
 
-        modeText.text = mainModes[currentIndex].modeName;
-        modeText.color = modeColor;
-        modeBGText.text = modeText.text;
+        SetModeText(mainModes[currentIndex].modeName, modeColor);
 
         //descriptionText.color = FlatterFogelHandler.currentColor;
-        descriptionText.text = mainModes[currentIndex].modeDescription;
+        //descriptionText.text = mainModes[currentIndex].modeDescription;
 
         //descriptionText.transform.parent.GetComponent<TextMeshProUGUI>().color =
         //    FlatterFogelHandler.currentColor;
@@ -205,6 +222,17 @@ public class ModeManager : MonoBehaviour
             descriptionText.text;
 
         Invoke("SetIndexDataLate", 0.25f);
+    }
+
+    private void SetModeText(string newText, Color modeColor)
+    {
+        oldModeText.text = modeText.text;
+        oldModeText.color = modeColor;
+        oldModeBGText.text = modeText.text;
+
+        modeText.text = newText;
+        modeText.color = modeColor;
+        modeBGText.text = modeText.text;
     }
 
     private void SetIndexDataLate()

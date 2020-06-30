@@ -14,5 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   previewSprite: {fileID: 21300000, guid: 61f77e3c955d3e94cb1d67b2a48b9800, type: 3}
   modeName: Mining
-  modeDescription: Begib dich in den Untergrund, sammle Blussizin und Mineralien.
-    Was dich wohl alles in der Tiefe erwartet...?
+  modeNameLocalized:
+    m_TableReference:
+      m_TableCollectionName: GUID:e01e314ccb4b8344299bb340a47791d6
+    m_TableEntryReference:
+      m_KeyId: 1
+      m_Key: 
+  modeID: 0
