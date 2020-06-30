@@ -2,12 +2,10 @@
 
 Complete Sourcecode of Flatterfogel 2 Mobile Game.
 
-The use of no License is intentional.
+The use of no License is intentional. This Repo is for educational purposes only.
 
-You are, under all circumstances, **not permitted** to compile or modify*/distribute**/sell this Code or Project.
+You are, under all circumstances, **not permitted** to compile or modify/distribute*/sell this Code or Project.
 
-`*`even for private use
-
-`**`you can share a link to this Repo
+`*`you can share a link to this Repo
 
 Copyright 2020 Bruh Games / Nicolas B.
