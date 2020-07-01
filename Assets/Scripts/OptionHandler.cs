@@ -169,10 +169,10 @@ public class OptionHandler : MonoBehaviour
             }
         }
 
-        StartCoroutine(SetLocalization(selectedLocaleIndex));
+        StartCoroutine(SetLocalization(selectedLocaleIndex, true));
     }
 
-    private IEnumerator SetLocalization(int index)
+    private IEnumerator SetLocalization(int index, bool load = false)
     {
         selectedLocaleIndex = index;
         string localeName = allLocales[index].name;
@@ -184,18 +184,24 @@ public class OptionHandler : MonoBehaviour
 
         Debug.Log("LOADED LOCALE: " + localeName);
 
-        //intro erst starten wenn laden fertig
+        if(load)
+        {
 #if UNITY_EDITOR
-        introParent.SetActive(false);
+            introParent.SetActive(false);
 #else
-        introParent.SetActive(true);
+            introParent.SetActive(true);
 #endif
+
+            introHold.SetActive(false);
+        }
+        //intro erst starten wenn laden fertig
 
         UpdateAll();
         ModeManager.Instance.StartLoadLocalization();
         LevelHandler.Instance.StartLoadLocalization();
         ScoreHandler.Instance.StartLoadLocalization();
         ShopHandler.Instance.StartLoadLocalization();
+        ThinkHandler.Instance.StartLoadLocalization();
         //AccountHandler.Instance.StartLoadLocalization();
     }
 

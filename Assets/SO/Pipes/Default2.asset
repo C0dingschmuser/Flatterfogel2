@@ -29,3 +29,4 @@ MonoBehaviour:
   - mineralID: 0
     amount: 0
   pipeID: 0
+  identifier: default

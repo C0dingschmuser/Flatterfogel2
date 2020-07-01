@@ -147,7 +147,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 35
-    m_Localized: "Halbiert die Bilder pro Sekunde; empfohlen bei langsameren Ger\xE4ten"
+    m_Localized: "Halbiert die Bilder pro Sekunde;\nempfohlen bei langsameren Ger\xE4ten"
     m_Metadata:
       m_Items: []
   - m_Id: 36

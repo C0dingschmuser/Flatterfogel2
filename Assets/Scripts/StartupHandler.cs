@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StartupHandler : MonoBehaviour
 {
-    public GameObject parentObj, skipObj;
+    public GameObject parentObj, skipObj, copyrightObj;
     public Material dissolveMat;
     public Animator animator;
     public Dissolver logoDissolver;
@@ -17,6 +17,7 @@ public class StartupHandler : MonoBehaviour
         if(force)
         {
             minus.gameObject.SetActive(false);
+            copyrightObj.SetActive(false);
         }
 
         dissolveMat.SetFloat("_DissolveAmount", 1);

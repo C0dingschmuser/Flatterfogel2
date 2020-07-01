@@ -10,4 +10,5 @@ public class Pipe : ScriptableObject
     public bool purchased = false, colorChangeSupported = false;
     public CostData[] cost;
     public int pipeID;
+    public string identifier;
 }

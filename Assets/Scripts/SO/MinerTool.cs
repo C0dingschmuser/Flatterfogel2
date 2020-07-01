@@ -5,6 +5,12 @@ using UnityEngine;
 [System.Serializable]
 public class CostData
 {
+    public CostData(MineralType type, int amount)
+    {
+        mineralID = type;
+        this.amount = amount;
+    }
+
     public MineralType mineralID;
     public int amount;
 }

@@ -7,7 +7,9 @@ public class Skin : ScriptableObject
 {
     public Sprite sprite;
     public int animated;
-    public bool purchased = false, wingSupport = true, hatSupport = true;
+    public bool purchased = false, wingSupport = true, hatSupport = true, boxCollider = false;
+    public Vector2 colliderSize, colliderOffset;
     public CostData[] cost;
     public int skinID;
+    public string identifier;
 }

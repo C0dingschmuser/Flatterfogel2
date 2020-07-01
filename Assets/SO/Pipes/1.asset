@@ -24,7 +24,7 @@ MonoBehaviour:
   colorChangeSupported: 1
   cost:
   - mineralID: 14
-    amount: 1
+    amount: 45
   - mineralID: 0
     amount: 0
   - mineralID: 0
@@ -32,3 +32,4 @@ MonoBehaviour:
   - mineralID: 0
     amount: 0
   pipeID: 1
+  identifier: pillar

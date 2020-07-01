@@ -4,17 +4,35 @@ using UnityEngine;
 using DG.Tweening;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Localization;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class ThinkHandler : MonoBehaviour
 {
     public GameObject thinkObj;
     public static ThinkHandler Instance;
 
+    public LocalizedString mineBegin;
+    public string mineBeginString;
+
     private float length;
 
     private void Awake()
     {
         Instance = this;
+    }
+
+    public void StartLoadLocalization()
+    {
+        StartCoroutine(LoadLocalization());
+    }
+
+    private IEnumerator LoadLocalization()
+    {
+        AsyncOperationHandle handle;
+
+        yield return handle = mineBegin.GetLocalizedString();
+        mineBeginString = (string)handle.Result;
     }
 
     public void StartThink(string text, float length)

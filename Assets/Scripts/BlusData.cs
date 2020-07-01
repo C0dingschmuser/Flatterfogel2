@@ -33,6 +33,8 @@ public class BlusData : MonoBehaviour
     {
         ResetBlus();
 
+        imageObj.GetComponent<SpriteRenderer>().sortingOrder = 8;
+
         blusAnimation = animationSprites;
         isCoin = true;
 
@@ -56,6 +58,7 @@ public class BlusData : MonoBehaviour
         transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         imageObj.GetComponent<BoxCollider2D>().enabled = true;
 
+        imageObj.GetComponent<SpriteRenderer>().sortingOrder = 5;
         imageObj.GetComponent<SpriteRenderer>().color = Color.white;
         imageObj.gameObject.SetActive(false);
 

@@ -147,7 +147,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 35
-    m_Localized: "Reduce la framerate en un 50%;\r recomendado para los dispositivos
+    m_Localized: "Reduce la framerate en un 50%;\r\nrecomendado para los dispositivos
       m\xE1s lentos"
     m_Metadata:
       m_Items: []

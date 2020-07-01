@@ -10,4 +10,5 @@ public class Wing : ScriptableObject
     public CostData[] cost;
     public int wingID;
     public float shopScale = 3.333f;
+    public string identifier;
 }

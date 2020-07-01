@@ -34,6 +34,8 @@ public class FF_PlayerData : MonoBehaviour
     private bool goLocked = false, landing = false;
     public List<GameObject> deadChilds = new List<GameObject>();
 
+    public Transform bottomPlane;
+
     public Sprite[,] pipeSprite = new Sprite[4,4]; //2D 4x4 Array a 8x8Px Sprites
     public Sprite[,] pipeEndSprite = new Sprite[4, 4]; //2D 4x4 Array a 10x10 Sprites
 
@@ -636,7 +638,20 @@ public class FF_PlayerData : MonoBehaviour
         transform.parent.GetChild(0).gameObject.SetActive(true); //enable itemholder
 
         GetComponent<CircleCollider2D>().isTrigger = true;
-        GetComponent<CircleCollider2D>().enabled = true;
+        GetComponent<BoxCollider2D>().isTrigger = true;
+
+        if(!currentSkin.boxCollider)
+        {
+            GetComponent<CircleCollider2D>().enabled = true;
+            GetComponent<BoxCollider2D>().enabled = false;
+        } else
+        {
+            GetComponent<BoxCollider2D>().offset = currentSkin.colliderOffset;
+            GetComponent<BoxCollider2D>().size = currentSkin.colliderSize;
+
+            GetComponent<CircleCollider2D>().enabled = false;
+            GetComponent<BoxCollider2D>().enabled = true;
+        }
 
         groundHeight = 0;
 
@@ -763,6 +778,11 @@ public class FF_PlayerData : MonoBehaviour
             BossHandler.Instance.PlayerShoot();
             ffHandler.PlayerShoot();
 
+            GameObject tap =
+                ObjectPooler.Instance.SpawnFromPool("TapEffect", new Vector3(mPos.x, mPos.y, 501), Quaternion.identity);
+            ParticleSystem.CollisionModule cM = tap.GetComponent<ParticleSystem>().collision;
+            cM.SetPlane(0, bottomPlane);
+
             HandleRotation();
         } else
         {
@@ -860,7 +880,7 @@ public class FF_PlayerData : MonoBehaviour
                         GameObject infoText =
                             ObjectPooler.Instance.SpawnFromPool("InfoText", transform.position, Quaternion.identity);
 
-                        infoText.GetComponent<InfoText>().StartFlashing("PERFEKTER TREFFER!");
+                        infoText.GetComponent<InfoText>().StartFlashing(ScoreHandler.Instance.perfectHitString);
                     }
 
                     if(blus.transform.parent.GetComponent<BlusData>().isCoin)
@@ -974,6 +994,8 @@ public class FF_PlayerData : MonoBehaviour
         heatRoutine = StartCoroutine(HandleHeat());
 
         GetComponent<CircleCollider2D>().isTrigger = false;
+        GetComponent<BoxCollider2D>().isTrigger = false;
+
         //GetComponent<BoxCollider2D>().enabled = true;
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
 

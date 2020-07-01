@@ -147,7 +147,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 35
-    m_Localized: "R\xE9duit le taux de framerate de 50 %; \rrecommand\xE9 pour les
+    m_Localized: "R\xE9duit le taux de framerate de 50 %; \nrecommand\xE9 pour les
       dispositifs plus lents"
     m_Metadata:
       m_Items: []

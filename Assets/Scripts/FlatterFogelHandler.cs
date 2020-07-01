@@ -404,6 +404,8 @@ public class FlatterFogelHandler : MonoBehaviour
         }
 
         player.GetComponent<CircleCollider2D>().isTrigger = true;
+        player.GetComponent<BoxCollider2D>().isTrigger = true;
+
         FF_PlayerData.Instance.ResetRotation();
         FF_PlayerData.Instance.ResetMine(false);
 
@@ -966,7 +968,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         if(miningMode)
         {
-            ThinkHandler.Instance.StartThink("Lass mich fallen", 2f);
+            ThinkHandler.Instance.StartThink(ThinkHandler.Instance.mineBeginString, 2f);
         }
 
         pauseImage.gameObject.SetActive(true);
@@ -1020,6 +1022,8 @@ public class FlatterFogelHandler : MonoBehaviour
         gameState = 0;
         //scrollSpeed = defaultScrollSpeed;
         player.GetComponent<CircleCollider2D>().isTrigger = true;
+        player.GetComponent<BoxCollider2D>().isTrigger = true;
+
         player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 
         SoundManager.Instance.PlayMusicFade((MusicID)Random.Range(1, 3));
@@ -1118,6 +1122,8 @@ public class FlatterFogelHandler : MonoBehaviour
         scrollSpeed = 375;
 
         player.GetComponent<CircleCollider2D>().isTrigger = false;
+        player.GetComponent<BoxCollider2D>().isTrigger = false;
+
         player.GetComponent<Rigidbody2D>().gravityScale = 200;
         player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 
@@ -1512,6 +1518,26 @@ public class FlatterFogelHandler : MonoBehaviour
             abstand = 125;//Random.Range(115, 135);
         }
 
+        int maxChance = 2;
+
+        if(StatHandler.classicCount <= 2)
+        {
+            maxChance = 4;
+        }
+
+        if(Random.Range(0, maxChance) == 0)
+        {
+            abstand = 125;
+        } else
+        {
+            abstand = 150;
+        }
+
+        if(StatHandler.classicCount == 1 && pipes.Count < 4)
+        {
+            abstand = 150;
+        }
+
         GameObject middleObj = pipeHolder.transform.GetChild(3).gameObject;
         middleObj.GetComponent<SpriteRenderer>().size = new Vector2(1,  2 + (abstand / 75f));
         middleObj.GetComponent<SpriteRenderer>().color = ShopHandler.Instance.pipeColor;
@@ -1761,9 +1787,9 @@ public class FlatterFogelHandler : MonoBehaviour
             pipeTop.transform.parent.GetComponent<PipeHolder>().SetAssignedBlus(newBlus);
         }
 
-        if (score % 30 == 0 && waitingState == -1 && score > 0 &&
+        if (score % 45 == 0 && waitingState == -1 && score > 0 &&
             !modeCurrentlyChanged && !destructionMode &&!battleRoyale && !hardcore && !zigZag)
-        { //wenn score glatt durch 15 teilbar & gerade kein waitingstate & kein destructionmode / hardcore (einbauen)
+        { //wenn score glatt durch 45 teilbar & gerade kein waitingstate & kein destructionmode / hardcore (einbauen)
             modeCurrentlyChanged = true;
             bData.modeChangeBlus = true;
 

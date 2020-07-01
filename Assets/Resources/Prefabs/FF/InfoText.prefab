@@ -82,7 +82,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: FLIESIUM
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6074ccd890657124f965693cf23e556b, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 6ef37dffa936e5342b91e30cdd941872, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}

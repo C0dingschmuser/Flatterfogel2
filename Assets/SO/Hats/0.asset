@@ -25,3 +25,4 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
+  identifier: default

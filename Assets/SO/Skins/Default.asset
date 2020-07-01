@@ -16,6 +16,7 @@ MonoBehaviour:
   animated: 0
   purchased: 1
   wingSupport: 1
+  hatSupport: 1
   cost:
   - mineralID: 0
     amount: 0
@@ -26,3 +27,4 @@ MonoBehaviour:
   - mineralID: 0
     amount: 0
   skinID: 0
+  identifier: default

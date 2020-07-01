@@ -28,3 +28,4 @@ MonoBehaviour:
     amount: 0
   wingID: 1
   shopScale: 4.5
+  identifier: turbine

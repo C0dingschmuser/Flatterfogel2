@@ -28,3 +28,4 @@ MonoBehaviour:
     amount: 0
   wingID: 0
   shopScale: 2.5
+  identifier: default

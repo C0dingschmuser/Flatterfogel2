@@ -10,4 +10,5 @@ public class Hat : ScriptableObject
     public int hatID;
     public bool purchased = false;
     public CostData[] cost;
+    public string identifier;
 }

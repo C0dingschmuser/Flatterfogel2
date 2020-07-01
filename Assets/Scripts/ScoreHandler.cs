@@ -47,6 +47,9 @@ public class ScoreHandler : MonoBehaviour
     public Vector3 highscoreStartPos, defaultHighscorePos;
     public Transform modeButtonParent, diffButtonParent;
 
+    public LocalizedString perfectHit;
+    public string perfectHitString;
+
     public static float moveTime = 0.25f;
     public static ObscuredInt personalCoins = 0;
     public static ScoreHandler Instance;
@@ -87,6 +90,9 @@ public class ScoreHandler : MonoBehaviour
     private IEnumerator LoadLocalization()
     {
         AsyncOperationHandle handle;
+
+        yield return handle = perfectHit.GetLocalizedString();
+        perfectHitString = (string)handle.Result;
 
         yield return handle = accountHandler.connecting.GetLocalizedString();
         accountHandler.connectionString = (string)handle.Result;

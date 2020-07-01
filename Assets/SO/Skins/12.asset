@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 0eaa8a9a8abc7fc4685d302a5dbe8256, type: 3}
   animated: 0
-  purchased: 0
+  purchased: 1
   wingSupport: 0
   hatSupport: 1
+  boxCollider: 1
+  colliderSize: {x: 1.28, y: 0.59}
+  colliderOffset: {x: 0, y: -0.03}
   cost:
   - mineralID: 14
     amount: 150
@@ -27,3 +30,4 @@ MonoBehaviour:
   - mineralID: 0
     amount: 0
   skinID: 12
+  identifier: tiletable
