@@ -72,9 +72,7 @@ public class RemoteConfigHandler : MonoBehaviour
 
     private IEnumerator FetchValues()
     {
-        Debug.Log("FetchBegin");
         yield return FirebaseRemoteConfig.FetchAsync(TimeSpan.Zero);
-        Debug.Log("FetchEnd");
 
         FirebaseRemoteConfig.ActivateFetched();
 

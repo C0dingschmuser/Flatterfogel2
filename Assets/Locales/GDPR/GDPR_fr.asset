@@ -23,18 +23,10 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2
-    m_Localized: 'VEUILLEZ LIRE
-
-      
-
-      Flatterfogel2 est libre de jouer,
-      mais vous devez
-
-      accepter notre
-
-
-
-      et nos'
+    m_Localized: "Flappy Fowl suit votre progression dans un profil d'utilisateur
+      avec des informations sur votre niveau et vos meilleurs scores, si vous vous
+      connectez. Nous recueillons \xE9galement une s\xE9rie de donn\xE9es qui analysent
+      de mani\xE8re anonyme votre comportement de jeu afin d'am\xE9liorer le jeu."
     m_Metadata:
       m_Items: []
   - m_Id: 3
@@ -55,6 +47,26 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 7
     m_Localized: "TAPEZ \xC0 NOUVEAU POUR PASSER"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: "Comment nous traitons vos donn\xE9es"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: "Veuillez jeter un coup d'oeil \xE0"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: et
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: si vous voulez en savoir plus.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: OKAY
     m_Metadata:
       m_Items: []
   references:

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: GDPR Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 8
+  m_NextAvailableId: 13
   m_TableCollectionName: GDPR
   m_TableCollectionNameGuidString: 20a4b0c3e23a2494aad620c9232e2378
   m_Entries:
@@ -42,6 +42,26 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 7
     m_Key: Tap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Key: InfoTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Key: Info2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Key: And
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Key: Info3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Key: Okay
     m_Metadata:
       m_Items: []
   m_Metadata:

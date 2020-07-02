@@ -8,6 +8,10 @@ using TMPro;
 public class MinerCustomizationHandler : MonoBehaviour
 {
     public ShopHandler shop;
+
+    [SerializeField]
+    ShopMenuHandler shopMenu = null;
+
     public GameObject selected, minerUpgrade, minerUpgradeButton,
         shieldUpgrade, shieldUpgradeButton, priceHighlight, mineModePriceText,
         mineModePriceImage, buyButton, itemParent, minerImage, heatShieldImage,
@@ -22,7 +26,11 @@ public class MinerCustomizationHandler : MonoBehaviour
     public static int buyOption = 0;
 
     private int selectedUpgrade = 0, selectedItem = 0;
+    private float dissolveAmount = 0;
     private bool itemSelected = false;
+
+    [SerializeField]
+    private Material imageMat = null, fontMat = null;
 
     private Tween objTween = null, objScaleTween = null, highlightTween = null,
         smallPriceMoveTween = null, smallPriceScaleTween = null;
@@ -39,7 +47,14 @@ public class MinerCustomizationHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for(int i = 0; i < 4; i++)
+
+    }
+
+    public void StartMineCustomizationHandler()
+    {
+        gameObject.SetActive(true);
+
+        for (int i = 0; i < 4; i++)
         {
             priceTextTween[i] = null;
             priceImageTween[i] = null;
@@ -47,6 +62,51 @@ public class MinerCustomizationHandler : MonoBehaviour
 
         UpdateUI();
         ObjClicked(0);
+
+        fontMat.SetFloat("_DissolveAmount", 0);
+        imageMat.SetFloat("_DissolveAmount", 0);
+
+        dissolveAmount = 0;
+
+        Tween anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, 1, ShopMenuHandler.anTime);
+        anTween.OnUpdate(() =>
+        {
+            fontMat.SetFloat("_DissolveAmount", dissolveAmount);
+            imageMat.SetFloat("_DissolveAmount", dissolveAmount);
+        });
+
+        StartCoroutine(EndStart());
+    }
+
+    private IEnumerator EndStart()
+    {
+        yield return new WaitForSeconds(ShopMenuHandler.anTime + 0.01f);
+    }
+
+    public void CloseButtonClicked()
+    {
+        fontMat.SetFloat("_DissolveAmount", 1);
+        imageMat.SetFloat("_DissolveAmount", 1);
+
+        dissolveAmount = 1;
+
+        Tween anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, 0, ShopMenuHandler.anTime);
+        anTween.OnUpdate(() =>
+        {
+            fontMat.SetFloat("_DissolveAmount", dissolveAmount);
+            imageMat.SetFloat("_DissolveAmount", dissolveAmount);
+        });
+
+        StartCoroutine(EndClose());
+    }
+
+    private IEnumerator EndClose()
+    {
+        yield return new WaitForSeconds(ShopMenuHandler.anTime + 0.01f);
+
+        gameObject.SetActive(false);
+
+        shopMenu.OpenMenu();
     }
 
     public void UpdateUI()

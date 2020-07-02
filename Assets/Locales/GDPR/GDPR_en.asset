@@ -23,17 +23,9 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2
-    m_Localized: 'PLEASE READ
-
-
-      Flatterfogel 2 is free to play but in order
-      to continue
-
-      you need to agree to our
-
-
-
-      and'
+    m_Localized: Flappy Fowl tracks your progress in a user profile with information
+      about your level and your highscores, if you log in. We also collect a range
+      of data that anonymously analyses your playing behaviour to improve the game.
     m_Metadata:
       m_Items: []
   - m_Id: 3
@@ -54,6 +46,26 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 7
     m_Localized: TAP AGAIN TO SKIP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: How we handle your data
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: Please take a look at
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: and
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: if you want to know more about it.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: OKAY
     m_Metadata:
       m_Items: []
   references:

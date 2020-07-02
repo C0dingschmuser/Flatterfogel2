@@ -5,12 +5,12 @@ using UnityEngine;
 public class TrainHandler : MonoBehaviour
 {
     [SerializeField]
-    private SpriteRenderer sRenderer;
+    private SpriteRenderer sRenderer = null;
 
     [SerializeField]
-    private Train[] allTrains;
+    private Train[] allTrains = null;
     [SerializeField]
-    private Train currentTrain;
+    private Train currentTrain = null;
 
     private float speed = 100f;
     private bool night = false;

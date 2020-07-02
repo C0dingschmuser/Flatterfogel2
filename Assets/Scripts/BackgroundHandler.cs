@@ -39,7 +39,7 @@ public class BackgroundHandler : MonoBehaviour
     public GameObject[] layerParents;
 
     [SerializeField]
-    private Camera camera;
+    private new Camera camera = null;
     [SerializeField]
     private FlatterFogelHandler ffHandler = null;
     [SerializeField]
@@ -65,9 +65,9 @@ public class BackgroundHandler : MonoBehaviour
     public Sprite[] sunMoonSprites = new Sprite[2];
 
     [SerializeField]
-    private Transform lightLayerParent;
+    private Transform lightLayerParent = null;
     [SerializeField]
-    private GameObject train;
+    private GameObject train = null;
 
     private Tween globalLightTween, moonLightTween, sunLightTween, cameraColorTween;
     private Background currentBackground;
@@ -77,7 +77,7 @@ public class BackgroundHandler : MonoBehaviour
     [SerializeField]
     private float[] layerSpeeds = new float[4];
     [SerializeField]
-    private float[] oldLayerSpeeds;
+    private float[] oldLayerSpeeds = null;
 
     public class BackgroundData
     { //obsolete

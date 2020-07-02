@@ -39,10 +39,13 @@ public class CustomizationHandler : MonoBehaviour
         smallPreviewParent = null;
 
     [SerializeField]
-    private GameObject priceText, priceImage;
+    private GameObject priceText = null, priceImage = null, buyInfo = null;
+
+    [SerializeField]
+    private Material imageMat = null, fontMat = null;
 
     private CustomizationType type = CustomizationType.Skin;
-    private float time = 0.25f, hatMiddleY = 847; //0.25 original
+    private float time = 0.25f, hatMiddleY = 847, dissolveAmount = 0; //0.25 original
     private int middleID = 1;
     private bool changeApplied = false, interaction = false;
     private ObscuredInt selectedID = 0;
@@ -57,13 +60,36 @@ public class CustomizationHandler : MonoBehaviour
         SwipeDetector.OnSwipe += SwipeDetector_OnSwipe;
     }
 
-    // Start is called before the first frame update
-    void Start()
+
+    public void StartCustomizationHandler()
     {
+        SetType(CustomizationType.Skin, true);
         smallPreviewParent.GetChild(0).GetComponent<Image>().color = Color.green;
-        TypeClicked((int)type);
+
+        switchRunning = true;
+
+        fontMat.SetFloat("_DissolveAmount", 0);
+        imageMat.SetFloat("_DissolveAmount", 0);
+
+        dissolveAmount = 0;
+
+        Tween anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, 1, ShopMenuHandler.anTime);
+        anTween.OnUpdate(() =>
+        {
+            fontMat.SetFloat("_DissolveAmount", dissolveAmount);
+            imageMat.SetFloat("_DissolveAmount", dissolveAmount);
+        });
+
+        StartCoroutine(EndStart());
+    }
+
+    private IEnumerator EndStart()
+    {
+        yield return new WaitForSeconds(ShopMenuHandler.anTime + 0.01f);
+
         swDetector.enabled = true;
         changeApplied = true;
+        switchRunning = false;
     }
 
     public void SetType(CustomizationType newType, bool start = false)
@@ -93,6 +119,27 @@ public class CustomizationHandler : MonoBehaviour
 
     public void CloseButtonClicked()
     {
+        switchRunning = true;
+
+        fontMat.SetFloat("_DissolveAmount", 1);
+        imageMat.SetFloat("_DissolveAmount", 1);
+
+        dissolveAmount = 1;
+
+        Tween anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, 0, ShopMenuHandler.anTime);
+        anTween.OnUpdate(() =>
+        {
+            fontMat.SetFloat("_DissolveAmount", dissolveAmount);
+            imageMat.SetFloat("_DissolveAmount", dissolveAmount);
+        });
+
+        StartCoroutine(EndClose());
+    }
+
+    private IEnumerator EndClose()
+    {
+        yield return new WaitForSeconds(ShopMenuHandler.anTime + 0.01f);
+
         CloseCustomization(true);
 
         shopMenu.OpenMenu();
@@ -601,7 +648,7 @@ public class CustomizationHandler : MonoBehaviour
         CheckWingSupport();
         CheckHatSupport();
 
-        StartCoroutine(EndSwitch());
+        StartCoroutine(EndSwitch(dir));
     }
 
     private void CheckHatSupport()
@@ -766,5 +813,7 @@ public class CustomizationHandler : MonoBehaviour
             ShopHandler.Instance.boughtString;
 
         shop.BuyCustom(type, selectedID);
+
+        buyInfo.SetActive(true);
     }
 }

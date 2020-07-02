@@ -70,5 +70,9 @@ MonoBehaviour:
     m_Localized: Comprado
     m_Metadata:
       m_Items: []
+  - m_Id: 14
+    m_Localized: C O M P R A D O
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

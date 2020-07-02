@@ -7,17 +7,17 @@ using UnityEngine.UI;
 public class IngameMenuHandler : MonoBehaviour
 {
     [SerializeField]
-    private GameObject continueBtn, settingsBtn, exitBtn, eventSystem, mainCamera,
-        bgImage, quitParent, quitImage;
+    private GameObject continueBtn = null, settingsBtn = null, exitBtn = null, eventSystem = null, mainCamera = null,
+        bgImage = null, quitParent = null, quitImage = null;
 
     [SerializeField]
-    private Canvas uiCanvas;
+    private Canvas uiCanvas = null;
 
     [SerializeField]
-    private GraphicRaycaster raycaster, optionRaycaster;
+    private GraphicRaycaster raycaster = null, optionRaycaster = null;
 
     [SerializeField]
-    private FlatterFogelHandler ffHandler;
+    private FlatterFogelHandler ffHandler = null;
 
     private bool buttonsMoving = false, bgEnabled = true;
     private List<GameObject> scalingButtons = new List<GameObject>();

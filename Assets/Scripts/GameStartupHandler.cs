@@ -18,12 +18,6 @@ public class GameStartupHandler : MonoBehaviour
             PlayerPrefs.SetInt("DownloadedBundle", installedBundle);
         }
 
-        string link = "https://bruh.games/assetbundles/android/mainbundle";
-
-#if UNITY_IOS
-        link = "https://bruh.games/assetbundles/ios/mainbundle";
-#endif
-
         Debug.Log(installedBundle + " " + downloadedBundle);
 
         if (downloadedBundle > installedBundle)

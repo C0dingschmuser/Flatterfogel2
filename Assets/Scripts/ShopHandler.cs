@@ -74,6 +74,11 @@ public class ShopHandler : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
+        for(int i = 0; i < allSkins.Count; i++)
+        {
+            allSkins[i].skinID = i;
+        }
     }
 
     // Start is called before the first frame update
@@ -444,53 +449,55 @@ public class ShopHandler : MonoBehaviour
         }
 
         blusText.GetComponent<TextMeshProUGUI>().text = blus.ToString();
+    }
 
-        if(effect)
+    public void CoinAddEffect()
+    {
+        UpdateBlus(1, 1, true);
+
+        blusEffect.SetActive(false);
+        blusEffect.SetActive(true);
+
+        if (coinEffectPosition != null)
         {
-            blusEffect.SetActive(false);
-            blusEffect.SetActive(true);
-
-            if(coinEffectPosition != null)
+            if (coinEffectPosition.active)
             {
-                if(coinEffectPosition.active)
-                {
-                    coinEffectPosition.Kill();
-                }
+                coinEffectPosition.Kill();
             }
-
-            if (coinEffectScale != null)
-            {
-                if (coinEffectScale.active)
-                {
-                    coinEffectScale.Kill();
-                }
-            }
-
-            if(coinColorTween != null)
-            {
-                if(coinColorTween.active)
-                {
-                    coinColorTween.Kill();
-                }
-            }
-
-            Vector3 bottomPos = originalBlusTextPos;
-            bottomPos.y -= 36.7f;
-            bottomPos.x += 41;
-
-            blusText.transform.parent.position = bottomPos;//new Vector3(-669.3f, 1359.3f, 100);
-            blusText.transform.parent.localScale = new Vector3(2.5f, 2.5f, 2.5f);
-            blusText.GetComponent<TextMeshProUGUI>().color = Color.white;
-
-            coinEffectPosition = //zurück zu original Pos
-                blusText.transform.parent.DOMove(originalBlusTextPos, 0.5f); //new Vector3(-710.3f, 1396, 100)
-
-            coinEffectScale =
-                blusText.transform.parent.DOScale(1, 0.5f);
-
-            coinColorTween =
-                blusText.GetComponent<TextMeshProUGUI>().DOColor(new Color32(192, 115, 0, 255), 0.5f);
         }
+
+        if (coinEffectScale != null)
+        {
+            if (coinEffectScale.active)
+            {
+                coinEffectScale.Kill();
+            }
+        }
+
+        if (coinColorTween != null)
+        {
+            if (coinColorTween.active)
+            {
+                coinColorTween.Kill();
+            }
+        }
+
+        Vector3 bottomPos = originalBlusTextPos;
+        bottomPos.y -= 36.7f;
+        bottomPos.x += 41;
+
+        blusText.transform.parent.position = bottomPos;//new Vector3(-669.3f, 1359.3f, 100);
+        blusText.transform.parent.localScale = new Vector3(2.5f, 2.5f, 2.5f);
+        blusText.GetComponent<TextMeshProUGUI>().color = Color.white;
+
+        coinEffectPosition = //zurück zu original Pos
+            blusText.transform.parent.DOMove(originalBlusTextPos, 0.5f); //new Vector3(-710.3f, 1396, 100)
+
+        coinEffectScale =
+            blusText.transform.parent.DOScale(1, 0.5f);
+
+        coinColorTween =
+            blusText.GetComponent<TextMeshProUGUI>().DOColor(new Color32(192, 115, 0, 255), 0.5f);
     }
 
     public void UIScaleFinished()
@@ -589,8 +596,16 @@ public class ShopHandler : MonoBehaviour
                 {
                     if(skinData[i].Length > 0)
                     {
-                        int id = Int32.Parse(skinData[i]);
-                        allSkins[id].purchased = true;
+                        string identifier = skinData[i];
+
+                        for(int a = 0; a < allSkins.Count; a++)
+                        {
+                            if(allSkins[a].identifier.Equals(identifier))
+                            { //gekaufter skin gefunden
+                                allSkins[a].purchased = true;
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -714,7 +729,7 @@ public class ShopHandler : MonoBehaviour
         {
             if(allSkins[i].purchased)
             {
-                data += i.ToString() + ",";
+                data += allSkins[i].identifier + ",";
             }
         }
         data += "|";
@@ -904,7 +919,7 @@ public class ShopHandler : MonoBehaviour
         pipeCustomizationHandler.gameObject.SetActive(false);
         buyButton.gameObject.SetActive(false);
 
-        shopMenuHandler.OpenMenu();
+        shopMenuHandler.OpenMenu(true);
         shopObj.transform.position = startPos;
         //shopObj.transform.localScale = new Vector3(0, 0, 0);
 
@@ -1908,6 +1923,8 @@ public class ShopHandler : MonoBehaviour
 
     public void BuyCustom(CustomizationType type, int id)
     {
+        Sprite newSprite = null;
+
         CostData[] price;
         switch(type)
         {
@@ -1915,20 +1932,30 @@ public class ShopHandler : MonoBehaviour
             case CustomizationType.Skin:
                 price = allSkins[id].cost;
                 allSkins[id].purchased = true;
+
+                newSprite = allSkins[id].sprite;
                 break;
             case CustomizationType.Wing:
                 price = allWings[id].cost;
                 allWings[id].purchased = true;
+
+                newSprite = allWings[id].sprite[0];
                 break;
             case CustomizationType.Pipe:
                 price = allPipes[id].cost;
                 allPipes[id].purchased = true;
+
+                newSprite = allPipes[id].endSprite[0];
                 break;
             case CustomizationType.Hat:
                 price = allHats[id].cost;
                 allHats[id].purchased = true;
+
+                newSprite = allHats[id].sprite;
                 break;
         }
+
+        buyInfoObj.GetComponent<BuyInfoHandler>().SetBuyData(newSprite);
 
         PurchaseMinerItem(price);
 

@@ -292,6 +292,8 @@ public class BlusData : MonoBehaviour
 
         yield return new WaitForSeconds(waitTime * 0.2f);
 
+        ShopHandler.Instance.CoinAddEffect();
+
         imageObj.gameObject.SetActive(false);
         blusLight.gameObject.SetActive(false);
         isDestroyed = true;
@@ -323,6 +325,7 @@ public class BlusData : MonoBehaviour
         this.startPos = transform.position;
 
         return; //disabled da 3d effekt
+#pragma warning disable CS0162
 
         Vector3 startPos = transform.position;
         startPos.x -= 50f;
@@ -376,5 +379,6 @@ public class BlusData : MonoBehaviour
                 //newDeathPart.GetComponent<DeadData>().originalPos = newDeathPart.transform.position;
             }
         }
+#pragma warning restore CS0162
     }
 }

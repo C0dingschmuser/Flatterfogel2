@@ -22,19 +22,20 @@ public class PipeCustomizationHandler : MonoBehaviour
     [SerializeField]
     private Transform buyButton = null,
         colorDisabled = null,
-        skinPreview = null,
-        wingPreview = null,
         typeParent = null,
         smallPreviewParent = null;
 
     [SerializeField]
-    private GameObject priceText, priceImage;
+    private GameObject priceText = null, priceImage = null;
 
     private Tween[] priceTextTween = new Tween[4];
     private Tween[] priceImageTween = new Tween[4];
 
+    [SerializeField]
+    private Material imageMat = null, fontMat = null;
+
     private CustomizationType type = CustomizationType.Pipe;
-    private float time = 0.25f, bigScale = 1.43f, smallScale = 0.63f;
+    private float time = 0.25f, bigScale = 1.43f, smallScale = 0.63f, dissolveAmount = 0;
     private int middleID = 1;
     private bool switchRunning = false, changeApplied = false, interaction = false;
     private ObscuredInt selectedID = 0;
@@ -47,13 +48,35 @@ public class PipeCustomizationHandler : MonoBehaviour
         Instance = this;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public void StartPipeCustomizationHandler()
     {
+        SetType(CustomizationType.Pipe);
         smallPreviewParent.GetChild(0).GetComponent<Image>().color = Color.green;
-        TypeClicked((int)type);
+
+        switchRunning = true;
+
+        fontMat.SetFloat("_DissolveAmount", 0);
+        imageMat.SetFloat("_DissolveAmount", 0);
+
+        dissolveAmount = 0;
+
+        Tween anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, 1, ShopMenuHandler.anTime);
+        anTween.OnUpdate(() =>
+        {
+            fontMat.SetFloat("_DissolveAmount", dissolveAmount);
+            imageMat.SetFloat("_DissolveAmount", dissolveAmount);
+        });
+
+        StartCoroutine(EndStart());
+    }
+
+    private IEnumerator EndStart()
+    {
+        yield return new WaitForSeconds(ShopMenuHandler.anTime);
+
         swDetector.enabled = true;
         changeApplied = true;
+        switchRunning = false;
     }
 
     public void SetType(CustomizationType newType, bool start = false)
@@ -80,6 +103,27 @@ public class PipeCustomizationHandler : MonoBehaviour
 
     public void CloseButtonClicked()
     {
+        switchRunning = true;
+
+        fontMat.SetFloat("_DissolveAmount", 1);
+        imageMat.SetFloat("_DissolveAmount", 1);
+
+        dissolveAmount = 1;
+
+        Tween anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, 0, ShopMenuHandler.anTime);
+        anTween.OnUpdate(() =>
+        {
+            fontMat.SetFloat("_DissolveAmount", dissolveAmount);
+            imageMat.SetFloat("_DissolveAmount", dissolveAmount);
+        });
+
+        StartCoroutine(EndClose());
+    }
+
+    private IEnumerator EndClose()
+    {
+        yield return new WaitForSeconds(ShopMenuHandler.anTime + 0.01f);
+
         CloseCustomization(true);
 
         shopMenu.OpenMenu();
@@ -678,7 +722,7 @@ public class PipeCustomizationHandler : MonoBehaviour
 
         CheckPipeColorSupport();
 
-        StartCoroutine(EndSwitch());
+        StartCoroutine(EndSwitch(dir));
     }
 
     private void SetPrice(CostData[] prices, bool showBuy = true)

@@ -883,10 +883,10 @@ public class FF_PlayerData : MonoBehaviour
                         infoText.GetComponent<InfoText>().StartFlashing(ScoreHandler.Instance.perfectHitString);
                     }
 
-                    if(blus.transform.parent.GetComponent<BlusData>().isCoin)
-                    {
-                        ShopHandler.Instance.UpdateBlus(1, 1, true);
-                    }
+                    //if(blus.transform.parent.GetComponent<BlusData>().isCoin)
+                    //{
+                    //    ShopHandler.Instance.UpdateBlus(1, 1, true);
+                    //}
 
                     if(blus.transform.parent.GetComponent<BlusData>().modeChangeBlus)
                     { //neuer Modus

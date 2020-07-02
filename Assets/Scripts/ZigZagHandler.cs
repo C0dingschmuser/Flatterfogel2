@@ -11,7 +11,7 @@ public class ZigZagHandler : MonoBehaviour
     private FlatterFogelHandler ffHandler;
 
     [SerializeField]
-    private Sprite[] lineSprites;
+    private Sprite[] lineSprites = null;
 
     public GameObject playerArm, player, armPosition;
     public Transform endPart;

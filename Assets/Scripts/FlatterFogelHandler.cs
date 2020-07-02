@@ -1240,7 +1240,7 @@ public class FlatterFogelHandler : MonoBehaviour
                 LevelHandler.Instance.AddNewXP((int)xp);
             }
 
-            float am = 3;
+            float am = 9;
 
             if (hardcore)
             {
@@ -1251,6 +1251,7 @@ public class FlatterFogelHandler : MonoBehaviour
             {
                 scrollSpeed = Mathf.Clamp(scrollSpeed + am, defaultScrollSpeed, 400);
             }
+
         } else if(add == -1)
         { //subtrahieren
             if ((ulong)Mathf.Abs(score) >= this.score)
@@ -1808,6 +1809,9 @@ public class FlatterFogelHandler : MonoBehaviour
             bData.isCoin = false;
             bData.SetSprites(blusSprites);
         }
+
+        bData.isCoin = true;
+        bData.SetSprites(coinSprites);
 
         newBlus.transform.GetChild(0).GetComponent<BoxCollider2D>().enabled = true;
 

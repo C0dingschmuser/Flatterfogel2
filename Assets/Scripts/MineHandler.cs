@@ -120,20 +120,20 @@ public class MineHandler : MonoBehaviour
 
         //movement.SetActive(true);
 
-        bool okk, swDetector;
+        bool swDetector;
 
         switch(OptionHandler.mineMode)
         {
             case 1: //gesten
-                okk = false;
+                //okk = false;
                 swDetector = true;
                 break;
             case 2: //kreuz
-                okk = true;
+                //okk = true;
                 swDetector = false;
                 break;
             default: //halten
-                okk = false;
+                //okk = false;
                 swDetector = false;
                 break;
         }
@@ -1222,11 +1222,11 @@ public class MineHandler : MonoBehaviour
         yield return new WaitForSeconds(time);
 
 
-        int startPos = nextMinePos;
+        /*int startPos = nextMinePos;
 
         bool ok = false;
 
-        /*if(startPos >= 0 && startPos < mineObjsCounter)
+        if(startPos >= 0 && startPos < mineObjsCounter)
         {
             if(mineObjs[startPos] != null)
             {

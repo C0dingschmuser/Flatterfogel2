@@ -23,21 +23,10 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2
-    m_Localized: 'BITTE LESEN
-
-
-      Flatterfogel2 ist kostenlos spielbar, jedoch
-      musst du
-
-      unseren
-
-
-
-      und der
-
-
-
-      zustimmen.'
+    m_Localized: "Flatterfogel 2 verfolgt deinen Spielfortschritt in einem Benuterprofil
+      mit Informationen \xFCber dein Level und deinen Highscores, sofern du dich
+      anmeldest. Wir sammeln ebenfalls eine Reihe von Daten, die anonym dein Spielverhalten
+      analysieren, um das Spiel zu verbessern."
     m_Metadata:
       m_Items: []
   - m_Id: 3
@@ -58,6 +47,26 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 7
     m_Localized: "ERNEUT TIPPEN ZUM \xDCBERSPRINGEN"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: Wie wir mit deinen Daten umgehen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: Bitte wirf einen Blick auf unsere
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: und
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: "falls du mehr dar\xFCber erfahren m\xF6chtest."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: OKAY
     m_Metadata:
       m_Items: []
   references:
