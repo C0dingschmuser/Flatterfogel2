@@ -51,6 +51,8 @@ public class FlatterFogelHandler : MonoBehaviour
     public IngameMenuHandler ingameMenu;
     public ZigZagHandler zigZagHandler;
 
+    public float minPipeY = 500, maxPipeY = 1065;
+
     private ObscuredULong score = 0, taps = 0, lastScore = 0;
 
     public class HighscoreHolder
@@ -979,7 +981,7 @@ public class FlatterFogelHandler : MonoBehaviour
         if(!destructionMode && !miningMode)
         {
             pipeSpawnAllowed = true;
-            Invoke("SpawnPipes", 1f);
+            StartCoroutine(SpawnPipesWait(1f, false));
         }
         
         if(destructionMode)
@@ -1037,7 +1039,7 @@ public class FlatterFogelHandler : MonoBehaviour
         FF_PlayerData.Instance.ResetMine();
 
         pipeSpawnAllowed = true;
-        Invoke("SpawnPipes", 1f);
+        StartCoroutine(SpawnPipesWait(1f, false));
     }
 
     public Vector3[] GetAllPipePositions(float overrideHeight = -9999)
@@ -1472,7 +1474,15 @@ public class FlatterFogelHandler : MonoBehaviour
         }
     }
 
-    private void SpawnPipes()
+    private IEnumerator SpawnPipesWait(float wait, bool empty = false, bool moveAllowed = true)
+    {
+        yield return new WaitForSeconds(wait);
+
+        SpawnPipes(empty, moveAllowed);
+    }
+
+    private void SpawnPipes(bool empty = false, bool moveAllowed = true, 
+        float overrideY = 9999, bool spawnClose = false, bool overrideDistance = false)
     {
         if(!pipeSpawnAllowed)
         {
@@ -1486,6 +1496,11 @@ public class FlatterFogelHandler : MonoBehaviour
         if(pipes.Count > 0)
         {
             lastX = pipes[pipes.Count - 1].transform.position.x + 500;
+        }
+
+        if(spawnClose)
+        {
+            lastX = pipes[pipes.Count - 1].transform.position.x + 93.3f;
         }
 
         GameObject pipeHolder = objectPooler.SpawnFromPool("Pipe",
@@ -1503,9 +1518,17 @@ public class FlatterFogelHandler : MonoBehaviour
 
         pipeBottom.GetComponent<PipeData>().ResetPipe();
 
-        float minY = 565, maxY = 1065;
+        float minY = minPipeY, maxY = maxPipeY;
 
         float yPos = 565 + (25 * Random.Range(0, 20));
+
+        if(overrideY < 9998)
+        {
+            yPos = overrideY;
+        }
+
+        pipeHolder.GetComponent<PipeHolder>().SetEmpty(yPos, empty);
+
         float xPos = lastX;
 
         int abstand = 150;//Random.Range(130, 160);
@@ -1537,6 +1560,10 @@ public class FlatterFogelHandler : MonoBehaviour
         if(StatHandler.classicCount == 1 && pipes.Count < 4)
         {
             abstand = 150;
+        }
+
+        if (overrideDistance) {
+            abstand = 160;
         }
 
         GameObject middleObj = pipeHolder.transform.GetChild(3).gameObject;
@@ -1600,7 +1627,82 @@ public class FlatterFogelHandler : MonoBehaviour
         //pBB2D.size = new Vector2(75, bottomDiff);
         //pBB2D.offset = new Vector2(0, -(bottomDiff / 2));
 
-        SpawnBlus(new Vector3(xPos, yPos, -1.1f), pipeTop, pipeBottom);
+        float maxYDiff = 50;
+
+        if(abstand == 150)
+        {
+            maxYDiff = 65;
+        }
+
+        //spawn moving pipes
+        bool ok = false, destOk = false;
+        float speed = 100;
+
+        switch (OptionHandler.GetDifficulty())
+        {
+            case 0: //leicht
+
+                if (Random.Range(0, 10) == 0)
+                {
+                    speed = 75;
+                    ok = true;
+                }
+
+                if ((ok && Random.Range(0, 12) == 0) ||
+                    (!ok && Random.Range(0, 10) == 0))
+                {
+                    destOk = true;
+                }
+
+                break;
+            case 1: //mittel
+
+                if (Random.Range(0, 5) == 0)
+                {
+                    speed = 100;
+                    ok = true;
+                }
+
+                if ((ok && Random.Range(0, 8) == 0) ||
+                    (!ok && Random.Range(0, 6) == 0))
+                {
+                    destOk = true;
+                }
+
+                break;
+            case 2: //schwer
+
+                if (Random.Range(0, 2) == 0)
+                {
+                    speed = 150;
+                    ok = true;
+                }
+
+                if ((ok && Random.Range(0, 6) == 0) ||
+                    (!ok && Random.Range(0, 4) == 0))
+                {
+                    destOk = true;
+                }
+
+                break;
+        }
+
+        if(!moveAllowed)
+        {
+            ok = false;
+        }
+
+        if (!empty)
+        {
+            SpawnBlus(new Vector3(xPos, yPos, -1.1f), pipeTop, pipeBottom, maxYDiff, ok); //temp
+        } else
+        {
+            pipeBottom.GetComponent<PipeData>().emptyPipe = true;
+            pipeBottom.GetComponent<PipeData>().isChecked = true;
+
+            pipeTop.GetComponent<PipeData>().emptyPipe = true;
+            pipeTop.GetComponent<PipeData>().isChecked = true;
+        }
 
         int pipeType = 0;
 
@@ -1622,59 +1724,6 @@ public class FlatterFogelHandler : MonoBehaviour
 
                     gravestoneObjs.Add(nG);
                 }
-            }
-
-            //spawn moving pipes
-            bool ok = false, destOk = false;
-            float speed = 100;
-
-            switch (OptionHandler.GetDifficulty())
-            {
-                case 0: //leicht
-
-                    if(Random.Range(0, 10) == 0)
-                    {
-                        speed = 75;
-                        ok = true;
-                    }
-
-                    if((ok && Random.Range(0, 12) == 0) || 
-                        (!ok && Random.Range(0, 10) == 0))
-                    {
-                        destOk = true;
-                    }
-
-                    break;
-                case 1: //mittel
-
-                    if(Random.Range(0, 5) == 0)
-                    {
-                        speed = 100;
-                        ok = true;
-                    }
-
-                    if ((ok && Random.Range(0, 8) == 0) ||
-                        (!ok && Random.Range(0, 6) == 0))
-                    {
-                        destOk = true;
-                    }
-
-                    break;
-                case 2: //schwer
-
-                    if(Random.Range(0, 2) == 0)
-                    {
-                        speed = 150;
-                        ok = true;
-                    }
-
-                    if ((ok && Random.Range(0, 6) == 0) ||
-                        (!ok && Random.Range(0, 4) == 0))
-                    {
-                        destOk = true;
-                    }
-
-                    break;
             }
 
             if (ok)
@@ -1703,34 +1752,38 @@ public class FlatterFogelHandler : MonoBehaviour
             }
         }
 
-        pipeHolder.GetComponent<PipeHolder>().GetAssignedBlus().
-            GetComponent<BlusData>().SetBlusPipeType(pipeType);
-
-        ulong bCount = 0;
-        for (int i = 0; i < pipes.Count; i++)
+        if(!empty)
         {
-            if (pipes[i].GetComponent<PipeData>().isTop &&
-                !pipes[i].GetComponent<PipeData>().isChecked)
-            { //um zu zählen wie viele blus schon gespawnt sind
-                bCount++;
+            pipeHolder.GetComponent<PipeHolder>().GetAssignedBlus().
+                GetComponent<BlusData>().SetBlusPipeType(pipeType);
+
+            ulong bCount = 0;
+            for (int i = 0; i < pipes.Count; i++)
+            {
+                if (pipes[i].GetComponent<PipeData>().isTop &&
+                    !pipes[i].GetComponent<PipeData>().isChecked)
+                { //um zu zählen wie viele blus schon gespawnt sind
+                    bCount++;
+                }
+            }
+
+            ulong newScore = score + bCount + 1;
+            if (newScore > highscore[ModeManager.currentIndex].highscore[OptionHandler.GetDifficulty()] &&
+                highscore[ModeManager.currentIndex].highscore[OptionHandler.GetDifficulty()] != 0 && !highscoreLineShowed)
+            { //highscorelinie aktivieren
+                pipeTop.GetComponent<PipeData>().highscorePipe = true;
+                highscoreLineShowed = true;
+
+                highscoreLineObj.SetActive(true);
+                InvokeRepeating("FlashHighscoreObj", 0f, 0.25f);
+
+                Vector3 hObjPos = highscoreLineObj.transform.position;
+                hObjPos.x = pipeTop.transform.position.x + 50f;
+
+                highscoreLineObj.transform.position = hObjPos;
             }
         }
 
-        ulong newScore = score + bCount + 1;
-        if (newScore > highscore[ModeManager.currentIndex].highscore[OptionHandler.GetDifficulty()] && 
-            highscore[ModeManager.currentIndex].highscore[OptionHandler.GetDifficulty()] != 0 && !highscoreLineShowed)
-        { //highscorelinie aktivieren
-            pipeTop.GetComponent<PipeData>().highscorePipe = true;
-            highscoreLineShowed = true;
-
-            highscoreLineObj.SetActive(true);
-            InvokeRepeating("FlashHighscoreObj", 0f, 0.25f);
-
-            Vector3 hObjPos = highscoreLineObj.transform.position;
-            hObjPos.x = pipeTop.transform.position.x + 50f;
-
-            highscoreLineObj.transform.position = hObjPos;
-        }
 
         /*if(Random.Range(0, 65) == 44 && newScore > 30)
         { //spawn coin
@@ -1757,7 +1810,7 @@ public class FlatterFogelHandler : MonoBehaviour
         return nG;
     }
 
-    public bool SpawnBlus(Vector3 pos, GameObject pipeTop = null, GameObject pipeBot = null)
+    public bool SpawnBlus(Vector3 pos, GameObject pipeTop = null, GameObject pipeBot = null, float maxY = 50, bool moving = false)
     {
         bool modeChangeBlus = false;
 
@@ -1810,8 +1863,10 @@ public class FlatterFogelHandler : MonoBehaviour
             bData.SetSprites(blusSprites);
         }
 
-        bData.isCoin = true;
-        bData.SetSprites(coinSprites);
+        if(!moving)
+        {
+            bData.StartMove(25, maxY);
+        }
 
         newBlus.transform.GetChild(0).GetComponent<BoxCollider2D>().enabled = true;
 
@@ -2228,6 +2283,56 @@ public class FlatterFogelHandler : MonoBehaviour
         }
     }
 
+    public void SpawnTunnel()
+    {
+        SpawnPipes(true, false);
+
+        float lastY = 
+            pipes[pipes.Count - 1].transform.parent.GetComponent<PipeHolder>().GetStartY();
+
+        int dir;
+
+        for(int a = 0; a < 2; a++)
+        {
+            dir = Random.Range(0, 2); //richtung
+
+            for (int i = 0; i < 10; i++)
+            {
+                float newY;
+
+                if (dir == 0)
+                { //hoch
+                    newY = Random.Range(lastY, lastY + 25);
+                }
+                else
+                { //runter
+                    newY = Random.Range(lastY - 25, lastY);
+                }
+
+                if(newY > maxPipeY)
+                {
+                    newY = maxPipeY;
+                    dir = 1;
+                } else if(newY < minPipeY)
+                {
+                    newY = minPipeY;
+                    dir = 0;
+                }
+
+                lastY = newY;
+
+                bool empty = true;
+
+                if(i == 0 || i == 5)
+                {
+                    empty = false;
+                }
+
+                SpawnPipes(empty, false, newY, true);
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -2581,12 +2686,20 @@ public class FlatterFogelHandler : MonoBehaviour
                     pipes[i].transform.position = pos;
                     if(pData.isTop)
                     {
-                        if(pos.x < -202)
-                        {
+                        if(pos.x < -202 && (i == len - 2))
+                        { //wenn letzte pipe x in liste < -202
                             if(!pData.nextSpawned)
                             {
                                 pData.nextSpawned = true;
-                                SpawnPipes();
+
+                                if(Random.Range(0, 10) == 0)
+                                {
+                                    SpawnTunnel();
+                                } else
+                                {
+                                    SpawnPipes();
+                                }
+                                //SpawnPipes(false);
                             }
                         } 
 

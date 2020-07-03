@@ -53,10 +53,19 @@ public class ShopMenuHandler : MonoBehaviour
             });
         }
 
-        skinImage.sprite = shop.GetSkinSprite(shop.GetSelectedSkin());
-        if(shop.HasWingSupport(shop.GetSelectedSkin()))
+        int selectedSkin = shop.GetSelectedSkin();
+
+        skinImage.sprite = shop.GetSkinSprite(selectedSkin);
+        if(shop.HasWingSupport(selectedSkin))
         {
-            wingImage.sprite = shop.GetWingSprite(shop.GetSelectedWing());
+            if(shop.allSkins[selectedSkin].overrideWing == null)
+            {
+                wingImage.sprite = shop.GetWingSprite(shop.GetSelectedWing());
+            } else
+            {
+                wingImage.sprite = shop.allSkins[selectedSkin].overrideWing.sprite[0];
+            }
+
             wingImage.gameObject.SetActive(true);
         } else
         {

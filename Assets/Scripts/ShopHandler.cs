@@ -565,7 +565,12 @@ public class ShopHandler : MonoBehaviour
 
     private void LoadPurchasedItems()
     {
-        UpdateBlus(ObscuredPrefs.GetULong("Blus", 0), 0);
+#if UNITY_EDITOR
+        UpdateBlus(200, 0);
+#else
+        ObscuredPrefs.GetULong("Blus", 0);
+#endif
+        //ObscuredPrefs.GetULong("Blus", 0), 0);
 
         selectedSkin = ObscuredPrefs.GetInt("SelectedSkin", 0);
         selectedWing = ObscuredPrefs.GetInt("SelectedWing", 0);

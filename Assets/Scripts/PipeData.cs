@@ -10,7 +10,7 @@ public class PipeData : MonoBehaviour
 {
 
     public bool isChecked = false, beginDestruction = false, isTop = false, destructionComplete = false,
-        highscorePipe = false, destructable = false, nextSpawned = false;
+        highscorePipe = false, destructable = false, nextSpawned = false, emptyPipe = false;
 
     public int renderDeactivated = 2;
 
@@ -51,7 +51,7 @@ public class PipeData : MonoBehaviour
         }
     }
 
-    public void ResetPipe(bool isTop = false, bool highscorePipe = false)
+    public void ResetPipe(bool isTop = false, bool highscorePipe = false, bool emptyPipe = false)
     {
         physicsCalculated = false;
         isChecked = false;
@@ -63,6 +63,7 @@ public class PipeData : MonoBehaviour
         destructionStarted = false;
         fullDestructionStarted = false;
         nextSpawned = false;
+        this.emptyPipe = emptyPipe;
         renderDeactivated = 2;
         this.isTop = isTop;
 
@@ -418,7 +419,7 @@ public class PipeData : MonoBehaviour
             }
         }*/
 
-        if(isChecked)
+        if(isChecked && !emptyPipe)
         {
             if (lightObj.intensity > 0)
             {

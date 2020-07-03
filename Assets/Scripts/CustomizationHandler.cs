@@ -55,9 +55,19 @@ public class CustomizationHandler : MonoBehaviour
     private Tween[] priceTextTween = new Tween[4];
     private Tween[] priceImageTween = new Tween[4];
 
+    [SerializeField]
+    private Transform priceParent = null;
+
+    private Vector3 pricePos;
+    private int buyCode = 0;
+
+    private Coroutine noMoneyRoutine = null;
+
     private void Awake()
     {
         SwipeDetector.OnSwipe += SwipeDetector_OnSwipe;
+
+        pricePos = priceParent.transform.position;
     }
 
 
@@ -100,6 +110,13 @@ public class CustomizationHandler : MonoBehaviour
         {
             switchRunning = false;
         }
+
+        if(noMoneyRoutine != null)
+        {
+            StopCoroutine(noMoneyRoutine);
+        }
+
+        priceParent.position = pricePos;
 
         switch(type)
         {
@@ -207,6 +224,7 @@ public class CustomizationHandler : MonoBehaviour
                 right = shop.GetSkinSprite(id + 1);
 
                 skinPreview.GetComponent<Image>().sprite = middle;
+                UpdateWing(id);
 
                 break;
             case CustomizationType.Wing:
@@ -293,24 +311,15 @@ public class CustomizationHandler : MonoBehaviour
             skinPreview.gameObject.SetActive(true);
         } else
         {
+            CheckHatSupport();
+            CheckWingSupport();
+
             skinPreview.gameObject.SetActive(false);
         }
 
         if(newType != CustomizationType.Wing)
         {
-            wingPreview.GetComponent<Image>().sprite =
-                shop.GetWingSprite(shop.GetSelectedWing());
-
-            float scale = shop.GetWingScale(shop.GetSelectedWing());
-            wingPreview.localScale = new Vector3(scale, scale, scale);
-
-            if(shop.HasWingSupport(shop.GetSelectedSkin()))
-            {
-                wingPreview.gameObject.SetActive(true);
-            } else
-            {
-                wingPreview.gameObject.SetActive(false);
-            }
+            UpdateWing();
         } else
         {
             wingPreview.gameObject.SetActive(false);
@@ -338,6 +347,41 @@ public class CustomizationHandler : MonoBehaviour
         type = newType;
         UpdateDisplay(newType);
         UpdateSmallPreviews();
+    }
+
+    private void UpdateWing(int overrideSelected = -1)
+    {
+        int sel = shop.GetSelectedSkin();
+
+        if(overrideSelected > -1)
+        {
+            sel = overrideSelected;
+        }
+
+        wingPreview.GetComponent<Image>().sprite =
+            shop.GetWingSprite(shop.GetSelectedWing());
+
+        float scale = shop.GetWingScale(shop.GetSelectedWing());
+
+        if (shop.allSkins[sel].overrideWing != null)
+        {
+            Wing oWing = shop.allSkins[sel].overrideWing;
+
+            wingPreview.GetComponent<Image>().sprite = oWing.sprite[0];
+
+            scale = oWing.shopScale;
+        }
+
+        wingPreview.localScale = new Vector3(scale, scale, scale);
+
+        if (shop.HasWingSupport(sel))
+        {
+            wingPreview.gameObject.SetActive(true);
+        }
+        else
+        {
+            wingPreview.gameObject.SetActive(false);
+        }
     }
 
     public void UpdateSmallPreviews(int dir = 1)
@@ -489,11 +533,13 @@ public class CustomizationHandler : MonoBehaviour
         buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
             ShopHandler.Instance.buyString;
 
+        buyCode = code;
+
         switch (code)
         {
             case 0: //nicht gekauft & kein geld
                 buyButton.GetComponent<Image>().color = Color.red;
-                buyButton.GetComponent<Button>().interactable = false;
+                buyButton.GetComponent<Button>().interactable = true;
                 break;
             case 1: //nicht gekauft & geld
                 buyButton.GetComponent<Image>().color = Color.green;
@@ -675,9 +721,19 @@ public class CustomizationHandler : MonoBehaviour
         {
             if (shop.HasWingSupport(selectedID))
             {
-                wingDisabled.gameObject.SetActive(false);
-                wingDisabled.parent.GetChild(0).GetComponent<Button>().interactable = true;
-                wingPreview.gameObject.SetActive(true);
+                if(shop.allSkins[selectedID].overrideWing == null)
+                { //wing support nur wenn kein wing override festgelegt
+                    wingDisabled.gameObject.SetActive(false);
+                    wingDisabled.parent.GetChild(0).GetComponent<Button>().interactable = true;
+                    wingPreview.gameObject.SetActive(true);
+                } else
+                {
+                    wingDisabled.gameObject.SetActive(true);
+                    wingDisabled.parent.GetChild(0).GetComponent<Button>().interactable = false;
+                    //wingPreview.gameObject.SetActive(false);
+                }
+
+                UpdateWing(selectedID);
             }
             else
             {
@@ -802,8 +858,49 @@ public class CustomizationHandler : MonoBehaviour
         }
     }
 
+    private IEnumerator NotEnoughMoney()
+    {
+        bool ok = false;
+
+        float max = 10;
+        float time = 0.025f;
+
+        for(int i = 0; i < 10; i++)
+        {
+            Vector3 temp = pricePos;
+
+            if(ok)
+            {
+                temp.x -= max;
+                ok = false;
+            } else
+            {
+                temp.x += max;
+                ok = true;
+            }
+
+            priceParent.position = temp;
+
+            yield return new WaitForSeconds(time);
+        }
+
+        priceParent.position = pricePos;
+    }
+
     public void BuyClicked()
     { //kann nur aufgerufen werden wenn noch nicht gekauft & genug geld
+        if(buyCode == 0)
+        {
+            if(noMoneyRoutine != null)
+            {
+                StopCoroutine(noMoneyRoutine);
+                priceParent.position = pricePos;
+            }
+
+            noMoneyRoutine = StartCoroutine(NotEnoughMoney());
+            return;
+        }
+
         priceImage.SetActive(false);
         priceText.SetActive(false);
 

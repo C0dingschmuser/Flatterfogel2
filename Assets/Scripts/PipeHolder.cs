@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PipeHolder : MonoBehaviour
 {
-    private bool isMoving = false;
+    private bool isMoving = false, isEmpty = false;
     private int mode = 0;
-    private float maxY = 0, minY = 0, speed = 0;
+    private float maxY = 0, minY = 0, speed = 0, startY;
     private GameObject assignedBlus, topPipe, bottomPipe;
 
     public GameObject movingEffect;
@@ -16,6 +16,17 @@ public class PipeHolder : MonoBehaviour
     {
         topPipe = transform.GetChild(0).gameObject;
         bottomPipe = transform.GetChild(1).gameObject;
+    }
+
+    public void SetEmpty(float startY, bool empty)
+    {
+        isEmpty = empty;
+        this.startY = startY;
+    }
+
+    public float GetStartY()
+    {
+        return startY;
     }
 
     public void SetAssignedBlus(GameObject blus)
@@ -66,23 +77,38 @@ public class PipeHolder : MonoBehaviour
             }
 
             Vector3 pos = transform.position;
-            Vector3 blusPos = assignedBlus.transform.position;
+            Vector3 blusPos = Vector3.zero;
+
+            if (!isEmpty)
+            {
+                blusPos = assignedBlus.transform.position;
+            }
+
+            float diff = 0;
 
             if(mode == 0)
             { //runter
+                diff = -speed * Time.deltaTime;
+
                 pos.y -= speed * Time.deltaTime;
                 if(pos.y < minY)
                 {
+                    diff = -(pos.y + minY);
+
                     pos.y = minY;
                     mode = 1;
                 }
 
             } else
             { //hoch
+                diff = speed * Time.deltaTime;
+
                 pos.y += speed * Time.deltaTime;
 
                 if(pos.y > maxY)
                 {
+                    diff = pos.y - maxY;
+
                     pos.y = maxY;
                     mode = 0;
                 }
@@ -91,10 +117,21 @@ public class PipeHolder : MonoBehaviour
             transform.position = pos;
 
             blusPos.y = pos.y;
-            assignedBlus.transform.position = blusPos;
+
+            if(!isEmpty)
+            {
+                assignedBlus.transform.position = blusPos;
+            }
 
             pos.y = 228.47f;
-            pos.x = blusPos.x;
+
+            if(!isEmpty)
+            {
+                pos.x = blusPos.x;
+            } else
+            {
+                pos.x = topPipe.transform.position.x + 37.5f;
+            }
 
             movingEffect.transform.GetChild(0).position = pos;
 

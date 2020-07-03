@@ -258,6 +258,11 @@ public class FF_PlayerData : MonoBehaviour
 
         Sprite[] animationSprites = new Sprite[3]; //Resources.LoadAll<Sprite>("Sprites/Flatterfogel/player/Wings/" + wingID.ToString());
         
+        if(newSkin.overrideWing != null)
+        {
+            newWing = newSkin.overrideWing;
+        }
+
         for(int i = 0; i < 3; i++)
         {
             animationSprites[i] = newWing.sprite[i];

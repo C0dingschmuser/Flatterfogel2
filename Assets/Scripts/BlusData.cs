@@ -7,8 +7,8 @@ using DG.Tweening;
 public class BlusData : MonoBehaviour
 {
     public bool isDestroyed = false, endAnimation = false, modeChangeBlus = false, renderDisabled = true,
-        isCoin = false;
-    public float timer = 5f;
+        isCoin = false, blusActive = false, moveDir = false;
+    public float timer = 5f, yDiff = 0, maxYDiff = 50, speed = 10;
 
     private int anCounter = 0;
     private Vector3 startPos;
@@ -219,6 +219,8 @@ public class BlusData : MonoBehaviour
             StopCoroutine(animationRoutine);
         }
 
+        blusActive = false;
+
         imageObj.GetComponent<BoxCollider2D>().enabled = false;
         //destroyedBlusParent.gameObject.SetActive(true);
 
@@ -307,6 +309,51 @@ public class BlusData : MonoBehaviour
         for(int i = 0; i < len; i++)
         {
             destroyedBlusParent.GetChild(i).DOScale(0, 0.75f);
+        }
+    }
+
+    public void StartMove(float speed, float maxDiff)
+    {
+        blusActive = true;
+
+        yDiff = Random.Range(-30, 30);
+
+        this.speed = speed;
+        maxYDiff = maxDiff;
+    }
+
+    private void Update()
+    {
+        if(blusActive && !isDestroyed)
+        {
+            Vector3 pos = transform.position;
+
+            if(!moveDir)
+            { //hoch
+                pos.y += speed * Time.deltaTime;
+
+                yDiff += speed * Time.deltaTime;
+            } else
+            { //runter
+                pos.y -= speed * Time.deltaTime;
+
+                yDiff -= speed * Time.deltaTime;
+            }
+
+            transform.position = pos;
+
+            if(Mathf.Abs(yDiff) >= maxYDiff)
+            {
+                //yDiff = 0;
+
+                if(!moveDir)
+                {
+                    moveDir = true;
+                } else
+                {
+                    moveDir = false;
+                }
+            }
         }
     }
 
