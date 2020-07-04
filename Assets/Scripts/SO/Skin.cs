@@ -6,11 +6,12 @@ using UnityEngine;
 public class Skin : ScriptableObject
 {
     public Sprite sprite;
-    public int animated;
+    public int animated, salePercent = 0;
     public bool purchased = false, wingSupport = true, hatSupport = true, boxCollider = false;
     public Wing overrideWing = null;
     public Vector2 colliderSize, colliderOffset;
     public CostData[] cost;
+    public int[] boughtWings, boughtHats;
     public int skinID;
     public string identifier;
 }

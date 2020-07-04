@@ -98,8 +98,8 @@ public class FlatterFogelHandler : MonoBehaviour
     public static int state = 0, gameState = 0, waitingState = -1;
     public static bool cullingEnabled = false, gamePaused = false, clicked = false,
         nextCompleteDestruction = false;
-    public static float scrollSpeed = 125f;
-    public const float defaultScrollSpeed = 150f; //150 def
+    public static float scrollSpeed = 175f;
+    public const float defaultScrollSpeed = 175f; //150 def
     
     ObjectPooler objectPooler;
     public static FlatterFogelHandler Instance;
@@ -1563,7 +1563,7 @@ public class FlatterFogelHandler : MonoBehaviour
         }
 
         if (overrideDistance) {
-            abstand = 160;
+            abstand = 165;
         }
 
         GameObject middleObj = pipeHolder.transform.GetChild(3).gameObject;
@@ -1718,8 +1718,21 @@ public class FlatterFogelHandler : MonoBehaviour
             {
                 if(scoreHandler.scoreData[i].score == score + 1)
                 {
+                    float lastGraveX = lastPipeX + 123f + Random.Range(0, 50);
+
+                    if(gravestoneObjs.Count > 0)
+                    {
+                        if (gravestoneObjs[gravestoneObjs.Count - 1].transform.position.x >
+                                lastPipeX)
+                        {
+                            lastGraveX = gravestoneObjs[gravestoneObjs.Count - 1].transform.position.x;
+
+                            lastGraveX += Random.Range(121.5f, 243);
+                        }
+                    }
+
                     GameObject nG = 
-                        SpawnGravestone(lastPipeX + scoreHandler.scoreData[i].offset, 
+                        SpawnGravestone(lastGraveX, 
                         scoreHandler.scoreData[i].username);
 
                     gravestoneObjs.Add(nG);

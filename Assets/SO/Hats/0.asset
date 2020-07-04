@@ -16,6 +16,7 @@ MonoBehaviour:
   yDist: 0
   hatID: 0
   purchased: 1
+  sale: 0
   cost:
   - mineralID: 0
     amount: 0

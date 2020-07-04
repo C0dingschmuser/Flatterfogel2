@@ -8,7 +8,7 @@ public class Wing : ScriptableObject
     public Sprite[] sprite;
     public bool purchased = false;
     public CostData[] cost;
-    public int wingID;
+    public int wingID, salePercent = 0;
     public float shopScale = 3.333f;
     public string identifier;
 }

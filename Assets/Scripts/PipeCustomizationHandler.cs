@@ -26,7 +26,7 @@ public class PipeCustomizationHandler : MonoBehaviour
         smallPreviewParent = null;
 
     [SerializeField]
-    private GameObject priceText = null, priceImage = null;
+    private GameObject priceText = null, priceImage = null, saleObj = null;
 
     private Tween[] priceTextTween = new Tween[4];
     private Tween[] priceImageTween = new Tween[4];
@@ -46,7 +46,7 @@ public class PipeCustomizationHandler : MonoBehaviour
     private Vector3 pricePos;
     private int buyCode = 0;
 
-    private Coroutine noMoneyRoutine = null;
+    private Coroutine noMoneyRoutine = null, saleRoutine = null;
 
     public static PipeCustomizationHandler Instance;
 
@@ -88,6 +88,69 @@ public class PipeCustomizationHandler : MonoBehaviour
         swDetector.enabled = true;
         changeApplied = true;
         switchRunning = false;
+    }
+
+    public void UpdateSale(CustomizationType type, int overrideID = -1)
+    {
+        int saleAmount;
+
+        int id = selectedID;
+
+        if (overrideID > -1)
+        {
+            id = overrideID;
+        }
+
+        switch (type)
+        {
+            case CustomizationType.Pipe:
+                saleAmount = shop.allPipes[id].salePercent;
+                break;
+            default:
+                saleAmount = 0;
+                break;
+        }
+
+        if (saleAmount != 0)
+        {
+            if (saleRoutine != null)
+            {
+                StopCoroutine(saleRoutine);
+            }
+
+            saleObj.SetActive(true);
+
+            saleRoutine = StartCoroutine(SaleRoutine(saleAmount));
+        }
+        else
+        {
+            if (saleRoutine != null)
+            {
+                StopCoroutine(saleRoutine);
+            }
+
+            saleObj.SetActive(false);
+        }
+    }
+
+    private IEnumerator SaleRoutine(int saleAmount)
+    {
+        string final = shop.saleString + ": " + saleAmount.ToString() + "%";
+
+        saleObj.GetComponent<TextMeshProUGUI>().text = final;
+        saleObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = final;
+
+        while (true)
+        {
+            Color temp = saleObj.GetComponent<TextMeshProUGUI>().color;
+
+            saleObj.GetComponent<TextMeshProUGUI>().color =
+                saleObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color;
+
+            saleObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color =
+                temp;
+            yield return new WaitForSeconds(0.25f);
+        }
     }
 
     public void SetType(CustomizationType newType, bool start = false)
@@ -134,6 +197,13 @@ public class PipeCustomizationHandler : MonoBehaviour
             fontMat.SetFloat("_DissolveAmount", dissolveAmount);
             imageMat.SetFloat("_DissolveAmount", dissolveAmount);
         });
+
+        if (saleRoutine != null)
+        {
+            StopCoroutine(saleRoutine);
+        }
+
+        saleObj.SetActive(false);
 
         StartCoroutine(EndClose());
     }
@@ -246,6 +316,8 @@ public class PipeCustomizationHandler : MonoBehaviour
                     rightColor = allColors[shop.GetPipeColorID()];
                 }
 
+                UpdateSale(type, selectedID);
+
                 break;
             case CustomizationType.PipeColor:
                 selectedID = shop.GetPipeColorID();
@@ -269,6 +341,7 @@ public class PipeCustomizationHandler : MonoBehaviour
                 rightEnd = middleEnd;
 
                 rightColor = GetPipeColor(selectedID + 1);
+                UpdateSale(type, selectedID);
                 break;
         }
 
@@ -340,6 +413,8 @@ public class PipeCustomizationHandler : MonoBehaviour
         type = newType;
         UpdateDisplay(newType);
         UpdateSmallPreviews();
+
+        UpdateSale(newType);
     }
 
     public void UpdateSmallPreviews(int dir = 1)
@@ -489,6 +564,8 @@ public class PipeCustomizationHandler : MonoBehaviour
 
         FetchPurchased(type, selectedID);
         CheckPipeColorSupport();
+
+        UpdateSale(type);
     }
 
     public void SwipeDetector_OnSwipe(SwipeData data)
@@ -741,6 +818,8 @@ public class PipeCustomizationHandler : MonoBehaviour
         }
 
         CheckPipeColorSupport();
+
+        UpdateSale(type);
 
         StartCoroutine(EndSwitch(dir));
     }

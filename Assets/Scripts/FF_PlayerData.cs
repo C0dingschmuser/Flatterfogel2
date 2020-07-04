@@ -738,7 +738,8 @@ public class FF_PlayerData : MonoBehaviour
 
         if(dead || !GetComponent<Rigidbody2D>().simulated || landing ||
            (mPos.x > (pITransform.position.x - 37.5f) &&
-            mPos.y > (pITransform.position.y - 37.5f)))
+            mPos.y > (pITransform.position.y - 37.5f)) ||
+            transform.position.y > 1730)
         {
             return;
         }

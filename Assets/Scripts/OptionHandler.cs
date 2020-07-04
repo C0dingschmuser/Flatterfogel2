@@ -218,7 +218,7 @@ public class OptionHandler : MonoBehaviour
     public void LoadOptions()
     {
         physicsResolution = PlayerPrefs.GetInt("Player_PhysicsResolution", 0);
-        screenResolution = 2;//PlayerPrefs.GetInt("Player_Resolution", 2);
+        screenResolution = PlayerPrefs.GetInt("Player_Resolution", 2);
         lightEnabled = PlayerPrefs.GetInt("Player_Light", 1);
         parallaxMode = PlayerPrefs.GetInt("Player_ParallaxMode", 1);
         enhancedPipeDestruction = PlayerPrefs.GetInt("Player_EnhancedDestruction", 1);

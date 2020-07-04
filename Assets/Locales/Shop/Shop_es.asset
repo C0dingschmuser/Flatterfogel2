@@ -74,5 +74,9 @@ MonoBehaviour:
     m_Localized: C O M P R A D O
     m_Metadata:
       m_Items: []
+  - m_Id: 15
+    m_Localized: VENTA
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

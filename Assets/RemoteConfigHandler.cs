@@ -23,7 +23,9 @@ public class RemoteConfigHandler : MonoBehaviour
         {
             string price = GetPriceString(allSkins[i].cost);
 
-            defaults.Add("shop_skin_" + allSkins[i].identifier, price);
+            string final = price + "~0";
+
+            defaults.Add("shop_skin_" + allSkins[i].identifier, final);
         }
 
         List<Wing> allWings = ShopHandler.Instance.allWings;
@@ -31,7 +33,9 @@ public class RemoteConfigHandler : MonoBehaviour
         {
             string price = GetPriceString(allWings[i].cost);
 
-            defaults.Add("shop_wing_" + allWings[i].identifier, price);
+            string final = price + "~0";
+
+            defaults.Add("shop_wing_" + allWings[i].identifier, final);
         }
 
         List<Hat> allHats = ShopHandler.Instance.allHats;
@@ -39,7 +43,9 @@ public class RemoteConfigHandler : MonoBehaviour
         {
             string price = GetPriceString(allHats[i].cost);
 
-            defaults.Add("shop_hat_" + allHats[i].identifier, price);
+            string final = price + "~0";
+
+            defaults.Add("shop_hat_" + allHats[i].identifier, final);
         }
 
         List<Pipe> allPipes = ShopHandler.Instance.allPipes;
@@ -47,7 +53,9 @@ public class RemoteConfigHandler : MonoBehaviour
         {
             string price = GetPriceString(allPipes[i].cost);
 
-            defaults.Add("shop_pipe_" + allPipes[i].identifier, price);
+            string final = price + "~0";
+
+            defaults.Add("shop_pipe_" + allPipes[i].identifier, final);
         }
 
         FirebaseRemoteConfig.SetDefaults(defaults);
@@ -82,7 +90,8 @@ public class RemoteConfigHandler : MonoBehaviour
             string price = 
                 FirebaseRemoteConfig.GetValue("shop_skin_" + allSkins[i].identifier).StringValue;
 
-            string[] costParts = price.Split('|');
+            string[] dataPart = price.Split('~'); //andere daten
+            string[] costParts = dataPart[0].Split('|'); //preise
 
             for(int a = 0; a < costParts.Length - 1; a++)
             {
@@ -93,6 +102,13 @@ public class RemoteConfigHandler : MonoBehaviour
 
                 allSkins[i].cost[a] = new CostData((MineralType)id, amount);
             }
+
+            if(dataPart[1].Length > 0)
+            {
+                int salePercent = Int32.Parse(dataPart[1]);
+
+                allSkins[i].salePercent = salePercent;
+            }
         }
 
         List<Wing> allWings = ShopHandler.Instance.allWings;
@@ -101,6 +117,7 @@ public class RemoteConfigHandler : MonoBehaviour
             string price =
                 FirebaseRemoteConfig.GetValue("shop_wing_" + allWings[i].identifier).StringValue;
 
+            string[] dataPart = price.Split('~');
             string[] costParts = price.Split('|');
 
             for (int a = 0; a < costParts.Length - 1; a++)
@@ -112,6 +129,13 @@ public class RemoteConfigHandler : MonoBehaviour
 
                 allWings[i].cost[a] = new CostData((MineralType)id, amount);
             }
+
+            if (dataPart[1].Length > 0)
+            {
+                int salePercent = Int32.Parse(dataPart[1]);
+
+                allWings[i].salePercent = salePercent;
+            }
         }
 
         List<Hat> allHats = ShopHandler.Instance.allHats;
@@ -120,6 +144,7 @@ public class RemoteConfigHandler : MonoBehaviour
             string price =
                 FirebaseRemoteConfig.GetValue("shop_hat_" + allHats[i].identifier).StringValue;
 
+            string[] dataPart = price.Split('~');
             string[] costParts = price.Split('|');
 
             for (int a = 0; a < costParts.Length - 1; a++)
@@ -131,6 +156,13 @@ public class RemoteConfigHandler : MonoBehaviour
 
                 allHats[i].cost[a] = new CostData((MineralType)id, amount);
             }
+
+            if (dataPart[1].Length > 0)
+            {
+                int salePercent = Int32.Parse(dataPart[1]);
+
+                allHats[i].salePercent = salePercent;
+            }
         }
 
         List<Pipe> allPipes = ShopHandler.Instance.allPipes;
@@ -139,6 +171,7 @@ public class RemoteConfigHandler : MonoBehaviour
             string price =
                 FirebaseRemoteConfig.GetValue("shop_pipe_" + allPipes[i].identifier).StringValue;
 
+            string[] dataPart = price.Split('~');
             string[] costParts = price.Split('|');
 
             for (int a = 0; a < costParts.Length - 1; a++)
@@ -149,6 +182,13 @@ public class RemoteConfigHandler : MonoBehaviour
                 int amount = Int32.Parse(costData[1]);
 
                 allPipes[i].cost[a] = new CostData((MineralType)id, amount);
+            }
+
+            if (dataPart[1].Length > 0)
+            {
+                int salePercent = Int32.Parse(dataPart[1]);
+
+                allPipes[i].salePercent = salePercent;
             }
         }
     }

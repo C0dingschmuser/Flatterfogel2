@@ -7,7 +7,7 @@ public class Hat : ScriptableObject
 {
     public Sprite sprite;
     public float yDist = 0;
-    public int hatID;
+    public int hatID, salePercent = 0;
     public bool purchased = false;
     public CostData[] cost;
     public string identifier;

@@ -32,4 +32,5 @@ MonoBehaviour:
   - mineralID: 0
     amount: 0
   pipeID: 1
+  salePercent: 0
   identifier: pillar

@@ -70,8 +70,6 @@ public class MieserHandler : MonoBehaviour
     {
         float timeTillDeath = 3f;
 
-        Debug.Log(aliveTime);
-
         int coins = 3;
 
         if(aliveTime < 11)

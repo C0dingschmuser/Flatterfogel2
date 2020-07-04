@@ -17,6 +17,11 @@ MonoBehaviour:
   purchased: 1
   wingSupport: 1
   hatSupport: 1
+  boxCollider: 0
+  sale: 0
+  overrideWing: {fileID: 0}
+  colliderSize: {x: 0, y: 0}
+  colliderOffset: {x: 0, y: 0}
   cost:
   - mineralID: 0
     amount: 0
@@ -26,5 +31,7 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
+  boughtWings: 0100000002000000
+  boughtHats: 02000000
   skinID: 0
   identifier: default

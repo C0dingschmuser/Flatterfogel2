@@ -5,10 +5,12 @@ using CodeStage.AntiCheat.Storage;
 using UnityEngine.Networking;
 using UnityEngine.Localization;
 using UnityEngine.ResourceManagement.AsyncOperations;
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_IOS
 using UnityEngine.SocialPlatforms;
-using GooglePlayGames;
 using Firebase.Analytics;
+#endif
+#if UNITY_ANDROID
+using GooglePlayGames;
 #endif
 using TMPro;
 
@@ -71,7 +73,7 @@ public class AccountHandler : MonoBehaviour
 
     public void StartGplayLogin()
     {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_IOS
         if (!OptionHandler.playStore)
         {
             FirebaseAnalytics.SetUserProperty("PlayStoreVersion", "0");
@@ -289,8 +291,6 @@ public class AccountHandler : MonoBehaviour
         } else
         {
             string response = www.downloadHandler.text;
-
-            Debug.Log(response);
 
             string[] split = response.Split('|');
 

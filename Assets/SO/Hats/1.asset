@@ -15,10 +15,11 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: 63fdde012ce3c2c42b536165d2e1fba4, type: 3}
   yDist: 0
   hatID: 1
+  salePercent: 0
   purchased: 0
   cost:
   - mineralID: 14
-    amount: 250
+    amount: 45
   - mineralID: 0
     amount: 0
   - mineralID: 0

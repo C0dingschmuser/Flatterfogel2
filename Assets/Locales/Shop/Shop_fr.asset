@@ -74,5 +74,9 @@ MonoBehaviour:
     m_Localized: "A C H E T \xC9"
     m_Metadata:
       m_Items: []
+  - m_Id: 15
+    m_Localized: VENTE
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

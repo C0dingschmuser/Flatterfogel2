@@ -11,6 +11,7 @@ using Random = UnityEngine.Random;
 using Object = System.Object;
 using UnityEngine.Localization;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using System.Linq;
 
 public class ShopHandler : MonoBehaviour
 {
@@ -53,8 +54,8 @@ public class ShopHandler : MonoBehaviour
     public FF_PlayerData playerData;
     public BackgroundHandler bgHandler;
 
-    public LocalizedString buy, select, bought;
-    public string buyString, selectString, boughtString;
+    public LocalizedString buy, select, bought, sale;
+    public string buyString, selectString, boughtString, saleString;
 
     public static ShopHandler Instance;
 
@@ -113,6 +114,9 @@ public class ShopHandler : MonoBehaviour
 
         yield return handle = bought.GetLocalizedString();
         boughtString = (string)handle.Result;
+
+        yield return handle = sale.GetLocalizedString();
+        saleString = (string)handle.Result;
     }
 
     public Sprite GetSkinSprite(int skinID)
@@ -522,18 +526,33 @@ public class ShopHandler : MonoBehaviour
 
     private void ResetAll()
     {
-        for (int i = 1; i < allSkins.Count; i++)
+        for (int i = 0; i < allSkins.Count; i++)
         {
-            allSkins[i].purchased = false;
+            if(i > 0)
+            {
+                allSkins[i].purchased = false;
+            }
+
+            allSkins[i].salePercent = 0;
+
+            allSkins[i].boughtWings = new int[1];
+            allSkins[i].boughtWings[0] = 0;
+
+            allSkins[i].boughtHats = new int[1];
+            allSkins[i].boughtHats[0] = 0;
         }
 
         for (int i = 1; i < allWings.Count; i++)
         {
+            allWings[i].salePercent = 0;
+
             allWings[i].purchased = false;
         }
 
         for (int i = 1; i < allPipes.Count; i++)
         {
+            allPipes[i].salePercent = 0;
+
             allPipes[i].purchased = false;
         }
 
@@ -559,8 +578,22 @@ public class ShopHandler : MonoBehaviour
 
         for(int i = 1; i < allHats.Count; i++)
         {
+            allHats[i].salePercent = 0;
+
             allHats[i].purchased = false;
         }
+    }
+
+    public bool HasSkinPurchasedWing(int skinID, int wingID)
+    {
+        bool ok = false;
+
+        if(allSkins[skinID].boughtWings.Contains(wingID))
+        {
+            ok = true;
+        }
+
+        return ok;
     }
 
     private void LoadPurchasedItems()
@@ -568,9 +601,8 @@ public class ShopHandler : MonoBehaviour
 #if UNITY_EDITOR
         UpdateBlus(200, 0);
 #else
-        ObscuredPrefs.GetULong("Blus", 0);
+        UpdateBlus(ObscuredPrefs.GetULong("Blus", 0));
 #endif
-        //ObscuredPrefs.GetULong("Blus", 0), 0);
 
         selectedSkin = ObscuredPrefs.GetInt("SelectedSkin", 0);
         selectedWing = ObscuredPrefs.GetInt("SelectedWing", 0);
@@ -601,20 +633,61 @@ public class ShopHandler : MonoBehaviour
                 {
                     if(skinData[i].Length > 0)
                     {
-                        string identifier = skinData[i];
+                        string[] type = skinData[i].Split('#');
+                        //0 = skin identifier
+                        //1 = gekaufte wings
+                        //2 = gekaufte hats
+
+                        string identifier = type[0];
+
+                        string[] pWings = type[1].Split('~');
+                        int[] purchasedWings = new int[pWings.Length - 1];
+
+                        for(int a = 0; a < pWings.Length - 1; a++) //-1 weil letzte stelle leer
+                        {
+                            string wingIdentifier = pWings[a];
+
+                            for(int b = 0; b < allWings.Count; b++)
+                            {
+                                if(allWings[b].identifier.Equals(wingIdentifier))
+                                { //position in array gefunden -> zuweisen
+                                    purchasedWings[a] = b;
+                                    break;
+                                }
+                            }
+                        }
+
+                        string[] pHats = type[2].Split('~');
+                        int[] purchasedHats = new int[pHats.Length - 1];
+
+                        for(int a = 0; a < pHats.Length - 1; a++) //-1 weil letzte stelle leer
+                        {
+                            string hatIdentifier = pHats[a];
+
+                            for(int b = 0; b < allHats.Count; b++)
+                            {
+                                if(allHats[b].identifier.Equals(hatIdentifier))
+                                {
+                                    purchasedHats[a] = b;
+                                    break;
+                                }
+                            }
+                        }
 
                         for(int a = 0; a < allSkins.Count; a++)
                         {
                             if(allSkins[a].identifier.Equals(identifier))
                             { //gekaufter skin gefunden
                                 allSkins[a].purchased = true;
+                                allSkins[a].boughtWings = purchasedWings;
+                                allSkins[a].boughtHats = purchasedHats;
                                 break;
                             }
                         }
                     }
                 }
             }
-            if(types[1].Contains(","))
+            /*if(types[1].Contains(","))
             {
                 string[] wingData = types[1].Split(',');
                 for(int i = 0; i < wingData.Length; i++)
@@ -625,7 +698,7 @@ public class ShopHandler : MonoBehaviour
                         allWings[id].purchased = true;
                     }
                 }
-            }
+            }*/
             if(types[2].Contains(","))
             {
                 string[] minerData = types[2].Split(',');
@@ -704,7 +777,7 @@ public class ShopHandler : MonoBehaviour
                     }
                 }
             }
-            if(types.Length > 8)
+            /*if(types.Length > 8)
             {
                 if (types[8].Contains(","))
                 {
@@ -718,7 +791,7 @@ public class ShopHandler : MonoBehaviour
                         }
                     }
                 }
-            }
+            }*/
         }
 
         PlayerMiner.currentMiner = allMiners[selectedMiner];
@@ -734,7 +807,22 @@ public class ShopHandler : MonoBehaviour
         {
             if(allSkins[i].purchased)
             {
-                data += allSkins[i].identifier + ",";
+                int[] purchasedWings = allSkins[i].boughtWings;
+                int[] purchasedHats = allSkins[i].boughtHats;
+
+                string wingString = "", hatString = "";
+
+                for(int a = 0; a < purchasedWings.Length; a++)
+                {
+                    wingString += allWings[purchasedWings[a]].identifier + "~";
+                }
+
+                for(int a = 0; a < purchasedHats.Length; a++)
+                {
+                    hatString += allHats[purchasedHats[a]].identifier + "~";
+                }
+
+                data += allSkins[i].identifier + "#" + wingString + "#" + hatString + ",";
             }
         }
         data += "|";
@@ -1945,6 +2033,18 @@ public class ShopHandler : MonoBehaviour
                 allWings[id].purchased = true;
 
                 newSprite = allWings[id].sprite[0];
+
+                int[] boughtWings = allSkins[selectedSkin].boughtWings;
+                int[] newBoughtWings = new int[boughtWings.Length + 1];
+
+                for(int i = 0; i < boughtWings.Length; i++)
+                {
+                    newBoughtWings[i] = boughtWings[i];
+                }
+
+                newBoughtWings[newBoughtWings.Length - 1] = id;
+
+                allSkins[selectedSkin].boughtWings = newBoughtWings;
                 break;
             case CustomizationType.Pipe:
                 price = allPipes[id].cost;
@@ -1957,6 +2057,18 @@ public class ShopHandler : MonoBehaviour
                 allHats[id].purchased = true;
 
                 newSprite = allHats[id].sprite;
+
+                int[] boughtHats = allSkins[selectedSkin].boughtHats;
+                int[] newBoughtHats = new int[boughtHats.Length + 1];
+
+                for (int i = 0; i < boughtHats.Length; i++)
+                {
+                    newBoughtHats[i] = boughtHats[i];
+                }
+
+                newBoughtHats[newBoughtHats.Length - 1] = id;
+
+                allSkins[selectedSkin].boughtHats = newBoughtHats;
                 break;
         }
 
@@ -1966,6 +2078,12 @@ public class ShopHandler : MonoBehaviour
 
         ApplyCustom(type, id);
         SavePurchasedItems();
+    }
+
+    public void ResetSelected()
+    {
+        selectedWing = 0;
+        selectedHat = 0;
     }
 
     public void ApplyCustom(CustomizationType type, int id, bool reload = true)
@@ -1979,6 +2097,39 @@ public class ShopHandler : MonoBehaviour
             {
                 case CustomizationType.Skin:
                     selectedSkin = id;
+
+                    for (int i = 1; i < this.allWings.Count; i++)
+                    { //i = 1 weil default ist ja immer gekauft
+                        this.allWings[i].purchased = false;
+                    }
+
+                    for(int i = 1; i < this.allHats.Count; i++)
+                    {
+                        this.allHats[i].purchased = false;
+                    }
+
+                    int[] allWings = allSkins[id].boughtWings;
+                    int[] allHats = allSkins[id].boughtHats;
+
+                    for(int i = 0; i < allWings.Length; i++)
+                    {
+                        this.allWings[allWings[i]].purchased = true;
+                    }
+
+                    for(int i = 0; i < allHats.Length; i++)
+                    {
+                        this.allHats[allHats[i]].purchased = true;
+                    }
+
+                    if(!this.allWings[selectedWing].purchased)
+                    {
+                        selectedWing = 0;
+                    }
+
+                    if(!this.allHats[selectedHat].purchased)
+                    {
+                        selectedHat = 0;
+                    }
                     break;
                 case CustomizationType.Wing:
                     selectedWing = id;
@@ -2009,6 +2160,7 @@ public class ShopHandler : MonoBehaviour
                 case CustomizationType.Skin:
                 case CustomizationType.Wing:
                     playerData.LoadPlayerSkin(allSkins[selectedSkin], allWings[selectedWing]);
+                    playerData.LoadHat(allHats[selectedHat]);
                     break;
                 case CustomizationType.Hat:
                     playerData.LoadHat(allHats[selectedHat]);

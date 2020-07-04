@@ -19,7 +19,7 @@ MonoBehaviour:
   purchased: 0
   cost:
   - mineralID: 14
-    amount: 120
+    amount: 25
   - mineralID: 0
     amount: 0
   - mineralID: 0
@@ -27,5 +27,6 @@ MonoBehaviour:
   - mineralID: 0
     amount: 0
   wingID: 1
+  salePercent: 0
   shopScale: 4.5
   identifier: turbine

@@ -74,5 +74,9 @@ MonoBehaviour:
     m_Localized: G E K A U F T
     m_Metadata:
       m_Items: []
+  - m_Id: 15
+    m_Localized: SALE
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

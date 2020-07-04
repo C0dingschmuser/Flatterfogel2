@@ -39,7 +39,8 @@ public class CustomizationHandler : MonoBehaviour
         smallPreviewParent = null;
 
     [SerializeField]
-    private GameObject priceText = null, priceImage = null, buyInfo = null;
+    private GameObject priceText = null, priceImage = null, buyInfo = null,
+        saleObj = null;
 
     [SerializeField]
     private Material imageMat = null, fontMat = null;
@@ -61,7 +62,7 @@ public class CustomizationHandler : MonoBehaviour
     private Vector3 pricePos;
     private int buyCode = 0;
 
-    private Coroutine noMoneyRoutine = null;
+    private Coroutine noMoneyRoutine = null, saleRoutine = null;
 
     private void Awake()
     {
@@ -150,6 +151,13 @@ public class CustomizationHandler : MonoBehaviour
             imageMat.SetFloat("_DissolveAmount", dissolveAmount);
         });
 
+        if(saleRoutine != null)
+        {
+            StopCoroutine(saleRoutine);
+        }
+
+        saleObj.SetActive(false);
+
         StartCoroutine(EndClose());
     }
 
@@ -191,6 +199,77 @@ public class CustomizationHandler : MonoBehaviour
         return id;
     }
 
+    public void UpdateSale(CustomizationType type, int overrideID = -1)
+    {
+        int saleAmount = 0;
+
+        int id = selectedID;
+
+        if(overrideID > -1)
+        {
+            id = overrideID;
+        }
+
+        switch(type)
+        {
+            case CustomizationType.Skin:
+
+                saleAmount = shop.allSkins[id].salePercent;
+
+                break;
+            case CustomizationType.Wing:
+
+                saleAmount = shop.allWings[id].salePercent;
+
+                break;
+            case CustomizationType.Hat:
+
+                saleAmount = shop.allHats[id].salePercent;
+
+                break;
+        }
+
+        if(saleAmount != 0)
+        {
+            if (saleRoutine != null)
+            {
+                StopCoroutine(saleRoutine);
+            }
+
+            saleObj.SetActive(true);
+
+            saleRoutine = StartCoroutine(SaleRoutine(saleAmount));
+        } else
+        {
+            if(saleRoutine != null)
+            {
+                StopCoroutine(saleRoutine);
+            }
+
+            saleObj.SetActive(false);
+        }
+    }
+
+    private IEnumerator SaleRoutine(int saleAmount)
+    {
+        string final = shop.saleString + ": " + saleAmount.ToString() + "%";
+
+        saleObj.GetComponent<TextMeshProUGUI>().text = final;
+        saleObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = final;
+
+        while (true)
+        {
+            Color temp = saleObj.GetComponent<TextMeshProUGUI>().color;
+
+            saleObj.GetComponent<TextMeshProUGUI>().color =
+                saleObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color;
+
+            saleObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color =
+                temp;
+            yield return new WaitForSeconds(0.25f);
+        }
+    }
+
     public void UpdateDisplay(CustomizationType type)
     {
         Sprite left = null, middle = null, right = null;
@@ -225,6 +304,7 @@ public class CustomizationHandler : MonoBehaviour
 
                 skinPreview.GetComponent<Image>().sprite = middle;
                 UpdateWing(id);
+                UpdateSale(type, id);
 
                 break;
             case CustomizationType.Wing:
@@ -237,6 +317,8 @@ public class CustomizationHandler : MonoBehaviour
                 left = shop.GetWingSprite(id - 1);
                 middle = shop.GetWingSprite(id);
                 right = shop.GetWingSprite(id + 1);
+
+                UpdateSale(type, id);
 
                 wingPreview.GetComponent<Image>().sprite = middle;
 
@@ -253,6 +335,8 @@ public class CustomizationHandler : MonoBehaviour
                 left = shop.GetHatSprite(id - 1);
                 middle = shop.GetHatSprite(id);
                 right = shop.GetHatSprite(id + 1);
+
+                UpdateSale(type, id);
 
                 hatPreview.GetComponent<Image>().sprite = middle;
 
@@ -327,18 +411,7 @@ public class CustomizationHandler : MonoBehaviour
 
         if(newType != CustomizationType.Hat)
         {
-            hatPreview.GetComponent<Image>().sprite =
-                shop.GetHatSprite(shop.GetSelectedHat());
-            hatPreview.gameObject.SetActive(true);
-
-            if (shop.HasHatSupport(shop.GetSelectedSkin()))
-            {
-                hatPreview.gameObject.SetActive(true);
-            }
-            else
-            {
-                hatPreview.gameObject.SetActive(false);
-            }
+            UpdateHat();
         } else
         {
             hatPreview.gameObject.SetActive(false);
@@ -347,6 +420,24 @@ public class CustomizationHandler : MonoBehaviour
         type = newType;
         UpdateDisplay(newType);
         UpdateSmallPreviews();
+
+        UpdateSale(newType);
+    }
+
+    private void UpdateHat()
+    {
+        hatPreview.GetComponent<Image>().sprite =
+            shop.GetHatSprite(shop.GetSelectedHat());
+        hatPreview.gameObject.SetActive(true);
+
+        if (shop.HasHatSupport(shop.GetSelectedSkin()))
+        {
+            hatPreview.gameObject.SetActive(true);
+        }
+        else
+        {
+            hatPreview.gameObject.SetActive(false);
+        }
     }
 
     private void UpdateWing(int overrideSelected = -1)
@@ -508,6 +599,9 @@ public class CustomizationHandler : MonoBehaviour
         }
 
         FetchPurchased(type, selectedID);
+
+        UpdateSale(type);
+
         CheckWingSupport();
         CheckHatSupport();
     }
@@ -691,8 +785,14 @@ public class CustomizationHandler : MonoBehaviour
             FetchPurchased(type, selectedID);
         }
 
+        if(type == CustomizationType.Skin)
+        { //wing und hat zurücksetzen bei skinänderung
+            shop.ResetSelected();
+        }
+
         CheckWingSupport();
         CheckHatSupport();
+        UpdateSale(type);
 
         StartCoroutine(EndSwitch(dir));
     }
@@ -706,6 +806,8 @@ public class CustomizationHandler : MonoBehaviour
                 hatDisabled.gameObject.SetActive(false);
                 hatDisabled.parent.GetChild(0).GetComponent<Button>().interactable = true;
                 hatPreview.gameObject.SetActive(true);
+
+                UpdateHat();
             } else
             {
                 hatDisabled.gameObject.SetActive(true);
