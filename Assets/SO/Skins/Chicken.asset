@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: Chicken
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 08efd427490d70546a5e0cbc0897ea5b, type: 3}
-  animated: 0
-  purchased: 1
-  wingSupport: 1
-  hatSupport: 1
-  boxCollider: 0
   overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
-  colliderSize: {x: 0, y: 0}
-  colliderOffset: {x: 0, y: 0}
+  animatedSprites: []
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  purchased: 1
+  salePercent: 0
   cost:
   - mineralID: 14
     amount: 100
@@ -30,5 +30,12 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
+  boughtWings: 00000000
+  boughtHats: 00000000
+  wingSupport: 1
+  hatSupport: 1
+  boxCollider: 0
+  colliderSize: {x: 0, y: 0}
+  colliderOffset: {x: 0, y: 0}
   skinID: 16
-  identifier: chicken
+  identifier: original_chicken

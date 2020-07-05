@@ -69,11 +69,6 @@ public class AIHandler : MonoBehaviour
 
         Color32 newColor = Color.white;
 
-        if(newSkin.animated == 1)
-        {
-            newColor = FlatterFogelHandler.GetTandomPr0Color();
-        }
-
         newColor.a = 75;
 
         GetComponent<SpriteRenderer>().color = newColor;

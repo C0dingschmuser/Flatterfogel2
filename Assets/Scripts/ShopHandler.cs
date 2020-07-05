@@ -604,9 +604,43 @@ public class ShopHandler : MonoBehaviour
         UpdateBlus(ObscuredPrefs.GetULong("Blus", 0));
 #endif
 
-        selectedSkin = ObscuredPrefs.GetInt("SelectedSkin", 0);
-        selectedWing = ObscuredPrefs.GetInt("SelectedWing", 0);
-        selectedHat = ObscuredPrefs.GetInt("SelectedHat", 0);
+        string selectedSkinString = ObscuredPrefs.GetString("SelectedSkinString", "original");
+        string selectedWingString = ObscuredPrefs.GetString("SelectedWingString", "default");
+        string selectedHatString = ObscuredPrefs.GetString("SelectedHatString", "default");
+
+        selectedSkin = 0;
+
+        for(int i = 0; i < allSkins.Count; i++)
+        {
+            if(allSkins[i].identifier.Equals(selectedSkinString))
+            {
+                selectedSkin = i;
+                break;
+            }
+        }
+
+        selectedWing = 0;
+
+        for(int i = 0; i < allWings.Count; i++)
+        {
+            if(allWings[i].identifier.Equals(selectedWingString))
+            {
+                selectedWing = i;
+                break;
+            }
+        }
+
+        selectedHat = 0;
+
+        for(int i = 0; i < allHats.Count; i++)
+        {
+            if(allHats[i].identifier.Equals(selectedHatString))
+            {
+                selectedHat = i;
+                break;
+            }
+        }
+
         selectedMiner = ObscuredPrefs.GetInt("SelectedMiner", 0);
 
         selectedPipe = ObscuredPrefs.GetInt("SelectedPipe", 0);
@@ -898,13 +932,13 @@ public class ShopHandler : MonoBehaviour
 
         ObscuredPrefs.SetString("ShopPurchasedItems", data);
         ObscuredPrefs.SetULong("Blus", blus);
-        ObscuredPrefs.SetInt("SelectedSkin", selectedSkin);
-        ObscuredPrefs.SetInt("SelectedWing", selectedWing);
+        ObscuredPrefs.SetString("SelectedSkinString", allSkins[selectedSkin].identifier);
+        ObscuredPrefs.SetString("SelectedWingString", allWings[selectedWing].identifier);
         ObscuredPrefs.SetInt("SelectedPipe", selectedPipe);
         ObscuredPrefs.SetInt("SelectedBackground", selectedBackground);
         ObscuredPrefs.SetInt("SelectedMiner", selectedMiner);
         ObscuredPrefs.SetInt("SelectedHeatShield", selectedHeatShield);
-        ObscuredPrefs.SetInt("SelectedHat", selectedHat);
+        ObscuredPrefs.SetString("SelectedHatString", allHats[selectedHat].identifier);
         ObscuredPrefs.SetInt("SelectedPipeColorID", pipeColorID);
     }
 
@@ -2257,25 +2291,12 @@ public class ShopHandler : MonoBehaviour
     {
         if(shopActive)
         {
-            switch (currentType)
-            {
-                case 0:
-                    for (int i = 0; i < allSkins.Count; i++)
-                    {
-                        if (allSkins[i].animated == 1)
-                        { //farben fade
-                            slotParent.transform.GetChild(i).GetChild(0).GetComponent<Image>().color = fadeMat.color;
-                        }
-                    }
-                    break;
-            }
-
             if(Input.GetKeyDown(KeyCode.Escape) && !closing)
             {
                 CloseShop();
             }
         }
 
-        playerData.SetColor(fadeMat.color);
+        //playerData.SetColor(fadeMat.color);
     }
 }

@@ -79,6 +79,8 @@ public class CustomizationHandler : MonoBehaviour
 
         switchRunning = true;
 
+        FF_PlayerData.Instance.inShop = true;
+
         fontMat.SetFloat("_DissolveAmount", 0);
         imageMat.SetFloat("_DissolveAmount", 0);
 
@@ -157,6 +159,8 @@ public class CustomizationHandler : MonoBehaviour
         }
 
         saleObj.SetActive(false);
+
+        FF_PlayerData.Instance.inShop = false;
 
         StartCoroutine(EndClose());
     }
@@ -355,10 +359,17 @@ public class CustomizationHandler : MonoBehaviour
         selectedID = id;
 
         previewImages[GetNewID(middleID - 1)].GetComponent<Image>().sprite = left;
-        previewImages[middleID].GetComponent<Image>().sprite = middle;
-        previewImages[GetNewID(middleID + 1)].GetComponent<Image>().sprite = right;
+        previewImages[GetNewID(middleID - 1)].GetComponent<IDHolder>().realID =
+            shop.CheckSelected(type, selectedID - 1);
 
-        if(purchased)
+        previewImages[middleID].GetComponent<Image>().sprite = middle;
+        previewImages[middleID].GetComponent<IDHolder>().realID = selectedID;
+
+        previewImages[GetNewID(middleID + 1)].GetComponent<Image>().sprite = right;
+        previewImages[GetNewID(middleID + 1)].GetComponent<IDHolder>().realID =
+            shop.CheckSelected(type, selectedID + 1);
+
+        if (purchased)
         {
             priceImage.SetActive(false);
             priceText.SetActive(false);
@@ -392,6 +403,10 @@ public class CustomizationHandler : MonoBehaviour
         {
             skinPreview.GetComponent<Image>().sprite = 
                 shop.GetSkinSprite(shop.GetSelectedSkin());
+
+            skinPreview.GetComponent<IDHolder>().realID =
+                shop.GetSelectedSkin();
+
             skinPreview.gameObject.SetActive(true);
         } else
         {
@@ -429,6 +444,9 @@ public class CustomizationHandler : MonoBehaviour
         hatPreview.GetComponent<Image>().sprite =
             shop.GetHatSprite(shop.GetSelectedHat());
         hatPreview.gameObject.SetActive(true);
+
+        hatPreview.GetComponent<IDHolder>().realID =
+            shop.GetSelectedHat();
 
         if (shop.HasHatSupport(shop.GetSelectedSkin()))
         {
@@ -580,12 +598,18 @@ public class CustomizationHandler : MonoBehaviour
 
         previewImages[GetNewID(middleID - 1)].GetComponent<Image>().sprite = newLeft;
         previewImages[GetNewID(middleID - 1)].localScale = Vector3.one;
+        previewImages[GetNewID(middleID - 1)].GetComponent<IDHolder>().realID =
+            shop.CheckSelected(type, selectedID - 1);
 
         previewImages[middleID].GetComponent<Image>().sprite = newMiddle;
         previewImages[middleID].localScale = new Vector3(bigScale, bigScale, bigScale);
+        previewImages[middleID].GetComponent<IDHolder>().realID =
+            selectedID;
 
         previewImages[GetNewID(middleID + 1)].GetComponent<Image>().sprite = newRight;
         previewImages[GetNewID(middleID + 1)].localScale = Vector3.one;
+        previewImages[GetNewID(middleID + 1)].GetComponent<IDHolder>().realID =
+            shop.CheckSelected(type, selectedID + 1);
 
         if (type == CustomizationType.Hat)
         {
@@ -698,16 +722,22 @@ public class CustomizationHandler : MonoBehaviour
             //linkes preview in mitte bewegen & upscalen
             previewImages[GetNewID(middleID - 1)].transform.DOMove(middlePos, time);
             previewImages[GetNewID(middleID - 1)].transform.DOScale(bigScale, time);
+            previewImages[GetNewID(middleID - 1)].GetComponent<IDHolder>().realID =
+                shop.CheckSelected(type, selectedID - 1);
 
             //mittleres preview nach rechts & runterscalen
             previewImages[middleID].transform.DOMove(previewPositions[2], time);
             previewImages[middleID].transform.DOScale(1, time);
+            previewImages[middleID].GetComponent<IDHolder>().realID =
+                shop.CheckSelected(type, selectedID);
 
             //rechtes preview an linke pos & dummy an rechte pos & beide x + 125
             Vector3 leftStartPos = previewPositions[0];
             leftStartPos.x -= 125;
             previewImages[GetNewID(middleID + 1)].transform.position = leftStartPos;
             previewImages[GetNewID(middleID + 1)].DOMove(previewPositions[0], time);
+            previewImages[GetNewID(middleID + 1)].GetComponent<IDHolder>().realID =
+                shop.CheckSelected(type, selectedID - 2);
 
             //dummy altes image zuweisen & nach rechts bewegen
             previewImages[3].transform.position = previewPositions[2];
@@ -744,16 +774,22 @@ public class CustomizationHandler : MonoBehaviour
           //rechtes preview in mitte bewegen & upscalen
             previewImages[GetNewID(middleID + 1)].transform.DOMove(middlePos, time);
             previewImages[GetNewID(middleID + 1)].transform.DOScale(bigScale, time);
+            previewImages[GetNewID(middleID + 1)].GetComponent<IDHolder>().realID =
+            shop.CheckSelected(type, selectedID + 1);
 
             //mittleres preview nach links & runterscalen
             previewImages[middleID].transform.DOMove(previewPositions[0], time);
             previewImages[middleID].transform.DOScale(1, time);
+            previewImages[middleID].GetComponent<IDHolder>().realID =
+                shop.CheckSelected(type, selectedID);
 
             //linkes preview an rechte pos & dummy an linke pos & beide x - 125
             Vector3 rightStartPos = previewPositions[2];
             rightStartPos.x += 125;
             previewImages[GetNewID(middleID - 1)].transform.position = rightStartPos;
             previewImages[GetNewID(middleID - 1)].DOMove(previewPositions[2], time);
+            previewImages[GetNewID(middleID - 1)].GetComponent<IDHolder>().realID =
+                shop.CheckSelected(type, selectedID + 2);
 
             //dummy altes image zuweisen & nach links bewegen
             previewImages[3].transform.position = previewPositions[0];
@@ -1014,5 +1050,124 @@ public class CustomizationHandler : MonoBehaviour
         shop.BuyCustom(type, selectedID);
 
         buyInfo.SetActive(true);
+    }
+
+    private void Update()
+    {
+        Skin pSkin;
+
+        for(int i = 0; i < shop.allSkins.Count; i++)
+        {
+            pSkin = shop.allSkins[i];
+
+            if (pSkin.animated)
+            {
+                pSkin.shopTime += Time.deltaTime;
+
+                if (pSkin.shopTime >= pSkin.animationSpeed)
+                { //sprite update
+                    pSkin.shopTime = 0;
+
+                    pSkin.shopStep++;
+                    if (pSkin.shopStep >= pSkin.animatedSprites.Length)
+                    {
+                        pSkin.shopStep = 0;
+                    }
+
+                    if(i == shop.GetSelectedSkin())
+                    {
+                        FF_PlayerData.Instance.OverrideSprite(pSkin.animatedSprites[pSkin.shopStep]);
+                    }
+
+                    if (skinPreview.gameObject.activeSelf)
+                    {
+                        if(i == skinPreview.GetComponent<IDHolder>().realID)
+                        {
+                            skinPreview.GetComponent<Image>().sprite = 
+                                pSkin.animatedSprites[pSkin.shopStep];
+                        }
+                    }
+
+                    if(type == CustomizationType.Skin)
+                    {
+                        for (int a = 0; a < smallPreviewParent.childCount; a++)
+                        {
+                            if (i == smallPreviewParent.GetChild(a).GetComponent<IDHolder>().realID)
+                            {
+                                smallPreviewParent.GetChild(a).GetChild(0).GetComponent<Image>().sprite =
+                                    pSkin.animatedSprites[pSkin.shopStep];
+                            }
+                        }
+
+                        for(int a = 0; a < 3; a++)
+                        {
+                            if(i == previewImages[a].GetComponent<IDHolder>().realID)
+                            {
+                                previewImages[a].GetComponent<Image>().sprite =
+                                    pSkin.animatedSprites[pSkin.shopStep];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Hat cHat;
+
+        for(int i = 0; i < shop.allHats.Count; i++)
+        {
+            cHat = shop.allHats[i];
+
+            if (cHat.animated)
+            {
+                cHat.shopTime += Time.deltaTime;
+
+                if (cHat.shopTime >= cHat.animationSpeed)
+                { //sprite update
+                    cHat.shopTime = 0;
+
+                    cHat.shopStep++;
+                    if (cHat.shopStep >= cHat.animatedSprites.Length)
+                    {
+                        cHat.shopStep = 0;
+                    }
+
+                    if(i == shop.GetSelectedHat())
+                    {
+                        FF_PlayerData.Instance.OverrideHatSprite(cHat.animatedSprites[cHat.shopStep]);
+                    }
+
+                    if(hatPreview.gameObject.activeSelf)
+                    {
+                        if (i == hatPreview.GetComponent<IDHolder>().realID)
+                        {
+                            hatPreview.GetComponent<Image>().sprite =
+                                cHat.animatedSprites[cHat.shopStep];
+                        }
+                    }
+
+                    if (type == CustomizationType.Hat)
+                    {
+                        for (int a = 0; a < smallPreviewParent.childCount; a++)
+                        {
+                            if (i == smallPreviewParent.GetChild(a).GetComponent<IDHolder>().realID)
+                            {
+                                smallPreviewParent.GetChild(a).GetChild(0).GetComponent<Image>().sprite =
+                                    cHat.animatedSprites[cHat.shopStep];
+                            }
+                        }
+
+                        for (int a = 0; a < 3; a++)
+                        {
+                            if (i == previewImages[a].GetComponent<IDHolder>().realID)
+                            {
+                                previewImages[a].GetComponent<Image>().sprite =
+                                    cHat.animatedSprites[cHat.shopStep];
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

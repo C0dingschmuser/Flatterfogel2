@@ -30,7 +30,8 @@ public class FF_PlayerData : MonoBehaviour
                 wing, minerTool, staminaText, itemHolder, fuelParent, mineItemParent,
                 hatObj;
     public Camera mainCamera;
-    public bool dead = false, isJumping = false, isGrounded = false, heatPaused = false;
+    public bool dead = false, isJumping = false, isGrounded = false, heatPaused = false, inShop = false,
+        animationRunning = false, hatAnimationRunning = false;
     private bool goLocked = false, landing = false;
     public List<GameObject> deadChilds = new List<GameObject>();
 
@@ -44,7 +45,7 @@ public class FF_PlayerData : MonoBehaviour
     [SerializeField]
     private int playerDepth = 0;
 
-    public SpriteRenderer sRenderer, wingRenderer;
+    public SpriteRenderer sRenderer, wingRenderer, hatRenderer;
 
     public Vector3 lastBlusPosition;
 
@@ -56,6 +57,7 @@ public class FF_PlayerData : MonoBehaviour
 
     private Skin currentSkin = null;
     private Wing currentWing = null;
+    private Hat currentHat = null;
 
     //private int lastKey = -1;
     private int groundHeight = 0; //höhe der aktuellen groundmodus-plattform
@@ -213,6 +215,11 @@ public class FF_PlayerData : MonoBehaviour
             }
         }
 
+        if(animationRunning)
+        {
+            animationRunning = false;
+        }
+
         currentSkin = newSkin;
         currentWing = newWing;
 
@@ -221,6 +228,16 @@ public class FF_PlayerData : MonoBehaviour
 
     public void LoadHat(Hat newHat)
     {
+        currentHat = newHat;
+
+        if(currentHat.animated)
+        {
+            hatAnimationRunning = true;
+        } else
+        {
+            hatAnimationRunning = false;
+        }
+
         if(newHat.hatID == 0)
         { //kein hut
             hatObj.SetActive(false);
@@ -230,6 +247,56 @@ public class FF_PlayerData : MonoBehaviour
         }
 
         hatObj.GetComponent<SpriteRenderer>().sprite = newHat.sprite;
+    }
+
+    private void HandleAnimation()
+    {
+        if (inShop) return;
+
+        currentSkin.shopTime += Time.deltaTime;
+
+        if (currentSkin.shopTime >= currentSkin.animationSpeed)
+        { //sprite update
+            currentSkin.shopTime = 0;
+
+            currentSkin.shopStep++;
+            if (currentSkin.shopStep >= currentSkin.animatedSprites.Length)
+            {
+                currentSkin.shopStep = 0;
+            }
+
+            sRenderer.sprite = currentSkin.animatedSprites[currentSkin.shopStep];
+        }
+    }
+
+    private void HandleHatAnimation()
+    {
+        if (inShop) return;
+
+        currentHat.shopTime += Time.deltaTime;
+
+        if (currentHat.shopTime >= currentHat.animationSpeed)
+        {
+            currentHat.shopTime = 0;
+
+            currentHat.shopStep++;
+            if (currentHat.shopStep >= currentHat.animatedSprites.Length)
+            {
+                currentHat.shopStep = 0;
+            }
+
+            hatRenderer.sprite = currentHat.animatedSprites[currentHat.shopStep];
+        }
+    }
+
+    public void OverrideSprite(Sprite newSprite)
+    {
+        sRenderer.sprite = newSprite;
+    }
+
+    public void OverrideHatSprite(Sprite newSprite)
+    {
+        hatRenderer.sprite = newSprite;
     }
 
     public void LoadPlayerSkin(Skin newSkin, Wing newWing, bool physicsResolution = false)
@@ -352,6 +419,11 @@ public class FF_PlayerData : MonoBehaviour
                 deadChilds[i].GetComponent<Rigidbody2D>().simulated = true;
             }
         }
+
+        if(currentSkin.animated)
+        {
+            animationRunning = true;
+        }
     }
 
     public void LoadPipe()
@@ -384,17 +456,6 @@ public class FF_PlayerData : MonoBehaviour
                 pipeEndSprite[y,x] =
                     Sprite.Create(fDT_End, new Rect(0 + (x * widthEnd), 0 + (y * heightEnd), widthEnd, heightEnd),
                     new Vector2(0.5f, 0.5f), 100, 1, SpriteMeshType.FullRect);
-            }
-        }
-    }
-
-    public void SetColor(Color c)
-    {
-        if(currentSkin != null)
-        {
-            if (currentSkin.animated == 1)
-            {
-                sRenderer.color = c;
             }
         }
     }
@@ -1199,6 +1260,16 @@ public class FF_PlayerData : MonoBehaviour
             if(touches[0].phase == TouchPhase.Began) touchOK = true;
 #endif
             holdingDown = true;
+        }
+
+        if(animationRunning)
+        {
+            HandleAnimation();
+        }
+
+        if(hatAnimationRunning)
+        {
+            HandleHatAnimation();
         }
 
         if (FlatterFogelHandler.gameState != 2)

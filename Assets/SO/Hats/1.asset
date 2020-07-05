@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: 1
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 63fdde012ce3c2c42b536165d2e1fba4, type: 3}
-  yDist: 0
-  hatID: 1
-  salePercent: 0
+  animatedSprites: []
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0.19999999
+  shopStep: 0
   purchased: 0
+  salePercent: 0
   cost:
   - mineralID: 14
     amount: 45
@@ -26,4 +29,6 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
+  yDist: 0
+  hatID: 1
   identifier: magic
