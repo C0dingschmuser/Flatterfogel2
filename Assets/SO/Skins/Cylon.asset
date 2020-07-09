@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7ece0d8c080068499e03e32231b4348, type: 3}
+  m_Name: Cylon
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 21300000, guid: d8da5a9f0dbd9344e93859842877a306, type: 3}
+  overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
+  animatedSprites:
+  - {fileID: 21300000, guid: d8da5a9f0dbd9344e93859842877a306, type: 3}
+  - {fileID: 21300000, guid: b7aa4e9e6b989a442a977d41fc644582, type: 3}
+  - {fileID: 21300000, guid: 5de9aed37e13ed24e8d3ec42359f749f, type: 3}
+  - {fileID: 21300000, guid: b9ce5fbcf71b95b4abb0790012107044, type: 3}
+  - {fileID: 21300000, guid: 5de9aed37e13ed24e8d3ec42359f749f, type: 3}
+  - {fileID: 21300000, guid: b7aa4e9e6b989a442a977d41fc644582, type: 3}
+  animated: 1
+  animationSpeed: 0.2
+  shopTime: 0.16750541
+  shopStep: 3
+  purchased: 0
+  salePercent: 0
+  cost:
+  - mineralID: 14
+    amount: 105
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  boughtWings: 00000000
+  boughtHats: 00000000
+  wingSupport: 1
+  hatSupport: 1
+  boxCollider: 0
+  colliderSize: {x: 0, y: 0}
+  colliderOffset: {x: 0, y: 0}
+  skinID: 10
+  identifier: cylon

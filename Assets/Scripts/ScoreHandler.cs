@@ -22,7 +22,7 @@ public class ScoreHandler : MonoBehaviour
     public Canvas windowCanvas;
     public Material medalMat;
     public GameObject[] medalObjs;
-    public GameObject scoreObj, highscoreObj, tapObj, highscoreList, okButton, personalCoinsObj,
+    public GameObject scoreObj, perfectHitObj, highscoreObj, coinObj, tapObj, highscoreList, okButton, personalCoinsObj,
         continueEffects, xpParent, goAgainButton, menuButton;
     public GameObject inputParent, hParent, eventSystem;
 
@@ -821,7 +821,7 @@ public class ScoreHandler : MonoBehaviour
         }
     }
 
-    public IEnumerator OpenScoreboard(float waitTime, ulong score, ulong highscore, ulong taps, bool showScore = true)
+    public IEnumerator OpenScoreboard(float waitTime, ulong score, ulong highscore, ulong taps, ulong perfectHits, ulong roundCoins, bool showScore = true)
     {
         if(showScore)
         {
@@ -832,6 +832,12 @@ public class ScoreHandler : MonoBehaviour
             lvlHandler.ResetEffects(xpParent);
             lvlHandler.SetXPText(xpParent);
 
+            scoreObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
+            perfectHitObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
+            highscoreObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
+            coinObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
+            tapObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
+
             goAgainButton.GetComponent<Button>().interactable = false;
             menuButton.GetComponent<Button>().interactable = false;
 
@@ -839,13 +845,16 @@ public class ScoreHandler : MonoBehaviour
         }
 
         yield return new WaitForSeconds(waitTime);
-        UpdateScoreboard(score, highscore, taps, showScore);
+        UpdateScoreboard(score, highscore, taps, perfectHits, roundCoins, showScore);
     }
 
-    public void UpdateScoreboard(ulong score, ulong highscore, ulong taps, bool showScore = true)
+    public void UpdateScoreboard(ulong score, ulong highscore, ulong taps, ulong perfectHits, ulong roundCoins, bool showScore = true)
     {
         scoreObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
+        perfectHitObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
         highscoreObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
+        coinObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
+        tapObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
 
         GameObject[] buttons = new GameObject[2];
         buttons[0] = goAgainButton;
@@ -853,10 +862,13 @@ public class ScoreHandler : MonoBehaviour
 
         lvlHandler.UpdateXP(xpParent, buttons);
 
-        ulong tempScore = 0;
-
         TextMeshProUGUI scoreText = scoreObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI perfectHitText = perfectHitObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI highscoreText = highscoreObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI coinText = coinObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI tapText = tapObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+
+        ulong tempScore = 0;
 
         Tween scoreTween = DOTween.To(() => tempScore, x => tempScore = x, score, 1f);
         scoreTween.OnUpdate(() =>
@@ -872,7 +884,29 @@ public class ScoreHandler : MonoBehaviour
             highscoreText.text = tempHighscore.ToString();
         });
 
-        tapObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = taps.ToString();
+        ulong tempTaps = 0;
+
+        Tween tapTween = DOTween.To(() => tempTaps, x => tempTaps = x, taps, 1f);
+        tapTween.OnUpdate(() =>
+        {
+            tapText.text = tempTaps.ToString();
+        });
+
+        ulong tempPerfectHit = 0;
+
+        Tween perfectHitTween = DOTween.To(() => tempPerfectHit, x => tempPerfectHit = x, perfectHits, 1f);
+        perfectHitTween.OnUpdate(() =>
+        {
+            perfectHitText.text = tempPerfectHit.ToString();
+        });
+
+        ulong tempRoundCoins = 0;
+
+        Tween roundCoinTween = DOTween.To(() => tempRoundCoins, x => tempRoundCoins = x, roundCoins, 1f);
+        roundCoinTween.OnUpdate(() =>
+        {
+            coinText.text = tempRoundCoins.ToString();
+        });
 
         int max = GetMax(score, true);
 

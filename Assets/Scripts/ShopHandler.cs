@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Localization;
 using DG.Tweening;
 using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
@@ -79,6 +80,16 @@ public class ShopHandler : MonoBehaviour
         for(int i = 0; i < allSkins.Count; i++)
         {
             allSkins[i].skinID = i;
+        }
+
+        for(int i = 0; i < allWings.Count; i++)
+        {
+            allWings[i].wingID = i;
+        }
+
+        for(int i = 0; i < allHats.Count; i++)
+        {
+            allHats[i].hatID = i;
         }
     }
 
@@ -449,6 +460,7 @@ public class ShopHandler : MonoBehaviour
                 break;
             case 1: //add
                 blus += newBlus;
+                FlatterFogelHandler.Instance.AddRoundCoin();
                 break;
         }
 

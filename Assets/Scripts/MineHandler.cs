@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
 using DG.Tweening;
 using TMPro;
 using System;
 using Random = UnityEngine.Random;
 using UnityEngine.UI;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public enum MineralType
 {
@@ -48,6 +50,11 @@ public class MineHandler : MonoBehaviour
     public bool miningActive = false;
     public bool isMoving = false, isShaking = false, lastCamPosAssigned = false;
 
+    [SerializeField]
+    private LocalizedString[] mineralName = null;
+    [SerializeField]
+    private string[] mineralString = null;
+
     private bool backgroundSet = false;
     private GameObject[] mineObjs = new GameObject[4096]; //aktuelle mineobjs die sichtbar sind
     private Tween playerMoveTween = null;
@@ -88,6 +95,23 @@ public class MineHandler : MonoBehaviour
         for(int i = 0; i < mineObjs.Length; i++)
         {
             mineObjs[i] = null;
+        }
+    }
+
+    public void StartLoadLocalozation()
+    {
+        StartCoroutine(LoadLocalization());
+    }
+
+    private IEnumerator LoadLocalization()
+    {
+        AsyncOperationHandle handle;
+
+        for(int i = 0; i < mineralName.Length; i++)
+        {
+            yield return handle = mineralName[i].GetLocalizedString();
+
+            rawMinerals[i].itemName = (string)handle.Result;
         }
     }
 

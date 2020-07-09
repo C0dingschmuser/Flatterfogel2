@@ -10,7 +10,8 @@ public class PipeData : MonoBehaviour
 {
 
     public bool isChecked = false, beginDestruction = false, isTop = false, destructionComplete = false,
-        highscorePipe = false, destructable = false, nextSpawned = false, emptyPipe = false;
+        highscorePipe = false, destructable = false, nextSpawned = false, emptyPipe = false,
+        flakEnabled = false;
 
     public int renderDeactivated = 2;
 
@@ -51,7 +52,7 @@ public class PipeData : MonoBehaviour
         }
     }
 
-    public void ResetPipe(bool isTop = false, bool highscorePipe = false, bool emptyPipe = false)
+    public void ResetPipe(bool isTop = false, bool highscorePipe = false, bool emptyPipe = false, bool enableFlak = false)
     {
         physicsCalculated = false;
         isChecked = false;
@@ -66,6 +67,7 @@ public class PipeData : MonoBehaviour
         this.emptyPipe = emptyPipe;
         renderDeactivated = 2;
         this.isTop = isTop;
+        flakEnabled = enableFlak;
 
         GetComponent<SpriteRenderer>().enabled = false;
         GetComponent<BoxCollider2D>().enabled = true;
@@ -74,6 +76,12 @@ public class PipeData : MonoBehaviour
         transform.GetChild(0).GetComponent<BoxCollider2D>().enabled = true;
         transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
         transform.GetChild(0).GetComponent<SpriteRenderer>().color = currentColor;
+
+        if(!isTop)
+        {
+            transform.GetChild(0).GetChild(0).gameObject.GetComponent<Flakhandler>().enabled = true;
+            transform.GetChild(0).GetChild(0).gameObject.SetActive(enableFlak);
+        }
 
         lightObj.intensity = 0f;
         colorTime = 0f;

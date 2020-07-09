@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Localization;
 using DG.Tweening;
 using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEditor;
 using TMPro;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public enum DeathCause
 {
@@ -84,6 +86,12 @@ public class FF_PlayerData : MonoBehaviour
     [SerializeField]
     SpriteRenderer minerSprite = null;
 
+    public LocalizedString collision, outOfWorld, minus, groundCollision, fuelEmpty,
+        overheated, vaporized, crushed, burnt, suicide;
+
+    private string collisionString, outOfWorldString, minusString, groundCollisionString,
+        fuelEmptyString, overheatedString, vaporizedString, crushedString, burntString, suicideString;
+
     private void Awake()
     {
         Instance = this;
@@ -94,6 +102,56 @@ public class FF_PlayerData : MonoBehaviour
 
         SwipeDetector.OnSwipe += SwipeDetector_OnSwipe;
         //LoadPlayerSkin(0, 0);
+    }
+
+    public void StartLoadLocalization()
+    {
+        StartCoroutine(LoadLocalization());
+    }
+
+    private IEnumerator LoadLocalization()
+    {
+        AsyncOperationHandle handle;
+
+        yield return handle = collision.GetLocalizedString();
+
+        collisionString = (string)handle.Result;
+
+        yield return handle = outOfWorld.GetLocalizedString();
+
+        outOfWorldString = (string)handle.Result;
+
+        yield return handle = minus.GetLocalizedString();
+
+        minusString = (string)handle.Result;
+
+        yield return handle = groundCollision.GetLocalizedString();
+
+        groundCollisionString = (string)handle.Result;
+
+        yield return handle = fuelEmpty.GetLocalizedString();
+
+        fuelEmptyString = (string)handle.Result;
+
+        yield return handle = overheated.GetLocalizedString();
+
+        overheatedString = (string)handle.Result;
+
+        yield return handle = vaporized.GetLocalizedString();
+
+        vaporizedString = (string)handle.Result;
+
+        yield return handle = crushed.GetLocalizedString();
+
+        crushedString = (string)handle.Result;
+
+        yield return handle = burnt.GetLocalizedString();
+
+        burntString = (string)handle.Result;
+
+        yield return handle = suicide.GetLocalizedString();
+
+        suicideString = (string)handle.Result;
     }
 
     public int GetMaxFuel()
@@ -244,6 +302,13 @@ public class FF_PlayerData : MonoBehaviour
         } else
         {
             hatObj.SetActive(true);
+
+            float yDiff = currentSkin.hatDiff;
+
+            Vector3 pos = transform.position;
+            pos.y += 31.005f + yDiff;
+
+            hatObj.transform.position = pos;
         }
 
         hatObj.GetComponent<SpriteRenderer>().sprite = newHat.sprite;
@@ -942,6 +1007,8 @@ public class FF_PlayerData : MonoBehaviour
                     else
                     { //näher dran -> mehr punkte
                         FlatterFogelHandler.nextCompleteDestruction = true;
+                        FlatterFogelHandler.Instance.AddPerfectHit();
+
                         ffHandler.SetScore(2, 1, 3, blus);
 
                         GameObject infoText =
@@ -996,17 +1063,29 @@ public class FF_PlayerData : MonoBehaviour
                     break;
                 case "Minus":
 
+                    bool ok = false;
+
                     if(MieserHandler.Instance != null)
                     {
                         if (!MieserHandler.Instance.IsDead())
                         {
-                            Die(DeathCause.MieserMinus);
+                            ok = true;
                         }
-                    } else
-                    {
-                        Die(DeathCause.MieserMinus);
                     }
 
+                    if(ShootingPipeHandler.Instance.shootingPipesActive ||
+                        !ShootingPipeHandler.Instance.endComplete)
+                    {
+                        ok = true;
+                    }
+
+                    if(ok)
+                    {
+                        GameObject minus = collision.gameObject;
+                        minus.GetComponent<MinusHandler>().Explode();
+
+                        Die(DeathCause.MieserMinus);
+                    }
 
                     break;
                 case "Laser":
@@ -1129,41 +1208,41 @@ public class FF_PlayerData : MonoBehaviour
         switch(type)
         {
             case DeathCause.Collision:
-                deathReason = "KOLLISION";
+                deathReason = collisionString;
                 break;
             case DeathCause.OutOfWorld:
-                deathReason = "AUS WELT GEFALLEN";
+                deathReason = outOfWorldString;
                 break;
             case DeathCause.Minus:
                 //oldVel.x = 250;
-                deathReason = "MINUSKOLLISION";
+                deathReason = minusString; //"MINUSKOLLISION";
                 break;
             case DeathCause.Ground:
-                deathReason = "BODENKOLLISION";
+                deathReason = groundCollisionString; //"BODENKOLLISION";
                 break;
             case DeathCause.FuelEmpty:
-                deathReason = "BLUSSIZIN ALLE";
+                deathReason = fuelEmptyString; //"BLUSSIZIN ALLE";
                 break;
             case DeathCause.Heatshield:
-                deathReason = "ÜBERHITZT";
+                deathReason = overheatedString; //"ÜBERHITZT";
                 break;
             case DeathCause.MieserLaser:
-                deathReason = "VERDAMPFT";
+                deathReason = vaporizedString; //"VERDAMPFT";
                 break;
             case DeathCause.MieserMinus:
-                deathReason = "WEGGEMINUST";
+                deathReason = minusString; //"WEGGEMINUST";
                 break;
             case DeathCause.Crushed:
-                deathReason = "ZERQUETSCHT";
+                deathReason = crushedString; //"ZERQUETSCHT";
                 break;
             case DeathCause.Burnt:
-                deathReason = "VERBRANNT";
+                deathReason = burntString; //"VERBRANNT";
                 break;
             case DeathCause.Suicide:
-                deathReason = "SELBSTMORD";
+                deathReason = suicideString; //"SELBSTMORD";
                 break;
             default:
-                deathReason = "Undefiniert: " + ((int)type).ToString();
+                deathReason = "Undefined: " + ((int)type).ToString();
                 break;
         }
 

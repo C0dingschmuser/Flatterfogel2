@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Classic Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 3
+  m_NextAvailableId: 17
   m_TableCollectionName: Classic
   m_TableCollectionNameGuidString: 8b1c0bf9100fe06438781f6ffd3c2d39
   m_Entries:
@@ -22,6 +22,58 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 2
     m_Key: Perfect hit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Key: Warning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Key: ShootsMinus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Key: OhNo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Key: Collision
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Key: OutOfWorld
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Key: GroundCollision
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Key: Minus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Key: FuelEmpty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Key: Overheated
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13
+    m_Key: Vaporized
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Key: Crushed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Key: Burnt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Key: Suicide
     m_Metadata:
       m_Items: []
   m_Metadata:

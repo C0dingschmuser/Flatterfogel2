@@ -24,6 +24,7 @@ public class Skin : ScriptableObject
     public int[] boughtHats;
 
     [Header("Allgemein")]
+    public float hatDiff = 0;
     public bool wingSupport = true;
     public bool hatSupport = true;
     public bool boxCollider = false;

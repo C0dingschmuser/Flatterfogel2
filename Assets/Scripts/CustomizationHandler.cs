@@ -114,7 +114,9 @@ public class CustomizationHandler : MonoBehaviour
             switchRunning = false;
         }
 
-        if(noMoneyRoutine != null)
+        shop.ApplyCustom(CustomizationType.Skin, shop.GetSelectedSkin(), false);
+
+        if (noMoneyRoutine != null)
         {
             StopCoroutine(noMoneyRoutine);
         }

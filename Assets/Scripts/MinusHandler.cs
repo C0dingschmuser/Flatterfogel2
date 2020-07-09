@@ -11,6 +11,7 @@ public class MinusHandler : MonoBehaviour
     [SerializeField]
     private ParticleSystem trailSystem = null;
 
+    private Vector3 targetPosition;
     private Vector2 dir;
     private float speed = 100f, targetY = -999, defaultEmission = 10;
 
@@ -36,41 +37,24 @@ public class MinusHandler : MonoBehaviour
         em.rateOverTime = defaultEmission;
     }
 
-    private Vector3 PredictedPosition(Vector3 targetPosition, Vector3 shooterPosition, Vector3 targetVelocity, float projectileSpeed)
+    public void StartMinusFlak(GameObject player, Vector3 target, float speed)
     {
-        Vector3 displacement = targetPosition - shooterPosition;
-        float targetMoveAngle = Vector3.Angle(-displacement, targetVelocity) * Mathf.Deg2Rad;
-        //if the target is stopping or if it is impossible for the projectile to catch up with the target (Sine Formula)
-        if (targetVelocity.magnitude == 0 || targetVelocity.magnitude > projectileSpeed && Mathf.Sin(targetMoveAngle) / projectileSpeed > Mathf.Cos(targetMoveAngle) / targetVelocity.magnitude)
-        {
-            //Debug.Log("Position prediction is not feasible.");
-            return targetPosition;
-        }
-        //also Sine Formula
-        float shootAngle = Mathf.Asin(Mathf.Sin(targetMoveAngle) * targetVelocity.magnitude / projectileSpeed);
-        return targetPosition + targetVelocity * displacement.magnitude / Mathf.Sin(Mathf.PI - targetMoveAngle - shootAngle) * Mathf.Sin(shootAngle) / targetVelocity.magnitude;
-    }
+        transform.localScale = new Vector3(30, 30, 30);
 
-    public void StartMinusFlak(GameObject player, float speed)
-    {
-        transform.localScale = new Vector3(40, 40, 40);
+        targetPosition = target;
 
         this.player = player;
         ResetMinus();
 
         exploded = false;
 
-        Vector3 target = PredictedPosition(player.transform.position,
-            transform.position, new Vector3(0, 0, 0), speed);
-
-        target.x += Random.Range(-100, 200);
-        target.y += Random.Range(-150, 75);
-
         dir = target - transform.position;
         dir = dir.normalized;
 
         this.targetY = player.transform.position.y;
         this.speed = speed;
+
+        transform.DOScale(65, 0.25f);
     }
 
     public void StartMinus(Vector2 dir, float speed, GameObject player)
@@ -98,7 +82,7 @@ public class MinusHandler : MonoBehaviour
         aimAssist = true;
     }
 
-    private void Explode()
+    public void Explode()
     {
         exploded = true;
 

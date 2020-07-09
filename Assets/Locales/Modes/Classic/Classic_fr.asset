@@ -26,5 +26,57 @@ MonoBehaviour:
     m_Localized: UN COUP PARFAIT!
     m_Metadata:
       m_Items: []
+  - m_Id: 3
+    m_Localized: ATTENTION
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: Tirez moins
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: OH NON
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Collision
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: Hors limites
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: Moins
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: Collision au sol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: En panne de carburant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: Surchauffe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13
+    m_Localized: "Vaporis\xE9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Localized: "Ecras\xE9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Localized: "Br\xFBl\xE9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Localized: Suicide
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

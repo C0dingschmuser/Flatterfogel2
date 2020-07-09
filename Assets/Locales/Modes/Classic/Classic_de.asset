@@ -26,5 +26,57 @@ MonoBehaviour:
     m_Localized: PERFEKTER TREFFER!
     m_Metadata:
       m_Items: []
+  - m_Id: 3
+    m_Localized: WARNUNG
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: "Schie\xDFt Minus"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: OH NEIM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Kollision
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: Aus Welt gefallen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: Weggeminust
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: Bodenkollision
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: Blussizin alle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: "\xDCberhitzt"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13
+    m_Localized: Verdampft
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Localized: Zerquetscht
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Localized: Verbrannt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Localized: Selbstmord
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

@@ -201,7 +201,10 @@ public class OptionHandler : MonoBehaviour
         LevelHandler.Instance.StartLoadLocalization();
         ScoreHandler.Instance.StartLoadLocalization();
         ShopHandler.Instance.StartLoadLocalization();
+        MineHandler.Instance.StartLoadLocalozation();
         ThinkHandler.Instance.StartLoadLocalization();
+        FF_PlayerData.Instance.StartLoadLocalization();
+
         //AccountHandler.Instance.StartLoadLocalization();
     }
 

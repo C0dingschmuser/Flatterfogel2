@@ -19,7 +19,7 @@ public class FlatterFogelHandler : MonoBehaviour
     public GameObject player, pipePrefab, flash, scoreText, goBtn, backbtn, menu,
         cameraObj, particleParent, pipeDestructionPrefab, deathText, backgroundHandler, blusPrefab,
         pipeDestructionParent, modeChangeInfo, startTimerObj, ovenButton, highscoreLineObj,
-        topCollider;
+        topCollider, bossWarning;
 
     public GameObject[] playerScoreEffect;
     public GameObject[] cameraColliders;
@@ -50,10 +50,13 @@ public class FlatterFogelHandler : MonoBehaviour
     public DestructionHandler destructionHandler;
     public IngameMenuHandler ingameMenu;
     public ZigZagHandler zigZagHandler;
+    public SplatterHandler splatterHandler;
+    public ShootingPipeHandler shootingPipehandler;
 
     public float minPipeY = 500, maxPipeY = 1065;
 
-    private ObscuredULong score = 0, taps = 0, lastScore = 0;
+    private ObscuredInt internalScoreCount = 0;
+    private ObscuredULong score = 0, taps = 0, lastScore = 0, roundCoins = 0, perfectHits = 0;
 
     public class HighscoreHolder
     {
@@ -128,10 +131,23 @@ public class FlatterFogelHandler : MonoBehaviour
         objectPooler = ObjectPooler.Instance;
         Instance = this;
 
-
-
         SetScoreColor(defaultColors[Random.Range(0, defaultColors.Length)]);
         ModeManager.modeColor = currentColor;
+    }
+
+    public void SetInternalScore(int newScore)
+    {
+        internalScoreCount = newScore;
+    }
+
+    public void AddRoundCoin()
+    {
+        roundCoins++;
+    }
+
+    public void AddPerfectHit()
+    {
+        perfectHits++;
     }
 
     private void FlashHighscoreObj()
@@ -520,7 +536,11 @@ public class FlatterFogelHandler : MonoBehaviour
             SetScore(0, 0);
 #endif
             scoreText.SetActive(false);
+
             taps = 0;
+            roundCoins = 0;
+            perfectHits = 0;
+
             highscoreLineShowed = false;
 
             CancelInvoke("FlashHighscoreObj");
@@ -1220,10 +1240,13 @@ public class FlatterFogelHandler : MonoBehaviour
         if(add == 0)
         {//setzen
             SetScore((ulong)score);
+            internalScoreCount = 0;
         } else if(add == 1)
         { //addieren
             SetScore(this.score + (ulong)score);
             ResetModeChangedBool();
+
+            internalScoreCount += score;
 
             float xp = (float)score * 5;
 
@@ -1242,14 +1265,15 @@ public class FlatterFogelHandler : MonoBehaviour
                 LevelHandler.Instance.AddNewXP((int)xp);
             }
 
-            float am = 9;
+            float am = 7;
 
             if (hardcore)
             {
                 am = 5;
             }
 
-            if (!destructionMode && !miningMode)
+            if (!destructionMode && !miningMode && 
+                (!shootingPipehandler.shootingPipesActive && shootingPipehandler.endComplete))
             {
                 scrollSpeed = Mathf.Clamp(scrollSpeed + am, defaultScrollSpeed, 400);
             }
@@ -1263,6 +1287,8 @@ public class FlatterFogelHandler : MonoBehaviour
             else
             {
                 ulong a = this.score;
+
+                internalScoreCount = Mathf.Clamp(internalScoreCount - score, 0, 9999);
 
                 long final = (long)a - score;
 
@@ -1342,6 +1368,12 @@ public class FlatterFogelHandler : MonoBehaviour
                             highscoreLineObj.SetActive(false);
                         }
 
+                        if(!pData.isTop)
+                        { //flak bei zerstörung deaktivieren
+                            //tempPipes[i].transform.GetChild(0).GetChild(0).gameObject.SetActive(false);
+                            tempPipes[i].transform.GetChild(0).GetChild(0).GetComponent<Flakhandler>().enabled = false;
+                        }
+
                         if (OptionHandler.enhancedPipeDestruction == 0 || battleRoyale || !nextCompleteDestruction)
                         { //Aufleuchten
                             if (OptionHandler.lightEnabled == 1)
@@ -1351,9 +1383,12 @@ public class FlatterFogelHandler : MonoBehaviour
                         }
                         else
                         { //"Zerstörung"
-                            if (!FF_PlayerData.Instance.IsStaminaLow())
-                            {
-                                pData.StartDestruction(0.2f, i);
+                            if(!pData.flakEnabled)
+                            { //nur obere pipe zerstören wenn flak da ist
+                                if (!FF_PlayerData.Instance.IsStaminaLow())
+                                {
+                                    pData.StartDestruction(0.2f, i);
+                                }
                             }
                         }
 
@@ -1474,6 +1509,122 @@ public class FlatterFogelHandler : MonoBehaviour
         }
     }
 
+    public void StartZoomOnBoss(Vector3 pos, float zoomInTime, float waitTime)
+    {
+        StartCoroutine(ZoomOnBoss(pos, zoomInTime, waitTime));
+    }
+
+    private IEnumerator ZoomOnBoss(Vector3 pos, float zoomInTime, float waitTime)
+    {
+        //reinzoomen
+        player.GetComponent<Rigidbody2D>().simulated = false;
+
+        bool circle = player.GetComponent<CircleCollider2D>().enabled;
+        bool box = player.GetComponent<BoxCollider2D>().enabled;
+
+        player.GetComponent<CircleCollider2D>().enabled = false;
+        player.GetComponent<BoxCollider2D>().enabled = false; ;
+
+        DOTween.To(() => cameraObj.GetComponent<Camera>().orthographicSize,
+            x => cameraObj.GetComponent<Camera>().orthographicSize = x, 300, zoomInTime);
+
+        pos.z = -500;
+
+        pos.x = Mathf.Clamp(pos.x, -572, -192);
+
+        if (pos.y > 1128)
+        {
+            pos.y = 1128;
+        }
+        else if (pos.y < 452)
+        {
+            if (!miningMode)
+            {
+                pos.y = 452;
+            }
+        }
+
+        cameraObj.transform.DOMove(pos, zoomInTime);
+
+        yield return new WaitForSeconds(zoomInTime);
+
+        if(shootingPipehandler.shootingPipesActive)
+        {
+            bossWarning.SetActive(true);
+
+            pos.z = 0;
+            bossWarning.transform.position = pos;
+
+            for(int i = 2; i < bossWarning.transform.childCount; i++)
+            {
+                bossWarning.transform.GetChild(i).gameObject.SetActive(false);
+            }
+
+            bossWarning.transform.GetChild(1).gameObject.SetActive(true);
+
+            Vector3 lineEndPos = Vector3.zero;
+
+            for(int i = 0; i < pipes.Count; i++)
+            { //erste pipe mit flak finden
+                if(pipes[i].GetComponent<PipeData>().flakEnabled)
+                {
+                    lineEndPos = pipes[i].transform.GetChild(0).GetChild(0).position;
+                    break;
+                }
+            }
+
+            lineEndPos.x -= 75;
+            lineEndPos.z = 100;
+
+            bossWarning.transform.GetChild(1).GetChild(0).
+                GetComponent<LineRenderer>().SetPosition(0,
+                bossWarning.transform.GetChild(1).GetChild(0).position);
+
+            bossWarning.transform.GetChild(1).GetChild(0).
+                GetComponent<LineRenderer>().SetPosition(1, lineEndPos);
+        }
+
+        //warten dass waittime vorbei ist
+
+        yield return new WaitForSeconds(waitTime);
+
+        bossWarning.SetActive(false);
+
+        //rauszoomen
+
+        DOTween.To(() => cameraObj.GetComponent<Camera>().orthographicSize,
+            x => cameraObj.GetComponent<Camera>().orthographicSize = x, OptionHandler.defaultOrthoSize, zoomInTime);
+
+        cameraObj.transform.DOMove(OptionHandler.defaultCameraPos, zoomInTime);
+
+        if(shootingPipehandler.shootingPipesActive)
+        {
+            for(int i = 0; i < pipes.Count; i++)
+            { //pipes nach rechts
+                pipes[i].transform.DOMoveX(pipes[i].transform.position.x + 300, zoomInTime * 0.95f);
+            }
+
+            for(int i = 0; i < otherObjs.Count; i++)
+            {
+                otherObjs[i].transform.DOMoveX(otherObjs[i].transform.position.x + 300, zoomInTime * 0.95f);
+            }
+        }
+
+        yield return new WaitForSeconds(zoomInTime);
+
+        //zoomout complete
+
+        player.GetComponent<CircleCollider2D>().enabled = circle;
+        player.GetComponent<BoxCollider2D>().enabled = box;
+
+        player.GetComponent<Rigidbody2D>().simulated = true;
+
+        if(shootingPipehandler.shootingPipesActive)
+        {
+            shootingPipehandler.ZoomComplete();
+        }
+    }
+
     private IEnumerator SpawnPipesWait(float wait, bool empty = false, bool moveAllowed = true)
     {
         yield return new WaitForSeconds(wait);
@@ -1487,6 +1638,11 @@ public class FlatterFogelHandler : MonoBehaviour
         if(!pipeSpawnAllowed)
         {
             return;
+        }
+
+        if(shootingPipehandler.shootingPipesActive || !shootingPipehandler.endComplete)
+        {
+            moveAllowed = false;
         }
 
         Pipe selectedPipe = ShopHandler.Instance.GetCurrentPipe();
@@ -1516,7 +1672,28 @@ public class FlatterFogelHandler : MonoBehaviour
 
         pipeTop.GetComponent<PipeData>().ResetPipe(true);
 
-        pipeBottom.GetComponent<PipeData>().ResetPipe();
+        bool flakActive =
+            shootingPipehandler.shootingPipesActive;
+
+        if(flakActive && shootingPipehandler.endComplete)
+        {
+            flakActive = false;
+        }
+
+        if(empty || overrideDistance)
+        { //im tunnel keine flaks auf pipes spawnen
+            flakActive = false;
+        }
+
+        if(flakActive)
+        {
+            if(!shootingPipehandler.firstPipeSpawned)
+            { //das hier ist die erste pipe -> zuweisung
+                shootingPipehandler.FirstPipeSpawn(pipeBottom);
+            }
+        }
+
+        pipeBottom.GetComponent<PipeData>().ResetPipe(false, false, false, flakActive);
 
         float minY = minPipeY, maxY = maxPipeY;
 
@@ -1563,7 +1740,10 @@ public class FlatterFogelHandler : MonoBehaviour
         }
 
         if (overrideDistance) {
-            abstand = 165;
+            abstand = 150;
+        } else if(flakActive)
+        {
+            abstand = 300;
         }
 
         GameObject middleObj = pipeHolder.transform.GetChild(3).gameObject;
@@ -1706,7 +1886,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         int pipeType = 0;
 
-        if(!FF_PlayerData.Instance.IsStaminaLow())
+        if(!FF_PlayerData.Instance.IsStaminaLow() && !spawnClose)
         {
             //spawn gravestones wenn vorhanden
 
@@ -1854,15 +2034,25 @@ public class FlatterFogelHandler : MonoBehaviour
             pipeTop.transform.parent.GetComponent<PipeHolder>().SetAssignedBlus(newBlus);
         }
 
-        if (score % 45 == 0 && waitingState == -1 && score > 0 &&
-            !modeCurrentlyChanged && !destructionMode &&!battleRoyale && !hardcore && !zigZag)
+        bool overrideModeChange = false;
+
+        //alt war score % 30 == 0
+        if ((internalScoreCount >= 3 && waitingState == -1 && score > 0 &&
+            !modeCurrentlyChanged && !destructionMode &&!battleRoyale && !hardcore && !zigZag) || overrideModeChange)
         { //wenn score glatt durch 45 teilbar & gerade kein waitingstate & kein destructionmode / hardcore (einbauen)
-            modeCurrentlyChanged = true;
-            bData.modeChangeBlus = true;
+            if(!splatterHandler.splatterActive &&
+                !shootingPipehandler.shootingPipesActive &&
+                shootingPipehandler.endComplete)
+            {
+                internalScoreCount = 0;
 
-            newBlus.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.blue;
+                modeCurrentlyChanged = true;
+                bData.modeChangeBlus = true;
 
-            modeChangeBlus = true;
+                newBlus.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.blue;
+
+                modeChangeBlus = true;
+            }
         }
 
         if((Random.Range(0, 20) == 0 && !modeChangeBlus) ||
@@ -1911,7 +2101,7 @@ public class FlatterFogelHandler : MonoBehaviour
         BlusData bData = newBlus.GetComponent<BlusData>();
 
         bData.SpawnCoin(pos, coinSprites);
-        ShopHandler.Instance.UpdateBlus(1, 1, true);
+        //ShopHandler.Instance.UpdateBlus(1, 1, true);
 
         otherObjs.Add(newBlus);
     }
@@ -1942,6 +2132,8 @@ public class FlatterFogelHandler : MonoBehaviour
         pipeSpawnAllowed = false;
 
         destructionHandler.DisableEnable(false);
+
+        shootingPipehandler.EndShootingPipes();
 
         float anTime = 0.2f;
         float newT = 0.1f;
@@ -2035,7 +2227,8 @@ public class FlatterFogelHandler : MonoBehaviour
         }
 
         StartCoroutine(scoreHandler.OpenScoreboard(
-            OptionHandler.moveTime, score, highscore[ModeManager.currentIndex].highscore[diff], taps));
+            OptionHandler.moveTime, score, highscore[ModeManager.currentIndex].highscore[diff], taps,
+            perfectHits, roundCoins));
 
 #if UNITY_ANDROID || UNITY_IOS
         FirebaseAnalytics.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
@@ -2076,7 +2269,21 @@ public class FlatterFogelHandler : MonoBehaviour
         switch(gameState)
         {
             case 0:
-                StartBossFull();
+                int newMode = 1; //Random.Range(0, 3);
+
+                switch(newMode)
+                {
+                    default:
+                        StartBossFull();
+                        break;
+                    case 1:
+                        StartSplatter();
+                        break;
+                    case 2:
+                        StartShootingPipes();
+                        break;
+                }
+
                 //StartGroundFull();
                 break;
             case 1: //von ground zu pipe
@@ -2101,6 +2308,56 @@ public class FlatterFogelHandler : MonoBehaviour
 
         Invoke("ChangeModeOver", 0.251f);
     }
+
+    private void StartSplatter()
+    {
+        for (int i = 0; i < pipes.Count; i++)
+        {
+            pipes[i].GetComponent<PipeData>().ResetAll();
+            pipes[i].SetActive(false);
+        }
+        pipes.Clear();
+
+        for (int i = 0; i < otherObjs.Count; i++)
+        {
+            if (!otherObjs[i].GetComponent<BlusData>().modeChangeBlus)
+            {
+                otherObjs[i].SetActive(false);
+            }
+        }
+
+        CancelInvoke("FlashHighscoreObj");
+        highscoreLineObj.SetActive(false);
+
+        splatterHandler.StartSplatter();
+
+        SpawnPipes();
+    }
+
+    private void StartShootingPipes()
+    {
+        for (int i = 0; i < pipes.Count; i++)
+        {
+            pipes[i].GetComponent<PipeData>().ResetAll();
+            pipes[i].SetActive(false);
+        }
+        pipes.Clear();
+
+        for (int i = 0; i < otherObjs.Count; i++)
+        {
+            if (!otherObjs[i].GetComponent<BlusData>().modeChangeBlus)
+            {
+                otherObjs[i].SetActive(false);
+            }
+        }
+
+        CancelInvoke("FlashHighscoreObj");
+        highscoreLineObj.SetActive(false);
+
+        shootingPipehandler.StartShootingPipes();
+
+        SpawnPipes();
+    } 
 
     public void StartBossFull()
     {
@@ -2315,11 +2572,11 @@ public class FlatterFogelHandler : MonoBehaviour
 
                 if (dir == 0)
                 { //hoch
-                    newY = Random.Range(lastY, lastY + 25);
+                    newY = Random.Range(lastY + 5, lastY + 30);
                 }
                 else
                 { //runter
-                    newY = Random.Range(lastY - 25, lastY);
+                    newY = Random.Range(lastY - 30, lastY - 5);
                 }
 
                 if(newY > maxPipeY)
@@ -2341,7 +2598,7 @@ public class FlatterFogelHandler : MonoBehaviour
                     empty = false;
                 }
 
-                SpawnPipes(empty, false, newY, true);
+                SpawnPipes(empty, false, newY, true, true);
             }
         }
     }
@@ -2705,7 +2962,9 @@ public class FlatterFogelHandler : MonoBehaviour
                             {
                                 pData.nextSpawned = true;
 
-                                if(Random.Range(0, 10) == 0)
+                                if(Random.Range(0, 10) == 0
+                                    && !shootingPipehandler.shootingPipesActive
+                                    && shootingPipehandler.endComplete)
                                 {
                                     SpawnTunnel();
                                 } else

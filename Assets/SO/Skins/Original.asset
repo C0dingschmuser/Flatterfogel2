@@ -14,11 +14,46 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 88d19ba899ba54d4da089baf99e42a3c, type: 3}
   overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
-  animatedSprites: []
+  animatedSprites:
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 4cc9a2af77a052d44a6ded0b0994faa1, type: 3}
+  - {fileID: 21300000, guid: b86a6f5cfea91044b8db91812088c7a1, type: 3}
+  - {fileID: 21300000, guid: 4fa598d76b86dcd4ead14927dbf54803, type: 3}
+  - {fileID: 21300000, guid: b86a6f5cfea91044b8db91812088c7a1, type: 3}
+  - {fileID: 21300000, guid: 4cc9a2af77a052d44a6ded0b0994faa1, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
+  - {fileID: 21300000, guid: 465176caf1711244c8dfa1cfd0288ed4, type: 3}
   animated: 1
-  animationSpeed: 0.25
+  animationSpeed: 0.05
   shopTime: 0
-  shopStep: 0
+  shopStep: 9
   purchased: 1
   salePercent: 0
   cost:
@@ -31,7 +66,8 @@ MonoBehaviour:
   - mineralID: 0
     amount: 0
   boughtWings: 00000000
-  boughtHats: 00000000
+  boughtHats: 000000000100000004000000010000000400000001000000
+  hatDiff: -15
   wingSupport: 1
   hatSupport: 1
   boxCollider: 0

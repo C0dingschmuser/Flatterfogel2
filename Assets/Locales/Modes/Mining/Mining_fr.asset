@@ -26,5 +26,57 @@ MonoBehaviour:
     m_Localized: Laissez-moi tomber...
     m_Metadata:
       m_Items: []
+  - m_Id: 3
+    m_Localized: Bronzium ore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: Purpium ore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: Whitium ore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Noblium ore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: Midium ore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: Oldium ore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: Helpium ore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: Modium ore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: Admium ore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: Legium ore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13
+    m_Localized: Fuelium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Localized: "Pi\xE8ce"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Localized: Lave
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

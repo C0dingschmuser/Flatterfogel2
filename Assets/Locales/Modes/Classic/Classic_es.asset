@@ -26,5 +26,57 @@ MonoBehaviour:
     m_Localized: "\xA1GOLPE PERFECTO!"
     m_Metadata:
       m_Items: []
+  - m_Id: 3
+    m_Localized: "ATENCI\xD3N"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: Dispara menos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: OH NO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: "Colisi\xF3n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: "Fuera de los l\xEDmites"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: Menos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: "Colisi\xF3n en tierra"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: Sin combustible
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: Sobrecalentado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13
+    m_Localized: Vaporizado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Localized: Aplastado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Localized: Quemado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Localized: Suicidio
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

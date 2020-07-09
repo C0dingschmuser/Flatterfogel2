@@ -26,5 +26,57 @@ MonoBehaviour:
     m_Localized: PERFECT HIT!
     m_Metadata:
       m_Items: []
+  - m_Id: 3
+    m_Localized: WARNING
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: Shoots Minus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: OH NO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Collision
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: Out of Bounds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: Minus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: Ground collision
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: Out of Fuel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12
+    m_Localized: Overheated
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13
+    m_Localized: Vaporized
+    m_Metadata:
+      m_Items: []
+  - m_Id: 14
+    m_Localized: Crushed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 15
+    m_Localized: Burnt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Localized: Suicide
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
