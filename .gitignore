@@ -20,6 +20,7 @@
 /Assets/Pixel*UI/
 /Assets/GoogleService-Info.plist
 /Assets/google-services.json
+/Flatterfogel2.zip
 
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
