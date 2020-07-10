@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using DG.Tweening;
+using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
 using UnityEngine.Video;
 using UnityEngine.Localization;
@@ -22,7 +23,7 @@ public class ModeManager : MonoBehaviour
 {
     public Sprite[] modeSprites;
     public MainMode[] mainModes;
-    public static int currentIndex = 0;
+    public static ObscuredInt currentIndex = 0;
 
     public static ModeManager Instance;
 
@@ -40,7 +41,7 @@ public class ModeManager : MonoBehaviour
     public Vector3 startPosition, endPosition;
     public static Color modeColor;
 
-    private int oldIndex = 0;
+    private ObscuredInt oldIndex = 0;
     private bool changeRunning = false, modeDisplayActive = false, moveDone = false,
         prepareDone = false;
     public bool IsMDisplayActive { get => modeDisplayActive; }

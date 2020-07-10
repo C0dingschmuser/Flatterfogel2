@@ -2037,7 +2037,7 @@ public class FlatterFogelHandler : MonoBehaviour
         bool overrideModeChange = false;
 
         //alt war score % 30 == 0
-        if ((internalScoreCount >= 3 && waitingState == -1 && score > 0 &&
+        if ((internalScoreCount >= 30 && waitingState == -1 && score > 0 &&
             !modeCurrentlyChanged && !destructionMode &&!battleRoyale && !hardcore && !zigZag) || overrideModeChange)
         { //wenn score glatt durch 45 teilbar & gerade kein waitingstate & kein destructionmode / hardcore (einbauen)
             if(!splatterHandler.splatterActive &&
@@ -2269,7 +2269,7 @@ public class FlatterFogelHandler : MonoBehaviour
         switch(gameState)
         {
             case 0:
-                int newMode = 1; //Random.Range(0, 3);
+                int newMode = Random.Range(0, 3);
 
                 switch(newMode)
                 {

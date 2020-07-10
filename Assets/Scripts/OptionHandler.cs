@@ -7,6 +7,7 @@ using UnityEngine.Localization;
 using UnityEngine.UI;
 using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.Localization.Settings;
+using UnityEngine.SceneManagement;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using CodeStage.AntiCheat.Storage;
 #if UNITY_ANDROID
@@ -127,8 +128,6 @@ public class OptionHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        UpdateAll();
-
         StartCoroutine(LoadLocalization());
 
         versionDisplay.GetComponent<TextMeshProUGUI>().text = 
@@ -148,6 +147,8 @@ public class OptionHandler : MonoBehaviour
     IEnumerator LoadLocalization()
     {
         yield return LocalizationSettings.InitializationOperation;
+
+        Debug.Log(LocalizationSettings.HasSettings + " UND " + LocalizationSettings.HasStringDatabase);
 
         selectedLocaleIndex = -1;
 

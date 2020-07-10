@@ -5,7 +5,7 @@ using UnityEngine;
 public class StartupHandler : MonoBehaviour
 {
     public GameObject parentObj, skipObj, copyrightObj;
-    public Material dissolveMat;
+    public Material[] dissolveMat;
     public Animator animator;
     public Dissolver logoDissolver;
     public ParticleSystem minus;
@@ -20,7 +20,11 @@ public class StartupHandler : MonoBehaviour
             copyrightObj.SetActive(false);
         }
 
-        dissolveMat.SetFloat("_DissolveAmount", 1);
+        for(int i = 0; i < dissolveMat.Length; i++)
+        {
+            dissolveMat[i].SetFloat("_DissolveAmount", 1);
+        }
+
 
         logoDissolver.enabled = true;
 

@@ -216,26 +216,39 @@ public class CustomizationHandler : MonoBehaviour
             id = overrideID;
         }
 
+        bool purchased = false;
+
         switch(type)
         {
             case CustomizationType.Skin:
 
                 saleAmount = shop.allSkins[id].salePercent;
+                if(shop.HasPurchased(CustomizationType.Skin, id) == 2) {
+                    purchased = true;
+                }
 
                 break;
             case CustomizationType.Wing:
 
                 saleAmount = shop.allWings[id].salePercent;
+                if (shop.HasPurchased(CustomizationType.Wing, id) == 2)
+                {
+                    purchased = true;
+                }
 
                 break;
             case CustomizationType.Hat:
 
                 saleAmount = shop.allHats[id].salePercent;
+                if (shop.HasPurchased(CustomizationType.Hat, id) == 2)
+                {
+                    purchased = true;
+                }
 
                 break;
         }
 
-        if(saleAmount != 0)
+        if(saleAmount != 0 && !purchased)
         {
             if (saleRoutine != null)
             {

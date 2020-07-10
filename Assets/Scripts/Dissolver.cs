@@ -8,6 +8,8 @@ public class Dissolver : MonoBehaviour
     [SerializeField]
     private Material material = null;
     [SerializeField]
+    private Material[] additionalMats = null;
+    [SerializeField]
     private float startDissolveAmount = 1;
     [SerializeField]
     private float dissolveTime = 1;
@@ -38,6 +40,14 @@ public class Dissolver : MonoBehaviour
 
         material.SetFloat("_DissolveAmount", startDissolveAmount);
 
+        if(additionalMats.Length > 0)
+        {
+            for (int i = 0; i < additionalMats.Length; i++)
+            {
+                additionalMats[i].SetFloat("_DissolveAmount", startDissolveAmount);
+            }
+        }
+
         dissolveAmount = startDissolveAmount;
         time = dissolveTime;
 
@@ -45,10 +55,27 @@ public class Dissolver : MonoBehaviour
         dissolveTween.OnUpdate(() =>
         {
             material.SetFloat("_DissolveAmount", dissolveAmount);
+
+            if (additionalMats.Length > 0)
+            {
+                for (int i = 0; i < additionalMats.Length; i++)
+                {
+                    additionalMats[i].SetFloat("_DissolveAmount", dissolveAmount);
+                }
+            }
         });
 
         material.SetFloat("_DissolveAmount", dissolveAmount);
         material.SetColor("DissolveColor", color);
+
+        if (additionalMats.Length > 0)
+        {
+            for (int i = 0; i < additionalMats.Length; i++)
+            {
+                additionalMats[i].SetFloat("_DissolveAmount", dissolveAmount);
+                additionalMats[i].SetColor("DissolveColor", color);
+            }
+        }
 
         dissolveTime = time;
 
@@ -63,6 +90,15 @@ public class Dissolver : MonoBehaviour
         }
 
         material.SetFloat("_DissolveAmount", 1);
+
+        if (additionalMats.Length > 0)
+        {
+            for (int i = 0; i < additionalMats.Length; i++)
+            {
+                additionalMats[i].SetFloat("_DissolveAmount", 1);
+            }
+        }
+
         isDissolving = false;
     }
 

@@ -14658,7 +14658,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.0259149, y: 3.25}
+  m_Size: {x: 1.0259149, y: 13}
   m_EdgeRadius: 0
 --- !u!1 &7774240737178159713
 GameObject:
@@ -14753,7 +14753,12 @@ MonoBehaviour:
   modeChangeBlus: 0
   renderDisabled: 1
   isCoin: 0
+  blusActive: 0
+  moveDir: 0
   timer: 5
+  yDiff: 0
+  maxYDiff: 50
+  speed: 10
   assignedPipes:
   - {fileID: 0}
   - {fileID: 0}

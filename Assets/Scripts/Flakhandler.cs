@@ -29,7 +29,7 @@ public class Flakhandler : MonoBehaviour
         if(onPipe)
         {
             bulletSpeed = 350;
-            maxReload = 3f;
+            maxReload = 2.5f;
             //maxReload = 0.1f;
             //bulletSpeed = 400;
         }

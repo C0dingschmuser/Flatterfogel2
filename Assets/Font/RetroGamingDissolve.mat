@@ -34,6 +34,8 @@ Material:
     - _DissolveAmount: 1
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
+    - _NoiseScale: 100
+    - _OutlineSize: 0.1
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0

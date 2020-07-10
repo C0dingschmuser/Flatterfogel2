@@ -924,7 +924,7 @@ public class ScoreHandler : MonoBehaviour
 
     private int GetMax(ulong score, bool particles = false)
     {
-        GameModes mode = (GameModes)ModeManager.currentIndex;
+        GameModes mode = (GameModes)(int)ModeManager.currentIndex;
 
         int max = -1;
 
