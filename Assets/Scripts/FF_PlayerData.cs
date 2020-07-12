@@ -257,8 +257,8 @@ public class FF_PlayerData : MonoBehaviour
 
         if(currentSkin != null && newSkin != null)
         {
-            if (currentSkin.skinID == newSkin.skinID
-                    && currentWing.wingID == newWing.wingID)
+            if (currentSkin.itemID == newSkin.itemID
+                    && currentWing.itemID == newWing.itemID)
             { //skin bereits ausgewählt
                 return;
             }
@@ -296,7 +296,7 @@ public class FF_PlayerData : MonoBehaviour
             hatAnimationRunning = false;
         }
 
-        if(newHat.hatID == 0)
+        if(newHat.itemID == 0)
         { //kein hut
             hatObj.SetActive(false);
         } else

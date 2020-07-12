@@ -78,7 +78,7 @@ public class PipeMiddleHandler : MonoBehaviour
                 {
                     pos.y = startY - (25 * i);
 
-                    GameObject dPart = objPooler.SpawnFromPool("DestroyedPipePart", pos, Quaternion.identity, true, true);
+                    GameObject dPart = objPooler.SpawnPipePart(pos, Quaternion.identity, true);
 
                     pData.ResetDestroyedPart(dPart, true);
 

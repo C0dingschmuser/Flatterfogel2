@@ -267,6 +267,11 @@ public class ModeManager : MonoBehaviour
     {
         if (changeRunning) return;
 
+        if(TutorialHandler.Instance.mainTut == 0)
+        { //Modewechsel disabled im Tutorial
+            return;
+        }
+
         changeRunning = true;
 
         oldIndex = currentIndex;
@@ -385,7 +390,10 @@ public class ModeManager : MonoBehaviour
 
             if(Input.GetKeyDown(KeyCode.Escape) && !changeRunning)
             {
-                BackClicked();
+                if(TutorialHandler.Instance.mainTut != 0)
+                {
+                    BackClicked();
+                }
             }
         }
     }

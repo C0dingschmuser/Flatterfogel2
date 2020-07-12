@@ -231,9 +231,9 @@ public class PipeData : MonoBehaviour
         {
             for (int x = 0; x < 4; x++)
             {
-                dPart = objectPooler.SpawnFromPool("DestroyedPipePart",
+                dPart = objectPooler.SpawnPipePart(
                     new Vector3(startPos.x + (x * xAdd), startPos.y + (y * yAdd)),
-                    Quaternion.identity, true, true);
+                    Quaternion.identity, true);
 
                 ResetDestroyedPart(dPart, true, true);
 
@@ -309,9 +309,9 @@ public class PipeData : MonoBehaviour
 
                 for (int i = 0; i < 4; i++)
                 {
-                    dPart = objectPooler.SpawnFromPool("DestroyedPipePart",
+                    dPart = objectPooler.SpawnPipePart(
                                 new Vector3(newX + 18.675f * i, transform.position.y + ((realMax / 2) * 18.675f)),
-                                Quaternion.identity, true, true);
+                                Quaternion.identity, true);
 
                     ResetDestroyedPart(dPart, true);
 
@@ -351,9 +351,9 @@ public class PipeData : MonoBehaviour
 
                 for (int i = 0; i < 4; i++)
                 {
-                    dPart = objectPooler.SpawnFromPool("DestroyedPipePart",
+                    dPart = objectPooler.SpawnPipePart(
                                 new Vector3(newX + 18.675f * i, transform.position.y - ((realMax / 2) * 18.675f)),
-                                Quaternion.identity, true, true);
+                                Quaternion.identity, true);
 
                     ResetDestroyedPart(dPart, true);
 

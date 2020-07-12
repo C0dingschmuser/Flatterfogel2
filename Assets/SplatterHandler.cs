@@ -25,6 +25,8 @@ public class SplatterHandler : MonoBehaviour
 
     private float dissolveAmount = 0, tempDissolveEnd;
 
+    private Tween anTween = null;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,7 +43,7 @@ public class SplatterHandler : MonoBehaviour
 
         tempDissolveEnd = Random.Range(0.25f, 0.35f);
 
-        Tween anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, dissolveEndValue, 1f);
+        anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, dissolveEndValue, 1f);
         anTween.OnUpdate(() =>
         {
             splatterMat.SetFloat("_DissolveAmount", dissolveAmount);
@@ -58,10 +60,15 @@ public class SplatterHandler : MonoBehaviour
     {
         transition = true;
 
+        if(anTween != null)
+        {
+            anTween.Kill();
+        }
+
         dissolveAmount = splatterMat.GetFloat("_DissolveAmount"); //dissolveEndValue;
         //splatterMat.SetFloat("_DissolveAmount", dissolveAmount);
 
-        Tween anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, 0, 1f);
+        anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, 0, 1f);
         anTween.OnUpdate(() =>
         {
             splatterMat.SetFloat("_DissolveAmount", dissolveAmount);

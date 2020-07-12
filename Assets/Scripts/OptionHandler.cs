@@ -148,8 +148,6 @@ public class OptionHandler : MonoBehaviour
     {
         yield return LocalizationSettings.InitializationOperation;
 
-        Debug.Log(LocalizationSettings.HasSettings + " UND " + LocalizationSettings.HasStringDatabase);
-
         selectedLocaleIndex = -1;
 
         string selectedLocaleName = PlayerPrefs.GetString("SelectedLocale", "");
@@ -205,6 +203,12 @@ public class OptionHandler : MonoBehaviour
         MineHandler.Instance.StartLoadLocalozation();
         ThinkHandler.Instance.StartLoadLocalization();
         FF_PlayerData.Instance.StartLoadLocalization();
+
+        if(load)
+        {
+            BackgroundHandler.Instance.SpawnCloud(true);
+            TutorialHandler.Instance.Startup();
+        }
 
         //AccountHandler.Instance.StartLoadLocalization();
     }

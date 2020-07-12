@@ -17,6 +17,8 @@ public class ObjectPooler : MonoBehaviour
     public List<Pool> pools;
     public Dictionary<string, Queue<GameObject>> poolDictionary;
 
+    private Queue<GameObject> destroyedPipeQueue = null;
+
     private void Awake()
     {
         Instance = this;
@@ -36,6 +38,11 @@ public class ObjectPooler : MonoBehaviour
                 GameObject obj = Instantiate(pool.prefab, transform);
                 obj.SetActive(false);
                 objectPool.Enqueue(obj);
+            }
+
+            if(pool.tag.Equals("DestroyedPipePart"))
+            {
+                destroyedPipeQueue = objectPool;
             }
 
             poolDictionary.Add(pool.tag, objectPool);
@@ -113,6 +120,29 @@ public class ObjectPooler : MonoBehaviour
         {
             objToSpawn.transform.rotation = rotation;
         }
+
+        return objToSpawn;
+    }
+
+    public GameObject SpawnPipePart(Vector3 position, Quaternion rotation, bool resetRotationAndScale = true)
+    { //Extra Funktion weil so oft aufgerufen -> bessere performance
+        GameObject objToSpawn = destroyedPipeQueue.Dequeue();
+
+        destroyedPipeQueue.Enqueue(objToSpawn);
+
+        if (resetRotationAndScale)
+        {
+            objToSpawn.transform.localScale = new Vector3(1, 1, 1);
+            objToSpawn.transform.rotation = rotation;
+        }
+
+        if(objToSpawn.activeSelf)
+        {
+            objToSpawn.SetActive(false);
+        }
+
+        objToSpawn.SetActive(true);
+        objToSpawn.transform.position = position;
 
         return objToSpawn;
     }

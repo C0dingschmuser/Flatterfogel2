@@ -46,7 +46,7 @@ public class CustomizationHandler : MonoBehaviour
     private Material imageMat = null, fontMat = null;
 
     private CustomizationType type = CustomizationType.Skin;
-    private float time = 0.25f, hatMiddleY = 847, dissolveAmount = 0; //0.25 original
+    private float time = 0.25f, hatMiddleY = 810, dissolveAmount = 0; //time = 0.25 original
     private int middleID = 1;
     private bool changeApplied = false, interaction = false;
     private ObscuredInt selectedID = 0;
@@ -218,32 +218,23 @@ public class CustomizationHandler : MonoBehaviour
 
         bool purchased = false;
 
-        switch(type)
+        if (shop.HasPurchased(type, id) == 2)
+        {
+            purchased = true;
+        }
+
+        switch (type)
         {
             case CustomizationType.Skin:
-
                 saleAmount = shop.allSkins[id].salePercent;
-                if(shop.HasPurchased(CustomizationType.Skin, id) == 2) {
-                    purchased = true;
-                }
 
                 break;
             case CustomizationType.Wing:
-
                 saleAmount = shop.allWings[id].salePercent;
-                if (shop.HasPurchased(CustomizationType.Wing, id) == 2)
-                {
-                    purchased = true;
-                }
 
                 break;
             case CustomizationType.Hat:
-
                 saleAmount = shop.allHats[id].salePercent;
-                if (shop.HasPurchased(CustomizationType.Hat, id) == 2)
-                {
-                    purchased = true;
-                }
 
                 break;
         }
@@ -299,7 +290,8 @@ public class CustomizationHandler : MonoBehaviour
         if(type == CustomizationType.Hat)
         {
             Vector3 pos = previewImages[middleID].transform.position;
-            pos.y = hatMiddleY;
+            pos.y = hatMiddleY + 
+                shop.allHats[previewImages[middleID].GetComponent<IDHolder>().realID].yDist;
             previewImages[middleID].transform.position = pos;
         } else
         {
@@ -309,35 +301,28 @@ public class CustomizationHandler : MonoBehaviour
         CostData[] cost = null;
         bool purchased = false;
 
+        id = shop.GetSelected(type);
+        cost = shop.GetCost(type, id);
+
+        if(shop.HasPurchased(type, id) == 2)
+        {
+            purchased = true;
+        }
+
+        left = shop.GetSprite(type, id - 1);
+        middle = shop.GetSprite(type, id);
+        right = shop.GetSprite(type, id + 1);
+
         switch(type)
         {
             case CustomizationType.Skin:
-                id = shop.GetSelectedSkin();
-
-                cost = shop.allSkins[id].cost;
-                purchased = shop.allSkins[id].purchased;
-
-                left = shop.GetSkinSprite(id - 1);
-                middle = shop.GetSkinSprite(id);
-                right = shop.GetSkinSprite(id + 1);
 
                 skinPreview.GetComponent<Image>().sprite = middle;
                 UpdateWing(id);
-                UpdateSale(type, id);
 
                 break;
             case CustomizationType.Wing:
-                id = shop.GetSelectedWing();
                 float scale = shop.GetWingScale(id);
-
-                cost = shop.allWings[id].cost;
-                purchased = shop.allWings[id].purchased;
-
-                left = shop.GetWingSprite(id - 1);
-                middle = shop.GetWingSprite(id);
-                right = shop.GetWingSprite(id + 1);
-
-                UpdateSale(type, id);
 
                 wingPreview.GetComponent<Image>().sprite = middle;
 
@@ -346,30 +331,12 @@ public class CustomizationHandler : MonoBehaviour
 
                 break;
             case CustomizationType.Hat:
-                id = shop.GetSelectedHat();
-
-                cost = shop.allHats[id].cost;
-                purchased = shop.allHats[id].purchased;
-
-                left = shop.GetHatSprite(id - 1);
-                middle = shop.GetHatSprite(id);
-                right = shop.GetHatSprite(id + 1);
-
-                UpdateSale(type, id);
 
                 hatPreview.GetComponent<Image>().sprite = middle;
 
                 break;
-            case CustomizationType.Pipe:
-                id = shop.GetSelectedPipe();
-
-                left = shop.GetPipeSprite(id - 1);
-                middle = shop.GetPipeSprite(id);
-                right = shop.GetPipeSprite(id + 1);
-
-
-                break;
         }
+        UpdateSale(type, id);
 
         selectedID = id;
 
@@ -586,29 +553,17 @@ public class CustomizationHandler : MonoBehaviour
 
         selectedID = realID;
 
-        Sprite newLeft = null, newMiddle = null, newRight = null;
+        Sprite newLeft, newMiddle, newRight;
 
         float bigScale = 2.5f;
 
-        switch (type)
-        {
-            case CustomizationType.Skin:
-                newLeft = shop.GetSkinSprite(selectedID - 1);
-                newMiddle = shop.GetSkinSprite(selectedID);
-                newRight = shop.GetSkinSprite(selectedID + 1);
-                break;
-            case CustomizationType.Wing:
-                newLeft = shop.GetWingSprite(selectedID - 1);
-                newMiddle = shop.GetWingSprite(selectedID);
-                newRight = shop.GetWingSprite(selectedID + 1);
+        newLeft = shop.GetSprite(type, selectedID - 1);
+        newMiddle = shop.GetSprite(type, selectedID);
+        newRight = shop.GetSprite(type, selectedID + 1);
 
-                bigScale = shop.GetWingScale(selectedID);
-                break;
-            case CustomizationType.Hat:
-                newLeft = shop.GetHatSprite(selectedID - 1);
-                newMiddle = shop.GetHatSprite(selectedID);
-                newRight = shop.GetHatSprite(selectedID + 1);
-                break;
+        if(type == CustomizationType.Wing)
+        {
+            bigScale = shop.GetWingScale(selectedID);
         }
 
         previewImages[GetNewID(middleID - 1)].GetComponent<Image>().sprite = newLeft;
@@ -629,7 +584,8 @@ public class CustomizationHandler : MonoBehaviour
         if (type == CustomizationType.Hat)
         {
             Vector3 pos = previewImages[middleID].transform.position;
-            pos.y = hatMiddleY;
+            pos.y = hatMiddleY +
+                shop.allHats[previewImages[middleID].GetComponent<IDHolder>().realID].yDist;
             previewImages[middleID].transform.position = pos;
         }
         else
@@ -728,7 +684,15 @@ public class CustomizationHandler : MonoBehaviour
 
         if(type == CustomizationType.Hat)
         {
-            middlePos.y = hatMiddleY;
+            if(dir == 0)
+            {
+                middlePos.y = hatMiddleY +
+                    shop.allHats[shop.CheckSelected(type, selectedID - 1)].yDist;
+            } else
+            {
+                middlePos.y = hatMiddleY +
+                    shop.allHats[shop.CheckSelected(type, selectedID + 1)].yDist;
+            }
         }
 
         if(dir == 0)
@@ -762,18 +726,7 @@ public class CustomizationHandler : MonoBehaviour
 
             previewImages[3].gameObject.SetActive(true);
 
-            switch (type)
-            {
-                case CustomizationType.Skin:
-                    newLeft = shop.GetSkinSprite(selectedID - 2);
-                    break;
-                case CustomizationType.Wing:
-                    newLeft = shop.GetWingSprite(selectedID - 2);
-                    break;
-                case CustomizationType.Hat:
-                    newLeft = shop.GetHatSprite(selectedID - 2);
-                    break;
-            }
+            newLeft = shop.GetSprite(type, selectedID - 2);
 
             selectedID = shop.CheckSelected(type, selectedID - 1);
 
@@ -814,18 +767,7 @@ public class CustomizationHandler : MonoBehaviour
 
             previewImages[3].gameObject.SetActive(true);
 
-            switch (type)
-            {
-                case CustomizationType.Skin:
-                    newRight = shop.GetSkinSprite(selectedID + 2);
-                    break;
-                case CustomizationType.Wing:
-                    newRight = shop.GetWingSprite(selectedID + 2);
-                    break;
-                case CustomizationType.Hat:
-                    newRight = shop.GetHatSprite(selectedID + 2);
-                    break;
-            }
+            newRight = shop.GetSprite(type, selectedID + 2);
 
             selectedID = shop.CheckSelected(type, selectedID + 1);
 

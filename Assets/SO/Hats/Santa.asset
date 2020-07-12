@@ -29,6 +29,6 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
-  yDist: 0
-  hatID: 0
+  yDist: -20
+  hatID: 5
   identifier: santa

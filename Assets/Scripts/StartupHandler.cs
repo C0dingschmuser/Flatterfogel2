@@ -12,6 +12,14 @@ public class StartupHandler : MonoBehaviour
 
     private int tapCount = 0;
 
+    public void Awake()
+    {
+        for (int i = 0; i < dissolveMat.Length; i++)
+        {
+            dissolveMat[i].SetFloat("_DissolveAmount", 1);
+        }
+    }
+
     public void StartDissolve(bool force = false)
     {
         if(force)
@@ -24,7 +32,6 @@ public class StartupHandler : MonoBehaviour
         {
             dissolveMat[i].SetFloat("_DissolveAmount", 1);
         }
-
 
         logoDissolver.enabled = true;
 

@@ -30,7 +30,7 @@ public class ShopHandler : MonoBehaviour
 
     public static float moveTime = 0.25f;
 
-    public GameObject buyButton, blusText, bgHinweis, bgParent, bgPreview, buyInfoObj, colorChangeObj,
+    public GameObject buyButton, blusText, bgHinweis, bgParent, bgPreview, buyInfoObj,
         mineModePriceText, mineModePriceImage, blusEffect;
     public TextMeshProUGUI typeInfoText, bgType, bgTypeInfo, bgPreis;
 
@@ -79,17 +79,17 @@ public class ShopHandler : MonoBehaviour
 
         for(int i = 0; i < allSkins.Count; i++)
         {
-            allSkins[i].skinID = i;
+            allSkins[i].itemID = i;
         }
 
         for(int i = 0; i < allWings.Count; i++)
         {
-            allWings[i].wingID = i;
+            allWings[i].itemID = i;
         }
 
         for(int i = 0; i < allHats.Count; i++)
         {
-            allHats[i].hatID = i;
+            allHats[i].itemID = i;
         }
     }
 
@@ -99,8 +99,8 @@ public class ShopHandler : MonoBehaviour
         LoadPurchasedItems();
         TypeClicked(0, true);
 
-        pipeColor =
-            colorSlotParent.transform.GetChild(pipeColorID).GetChild(0).GetComponent<Image>().color;
+        //pipeColor =
+        //    colorSlotParent.transform.GetChild(pipeColorID).GetChild(0).GetComponent<Image>().color;
 
         fadeMat.color = Color.red;
         fadeMat.DOColor(Color.blue, 0.5f).SetEase(Ease.Linear);
@@ -166,6 +166,33 @@ public class ShopHandler : MonoBehaviour
         }
 
         return allPipes[pipeID].sprite[0];
+    }
+
+    public int GetSelected(CustomizationType type)
+    {
+        int id;
+
+        switch (type)
+        {
+            default:
+            case CustomizationType.Skin:
+                id = selectedSkin;
+                break;
+            case CustomizationType.Wing:
+                id = selectedWing;
+                break;
+            case CustomizationType.Hat:
+                id = selectedHat;
+                break;
+            case CustomizationType.Pipe:
+                id = selectedPipe;
+                break;
+            case CustomizationType.PipeColor:
+                id = pipeColorID;
+                break;
+        }
+
+        return id;
     }
 
     public int GetSelectedSkin()
@@ -281,6 +308,31 @@ public class ShopHandler : MonoBehaviour
         return ok;
     }
 
+    public Sprite GetSprite(CustomizationType type, int id)
+    {
+        id = CheckSelected(type, id);
+
+        Sprite s = null;
+
+        switch(type)
+        {
+            case CustomizationType.Skin:
+                s = allSkins[id].sprite;
+                break;
+            case CustomizationType.Wing:
+                s = allWings[id].sprite[0];
+                break;
+            case CustomizationType.Hat:
+                s = allHats[id].sprite;
+                break;
+            case CustomizationType.Pipe:
+                s = allPipes[id].endSprite[0];
+                break;
+        }
+
+        return s;
+    }
+
     public CostData[] GetCost(CustomizationType type, int id)
     {
         CostData[] cost = null;
@@ -314,60 +366,38 @@ public class ShopHandler : MonoBehaviour
 
         int code = 0;
 
+        if(type == CustomizationType.PipeColor)
+        {
+            return 2;
+        }
+
+        List<ShopItem> shopItems = null;
+
         switch(type)
         {
             case CustomizationType.Skin:
-                if(allSkins[id].purchased)
-                {
-                    code = 2;
-                } else
-                {
-                    if(IsAffordable(allSkins[id].cost))
-                    {
-                        code = 1;
-                    }
-                }
+                shopItems = allSkins.Cast<ShopItem>().ToList();
                 break;
             case CustomizationType.Wing:
-                if(allWings[id].purchased)
-                {
-                    code = 2;
-                } else
-                {
-                    if (IsAffordable(allWings[id].cost))
-                    {
-                        code = 1;
-                    }
-                }
+                shopItems = allWings.Cast<ShopItem>().ToList();
                 break;
             case CustomizationType.Pipe:
-                if(allPipes[id].purchased)
-                {
-                    code = 2;
-                } else
-                {
-                    if(IsAffordable(allPipes[id].cost))
-                    {
-                        code = 1;
-                    }
-                }
-                break;
-            case CustomizationType.PipeColor:
-                code = 2;
+                shopItems = allPipes.Cast<ShopItem>().ToList();
                 break;
             case CustomizationType.Hat:
-                if (allHats[id].purchased)
-                {
-                    code = 2;
-                }
-                else
-                {
-                    if (IsAffordable(allHats[id].cost))
-                    {
-                        code = 1;
-                    }
-                }
+                shopItems = allHats.Cast<ShopItem>().ToList();
                 break;
+        }
+
+        if(shopItems[id].purchased)
+        {
+            code = 2;
+        } else
+        {
+            if (IsAffordable(shopItems[id].cost))
+            {
+                code = 1;
+            }
         }
 
         return code;
@@ -1050,7 +1080,6 @@ public class ShopHandler : MonoBehaviour
         ModeManager.Instance.BackClicked();
         StartCoroutine(MenuData.Instance.DoMoveAway());
 
-        colorChangeObj.SetActive(false);
         bgParent.SetActive(false);
         minerParent.gameObject.SetActive(false);
         slotParent.gameObject.SetActive(false);
@@ -1112,48 +1141,6 @@ public class ShopHandler : MonoBehaviour
         Invoke("ReactivateEventSystem", moveTime + 0.01f);
     }
 
-    public void ColorChangeClicked()
-    {
-        colorChangeObj.transform.GetChild(1).gameObject.SetActive(true);
-
-        pipeColorActive = true;
-
-        HandleSlotColor(pipeColorID);
-
-        buyButton.GetComponent<Image>().color = Color.white;
-        buyButton.GetComponent<Button>().interactable = false;
-        buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = selectString;
-    }
-
-    private void HandleSlotColor(int id)
-    {
-        for(int i = 0; i < colorSlotParent.childCount; i++)
-        {
-            if(i == id)
-            {
-                colorSlotParent.GetChild(i).GetComponent<Image>().color =
-                    new Color32(238, 77, 46, 255);
-            } else
-            {
-                colorSlotParent.GetChild(i).GetComponent<Image>().color =
-                    Color.white;
-            }
-        }
-    }
-
-    public void ColorChangeSlotClicked(int id)
-    {
-        pipeColorID = id;
-
-        Debug.Log("call");
-
-        pipeColor = 
-            colorSlotParent.transform.GetChild(id).GetChild(0).GetComponent<Image>().color;
-
-        HandleSlotColor(id);
-        buyButton.GetComponent<Button>().interactable = true;
-    }
-
     public void TypeClicked(int id)
     {
         TypeClicked(id, false);
@@ -1179,177 +1166,12 @@ public class ShopHandler : MonoBehaviour
         //    buyButton.SetActive(true);
         //}
 
-        colorChangeObj.SetActive(false);
+        //colorChangeObj.SetActive(false);
 
         minerParent.gameObject.SetActive(false);
 
         switch (id)
         {
-            case 0:
-                typeInfoText.text = "SKINS";
-
-                for(int i = 0; i < slotParent.childCount; i++)
-                {
-                    if(allSkins.Count > i)
-                    {
-                        slotParent.GetChild(i).GetChild(0).gameObject.SetActive(true);
-                        if(!allSkins[i].purchased)
-                        { //wenn nicht gekauft preis anzeigen
-                            slotParent.GetChild(i).GetChild(1).gameObject.SetActive(true);
-                            slotParent.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = allSkins[i].cost.ToString();
-                        } else
-                        {
-                            slotParent.GetChild(i).GetChild(1).gameObject.SetActive(false);
-                        }
-                        slotParent.GetChild(i).GetChild(0).GetComponent<Image>().sprite =
-                            allSkins[i].sprite;
-
-                        slotParent.GetChild(i).GetChild(0).GetComponent<RectTransform>().sizeDelta =
-                            new Vector2(75, 75);
-
-                        slotParent.GetChild(i).GetChild(0).GetComponent<Image>().color = Color.white;
-                    } else
-                    {
-                        slotParent.GetChild(i).GetChild(0).gameObject.SetActive(false);
-                        slotParent.GetChild(i).GetChild(1).gameObject.SetActive(false); //bild deaktivieren
-                    }
-                    slotParent.GetChild(i).GetComponent<Image>().color = Color.white;
-                    slotParent.GetChild(i).GetChild(0).GetComponent<Image>().color = Color.white;
-                }
-
-                slotParent.GetChild(selectedSkin).GetComponent<Image>().color =
-                    new Color32(255, 253, 0, 255);
-
-                break;
-            case 1:
-                typeInfoText.text = "FLÜGEL";
-
-                for (int i = 0; i < slotParent.childCount; i++)
-                {
-                    if(allWings.Count > i)
-                    {
-                        slotParent.GetChild(i).GetChild(0).gameObject.SetActive(true);
-                        if (!allWings[i].purchased)
-                        { //wenn nicht gekauft preis anzeigen
-                            slotParent.GetChild(i).GetChild(1).gameObject.SetActive(true);
-                            slotParent.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = allWings[i].cost.ToString();
-                        }
-                        else
-                        {
-                            slotParent.GetChild(i).GetChild(1).gameObject.SetActive(false);
-                        }
-
-                        slotParent.GetChild(i).GetChild(0).GetComponent<Image>().sprite =
-                            allWings[i].sprite[0];
-
-                        //slotParent.GetChild(i).GetChild(0).GetComponent<RectTransform>().sizeDelta =
-                        //    new Vector2(allWings[i].shopSize, allWings[i].shopSize);
-
-                    } else
-                    {
-                        slotParent.GetChild(i).GetChild(0).gameObject.SetActive(false);
-                        slotParent.GetChild(i).GetChild(1).gameObject.SetActive(false); //bild deaktivieren
-                    }
-                    slotParent.GetChild(i).GetComponent<Image>().color = Color.white;
-                    slotParent.GetChild(i).GetChild(0).GetComponent<Image>().color = Color.white;
-                }
-
-                slotParent.GetChild(selectedWing).GetComponent<Image>().color =
-                    new Color32(255, 253, 0, 255);
-
-                break;
-            case 2: //miners
-                typeInfoText.text = "";
-
-                //MinerSlotClicked(selectedMiner);
-                //MinerShieldClicked(selectedHeatShield);
-
-                slotParent.gameObject.SetActive(false);
-                minerParent.gameObject.SetActive(true);
-
-                /*for(int i = 0; i < mineItemParent.childCount; i++)
-                {
-                    if(mineItemParent.GetChild(i).gameObject.activeSelf)
-                    {
-                        mineItemParent.GetChild(i).GetChild(0).GetComponent<Image>().sprite =
-                            allMineItems[i].sprite;
-
-                        mineItemParent.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text =
-                            allMineItems[i].amount.ToString();
-                    }
-                }*/
-
-                // miner
-
-                /*for (int i = 0; i < slotParent.childCount; i++)
-                {
-                    if (allMiners.Count > i)
-                    {
-                        slotParent.GetChild(i).GetChild(0).gameObject.SetActive(true);
-                        if (!allMiners[i].purchased)
-                        { //wenn nicht gekauft preis anzeigen
-                            slotParent.GetChild(i).GetChild(1).gameObject.SetActive(true);
-                            slotParent.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = allMiners[i].cost.ToString();
-                        }
-                        else
-                        {
-                            slotParent.GetChild(i).GetChild(1).gameObject.SetActive(false);
-                        }
-                        slotParent.GetChild(i).GetChild(0).GetComponent<Image>().sprite =
-                            allMiners[i].full;
-
-                        slotParent.GetChild(i).GetChild(0).GetComponent<RectTransform>().sizeDelta =
-                            new Vector2(75, 75);
-
-                    }
-                    else
-                    {
-                        slotParent.GetChild(i).GetChild(0).gameObject.SetActive(false);
-                        slotParent.GetChild(i).GetChild(1).gameObject.SetActive(false); //bild deaktivieren
-                    }
-                    slotParent.GetChild(i).GetComponent<Image>().color = Color.white;
-                    slotParent.GetChild(i).GetChild(0).GetComponent<Image>().color = Color.white;
-                }
-
-                slotParent.GetChild(selectedMiner).GetComponent<Image>().color =
-                    new Color32(255, 253, 0, 255);*/
-
-                break;
-            case 3:
-                typeInfoText.text = "RÖHREN";
-
-                for (int i = 0; i < slotParent.childCount; i++)
-                {
-                    if (allPipes.Count > i)
-                    {
-                        slotParent.GetChild(i).GetChild(0).gameObject.SetActive(true);
-                        if (!allPipes[i].purchased)
-                        { //wenn nicht gekauft preis anzeigen
-                            slotParent.GetChild(i).GetChild(1).gameObject.SetActive(true);
-                            slotParent.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text = allPipes[i].cost.ToString();
-                        }
-                        else
-                        {
-                            slotParent.GetChild(i).GetChild(1).gameObject.SetActive(false);
-                        }
-                        slotParent.GetChild(i).GetChild(0).GetComponent<Image>().sprite =
-                            allPipes[i].sprite[0];
-
-                        slotParent.GetChild(i).GetChild(0).GetComponent<RectTransform>().sizeDelta =
-                            new Vector2(75, 75);
-
-                        slotParent.GetChild(i).GetChild(0).GetComponent<Image>().color = allPipes[i].defaultColor;
-                    }
-                    else
-                    {
-                        slotParent.GetChild(i).GetChild(0).gameObject.SetActive(false);
-                        slotParent.GetChild(i).GetChild(1).gameObject.SetActive(false); //bild deaktivieren
-                    }
-                    slotParent.GetChild(i).GetComponent<Image>().color = Color.white;
-
-                }
-
-                break;
             case 4:
                 typeInfoText.text = "HINTERGRÜNDE";
 
@@ -1379,135 +1201,6 @@ public class ShopHandler : MonoBehaviour
                 break;
         }
     }
-
-    /*public void SlotClicked(int id)
-    {
-        int realID = id + (slotParent.childCount * currentPage);
-
-        if(lastSlotID > -1)
-        {
-            slotParent.GetChild(lastSlotID).GetComponent<Image>().color = Color.white;
-        }
-
-        lastSlotID = id;
-
-        slotParent.GetChild(id).GetComponent<Image>().color = 
-            new Color32(255, 253, 0, 255);
-
-        bool purchased = false;
-        switch(currentType)
-        {
-            case 0: //skins
-
-                if(allSkins[realID].purchased)
-                {
-                    purchased = true;
-                }
-
-                if(selectedSkin != realID)
-                {
-                    slotParent.GetChild(selectedSkin).GetComponent<Image>().color = Color.white;
-                }
-
-                break;
-            case 1: //wings
-
-                if(allWings[realID].purchased)
-                {
-                    purchased = true;
-                }
-
-                if(selectedWing != realID)
-                {
-                    slotParent.GetChild(selectedWing).GetComponent<Image>().color = Color.white;
-                }
-
-                break;
-            /*case 2: //miner
-
-                if (allMiners[realID].purchased)
-                {
-                    purchased = true;
-                }
-
-                if (selectedMiner != realID)
-                {
-                    slotParent.GetChild(selectedMiner).GetComponent<Image>().color = Color.white;
-                }
-
-                break;
-            case 3: //pipes
-
-                if (allPipes[realID].purchased)
-                {
-                    purchased = true;
-                }
-
-                if(allPipes[realID].colorChangeSupported)
-                {
-                    colorChangeObj.SetActive(true);
-                } else
-                {
-                    colorChangeObj.SetActive(false);
-                }
-
-                if (selectedPipe != realID)
-                {
-                    slotParent.GetChild(selectedPipe).GetComponent<Image>().color = Color.white;
-                }
-
-                break;
-        }
-
-        if(purchased)
-        {
-            buyButton.GetComponent<Image>().color = Color.white;
-            buyButton.GetComponent<Button>().interactable = true;
-            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Wählen";
-        } else
-        {
-            bool price = false; //true wenn zu teuer
-
-            switch(currentType)
-            {
-                case 0: //skin
-                    if ((ulong)allSkins[realID].cost > blus)
-                    {
-                        price = true;
-                    }
-                    break;
-                case 1: //wing
-                    if ((ulong)allWings[realID].cost > blus)
-                    {
-                        price = true;
-                    }
-                    break;
-                /*case 2: //miner
-                    if ((ulong)allMiners[realID].cost > blus)
-                    {
-                        price = true;
-                    }
-                    break;
-                case 3: //pipe
-                    if ((ulong)allPipes[realID].cost > blus)
-                    {
-                        price = true;
-                    }
-                    break;
-            }
-
-            if(price)
-            { //zu teuer
-                buyButton.GetComponent<Button>().interactable = false;
-                buyButton.GetComponent<Image>().color = Color.red;
-            } else
-            {
-                buyButton.GetComponent<Button>().interactable = true;
-                buyButton.GetComponent<Image>().color = Color.green;
-            }
-            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Kaufen";
-        }
-    }*/
 
     public void BackgroundSlotClicked(int id)
     {
@@ -1587,55 +1280,10 @@ public class ShopHandler : MonoBehaviour
     {
         pipeColorActive = false;
 
-        colorChangeObj.transform.GetChild(1).gameObject.SetActive(false);
-
         PlayerPrefs.SetInt("Pipe_Color", pipeColorID);
 
         buyButton.GetComponent<Button>().interactable = false;
         buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Kaufen";
-    }
-
-    public void MinerSlotClicked(int id)
-    {
-        lastSlotID = id;
-        minerType = 0;
-
-        if(allMiners[id].purchased)
-        {
-            buyButton.GetComponent<Image>().color = Color.white;
-            buyButton.GetComponent<Button>().interactable = true;
-
-            DeactivatePurchaseInfo();
-
-            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = selectString;
-        } else
-        {
-            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = buyString;
-
-            SetMinePrices(allMiners[id].cost);
-        }
-
-        for(int i = 0; i < minerSlotParent.childCount; i++)
-        {
-            if(i == id)
-            {
-                minerSlotParent.GetChild(i).GetComponent<Image>().color =
-                    new Color32(255, 253, 0, 255);
-            } else
-            {
-                minerSlotParent.GetChild(i).GetComponent<Image>().color =
-                    Color.white;
-            }
-        }
-    }
-
-    private void DeactivatePurchaseInfo()
-    {
-        for(int i = 0; i < 4; i++)
-        {
-            mineModePriceText.transform.GetChild(i).gameObject.SetActive(false);
-            mineModePriceImage.transform.GetChild(i).gameObject.SetActive(false);
-        }
     }
 
     public int GetNextMiner()
@@ -1677,87 +1325,6 @@ public class ShopHandler : MonoBehaviour
         }
 
         return canAfford;
-    }
-
-    private void SetMinePrices(CostData[] prices)
-    {
-        bool canAfford = true;
-
-        for(int i = 0; i < 4; i++)
-        {
-            if(prices[i].amount > 0)
-            {
-                int collectedAmount = 
-                    Inventory.Instance.GetMineralAmount((int)prices[i].mineralID);
-
-                collectedAmount = Mathf.Clamp(collectedAmount, 0, prices[i].amount);
-
-                if(collectedAmount < prices[i].amount)
-                {
-                    canAfford = false;
-                }
-
-                mineModePriceText.transform.GetChild(i).gameObject.SetActive(true);
-                mineModePriceText.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text =
-                    collectedAmount + "/" + prices[i].amount.ToString();
-
-                mineModePriceImage.transform.GetChild(i).gameObject.SetActive(true);
-                mineModePriceImage.transform.GetChild(i).GetComponent<Image>().sprite =
-                    Inventory.Instance.allMinerals[(int)prices[i].mineralID].sprite;
-            } else
-            {
-                mineModePriceText.transform.GetChild(i).gameObject.SetActive(false);
-                mineModePriceImage.transform.GetChild(i).gameObject.SetActive(false);
-            }
-        }
-
-
-        if (canAfford)
-        {
-            buyButton.GetComponent<Button>().interactable = true;
-            buyButton.GetComponent<Image>().color = Color.green;
-        }
-        else
-        {
-            buyButton.GetComponent<Button>().interactable = false;
-            buyButton.GetComponent<Image>().color = Color.red;
-        }
-    }
-
-    public void MinerShieldClicked(int id)
-    {
-        lastSlotID = id;
-        minerType = 1;
-
-        if (allHeatShields[id].purchased)
-        {
-            buyButton.GetComponent<Image>().color = Color.white;
-            buyButton.GetComponent<Button>().interactable = true;
-
-            DeactivatePurchaseInfo();
-
-            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = selectString;
-        }
-        else
-        {
-            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = buyString;
-
-            SetMinePrices(allHeatShields[id].cost);
-        }
-
-        for (int i = 0; i < shieldSlotParent.childCount; i++)
-        {
-            if (i == id)
-            {
-                shieldSlotParent.GetChild(i).GetComponent<Image>().color =
-                    new Color32(255, 253, 0, 255);
-            }
-            else
-            {
-                shieldSlotParent.GetChild(i).GetComponent<Image>().color =
-                    Color.white;
-            }
-        }
     }
 
     public void MineItemClicked(int id)
@@ -1833,252 +1400,41 @@ public class ShopHandler : MonoBehaviour
         SavePurchasedItems();
     }
 
-    /*public void PurchaseClicked()
-    { //kein cost-check nötig da nur aufgerufen wenn genug blus vorhanden
-        if(pipeColorActive)
-        {
-            CloseColorSelection();
-            return;
-        }
-
-        bool purchased = false; //ob bereits gekauft
-
-        if (currentType == 2)
-        { //mining
-            switch(minerType)
-            {
-                case 0: //buy miner
-                    if (allMiners[lastSlotID].purchased)
-                    {
-                        purchased = true;
-                    }
-
-                    if (purchased)
-                    {
-                        selectedMiner = lastSlotID;
-                    }
-                    else
-                    {
-                        allMiners[lastSlotID].purchased = true;
-
-                        PurchaseMinerItem(allMiners[lastSlotID].cost);
-                        SavePurchasedItems();
-
-                        selectedMiner = lastSlotID;
-                    }
-
-                    PlayerMiner.currentMiner = allMiners[selectedMiner];
-                    break;
-                case 1: //buy shield
-                    if (allHeatShields[lastSlotID].purchased)
-                    {
-                        purchased = true;
-                    }
-
-                    if (purchased)
-                    {
-                        selectedHeatShield = lastSlotID;
-                    }
-                    else
-                    {
-                        allHeatShields[lastSlotID].purchased = true;
-                        PurchaseMinerItem(allHeatShields[lastSlotID].cost);
-                        SavePurchasedItems();
-
-                        selectedHeatShield = lastSlotID;
-                    }
-
-                    MineHandler.Instance.currentHeatShield = allHeatShields[lastSlotID];
-                    break;
-                case 2: //buy mineItem
-                    allMineItems[lastSlotID].amount++;
-
-                    /*for (int i = 0; i < mineItemParent.childCount; i++)
-                    { //ui amount update
-                        mineItemParent.GetChild(i).GetChild(0).GetComponent<Image>().sprite =
-                            allMineItems[i].sprite;
-
-                        mineItemParent.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text =
-                            allMineItems[i].amount.ToString();
-                    }
-
-                    CostData[] costData = allMineItems[lastSlotID].cost;
-
-                    PurchaseMinerItem(costData);
-                    SavePurchasedItems();
-
-                    //Um erneut zu checken ob genug Geld/Mineralien
-                    //da sind
-                    //MineItemClicked(lastSlotID);
-
-                    break;
-            }
-
-            if(minerType != 2)
-            {
-                buyButton.GetComponent<Image>().color = Color.white;
-                buyButton.GetComponent<Button>().interactable = false;
-            }
-
-            return;
-        }
-
-        int realID = lastSlotID + (slotParent.childCount * currentPage);
-
-        if(currentType == 4)
-        {
-            realID = lastSlotID + (bgSlotParent.childCount * currentPage);
-        }
-        int cost = 0;
-
-        Sprite newObjSprite = null;
-
-        switch(currentType)
-        {
-            case 0: //skins
-
-                if(allSkins[realID].purchased)
-                {
-                    purchased = true;
-                }
-
-                newObjSprite = allSkins[realID].sprite;
-
-                allSkins[realID].purchased = true;
-                cost = allSkins[realID].cost;
-
-                break;
-            case 1: //wings
-
-                if (allWings[realID].purchased)
-                {
-                    purchased = true;
-                }
-
-                newObjSprite = allWings[realID].sprite[0];
-
-                allWings[realID].purchased = true;
-                cost = allWings[realID].cost;
-
-                break;
-            case 2: //miner
-
-                if (allMiners[realID].purchased)
-                {
-                    purchased = true;
-                }
-
-                newObjSprite = allMiners[realID].full;
-
-                allMiners[realID].purchased = true;
-                cost = allMiners[realID].cost;
-
-                break;
-            case 3: //pipes
-
-                if(allPipes[realID].purchased)
-                {
-                    purchased = true;
-                }
-
-                newObjSprite = allPipes[realID].sprite[0];
-
-                if(!allPipes[realID].colorChangeSupported)
-                {
-                    pipeColor = allPipes[realID].defaultColor;
-                }
-
-                allPipes[realID].purchased = true;
-                cost = allPipes[realID].cost;
-
-                break;
-            case 4: //backgrounds
-
-                if(allBackgrounds[realID].purchased)
-                {
-                    purchased = true;
-                }
-
-                newObjSprite = allBackgrounds[realID].cover;
-
-                allBackgrounds[realID].purchased = true;
-                cost = allBackgrounds[realID].cost;
-
-                break;
-        }
-
-        if(currentType != 2)
-        {
-            buyButton.GetComponent<Image>().color = Color.white;
-            buyButton.GetComponent<Button>().interactable = false;
-            buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Wählen";
-        }
-
-        if(!purchased)
-        {
-            if(cost > 0)
-            {
-                blus -= (ulong)cost;
-            }
-
-            buyInfoObj.transform.GetChild(2).GetComponent<Image>().sprite = newObjSprite;
-            buyInfoObj.SetActive(true);
-        }
-
-        if(currentType == 0 || currentType == 1)
-        {
-            if(currentType == 0)
-            {
-                selectedSkin = realID;
-            } else if(currentType == 1)
-            {
-                selectedWing = realID;
-            }
-
-            playerData.LoadPlayerSkin(allSkins[selectedSkin], allWings[selectedWing]);
-        }
-
-        if(currentType == 2)
-        {
-            // selectedMiner = realID;
-            // PlayerMiner.currentMiner = allMiners[selectedMiner];
-            MinerCustomizationHandler.Instance.UpdateUI();
-            MinerCustomizationHandler.Instance.IsAffordable(true);
-        }
-
-        if(currentType == 3)
-        {
-            selectedPipe = realID;
-        }
-
-        if(currentType == 4)
-        {
-            selectedBackground = realID;
-            bgHandler.SetNewBackground(allBackgrounds[selectedBackground]);
-        }
-
-        SavePurchasedItems();
-    }*/
-
     public void BuyCustom(CustomizationType type, int id)
     {
-        Sprite newSprite = null;
+        Sprite newSprite;
 
         CostData[] price;
-        switch(type)
+
+        List<ShopItem> shopItems = null;
+
+        switch (type)
+        {
+            case CustomizationType.Skin:
+                shopItems = allSkins.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.Wing:
+                shopItems = allWings.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.Pipe:
+                shopItems = allPipes.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.Hat:
+                shopItems = allHats.Cast<ShopItem>().ToList();
+                break;
+        }
+
+        price = shopItems[id].cost;
+        newSprite = GetSprite(type, id);
+
+        switch (type)
         {
             default:
             case CustomizationType.Skin:
-                price = allSkins[id].cost;
                 allSkins[id].purchased = true;
-
-                newSprite = allSkins[id].sprite;
                 break;
             case CustomizationType.Wing:
-                price = allWings[id].cost;
                 allWings[id].purchased = true;
-
-                newSprite = allWings[id].sprite[0];
 
                 int[] boughtWings = allSkins[selectedSkin].boughtWings;
                 int[] newBoughtWings = new int[boughtWings.Length + 1];
@@ -2093,16 +1449,10 @@ public class ShopHandler : MonoBehaviour
                 allSkins[selectedSkin].boughtWings = newBoughtWings;
                 break;
             case CustomizationType.Pipe:
-                price = allPipes[id].cost;
                 allPipes[id].purchased = true;
-
-                newSprite = allPipes[id].endSprite[0];
                 break;
             case CustomizationType.Hat:
-                price = allHats[id].cost;
                 allHats[id].purchased = true;
-
-                newSprite = allHats[id].sprite;
 
                 int[] boughtHats = allSkins[selectedSkin].boughtHats;
                 int[] newBoughtHats = new int[boughtHats.Length + 1];

@@ -510,9 +510,12 @@ public class FlatterFogelHandler : MonoBehaviour
             cameraColliders[0].SetActive(false);
             cameraColliders[1].SetActive(false);
 
+            BackgroundHandler.Instance.ScaleLights(false);
             OptionHandler.Instance.DestructionEnlarge();
         } else
         {
+            BackgroundHandler.Instance.ScaleLights(true);
+
             cameraColliders[0].SetActive(true);
             cameraColliders[1].SetActive(true);
 
@@ -2037,9 +2040,9 @@ public class FlatterFogelHandler : MonoBehaviour
         bool overrideModeChange = false;
 
         //alt war score % 30 == 0
-        if ((internalScoreCount >= 30 && waitingState == -1 && score > 0 &&
+        if ((internalScoreCount >= 40 && waitingState == -1 && score > 0 &&
             !modeCurrentlyChanged && !destructionMode &&!battleRoyale && !hardcore && !zigZag) || overrideModeChange)
-        { //wenn score glatt durch 45 teilbar & gerade kein waitingstate & kein destructionmode / hardcore (einbauen)
+        { //wenn internalscore >= 40 & gerade kein waitingstate & kein destructionmode / hardcore (einbauen)
             if(!splatterHandler.splatterActive &&
                 !shootingPipehandler.shootingPipesActive &&
                 shootingPipehandler.endComplete)
@@ -2134,6 +2137,11 @@ public class FlatterFogelHandler : MonoBehaviour
         destructionHandler.DisableEnable(false);
 
         shootingPipehandler.EndShootingPipes();
+
+        if(splatterHandler.splatterActive)
+        {
+            splatterHandler.EndSplatter();
+        }
 
         float anTime = 0.2f;
         float newT = 0.1f;

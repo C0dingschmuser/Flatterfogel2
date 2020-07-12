@@ -107,10 +107,30 @@ public class BackgroundHandler : MonoBehaviour
 
         SetNewBackground(ShopHandler.Instance.GetCurrentBackground());
 
-        SpawnCloud(true);
+        //SpawnCloud(true);
+        ScaleLights(true);
 
         cycleTime = sunMoon.GetComponent<DOTweenPath>().duration;
         StartDayFirst();
+    }
+
+    public void ScaleLights(bool normal)
+    {
+        if(normal)
+        {
+            sunLightObj.transform.localScale = new Vector3(0.44f, 1, 1);
+            moonLightObj.transform.localScale = sunLightObj.transform.localScale;
+
+            sunLightObj.transform.position = new Vector3(-381, 983.4f, 10);
+            moonLightObj.transform.position = sunLightObj.transform.position;
+        } else
+        {
+            sunLightObj.transform.localScale = Vector3.one;
+            moonLightObj.transform.localScale = Vector3.one;
+
+            sunLightObj.transform.position = new Vector3(59, 983.4f, 10);
+            moonLightObj.transform.position = sunLightObj.transform.position;
+        }
     }
 
     private void LoadAllBackgrounds()
@@ -173,7 +193,7 @@ public class BackgroundHandler : MonoBehaviour
             if(currentBackground.supportsDayNight)
             {
                 moonObj.GetComponent<SpriteRenderer>().enabled = true;
-                moonLightObj.SetActive(true);
+                moonLightObj.SetActive(false);
 
                 sunObj.GetComponent<SpriteRenderer>().enabled = true;
                 sunLightObj.SetActive(true);
@@ -254,16 +274,20 @@ public class BackgroundHandler : MonoBehaviour
         if(bg.supportsDayNight)
         {
             moonObj.GetComponent<SpriteRenderer>().enabled = true;
-            moonLightObj.SetActive(true);
+            moonObj.SetActive(false);
+            moonLightObj.SetActive(false);
 
             sunObj.GetComponent<SpriteRenderer>().enabled = true;
+            sunObj.SetActive(true);
             sunLightObj.SetActive(true);
         } else
         {
             moonObj.GetComponent<SpriteRenderer>().enabled = false;
+            moonObj.SetActive(false);
             moonLightObj.SetActive(false);
 
             sunObj.GetComponent<SpriteRenderer>().enabled = false;
+            sunObj.SetActive(true);
             sunLightObj.SetActive(false);
         }
 
@@ -600,6 +624,8 @@ public class BackgroundHandler : MonoBehaviour
     public void StartMoonTween()
     { //Tweent Mondlicht hoch und sonnenlicht runter
 
+        moonLightObj.SetActive(true);
+
         if (OptionHandler.lightEnabled == 1 && currentBackground.supportsDayNight)
         {
             moonLightTween = DOTween.To(() => moonLight.intensity, x => moonLight.intensity = x, 1f, cycleTime / 8);
@@ -612,11 +638,16 @@ public class BackgroundHandler : MonoBehaviour
 
     private void StartMoonLoop()
     {
+        sunObj.SetActive(false);
+        moonObj.SetActive(true);
+
         moonObj.GetComponent<DOTweenPath>().DORestart();
     }
 
     public void StartSunTween()
     { //tweent mondlicht runter und sonnenlicht hoch
+        sunLightObj.SetActive(true);
+        
         if (OptionHandler.lightEnabled == 1 && currentBackground.supportsDayNight)
         {
             camera.backgroundColor = nightBackgroundColor;
@@ -633,17 +664,22 @@ public class BackgroundHandler : MonoBehaviour
 
     private void StartSunLoop()
     {
+        sunObj.SetActive(true);
+        moonObj.SetActive(false);
+
         sunObj.GetComponent<DOTweenPath>().DORestart();
         StartDay();
     }
 
     private void ResetSunPos()
     {
+        sunObj.SetActive(false);
         sunObj.transform.position = new Vector3(-951, 710);
     }
 
     private void ResetMoonPos()
     { //lightt
+        moonObj.SetActive(false);
         moonObj.transform.position = new Vector3(-951, 710);
 
         //wird erst hier generell hell damit der übergang smoother wirkt
