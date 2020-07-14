@@ -253,6 +253,12 @@ public class MenuData : MonoBehaviour
         {
             bool ok = true;
 
+            if (TutorialHandler.Instance.mainTut == 0 &&
+                !button.CompareTag("GoBtn"))
+            {
+                ok = false;
+            }
+
             if(ok)
             {
                 scalingButtons.Add(button);

@@ -999,6 +999,8 @@ public class FF_PlayerData : MonoBehaviour
                         min = 65;
                     }
 
+                    bool pHit = false;
+
                     if (yDiff > min)
                     {
                         FlatterFogelHandler.nextCompleteDestruction = false;
@@ -1006,6 +1008,8 @@ public class FF_PlayerData : MonoBehaviour
                     }
                     else
                     { //näher dran -> mehr punkte
+                        pHit = true;
+
                         FlatterFogelHandler.nextCompleteDestruction = true;
                         FlatterFogelHandler.Instance.AddPerfectHit();
 
@@ -1015,6 +1019,29 @@ public class FF_PlayerData : MonoBehaviour
                             ObjectPooler.Instance.SpawnFromPool("InfoText", transform.position, Quaternion.identity);
 
                         infoText.GetComponent<InfoText>().StartFlashing(ScoreHandler.Instance.perfectHitString);
+                    }
+
+                    if(TutorialHandler.Instance.mainTut == 0)
+                    {
+                        if(blus.transform.parent.GetComponent<BlusData>().isCoin)
+                        {
+                            TutorialHandler.Instance.StartCoinGreat();
+                        } else
+                        {
+                            if(TutorialHandler.Instance.mainTutStep < 2)
+                            {
+                                TutorialHandler.Instance.StartMainTutGreat2();
+                            } else if(TutorialHandler.Instance.mainTutStep == 3)
+                            { //perfect hit check
+                                if(pHit)
+                                {
+                                    TutorialHandler.Instance.StartRealPerfectHit();
+                                } else
+                                {
+                                    TutorialHandler.Instance.StartAlmostHit();
+                                }
+                            }
+                        }
                     }
 
                     //if(blus.transform.parent.GetComponent<BlusData>().isCoin)

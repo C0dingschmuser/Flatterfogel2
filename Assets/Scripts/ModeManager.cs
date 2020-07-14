@@ -340,9 +340,19 @@ public class ModeManager : MonoBehaviour
         //MenuData.Instance.DoScaleDown();
         if(!modeDisplayActive)
         {
+            if(TutorialHandler.Instance.mainTut == 0)
+            {
+                TutorialHandler.Instance.MainTutModes();
+            }
+
             ActivateModeChange();
         } else
         {
+            if (TutorialHandler.Instance.mainTut == 0)
+            {
+                TutorialHandler.Instance.MainTutBegin();
+            }
+
             GoClicked();
         }
 

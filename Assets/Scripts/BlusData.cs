@@ -324,7 +324,7 @@ public class BlusData : MonoBehaviour
 
     private void Update()
     {
-        if(blusActive && !isDestroyed)
+        if(blusActive && !isDestroyed && TutorialHandler.Instance.mainTut != 0)
         {
             Vector3 pos = transform.position;
 

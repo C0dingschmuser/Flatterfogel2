@@ -52,6 +52,7 @@ public class FlatterFogelHandler : MonoBehaviour
     public ZigZagHandler zigZagHandler;
     public SplatterHandler splatterHandler;
     public ShootingPipeHandler shootingPipehandler;
+    public TutorialHandler tutHandler;
 
     public float minPipeY = 500, maxPipeY = 1065;
 
@@ -200,6 +201,17 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public void UpdateTap()
     {
+        if(tutHandler.mainTut == 0)
+        {
+            if(tutHandler.mainTutStep == 0)
+            {
+                if(taps >= 3)
+                {
+                    tutHandler.StartMainTutGreat();
+                }
+            }
+        }
+
         taps++;
     }
 
@@ -1004,7 +1016,11 @@ public class FlatterFogelHandler : MonoBehaviour
         if(!destructionMode && !miningMode)
         {
             pipeSpawnAllowed = true;
-            StartCoroutine(SpawnPipesWait(1f, false));
+
+            if(tutHandler.mainTut != 0)
+            {
+                StartCoroutine(SpawnPipesWait(1f, false));
+            }
         }
         
         if(destructionMode)
@@ -1635,8 +1651,9 @@ public class FlatterFogelHandler : MonoBehaviour
         SpawnPipes(empty, moveAllowed);
     }
 
-    private void SpawnPipes(bool empty = false, bool moveAllowed = true, 
-        float overrideY = 9999, bool spawnClose = false, bool overrideDistance = false)
+    public void SpawnPipes(bool empty = false, bool moveAllowed = true, 
+        float overrideY = 9999, bool spawnClose = false, bool overrideDistance = false,
+        bool overrideCoin = false)
     {
         if(!pipeSpawnAllowed)
         {
@@ -1652,7 +1669,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         float lastX = 298;
 
-        if(pipes.Count > 0)
+        if(pipes.Count > 0 && tutHandler.mainTut != 0)
         {
             lastX = pipes[pipes.Count - 1].transform.position.x + 500;
         }
@@ -1711,7 +1728,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         float xPos = lastX;
 
-        int abstand = 150;//Random.Range(130, 160);
+        int abstand; /*= 150;//Random.Range(130, 160);
 
         //Abstand variiert je nach Schwierigkeit
         if(OptionHandler.GetDifficulty() == 0)
@@ -1720,7 +1737,7 @@ public class FlatterFogelHandler : MonoBehaviour
         } else if(OptionHandler.GetDifficulty() == 2)
         {
             abstand = 125;//Random.Range(115, 135);
-        }
+        }*/
 
         int maxChance = 2;
 
@@ -1729,7 +1746,7 @@ public class FlatterFogelHandler : MonoBehaviour
             maxChance = 4;
         }
 
-        if(Random.Range(0, maxChance) == 0)
+        if(Random.Range(0, maxChance) == 0 && score > 15)
         {
             abstand = 125;
         } else
@@ -1737,9 +1754,12 @@ public class FlatterFogelHandler : MonoBehaviour
             abstand = 150;
         }
 
-        if(StatHandler.classicCount == 1 && pipes.Count < 4)
+        if(score < 5)
         {
-            abstand = 150;
+            abstand = 225;
+        } else if(score < 10)
+        {
+            abstand = 175;
         }
 
         if (overrideDistance) {
@@ -1877,7 +1897,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         if (!empty)
         {
-            SpawnBlus(new Vector3(xPos, yPos, -1.1f), pipeTop, pipeBottom, maxYDiff, ok); //temp
+            SpawnBlus(new Vector3(xPos, yPos, -1.1f), pipeTop, pipeBottom, maxYDiff, ok, overrideCoin); //temp
         } else
         {
             pipeBottom.GetComponent<PipeData>().emptyPipe = true;
@@ -2006,7 +2026,8 @@ public class FlatterFogelHandler : MonoBehaviour
         return nG;
     }
 
-    public bool SpawnBlus(Vector3 pos, GameObject pipeTop = null, GameObject pipeBot = null, float maxY = 50, bool moving = false)
+    public bool SpawnBlus(Vector3 pos, GameObject pipeTop = null, GameObject pipeBot = null, float maxY = 50, bool moving = false,
+        bool overrideCoin = false)
     {
         bool modeChangeBlus = false;
 
@@ -2058,8 +2079,14 @@ public class FlatterFogelHandler : MonoBehaviour
             }
         }
 
-        if((Random.Range(0, 20) == 0 && !modeChangeBlus) ||
-            (StatHandler.classicCount == 1 && pipes.Count == 2))
+        bool tut = false;
+        if(TutorialHandler.Instance.mainTut == 0)
+        { //keine coins im tut spawnen außer bei override
+            tut = true;
+        }
+
+        if((Random.Range(0, 20) == 0 && !modeChangeBlus && !tut) ||
+            overrideCoin)
         { //coin spawnen
             bData.isCoin = true;
             bData.SetSprites(coinSprites);
@@ -2861,7 +2888,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
                         player.GetComponent<FF_PlayerData>().PlayerFly(pos, zigZag);
 
-                        taps++;
+                        UpdateTap();
 
                         float abstandX = 0, abstandY = 20f;
 
@@ -2970,15 +2997,20 @@ public class FlatterFogelHandler : MonoBehaviour
                             {
                                 pData.nextSpawned = true;
 
-                                if(Random.Range(0, 10) == 0
-                                    && !shootingPipehandler.shootingPipesActive
-                                    && shootingPipehandler.endComplete)
-                                {
-                                    SpawnTunnel();
-                                } else
-                                {
-                                    SpawnPipes();
+                                if(tutHandler.mainTut != 0)
+                                { //neue pipes nur spawnen wenn tutorial abgeschlossen
+                                    if (Random.Range(0, 10) == 0
+                                        && !shootingPipehandler.shootingPipesActive
+                                        && shootingPipehandler.endComplete)
+                                    {
+                                        SpawnTunnel();
+                                    }
+                                    else
+                                    {
+                                        SpawnPipes();
+                                    }
                                 }
+
                                 //SpawnPipes(false);
                             }
                         } 
