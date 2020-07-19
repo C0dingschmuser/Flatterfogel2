@@ -203,6 +203,7 @@ public class OptionHandler : MonoBehaviour
         MineHandler.Instance.StartLoadLocalozation();
         ThinkHandler.Instance.StartLoadLocalization();
         FF_PlayerData.Instance.StartLoadLocalization();
+        AchievementHandler.Instance.StartLoadLocalization();
 
         if(load)
         {

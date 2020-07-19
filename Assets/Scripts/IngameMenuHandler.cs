@@ -158,6 +158,16 @@ public class IngameMenuHandler : MonoBehaviour
             eventSystem.SetActive(true);
             raycaster.enabled = true;
 
+            if(ffHandler.tutHandler.mainTut == 0)
+            {
+                settingsBtn.GetComponent<Button>().interactable = false;
+                exitBtn.GetComponent<Button>().interactable = false;
+            } else
+            {
+                settingsBtn.GetComponent<Button>().interactable = true;
+                exitBtn.GetComponent<Button>().interactable = true;
+            }
+
             SetStartPosition();
             StartCoroutine(DoMoveIn());
         } else
@@ -253,7 +263,8 @@ public class IngameMenuHandler : MonoBehaviour
 
     public void ButtonPressed(GameObject btn)
     {
-        if (!scalingButtons.Contains(btn) && !buttonsMoving)
+        if (!scalingButtons.Contains(btn) && !buttonsMoving && 
+            btn.GetComponent<Button>().interactable == true)
         {
             bool ok = true;
 

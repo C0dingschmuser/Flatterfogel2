@@ -23,6 +23,7 @@ public enum MineralType
     Fliesizin = 13,
     Coin = 14,
     Lava = 15,
+    AchCoin = 16,
 }
 
 public class MineHandler : MonoBehaviour

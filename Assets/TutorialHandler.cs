@@ -115,7 +115,7 @@ public class TutorialHandler : MonoBehaviour
 
         mainTutObj.transform.DOMoveY(1375, MenuData.scaleTime, true).SetEase(Ease.OutBack);
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2.5f);
 
         mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
@@ -155,7 +155,7 @@ public class TutorialHandler : MonoBehaviour
 
         mainTutObj.transform.DOMoveY(1375, MenuData.scaleTime, true).SetEase(Ease.OutBack);
 
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(2.5f);
 
         mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
@@ -212,7 +212,7 @@ public class TutorialHandler : MonoBehaviour
 
         mainTutObj.transform.DOMoveY(1375, MenuData.scaleTime, true).SetEase(Ease.OutBack);
 
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2.5f);
 
         mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
@@ -254,7 +254,7 @@ public class TutorialHandler : MonoBehaviour
 
         mainTutObj.transform.DOMoveY(1375, MenuData.scaleTime, true).SetEase(Ease.OutBack);
 
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2.5f);
 
         mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
@@ -304,7 +304,7 @@ public class TutorialHandler : MonoBehaviour
 
         mainTutObj.transform.DOMoveY(1375, MenuData.scaleTime, true).SetEase(Ease.OutBack);
 
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2.5f);
 
         mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
@@ -323,6 +323,38 @@ public class TutorialHandler : MonoBehaviour
 
         mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
+        yield return new WaitForSeconds(0.51f);
+
         mainTut = 1;
+        EndMainTut();
+    }
+
+    public void StartPipeHit()
+    {
+        StartCoroutine(PipeHit());
+    }
+
+    private IEnumerator PipeHit()
+    {
+        Completed(true);
+
+        yield return new WaitForSeconds(1f);
+
+        ResetCompleted();
+    }
+
+    public void EndMainTut()
+    {
+        ResetCompleted();
+
+        for (int i = 0; i < menuButtons.Length; i++)
+        {
+            menuButtons[i].GetComponent<Button>().interactable = true;
+        }
+
+        mainTutObj.transform.position = new Vector3(-381, 2000, -300);
+        mainTutObj.transform.GetChild(0).gameObject.SetActive(false);
+
+        PlayerPrefs.SetInt("TutorialPlayed", 1);
     }
 }

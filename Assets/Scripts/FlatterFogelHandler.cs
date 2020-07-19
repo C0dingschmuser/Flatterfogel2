@@ -81,11 +81,13 @@ public class FlatterFogelHandler : MonoBehaviour
     [SerializeField] private Sprite[] pauseSprites = null;
     [SerializeField] public Image pauseImage = null;
     [SerializeField] private Color[] defaultColors = null;
-    [SerializeField] private GameObject blusEffect = null;
+    [SerializeField] private GameObject[] blusEffects = null;
+    [SerializeField] private Material[] blusEffectsMats = null;
+    private float[] blusEffectsDissolve = new float[3];
     [SerializeField] private CameraShake cameraShake = null;
     [SerializeField] private Camera mainCamera = null;
 
-    private int startTimer = 3, d2dLayerCounter = 0;
+    private int startTimer = 3, d2dLayerCounter = 0, blusEffectCounter = 0;
     private List<GameObject> delList = new List<GameObject>();
 
     public static Color32[] pr0Farben = 
@@ -1180,17 +1182,15 @@ public class FlatterFogelHandler : MonoBehaviour
         player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX;
     }
 
-    private IEnumerator CheckBlusCircle()
+    private IEnumerator CheckBlusCircle(int current)
     {
-        ParticleSystem pSystem = blusEffect.GetComponent<ParticleSystem>();
-        ParticleSystem.Particle[] pParticles = new ParticleSystem.Particle[1];
-
+        int newCounter = current; //zuweisung da evtl mehrmals aufgerufen
         int len = 0;
 
         yield return new WaitForSeconds(0.125f); //warte bis particle system effekt anfängt
 
         float currentRadius = 10;
-        DOTween.To(() => currentRadius, x => currentRadius = x, 400, 0.5f);
+        DOTween.To(() => currentRadius, x => currentRadius = x, 400, 0.7f);
 
         while (true)
         {
@@ -1202,7 +1202,7 @@ public class FlatterFogelHandler : MonoBehaviour
             }
 
             Collider2D[] objs =
-                Physics2D.OverlapCircleAll(blusEffect.transform.position, currentRadius);/*(pParticles[0].GetCurrentSize(pSystem) / 10) * 400f);*/
+                Physics2D.OverlapCircleAll(blusEffects[newCounter].transform.position, currentRadius);/*(pParticles[0].GetCurrentSize(pSystem) / 10) * 400f);*/
 
             //objs = objs.OrderBy(
             //    x => Vector2.Distance(this.transform.position, x.transform.position))
@@ -1291,6 +1291,11 @@ public class FlatterFogelHandler : MonoBehaviour
                 am = 5;
             }
 
+            if(score < 15 || tutHandler.mainTut == 0)
+            {
+                am = 0;
+            }
+
             if (!destructionMode && !miningMode && 
                 (!shootingPipehandler.shootingPipesActive && shootingPipehandler.endComplete))
             {
@@ -1324,18 +1329,46 @@ public class FlatterFogelHandler : MonoBehaviour
 
             if(effect > 1)
             {
-                blusEffect.transform.position = FF_PlayerData.Instance.lastBlusPosition;
+                blusEffectCounter++;
+                if(blusEffectCounter > 2)
+                {
+                    blusEffectCounter = 0;
+                }
 
-                ParticleSystem.MainModule psmain = blusEffect.GetComponent<ParticleSystem>().main;
+                blusEffects[blusEffectCounter].transform.position = FF_PlayerData.Instance.lastBlusPosition;
+
+                ParticleSystem.MainModule psmain = blusEffects[blusEffectCounter].GetComponent<ParticleSystem>().main;
                 psmain.startColor = orig;
 
-                blusEffect.SetActive(false);
-                blusEffect.SetActive(true);
-            }
+                blusEffects[blusEffectCounter].SetActive(false);
 
-            if(!destructionMode)
-            {
-                StartCoroutine(CheckBlusCircle());
+                StartCoroutine(HandleBlusEffectFade(0.4f));
+
+                IEnumerator HandleBlusEffectFade(float wait)
+                {
+                    int old = blusEffectCounter;
+
+                    Material mat = blusEffectsMats[old];
+
+                    blusEffectsDissolve[old] = 1;
+                    mat.SetFloat("_DissolveAmount", 1);
+
+                    blusEffects[old].SetActive(true);
+
+                    yield return new WaitForSeconds(wait);
+
+                    Tween bTween = DOTween.To(() => blusEffectsDissolve[old],
+                        x => blusEffectsDissolve[old] = x, 0, 0.3f);
+                    bTween.OnUpdate(() =>
+                    {
+                        mat.SetFloat("_DissolveAmount", blusEffectsDissolve[old]);
+                    });
+                }
+
+                if (!destructionMode)
+                {
+                    StartCoroutine(CheckBlusCircle(blusEffectCounter));
+                }
             }
 
             playerScoreEffect[scoreEffectCounter].SetActive(false);
@@ -1376,6 +1409,12 @@ public class FlatterFogelHandler : MonoBehaviour
                         if(i == 0)
                         {
                             tempPipes[i].transform.parent.GetComponent<PipeHolder>().StopMove();
+                        }
+
+                        if(tutHandler.mainTut == 0)
+                        { //im tutorial collision box deaktivieren
+                            tempPipes[i].GetComponent<BoxCollider2D>().enabled = false;
+                            tempPipes[i].transform.GetChild(0).GetComponent<BoxCollider2D>().enabled = false;
                         }
 
                         PipeData pData = tempPipes[i].GetComponent<PipeData>();
@@ -1739,14 +1778,9 @@ public class FlatterFogelHandler : MonoBehaviour
             abstand = 125;//Random.Range(115, 135);
         }*/
 
-        int maxChance = 2;
+        int maxChance = 4;
 
-        if(StatHandler.classicCount <= 2)
-        {
-            maxChance = 4;
-        }
-
-        if(Random.Range(0, maxChance) == 0 && score > 15)
+        if(Random.Range(0, maxChance) == 0 && score > 25)
         {
             abstand = 125;
         } else
@@ -1754,10 +1788,10 @@ public class FlatterFogelHandler : MonoBehaviour
             abstand = 150;
         }
 
-        if(score < 5)
+        if(score < 9)
         {
             abstand = 225;
-        } else if(score < 10)
+        } else if(score < 13)
         {
             abstand = 175;
         }
@@ -2873,6 +2907,7 @@ public class FlatterFogelHandler : MonoBehaviour
             {
                 if (gameState == 0 || waitingState == 0 || gameState == 3)
                 {
+
                     if (holdingDown && !clicked)
                     {
                         clicked = true;
@@ -2913,6 +2948,12 @@ public class FlatterFogelHandler : MonoBehaviour
                             {
                                 player.GetComponent<FF_PlayerData>().StartMining();
                                 StartMineFull();
+                            } else if(tutHandler.mainTut == 0 &&
+                                player.GetComponent<Rigidbody2D>().velocity.y <= 0.01f)
+                            {
+                                player.transform.position = new Vector3(player.transform.position.x,
+                                    337, player.transform.position.z);
+                                player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
                             }
                         }
                     } else if(gameState == 3)

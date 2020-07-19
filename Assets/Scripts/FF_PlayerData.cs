@@ -912,8 +912,8 @@ public class FF_PlayerData : MonoBehaviour
 
             GameObject tap =
                 ObjectPooler.Instance.SpawnFromPool("TapEffect", new Vector3(mPos.x, mPos.y, 501), Quaternion.identity);
-            ParticleSystem.CollisionModule cM = tap.GetComponent<ParticleSystem>().collision;
-            cM.SetPlane(0, bottomPlane);
+            //ParticleSystem.CollisionModule cM = tap.GetComponent<ParticleSystem>().collision;
+            //cM.SetPlane(0, bottomPlane);
 
             HandleRotation();
         } else
@@ -1063,9 +1063,9 @@ public class FF_PlayerData : MonoBehaviour
                     coin.GetComponent<CoinHandler>().DestroyCoin();
 
                     break;
+                case "FF_Pipe":
                 case "FF_World":
                 case "FF_WorldGround":
-                case "FF_Pipe":
                 case "DestructablePipe":
                 case "D2DObj":
                     if (!ffHandler.gameActive || 
@@ -1075,8 +1075,39 @@ public class FF_PlayerData : MonoBehaviour
                         return;
                     }
 
-                    Die(0);
-                    
+                    if (ffHandler.tutHandler.mainTut == 0)
+                    {
+                        bool isPipe = false;
+
+                        if(collision.gameObject.CompareTag("FF_Pipe"))
+                        { //pipe weg teleportieren
+                            isPipe = true;
+
+                            collision.transform.parent.GetComponent<PipeHolder>().
+                                GetAssignedBlus().transform.Translate(1250, 0, 0);
+
+                            collision.transform.parent.GetChild(0).Translate(1250, 0, 0);
+                            collision.transform.parent.GetChild(1).Translate(1250, 0, 0);
+                        } else if(collision.gameObject.CompareTag("FF_PipeEnd"))
+                        {
+                            isPipe = true;
+
+                            collision.transform.parent.parent.GetComponent<PipeHolder>().
+                                GetAssignedBlus().transform.Translate(1250, 0, 0);
+
+                            collision.transform.parent.parent.GetChild(0).Translate(1000, 0, 0);
+                            collision.transform.parent.parent.GetChild(1).Translate(1000, 0, 0);
+                        }
+
+                        if(isPipe)
+                        {
+                            ffHandler.tutHandler.StartPipeHit();
+                        }
+                    } else
+                    {
+                        Die(DeathCause.Collision);
+                    }
+
                     break;
                 case "Spike":
 

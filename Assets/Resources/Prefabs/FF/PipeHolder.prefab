@@ -50,7 +50,7 @@ GameObject:
   - component: {fileID: 3799981399527024853}
   m_Layer: 0
   m_Name: BottomEnd
-  m_TagString: FF_Pipe
+  m_TagString: FF_PipeEnd
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -382,7 +382,7 @@ GameObject:
   - component: {fileID: 2831965212232493101}
   m_Layer: 0
   m_Name: TopEnd
-  m_TagString: FF_Pipe
+  m_TagString: FF_PipeEnd
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10525,6 +10525,7 @@ MonoBehaviour:
   destructable: 0
   nextSpawned: 0
   emptyPipe: 0
+  flakEnabled: 0
   renderDeactivated: 2
   middleObj: {fileID: 0}
   thisPipe: {fileID: 0}
@@ -10733,6 +10734,7 @@ MonoBehaviour:
   destructable: 0
   nextSpawned: 0
   emptyPipe: 0
+  flakEnabled: 0
   renderDeactivated: 2
   middleObj: {fileID: 0}
   thisPipe: {fileID: 0}

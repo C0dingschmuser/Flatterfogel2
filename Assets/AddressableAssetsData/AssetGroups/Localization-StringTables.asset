@@ -26,6 +26,14 @@ MonoBehaviour:
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
+  - m_GUID: 0077cc1f083d80f4694604ba4324e6b7
+    m_Address: Achievements_de
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de
+    m_mainAssetType: 
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   - m_GUID: 0498f3f1aa9f2854ba391d91afe30eaf
     m_Address: Destruction_de
     m_ReadOnly: 1
@@ -242,6 +250,22 @@ MonoBehaviour:
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
+  - m_GUID: 82894e4b0c7b59f4580e87748430be57
+    m_Address: Achievements_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    m_mainAssetType: 
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
+  - m_GUID: 901ede2e1210a36478351f4655cf7c4f
+    m_Address: Achievements_fr
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-fr
+    m_mainAssetType: 
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   - m_GUID: 98a01a2bdfa3a4044b38e44be0d74ff8
     m_Address: Classic_fr
     m_ReadOnly: 1
@@ -303,6 +327,14 @@ MonoBehaviour:
     - Locale-fr
     m_mainAssetType: UnityEngine.Localization.Tables.StringTable, Unity.Localization,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
+  - m_GUID: e5618ad5739a3c24d84b53f8a4cf446c
+    m_Address: Achievements_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    m_mainAssetType: 
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
   - m_GUID: ec5f685c4b4194444b45ac7dfa53e2a4

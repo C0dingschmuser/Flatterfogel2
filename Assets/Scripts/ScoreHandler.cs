@@ -24,7 +24,7 @@ public class ScoreHandler : MonoBehaviour
     public GameObject[] medalObjs;
     public GameObject scoreObj, perfectHitObj, highscoreObj, coinObj, tapObj, highscoreList, okButton, personalCoinsObj,
         continueEffects, xpParent, goAgainButton, menuButton;
-    public GameObject inputParent, hParent, eventSystem;
+    public GameObject inputParent, hParent, eventSystem, achParent, fullParent;
 
     public GameObject inAppUpdate, inAppDialogue, inAppProgress, inAppProgressButton, inAppError;
     public TextMeshProUGUI progressText, dialogueSize;
@@ -172,6 +172,11 @@ public class ScoreHandler : MonoBehaviour
         ModeManager.Instance.BackClicked();
 
         eventSystem.SetActive(false);
+
+        fullParent.SetActive(true);
+
+        achParent.SetActive(false);
+
         hParent.SetActive(true);
         hParent.transform.position = highscoreStartPos;
         hParent.transform.localScale = Vector3.one;

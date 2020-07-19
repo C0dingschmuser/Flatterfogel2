@@ -1,0 +1,16 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Localization;
+
+[CreateAssetMenu(menuName = "Achievement")]
+public class Achievement : ScriptableObject
+{
+    public string identifier;
+    public Sprite mainSprite;
+    public CostData[] rewards;
+    public LocalizedString title, description;
+    public string titleString, descriptionString; //assigned beim laden
+    public int step = 0, maxStep = 10;
+    public bool completed = false, rewardCollected = false;
+}
