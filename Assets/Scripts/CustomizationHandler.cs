@@ -75,7 +75,6 @@ public class CustomizationHandler : MonoBehaviour
     public void StartCustomizationHandler()
     {
         SetType(CustomizationType.Skin, true);
-        smallPreviewParent.GetChild(0).GetComponent<Image>().color = Color.green;
 
         switchRunning = true;
 
@@ -287,17 +286,6 @@ public class CustomizationHandler : MonoBehaviour
 
         previewImages[middleID].localScale = new Vector3(2.5f, 2.5f, 2.5f);
 
-        if(type == CustomizationType.Hat)
-        {
-            Vector3 pos = previewImages[middleID].transform.position;
-            pos.y = hatMiddleY + 
-                shop.allHats[previewImages[middleID].GetComponent<IDHolder>().realID].yDist;
-            previewImages[middleID].transform.position = pos;
-        } else
-        {
-            previewImages[middleID].transform.position = previewPositions[1];
-        }
-
         CostData[] cost = null;
         bool purchased = false;
 
@@ -351,6 +339,24 @@ public class CustomizationHandler : MonoBehaviour
         previewImages[GetNewID(middleID + 1)].GetComponent<IDHolder>().realID =
             shop.CheckSelected(type, selectedID + 1);
 
+        if (type == CustomizationType.Hat)
+        {
+            Vector3 pos = previewImages[middleID].transform.position;
+
+            int realID = previewImages[middleID].GetComponent<IDHolder>().realID;
+
+            Debug.Log(realID);
+
+            pos.y = hatMiddleY +
+                shop.allHats[realID].shopYDist;
+
+            previewImages[middleID].transform.position = pos;
+        }
+        else
+        {
+            previewImages[middleID].transform.position = previewPositions[1];
+        }
+
         if (purchased)
         {
             priceImage.SetActive(false);
@@ -381,6 +387,11 @@ public class CustomizationHandler : MonoBehaviour
 
         interaction = false;
 
+        for(int i = 0; i < typeParent.childCount; i++)
+        {
+            typeParent.GetChild(i).GetComponent<Image>().color = Color.white;
+        }
+
         if(newType != CustomizationType.Skin)
         {
             skinPreview.GetComponent<Image>().sprite = 
@@ -395,6 +406,8 @@ public class CustomizationHandler : MonoBehaviour
             CheckHatSupport();
             CheckWingSupport();
 
+            typeParent.GetChild(1).GetComponent<Image>().color = Color.black;
+
             skinPreview.gameObject.SetActive(false);
         }
 
@@ -403,6 +416,8 @@ public class CustomizationHandler : MonoBehaviour
             UpdateWing();
         } else
         {
+            typeParent.GetChild(0).GetComponent<Image>().color = Color.black;
+
             wingPreview.gameObject.SetActive(false);
         }
 
@@ -411,12 +426,14 @@ public class CustomizationHandler : MonoBehaviour
             UpdateHat();
         } else
         {
+            typeParent.GetChild(2).GetComponent<Image>().color = Color.black;
+
             hatPreview.gameObject.SetActive(false);
         }
 
         type = newType;
         UpdateDisplay(newType);
-        UpdateSmallPreviews();
+        UpdateSmallPreviews(1);
 
         UpdateSale(newType);
     }
@@ -479,23 +496,34 @@ public class CustomizationHandler : MonoBehaviour
     {
         int max = shop.GetMax(type);
 
+        int currentPage = selectedID / 10;
+        //int posInSmallPreviews = selectedID - (currentPage * 10);
+
         for (int i = 0; i < smallPreviewParent.childCount; i++)
         {
             int newID = i;
             
             if(smallPreviewParent.childCount < max)
-            {
-                if(dir == 1)
+            { //wenn neue seite
+                #region alt
+                /*if(dir == 1) alter code für continuos
                 {//rechts (start ist 0)
-                    newID = shop.CheckSelected(type, selectedID + i);
+                    newID = selectedID + i;//shop.CheckSelected(type, selectedID + i);
+
+                    newID = (currentPage * 10) + i;
                 } else
                 { //links (start ist pmax - 1)
-                    newID = shop.CheckSelected(type, 
-                        (selectedID - (smallPreviewParent.childCount - 1)) + i);
-                }
+                    newID =
+                        (selectedID - (smallPreviewParent.childCount - 1)) + i;
+
+                    newID = (currentPage * 10) + i;
+                }*/
+                #endregion
+
+                newID = (currentPage * 10) + i;
             }
 
-            if(newID < max)
+            if(newID < max && newID >= 0)
             {
                 Sprite newSprite = null;
 
@@ -516,19 +544,25 @@ public class CustomizationHandler : MonoBehaviour
 
                 if(newID == selectedID)
                 {
-                    smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.green;
+                    smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.black;
                 } else
                 {
                     smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.white;
                 }
 
                 smallPreviewParent.GetChild(i).GetChild(0).gameObject.SetActive(true);
-                smallPreviewParent.GetChild(i).GetChild(0).GetComponent<Image>().sprite =
+                smallPreviewParent.GetChild(i).GetChild(1).gameObject.SetActive(true);
+
+                smallPreviewParent.GetChild(i).GetChild(0).GetComponent<Image>().color =
+                    shop.GetRarity(type, newID, 170);
+
+                smallPreviewParent.GetChild(i).GetChild(1).GetComponent<Image>().sprite =
                     newSprite;
             } else
             {
                 smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.white;
                 smallPreviewParent.GetChild(i).GetChild(0).gameObject.SetActive(false);
+                smallPreviewParent.GetChild(i).GetChild(1).gameObject.SetActive(false);
             }
         }
     }
@@ -547,7 +581,7 @@ public class CustomizationHandler : MonoBehaviour
             smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.white;
         }
 
-        smallPreviewParent.GetChild(newID).GetComponent<Image>().color = Color.green;
+        smallPreviewParent.GetChild(newID).GetComponent<Image>().color = Color.black;
 
         changeApplied = false;
 
@@ -585,7 +619,7 @@ public class CustomizationHandler : MonoBehaviour
         {
             Vector3 pos = previewImages[middleID].transform.position;
             pos.y = hatMiddleY +
-                shop.allHats[previewImages[middleID].GetComponent<IDHolder>().realID].yDist;
+                shop.allHats[previewImages[middleID].GetComponent<IDHolder>().realID].shopYDist;
             previewImages[middleID].transform.position = pos;
         }
         else
@@ -687,11 +721,11 @@ public class CustomizationHandler : MonoBehaviour
             if(dir == 0)
             {
                 middlePos.y = hatMiddleY +
-                    shop.allHats[shop.CheckSelected(type, selectedID - 1)].yDist;
+                    shop.allHats[shop.CheckSelected(type, selectedID - 1)].shopYDist;
             } else
             {
                 middlePos.y = hatMiddleY +
-                    shop.allHats[shop.CheckSelected(type, selectedID + 1)].yDist;
+                    shop.allHats[shop.CheckSelected(type, selectedID + 1)].shopYDist;
             }
         }
 
@@ -850,7 +884,7 @@ public class CustomizationHandler : MonoBehaviour
                 smallPreviewParent.GetChild(i).GetChild(0).gameObject.activeSelf)
             {
                 found = true;
-                smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.green;
+                smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.black;
             } else
             {
                 smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.white;
@@ -861,14 +895,6 @@ public class CustomizationHandler : MonoBehaviour
         if(!found)
         {
             UpdateSmallPreviews(dir);
-            if(dir == 0)
-            {
-                smallPreviewParent.GetChild(smallPreviewParent.childCount - 1).
-                    GetComponent<Image>().color = Color.green;
-            } else
-            {
-                smallPreviewParent.GetChild(0).GetComponent<Image>().color = Color.green;
-            }
         }
 
         switchRunning = false;
@@ -905,7 +931,7 @@ public class CustomizationHandler : MonoBehaviour
                     priceTextTween[i].Kill();
                 }
 
-                Color tC = Color.black;
+                Color tC = Color.green;
                 tC.a = 0;
 
                 priceText.transform.GetChild(i).GetComponent<TextMeshProUGUI>().color =
@@ -1051,7 +1077,7 @@ public class CustomizationHandler : MonoBehaviour
                         {
                             if (i == smallPreviewParent.GetChild(a).GetComponent<IDHolder>().realID)
                             {
-                                smallPreviewParent.GetChild(a).GetChild(0).GetComponent<Image>().sprite =
+                                smallPreviewParent.GetChild(a).GetChild(1).GetComponent<Image>().sprite =
                                     pSkin.animatedSprites[pSkin.shopStep];
                             }
                         }
@@ -1109,7 +1135,7 @@ public class CustomizationHandler : MonoBehaviour
                         {
                             if (i == smallPreviewParent.GetChild(a).GetComponent<IDHolder>().realID)
                             {
-                                smallPreviewParent.GetChild(a).GetChild(0).GetComponent<Image>().sprite =
+                                smallPreviewParent.GetChild(a).GetChild(1).GetComponent<Image>().sprite =
                                     cHat.animatedSprites[cHat.shopStep];
                             }
                         }

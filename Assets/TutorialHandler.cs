@@ -67,7 +67,7 @@ public class TutorialHandler : MonoBehaviour
             menuButtons[i].GetComponent<Button>().interactable = false;
         }
 
-        mainTutObj.transform.position = new Vector3(-381, 2000, -300);
+        mainTutObj.transform.position = new Vector3(-381, 2500, -300);
         mainTutObj.transform.GetChild(0).gameObject.SetActive(true);
 
         mainTutObj.transform.DOMoveY(987, MenuData.scaleTime, true).SetEase(Ease.OutBack);
@@ -103,7 +103,7 @@ public class TutorialHandler : MonoBehaviour
 
         yield return new WaitForSeconds(0.51f);
 
-        mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
+        mainTutObj.transform.DOMoveY(2500, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
         yield return new WaitForSeconds(MenuData.scaleTime + 0.01f);
         ResetCompleted();
@@ -117,7 +117,7 @@ public class TutorialHandler : MonoBehaviour
 
         yield return new WaitForSeconds(2.5f);
 
-        mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
+        mainTutObj.transform.DOMoveY(2500, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
         yield return new WaitForSeconds(MenuData.scaleTime + 0.01f);
 
@@ -142,7 +142,7 @@ public class TutorialHandler : MonoBehaviour
 
         yield return new WaitForSeconds(0.51f);
 
-        mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
+        mainTutObj.transform.DOMoveY(2500, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
         yield return new WaitForSeconds(MenuData.scaleTime + 0.01f);
         ResetCompleted();
@@ -157,7 +157,7 @@ public class TutorialHandler : MonoBehaviour
 
         yield return new WaitForSeconds(2.5f);
 
-        mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
+        mainTutObj.transform.DOMoveY(2500, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
         yield return new WaitForSeconds(MenuData.scaleTime + 0.01f);
 
@@ -197,7 +197,7 @@ public class TutorialHandler : MonoBehaviour
 
         yield return new WaitForSeconds(0.51f);
 
-        mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
+        mainTutObj.transform.DOMoveY(2500, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
         yield return new WaitForSeconds(MenuData.scaleTime + 0.01f);
         ResetCompleted();
@@ -214,7 +214,7 @@ public class TutorialHandler : MonoBehaviour
 
         yield return new WaitForSeconds(2.5f);
 
-        mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
+        mainTutObj.transform.DOMoveY(2500, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
         yield return new WaitForSeconds(MenuData.scaleTime + 0.01f);
 
@@ -239,7 +239,7 @@ public class TutorialHandler : MonoBehaviour
 
         yield return new WaitForSeconds(0.51f);
 
-        mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
+        mainTutObj.transform.DOMoveY(2500, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
         yield return new WaitForSeconds(MenuData.scaleTime + 0.01f);
         ResetCompleted();
@@ -256,7 +256,7 @@ public class TutorialHandler : MonoBehaviour
 
         yield return new WaitForSeconds(2.5f);
 
-        mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
+        mainTutObj.transform.DOMoveY(2500, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
         yield return new WaitForSeconds(MenuData.scaleTime + 0.01f);
 
@@ -287,7 +287,7 @@ public class TutorialHandler : MonoBehaviour
 
         yield return new WaitForSeconds(0.51f);
 
-        mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
+        mainTutObj.transform.DOMoveY(2500, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
         yield return new WaitForSeconds(MenuData.scaleTime + 0.01f);
         ResetCompleted();
@@ -306,7 +306,7 @@ public class TutorialHandler : MonoBehaviour
 
         yield return new WaitForSeconds(2.5f);
 
-        mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
+        mainTutObj.transform.DOMoveY(2500, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
         yield return new WaitForSeconds(MenuData.scaleTime + 0.01f);
 
@@ -321,7 +321,7 @@ public class TutorialHandler : MonoBehaviour
 
         yield return new WaitForSeconds(1);
 
-        mainTutObj.transform.DOMoveY(2000, MenuData.scaleTime, true).SetEase(Ease.InBack);
+        mainTutObj.transform.DOMoveY(2500, MenuData.scaleTime, true).SetEase(Ease.InBack);
 
         yield return new WaitForSeconds(0.51f);
 
@@ -352,9 +352,14 @@ public class TutorialHandler : MonoBehaviour
             menuButtons[i].GetComponent<Button>().interactable = true;
         }
 
-        mainTutObj.transform.position = new Vector3(-381, 2000, -300);
-        mainTutObj.transform.GetChild(0).gameObject.SetActive(false);
+        mainTutObj.transform.position = new Vector3(-381, 2500, -300);
+
+        for(int i = 0; i < mainTutObj.transform.childCount; i++)
+        {
+            mainTutObj.transform.GetChild(i).gameObject.SetActive(false);
+        }
 
         PlayerPrefs.SetInt("TutorialPlayed", 1);
+        AchievementHandler.Instance.UnlockComplete("completeTutorial");
     }
 }

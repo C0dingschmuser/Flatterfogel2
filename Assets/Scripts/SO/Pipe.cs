@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Pipe")]
-public class Pipe : ScriptableObject
+public class Pipe : ShopItem
 {
     public Sprite[] sprite, endSprite;
     public Color defaultColor;
-    public bool purchased = false, colorChangeSupported = false;
-    public CostData[] cost;
-    public int pipeID, salePercent = 0;
-    public string identifier;
+    public bool colorChangeSupported = false;
 }

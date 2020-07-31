@@ -12,6 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7ece0d8c080068499e03e32231b4348, type: 3}
   m_Name: Gamb
   m_EditorClassIdentifier: 
+  identifier: original_gamb
+  itemID: 8
+  rarity: 2
+  purchased: 0
+  salePercent: 0
+  cost:
+  - mineralID: 14
+    amount: 100
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  animated: 1
+  animationSpeed: 0.1
+  shopTime: 0.034716897
+  shopStep: 4
   sprite: {fileID: 21300000, guid: cb92dc7f3ce575f4e933265968b15a38, type: 3}
   overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
   animatedSprites:
@@ -25,27 +43,12 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 28b36dd7e781ac24d813e86c04d4bf45, type: 3}
   - {fileID: 21300000, guid: 72b7927b239a6454188ddba62c5ed697, type: 3}
   - {fileID: 21300000, guid: 99126633ee4d1be4cb9f9d7b69963358, type: 3}
-  animated: 1
-  animationSpeed: 0.1
-  shopTime: 0
-  shopStep: 0
-  purchased: 0
-  salePercent: 0
-  cost:
-  - mineralID: 14
-    amount: 100
-  - mineralID: 0
-    amount: 0
-  - mineralID: 0
-    amount: 0
-  - mineralID: 0
-    amount: 0
-  boughtWings: 
-  boughtHats: 
+  boughtWings: 00000000
+  boughtHats: 00000000
+  hatStart: 18.662
+  wingStart: 0
   wingSupport: 1
   hatSupport: 1
   boxCollider: 0
   colliderSize: {x: 0, y: 0}
   colliderOffset: {x: 0, y: 0}
-  skinID: 0
-  identifier: original_gamb

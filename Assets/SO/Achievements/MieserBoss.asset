@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26c3513d95ea7144b921b27da79a4251, type: 3}
+  m_Name: MieserBoss
+  m_EditorClassIdentifier: 
+  identifier: mieserBoss
+  mainSprite:
+  - {fileID: 21300000, guid: 0c3e5b90880411240bbdfb3aee0ffb79, type: 3}
+  rewards:
+  - mineralID: 16
+    amount: 15
+  title:
+    m_TableReference:
+      m_TableCollectionName: GUID:7300fd89b4d69cc41b25293fb5d9393c
+    m_TableEntryReference:
+      m_KeyId: 5
+      m_Key: 
+  description:
+    m_TableReference:
+      m_TableCollectionName: GUID:7300fd89b4d69cc41b25293fb5d9393c
+    m_TableEntryReference:
+      m_KeyId: 6
+      m_Key: 
+  titleString: Schmuser
+  descriptionString: Besiege den Mieserkadser
+  step: 0
+  maxStep: 1
+  upgradeStep: 0
+  maxUpgradeSteps: 0
+  stepMultiplier: 2
+  rewardMultiplier: 2
+  completed: 0
+  rewardCollected: 0

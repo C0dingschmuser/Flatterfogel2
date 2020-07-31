@@ -12,37 +12,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7ece0d8c080068499e03e32231b4348, type: 3}
   m_Name: OriginalRainbow
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 7fa87590eec4f9340b2f156a6198d5c9, type: 3}
-  overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
-  animatedSprites:
-  - {fileID: 21300000, guid: 0c3e5b90880411240bbdfb3aee0ffb79, type: 3}
-  - {fileID: 21300000, guid: 7fa87590eec4f9340b2f156a6198d5c9, type: 3}
-  - {fileID: 21300000, guid: ae8fbfc4bda92d0418a380686b6dc20c, type: 3}
-  - {fileID: 21300000, guid: e781e27658963c6438a90b6a996ea7b1, type: 3}
-  - {fileID: 21300000, guid: 9404050698617db41928e30012c319c7, type: 3}
-  - {fileID: 21300000, guid: b21b83ba4b6745c4aa9849992fde450c, type: 3}
-  - {fileID: 21300000, guid: f54cbb0a5c4ba164da22667471517787, type: 3}
-  animated: 1
-  animationSpeed: 0.05
-  shopTime: 0.0312186
-  shopStep: 1
-  purchased: 0
-  salePercent: 0
+  identifier: original_rainbow
+  itemID: 7
+  rarity: 4
+  purchased: 1
+  salePercent: -50
   cost:
   - mineralID: 14
-    amount: 130
+    amount: 75
   - mineralID: 0
     amount: 0
   - mineralID: 0
     amount: 0
   - mineralID: 0
     amount: 0
+  animated: 1
+  animationSpeed: 0.05
+  shopTime: 0.034716897
+  shopStep: 3
+  sprite: {fileID: 21300000, guid: c8f13a61476fa4845ac55839b2bcb217, type: 3}
+  overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
+  animatedSprites:
+  - {fileID: 21300000, guid: 534e0dc08841532438c4d3aa693c2e1b, type: 3}
+  - {fileID: 21300000, guid: 028ec8c978c0dea418a28c40b3a72b39, type: 3}
+  - {fileID: 21300000, guid: 05f9533dde5ce4f4b841de81f9f209de, type: 3}
+  - {fileID: 21300000, guid: 366379b186e20d641bf09ab169ec05f3, type: 3}
+  - {fileID: 21300000, guid: 8d6042bcb4497cc40ab6a45f08a89f75, type: 3}
+  - {fileID: 21300000, guid: c8f13a61476fa4845ac55839b2bcb217, type: 3}
+  - {fileID: 21300000, guid: 24f65e2795816e5419ef405c45cf1bd4, type: 3}
   boughtWings: 00000000
   boughtHats: 00000000
+  hatStart: 18.662
+  wingStart: 0
   wingSupport: 1
   hatSupport: 1
   boxCollider: 0
   colliderSize: {x: 0, y: 0}
   colliderOffset: {x: 0, y: 0}
-  skinID: 4
-  identifier: original_rainbow

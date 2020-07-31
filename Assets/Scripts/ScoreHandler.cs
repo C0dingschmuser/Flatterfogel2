@@ -146,6 +146,7 @@ public class ScoreHandler : MonoBehaviour
 
             closing = false;
             hParent.SetActive(false);
+            achParent.SetActive(false);
 
             windowCanvas.sortingOrder = 10;
 
@@ -176,6 +177,7 @@ public class ScoreHandler : MonoBehaviour
         fullParent.SetActive(true);
 
         achParent.SetActive(false);
+        achParent.transform.position = defaultHighscorePos;
 
         hParent.SetActive(true);
         hParent.transform.position = highscoreStartPos;
@@ -244,6 +246,18 @@ public class ScoreHandler : MonoBehaviour
         eventSystem.SetActive(false);
 
         hParent.transform.DOMove(highscoreStartPos, moveTime).SetEase(Ease.InBack);
+        //hParent.transform.DOScale(0, moveTime);
+
+        Invoke("ReactivateEventSystem", moveTime + 0.01f);
+    }
+
+    public void CloseAchievements()
+    {
+        closing = true;
+
+        eventSystem.SetActive(false);
+
+        achParent.transform.DOMove(highscoreStartPos, moveTime).SetEase(Ease.InBack);
         //hParent.transform.DOScale(0, moveTime);
 
         Invoke("ReactivateEventSystem", moveTime + 0.01f);

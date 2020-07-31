@@ -121,7 +121,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 0.67
+  bundleVersion: 0.75
   preloadedAssets:
   - {fileID: 11400000, guid: 2d1508543666cb9419f3cdaac930f525, type: 2}
   metroInputSource: 0
@@ -171,7 +171,7 @@ PlayerSettings:
     iPhone: com.bruhgames.flatterfogel
   buildNumber:
     iPhone: 8
-  AndroidBundleVersionCode: 9
+  AndroidBundleVersionCode: 11
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
@@ -257,7 +257,7 @@ PlayerSettings:
   AndroidEnableTango: 0
   androidEnableBanner: 1
   androidUseLowAccuracyLocation: 0
-  androidUseCustomKeystore: 1
+  androidUseCustomKeystore: 0
   m_AndroidBanners:
   - width: 320
     height: 180

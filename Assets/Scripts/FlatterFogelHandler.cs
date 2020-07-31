@@ -45,6 +45,7 @@ public class FlatterFogelHandler : MonoBehaviour
     private List<GameObject> coins = new List<GameObject>();
 
     public List<GameObject> bottomObjs = new List<GameObject>();
+    public AchievementHandler achHandler;
     public GroundHandler groundHandler;
     public MineHandler mineHandler;
     public DestructionHandler destructionHandler;
@@ -66,7 +67,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
     private HighscoreHolder[] highscore = new HighscoreHolder[6];
     private bool modeChanging = false, isStarting = false, highscoreLineShowed = false, highscoreLineMode = false,
-        pipeSpawnAllowed = false, holdingDown = false;
+        pipeSpawnAllowed = false, holdingDown = false, nextPipeTunnel = false;
     
     public static Vector3 currentCameraPos;
 
@@ -1380,7 +1381,7 @@ public class FlatterFogelHandler : MonoBehaviour
                 scoreEffectCounter = 0;
             }
 
-            defaultVolume.profile.TryGetSettings(out Bloom bloomLayer);
+            defaultVolume.profile.TryGetSettings(out Bloom bloomLayer); 
             defaultVolume.profile.TryGetSettings(out ChromaticAberration chromeLayer);
             defaultVolume.profile.TryGetSettings(out ColorGrading colorGr);
 
@@ -1406,9 +1407,34 @@ public class FlatterFogelHandler : MonoBehaviour
                 {
                     if(tempPipes[i] != null)
                     {
-                        if(i == 0)
+                        PipeData pData = tempPipes[i].GetComponent<PipeData>();
+
+                        if (i == 0)
                         {
-                            tempPipes[i].transform.parent.GetComponent<PipeHolder>().StopMove();
+                            PipeHolder pH = tempPipes[i].transform.parent.GetComponent<PipeHolder>();
+
+                            pH.StopMove();
+
+                            if(tutHandler.mainTut == 1)
+                            { //achs erst updaten wenn tutorial abgeschlossen
+                                if (pH.isMoving)
+                                {
+                                    achHandler.UpdateStep("movingPipe", 1);
+                                }
+                                else
+                                {
+                                    if(pH.tunnel)
+                                    {
+                                        if(pH.lastInTunnel)
+                                        {
+                                            achHandler.UpdateStep("tunnelCompleted", 1);
+                                        }
+                                    } else
+                                    {
+                                        achHandler.UpdateStep("normalPipe", 1);
+                                    }
+                                }
+                            }
                         }
 
                         if(tutHandler.mainTut == 0)
@@ -1416,8 +1442,6 @@ public class FlatterFogelHandler : MonoBehaviour
                             tempPipes[i].GetComponent<BoxCollider2D>().enabled = false;
                             tempPipes[i].transform.GetChild(0).GetComponent<BoxCollider2D>().enabled = false;
                         }
-
-                        PipeData pData = tempPipes[i].GetComponent<PipeData>();
 
                         pData.isChecked = true;
                         if(pData.highscorePipe)
@@ -1720,6 +1744,14 @@ public class FlatterFogelHandler : MonoBehaviour
 
         GameObject pipeHolder = objectPooler.SpawnFromPool("Pipe",
             new Vector3(1000, 0), Quaternion.identity);
+
+        pipeHolder.GetComponent<PipeHolder>().ResetPH();
+
+        if(nextPipeTunnel)
+        {
+            nextPipeTunnel = false;
+            pipeHolder.GetComponent<PipeHolder>().tunnel = true;
+        }
 
         pipeHolder.transform.SetParent(pipeParent);
 
@@ -2624,6 +2656,8 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public void SpawnTunnel()
     {
+        nextPipeTunnel = true; //zurückgesetzt in spawnpipe
+
         SpawnPipes(true, false);
 
         float lastY = 
@@ -2662,14 +2696,19 @@ public class FlatterFogelHandler : MonoBehaviour
 
                 bool empty = true;
 
-                if(i == 0 || i == 5)
+                if(i == 0 || i == 5 || (a == 1 && i == 9))
                 {
                     empty = false;
                 }
 
+                nextPipeTunnel = true;
+
                 SpawnPipes(empty, false, newY, true, true);
             }
         }
+
+        pipes[pipes.Count - 1].transform.parent.
+            GetComponent<PipeHolder>().lastInTunnel = true;
     }
 
     // Update is called once per frame
@@ -3040,7 +3079,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
                                 if(tutHandler.mainTut != 0)
                                 { //neue pipes nur spawnen wenn tutorial abgeschlossen
-                                    if (Random.Range(0, 10) == 0
+                                    if (Random.Range(0, 15) == 0
                                         && !shootingPipehandler.shootingPipesActive
                                         && shootingPipehandler.endComplete)
                                     {

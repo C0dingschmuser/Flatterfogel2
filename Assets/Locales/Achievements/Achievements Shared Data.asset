@@ -12,12 +12,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Achievements Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 2
+  m_NextAvailableId: 12
   m_TableCollectionName: Achievements
   m_TableCollectionNameGuidString: 7300fd89b4d69cc41b25293fb5d9393c
   m_Entries:
   - m_Id: 1
     m_Key: Placeholder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2
+    m_Key: CompleteTutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Key: TunnelTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Key: TunnelDescription
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Key: MieserBossTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Key: MieserBossDescription
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Key: MovingPipeTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Key: MovingPipeDescription
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Key: PipeTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Key: PipeDescription
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Key: Unlock
     m_Metadata:
       m_Items: []
   m_Metadata:

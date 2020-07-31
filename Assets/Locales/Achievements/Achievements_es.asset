@@ -22,5 +22,45 @@ MonoBehaviour:
     m_Localized: Placeholder
     m_Metadata:
       m_Items: []
+  - m_Id: 2
+    m_Localized: Reproducir el Tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Localized: "Trabajador de T\xFAneles"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: "Volar a trav\xE9s de un t\xFAnel"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Ganar contra el gato malo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: Buen gato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: "Maestro de Navegaci\xF3n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: "Volar a trav\xE9s de un tubo en movimiento"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: TBD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: TBD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: Logros desbloqueados!
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

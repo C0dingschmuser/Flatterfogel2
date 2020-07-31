@@ -1,3 +1,4 @@
+#if UNITY_IOS
 using UnityEngine;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -25,3 +26,4 @@ public class ExcemptFromEncryption : IPostprocessBuildWithReport // Will execute
         }
     }
 }
+#endif

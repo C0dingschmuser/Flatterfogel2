@@ -12,13 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7ece0d8c080068499e03e32231b4348, type: 3}
   m_Name: Dino
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: e42a2822b5223d849b4aba90ec9c2333, type: 3}
-  overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
-  animatedSprites: []
-  animated: 0
-  animationSpeed: 0.25
-  shopTime: 0
-  shopStep: 0
+  identifier: original_dino
+  itemID: 5
+  rarity: 1
   purchased: 0
   salePercent: 0
   cost:
@@ -30,12 +26,19 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
-  boughtWings: 
-  boughtHats: 
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  sprite: {fileID: 21300000, guid: 52bcb165ba03b9549b02892fe7876fd7, type: 3}
+  overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
+  animatedSprites: []
+  boughtWings: 00000000
+  boughtHats: 00000000
+  hatStart: 18.662
+  wingStart: 0
   wingSupport: 1
   hatSupport: 1
   boxCollider: 0
   colliderSize: {x: 0, y: 0}
   colliderOffset: {x: 0, y: 0}
-  skinID: 0
-  identifier: original_dino

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PipeHolder : MonoBehaviour
 {
-    private bool isMoving = false, isEmpty = false;
+    public bool isMoving = false, isEmpty = false, tunnel = false, lastInTunnel = false;
     private int mode = 0;
     private float maxY = 0, minY = 0, speed = 0, startY;
     private GameObject assignedBlus, topPipe, bottomPipe;
@@ -16,6 +16,13 @@ public class PipeHolder : MonoBehaviour
     {
         topPipe = transform.GetChild(0).gameObject;
         bottomPipe = transform.GetChild(1).gameObject;
+    }
+
+    public void ResetPH()
+    {
+        isMoving = false;
+        tunnel = false;
+        lastInTunnel = false;
     }
 
     public void SetEmpty(float startY, bool empty)

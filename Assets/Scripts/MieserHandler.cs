@@ -7,6 +7,7 @@ public class MieserHandler : MonoBehaviour
 {
     public GameObject whiteParent, deathEffect, mieser;
     public GameObject[] whiteParts;
+    public AchievementHandler achHandler;
 
     [SerializeField]
     private BossHandler bossHandler = null;
@@ -108,9 +109,11 @@ public class MieserHandler : MonoBehaviour
 
     private void EndDeath()
     {
+        achHandler.UnlockComplete("mieserBoss");
+
         FlatterFogelHandler.Instance.ChangeMode();
         bossHandler.BossDie(2f);
-        bossHandler.StopBoss(2f);
+        //bossHandler.StopBoss(2f); wird bei deathtimeout aufgerufen
     }
 
     private void SetWhiteAlpha(float a)

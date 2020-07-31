@@ -54,7 +54,7 @@ public class BackgroundHandler : MonoBehaviour
     public GameObject cloudObject;
 
     public List<BackgroundData> bgData = new List<BackgroundData>();
-    public Color moonColor, sunColor, nightBackgroundColor, dayBackgroundColor;
+    public Color nightColor, dayColor, nightBackgroundColor, dayBackgroundColor;
     public Color[] bgColor;
     public TextAsset bgDataText;
     public BackgroundData currentBG = new BackgroundData();
@@ -69,7 +69,7 @@ public class BackgroundHandler : MonoBehaviour
     [SerializeField]
     private GameObject train = null;
 
-    private Tween globalLightTween, moonLightTween, sunLightTween, cameraColorTween;
+    private Tween globalLightTween, globalColorTween, moonLightTween, sunLightTween, cameraColorTween;
     private Background currentBackground;
     private float cycleTime = 10;
     public bool night = true, layersEnabled = true;
@@ -196,7 +196,7 @@ public class BackgroundHandler : MonoBehaviour
                 moonLightObj.SetActive(false);
 
                 sunObj.GetComponent<SpriteRenderer>().enabled = true;
-                sunLightObj.SetActive(true);
+                sunLightObj.SetActive(false); //true
             }
 
             sunObj.GetComponent<DOTweenPath>().DORestart();
@@ -279,12 +279,12 @@ public class BackgroundHandler : MonoBehaviour
 
             sunObj.GetComponent<SpriteRenderer>().enabled = true;
             sunObj.SetActive(true);
-            sunLightObj.SetActive(true);
+            sunLightObj.SetActive(false); //true
         } else
         {
             moonObj.GetComponent<SpriteRenderer>().enabled = false;
             moonObj.SetActive(false);
-            moonLightObj.SetActive(false);
+            moonLightObj.SetActive(false); //false
 
             sunObj.GetComponent<SpriteRenderer>().enabled = false;
             sunObj.SetActive(true);
@@ -512,11 +512,14 @@ public class BackgroundHandler : MonoBehaviour
             cameraColorTween =
                 DOTween.To(() => camera.backgroundColor, x => camera.backgroundColor = x, dayBackgroundColor, cycleTime / 6);
 
+            globalColorTween =
+                DOTween.To(() => globalLight.color, x => globalLight.color = x, dayColor, cycleTime / 8);
+
             if (!mining)
             {
                 if (OptionHandler.lightEnabled == 1)
                 {
-                    globalLight.intensity = 0.2f;
+                    globalLight.intensity = 0.4f;
                 }
                 else
                 {
@@ -534,7 +537,7 @@ public class BackgroundHandler : MonoBehaviour
     {
         //globalLight.GetComponent<UnityEngine.Experimental.Rendering.LWRP.Light2D>().DO
 
-        //SetNight(false);
+        SetNight(false);
         StartCoroutine(EndNightLights(cycleTime / 5));
 
         Invoke("StartNight", cycleTime - (cycleTime / 5));
@@ -551,11 +554,11 @@ public class BackgroundHandler : MonoBehaviour
     { //lightt
         if (!mineHandler.miningActive)
         {
-            float val = 0.2f;
+            float val = 0.5f;
 
             if(OptionHandler.lightEnabled != 1)
             {
-                val = 0.4f;
+                val = 0.5f;
             }
 
             if(currentBackground.supportsDayNight)
@@ -567,6 +570,8 @@ public class BackgroundHandler : MonoBehaviour
 
                 cameraColorTween =
                     DOTween.To(() => camera.backgroundColor, x => camera.backgroundColor = x, nightBackgroundColor, cycleTime / 6);
+
+                globalColorTween = DOTween.To(() => globalLight.color, x => globalLight.color = x, nightColor, cycleTime / 8);
 
                 SetNight(true);
             }
@@ -624,12 +629,13 @@ public class BackgroundHandler : MonoBehaviour
     public void StartMoonTween()
     { //Tweent Mondlicht hoch und sonnenlicht runter
 
-        moonLightObj.SetActive(true);
+        moonLightObj.SetActive(false); //true
 
         if (OptionHandler.lightEnabled == 1 && currentBackground.supportsDayNight)
         {
-            moonLightTween = DOTween.To(() => moonLight.intensity, x => moonLight.intensity = x, 1f, cycleTime / 8);
-            sunLightTween = DOTween.To(() => sunLight.intensity, x => sunLight.intensity = x, 0f, cycleTime / 8);
+
+            //moonLightTween = DOTween.To(() => moonLight.intensity, x => moonLight.intensity = x, 1f, cycleTime / 8);
+            //sunLightTween = DOTween.To(() => sunLight.intensity, x => sunLight.intensity = x, 0f, cycleTime / 8);
         }
 
         Invoke("ResetSunPos", cycleTime / 6);
@@ -646,7 +652,7 @@ public class BackgroundHandler : MonoBehaviour
 
     public void StartSunTween()
     { //tweent mondlicht runter und sonnenlicht hoch
-        sunLightObj.SetActive(true);
+        sunLightObj.SetActive(false); //true
         
         if (OptionHandler.lightEnabled == 1 && currentBackground.supportsDayNight)
         {
@@ -654,8 +660,11 @@ public class BackgroundHandler : MonoBehaviour
             cameraColorTween =
                 DOTween.To(() => camera.backgroundColor, x => camera.backgroundColor = x, dayBackgroundColor, cycleTime / 6);
 
-            moonLightTween = DOTween.To(() => moonLight.intensity, x => moonLight.intensity = x, 0f, cycleTime / 8);
-            sunLightTween = DOTween.To(() => sunLight.intensity, x => sunLight.intensity = x, 0.75f, cycleTime / 8);
+            globalColorTween =
+                DOTween.To(() => globalLight.color, x => globalLight.color = x, dayColor, cycleTime / 8);
+
+            //moonLightTween = DOTween.To(() => moonLight.intensity, x => moonLight.intensity = x, 0f, cycleTime / 8);
+            //sunLightTween = DOTween.To(() => sunLight.intensity, x => sunLight.intensity = x, 0.75f, cycleTime / 8);
         }
 
         Invoke("ResetMoonPos", cycleTime / 6);
@@ -702,7 +711,7 @@ public class BackgroundHandler : MonoBehaviour
 
         mining = true;
 
-        float val = 0.15f;
+        float val = 0.5f;
         if (OptionHandler.lightEnabled == 0)
         {
             val = 0.6f;

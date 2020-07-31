@@ -7,6 +7,7 @@ public class ShopItem : ScriptableObject
     [Header("General")]
     public string identifier;
     public int itemID = 0;
+    public Rarity rarity = Rarity.Casual;
 
     [Header("Price")]
     public bool purchased = false;

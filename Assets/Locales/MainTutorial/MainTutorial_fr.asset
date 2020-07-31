@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: MainTutorial_fr
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: fr
+  m_SharedData: {fileID: 11400000, guid: d83c2f98be664ae46a415343b43108a4, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1
+    m_Localized: "Bienvenue \xE0 Flappy Fowl!\n\n\n\nTapez ici pour commencer"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2
+    m_Localized: "Il existe diff\xE9rents modes de jeu que vous pouvez d\xE9bloquer.\r\n\r\n\r\nTouchez
+      ici pour jouer \xE0 Classic"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Localized: Tapez plusieurs fois pour rester en l'air
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: "G\xE9nial !"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: "Voler \xE0 travers les tuyaux pour collecter des points"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Touchez parfaitement le milieu pour obtenir plus de points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: 'Presque !
+
+      
+
+      Essayez encore !'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: "Vous pouvez acheter des surclassements et des skins avec des pi\xE8ces"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: Parfait !
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: "Vous \xEAtes pr\xEAt maintenant : allons-y !"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

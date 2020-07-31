@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: MainTutorial_de
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: de
+  m_SharedData: {fileID: 11400000, guid: d83c2f98be664ae46a415343b43108a4, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1
+    m_Localized: 'Willkommen bei
+
+      Flatterfogel 2!
+
+
+
+      Hier geht''s los'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2
+    m_Localized: 'Es gibt verschiedene Spielmodi die du freischalten kannst.
+
+
+
+      Tippe
+      hier, um Klassisch zu spielen.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Localized: Tippe immer weiter, um in der Luft zu bleiben
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: Super!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: "Fliege durch R\xF6hren, um Punkte zu sammeln"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Wenn du die Mitte perfekt triffst bekommst du mehr Punkte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: 'Fast getroffen!
+
+
+      Versuch es noch einmal'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: "Mit M\xFCnzen kannst du dir im Shop Upgrades und neue Outfits kaufen"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: Perfekt!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: 'Du bist jetzt bereit: Los gehts!'
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

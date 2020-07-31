@@ -22,5 +22,45 @@ MonoBehaviour:
     m_Localized: Placeholder
     m_Metadata:
       m_Items: []
+  - m_Id: 2
+    m_Localized: Spiele das Tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Localized: Tunnelarbeiter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: Fliege durch einen Tunnel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: Schmuser
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Besiege den Mieserkadser
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: Navigationsmeister
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: "Fliege durch eine sich bewegende R\xF6hre"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: Immer weiter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: "Fliege durch eine normale R\xF6hre"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: Erfolg freigeschaltet!
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

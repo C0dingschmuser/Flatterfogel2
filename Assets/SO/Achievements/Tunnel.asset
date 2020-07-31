@@ -12,26 +12,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26c3513d95ea7144b921b27da79a4251, type: 3}
   m_Name: Tunnel
   m_EditorClassIdentifier: 
-  identifier: 
-  mainSprite: {fileID: 21300000, guid: 303155c5bbd5932488e8c8ce4c7d20cd, type: 3}
+  identifier: tunnelCompleted
+  mainSprite:
+  - {fileID: 21300000, guid: 3c041ebf968670241abb9ae784d573a1, type: 3}
   rewards:
   - mineralID: 16
-    amount: 10
+    amount: 60
   title:
     m_TableReference:
       m_TableCollectionName: GUID:7300fd89b4d69cc41b25293fb5d9393c
     m_TableEntryReference:
-      m_KeyId: 1
+      m_KeyId: 3
       m_Key: 
   description:
     m_TableReference:
       m_TableCollectionName: GUID:7300fd89b4d69cc41b25293fb5d9393c
     m_TableEntryReference:
-      m_KeyId: 1
+      m_KeyId: 4
       m_Key: 
-  titleString: Placeholder
-  descriptionString: Placeholder
+  titleString: Tunnelarbeiter
+  descriptionString: Fliege durch einen Tunnel
   step: 0
-  maxStep: 1
-  completed: 1
+  maxStep: 5
+  upgradeStep: 0
+  maxUpgradeSteps: 0
+  stepMultiplier: 2
+  rewardMultiplier: 2
+  completed: 0
   rewardCollected: 0

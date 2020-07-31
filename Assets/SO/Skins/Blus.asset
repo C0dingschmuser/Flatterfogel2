@@ -12,19 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7ece0d8c080068499e03e32231b4348, type: 3}
   m_Name: Blus
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: f8596786bd0b3934b9dc05701ee4ff42, type: 3}
-  overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
-  animatedSprites:
-  - {fileID: 21300000, guid: 320e940be12f3b14580d2acba93d72c9, type: 3}
-  - {fileID: 21300000, guid: 267fe47b824965346855966e030200cc, type: 3}
-  - {fileID: 21300000, guid: c8f93e450fd940e4c8539272c357910f, type: 3}
-  - {fileID: 21300000, guid: f8596786bd0b3934b9dc05701ee4ff42, type: 3}
-  - {fileID: 21300000, guid: c8f93e450fd940e4c8539272c357910f, type: 3}
-  - {fileID: 21300000, guid: 267fe47b824965346855966e030200cc, type: 3}
-  animated: 1
-  animationSpeed: 0.1
-  shopTime: 0.0669937
-  shopStep: 5
+  identifier: blus
+  itemID: 9
+  rarity: 3
   purchased: 0
   salePercent: 0
   cost:
@@ -36,12 +26,25 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
+  animated: 1
+  animationSpeed: 0.1
+  shopTime: 0.034716897
+  shopStep: 0
+  sprite: {fileID: 21300000, guid: b49c0aabfece7ea4a8b6d3a1a6dd2bb2, type: 3}
+  overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
+  animatedSprites:
+  - {fileID: 21300000, guid: 320e940be12f3b14580d2acba93d72c9, type: 3}
+  - {fileID: 21300000, guid: b49c0aabfece7ea4a8b6d3a1a6dd2bb2, type: 3}
+  - {fileID: 21300000, guid: 2f1105dad7e2c264195f8e429c430557, type: 3}
+  - {fileID: 21300000, guid: 4e13a0a4e70af8844977bd4e99f871a8, type: 3}
+  - {fileID: 21300000, guid: 2f1105dad7e2c264195f8e429c430557, type: 3}
+  - {fileID: 21300000, guid: b49c0aabfece7ea4a8b6d3a1a6dd2bb2, type: 3}
   boughtWings: 00000000
   boughtHats: 00000000
+  hatStart: 0
+  wingStart: 0
   wingSupport: 1
   hatSupport: 1
   boxCollider: 0
   colliderSize: {x: 0, y: 0}
   colliderOffset: {x: 0, y: 0}
-  skinID: 9
-  identifier: blus

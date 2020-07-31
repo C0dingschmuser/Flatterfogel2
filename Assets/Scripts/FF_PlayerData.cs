@@ -58,7 +58,7 @@ public class FF_PlayerData : MonoBehaviour
     [SerializeField] private Image fuelColorImage = null, heatColorImage = null;
 
     private Skin currentSkin = null;
-    private Wing currentWing = null;
+    public Wing currentWing = null;
     private Hat currentHat = null;
 
     //private int lastKey = -1;
@@ -281,6 +281,13 @@ public class FF_PlayerData : MonoBehaviour
         currentSkin = newSkin;
         currentWing = newWing;
 
+        float yDiff = currentWing.xDist;
+
+        Vector3 wPos = transform.position;
+        wPos.y += currentSkin.wingStart + yDiff;
+
+        wing.transform.position = wPos;
+
         LoadPlayerSkin(newSkin, newWing, physicsRes);
     }
 
@@ -303,10 +310,10 @@ public class FF_PlayerData : MonoBehaviour
         {
             hatObj.SetActive(true);
 
-            float yDiff = currentSkin.hatDiff;
+            float yDiff = currentHat.yDist;
 
             Vector3 pos = transform.position;
-            pos.y += 31.005f + yDiff;
+            pos.y += currentSkin.hatStart + yDiff;
 
             hatObj.transform.position = pos;
         }
@@ -381,24 +388,22 @@ public class FF_PlayerData : MonoBehaviour
 
         //Info:
         //Supported Body: 128x128Px
-        //Supported Animation: 3 Step (Source 384x128Px) 
+        //Supported Animation: n Step (Source (n * 128) * 128Px) 
         Texture2D sourceBody = newSkin.sprite.texture;//Resources.Load<Texture2D>("Sprites/Flatterfogel/player/" + id.ToString());
         Sprite bodySprite = Sprite.Create(sourceBody, new Rect(0, 0, 128, 128), new Vector2(0.5f, 0.5f));
 
         sRenderer.sprite = bodySprite;
         sRenderer.color = Color.white;
 
-        Sprite[] animationSprites = new Sprite[3]; //Resources.LoadAll<Sprite>("Sprites/Flatterfogel/player/Wings/" + wingID.ToString());
+        Sprite[] animationSprites; //new Sprite[3]; //Resources.LoadAll<Sprite>("Sprites/Flatterfogel/player/Wings/" + wingID.ToString());
         
         if(newSkin.overrideWing != null)
         {
+            currentWing = newSkin.overrideWing;
             newWing = newSkin.overrideWing;
         }
 
-        for(int i = 0; i < 3; i++)
-        {
-            animationSprites[i] = newWing.sprite[i];
-        }
+        animationSprites = newWing.sprite;
         
         anSprites = animationSprites;
 
@@ -410,7 +415,8 @@ public class FF_PlayerData : MonoBehaviour
         //Erstelle Death-Sprite mit mittlerer Animation-step
 
         Texture2D deathTexture = 
-            ImageHelpers.AlphaBlend(sourceBody, ImageHelpers.CroppedTextureFromSprite(animationSprites[1]));
+            ImageHelpers.AlphaBlend(sourceBody, 
+            ImageHelpers.CroppedTextureFromSprite(animationSprites[newWing.middleID]));
 
         if(!newSkin.wingSupport)
         {
@@ -764,6 +770,20 @@ public class FF_PlayerData : MonoBehaviour
         hatObj.GetComponent<Rigidbody2D>().simulated = false;
         hatObj.transform.rotation = Quaternion.identity;
 
+        float yDiff = currentHat.yDist;
+
+        Vector3 hPos = transform.position;
+        hPos.y += currentSkin.hatStart + yDiff; //18.662 = hat start
+
+        hatObj.transform.position = hPos;
+
+        yDiff = currentWing.xDist;
+
+        Vector3 wPos = transform.position;
+        wPos.y += currentSkin.wingStart + yDiff;
+
+        wing.transform.position = wPos;
+
         playerLight.SetActive(true);
         playerCollider2.SetActive(true);
         transform.parent.GetChild(0).gameObject.SetActive(true); //enable itemholder
@@ -849,10 +869,13 @@ public class FF_PlayerData : MonoBehaviour
         }
 
         hatObj.GetComponent<Rigidbody2D>().simulated = false;
-        Vector3 pos = ffHandler.playerStartPos;
-        pos.y += 31.005f;
 
-        hatObj.transform.DOMove(pos, 0.7f);
+        float yDiff = currentHat.yDist;
+
+        Vector3 hPos = ffHandler.playerStartPos;
+        hPos.y += currentSkin.hatStart + yDiff;
+
+        hatObj.transform.DOMove(hPos, 0.7f);
         hatObj.transform.DORotate(new Vector3(0, 0, 0), 0.7f);
 
         Invoke("ResetImage", 0.7f);

@@ -22,5 +22,45 @@ MonoBehaviour:
     m_Localized: Placeholder
     m_Metadata:
       m_Items: []
+  - m_Id: 2
+    m_Localized: Play the Tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Localized: Tunnel Worker
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: Fly through a tunnel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Win against Badcat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: Goodcat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: Navigation Master
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: Fly through a moving Pipe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: Keep going
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: Fly through a normal Pipe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: Achievement Unlocked!
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

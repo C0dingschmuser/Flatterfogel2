@@ -12,7 +12,7 @@ using Random = UnityEngine.Random;
 
 public class AchievementHandler : MonoBehaviour
 {
-    public GameObject achPrefab;
+    public GameObject achPrefab, achCoin, menuUnclaimed;
     public Transform contentParent;
 
     public Achievement[] allAchievements;
@@ -33,19 +33,28 @@ public class AchievementHandler : MonoBehaviour
     private Slider mainSlider;
 
     [SerializeField]
+    private Material[] completedMats;
+
+    [SerializeField]
     private TextMeshProUGUI mainText;
 
     [SerializeField]
     private Color lockedColor, unlockedColor;
 
+    private int flashDir = 0, dissolveStep = 0;
     private float sliderValue = 0;
+    private float[] dissolveAmounts;
 
     private ObscuredInt achLvl = 0;
-    private ObscuredLong newAchCoins = 0, defaultDiff = 25;
-    private ObscuredLong achCoins = 0, achMaxCoins = 25;
+    private ObscuredLong newAchCoins = 0, defaultDiff = 50;
+    private ObscuredLong achCoins = 0, achMaxCoins = 50;
 
-    private Tween achCoinTween = null;
+    private Tween achCoinTween = null, achCollTween = null, achColorTween = null;
     private bool handleRunning = false;
+
+    private AchHolder[] allAchHolders;
+
+    public Color flashColor;
 
     private List<GameObject> achMoveObjs = new List<GameObject>();
     private List<GameObject> delList = new List<GameObject>();
@@ -59,12 +68,83 @@ public class AchievementHandler : MonoBehaviour
 
     private void Start()
     {
+        dissolveAmounts = new float[completedMats.Length];
+        for(int i = 0; i < dissolveAmounts.Length; i++)
+        {
+            dissolveAmounts[i] = 1;
+        }
+
         achLvl = ObscuredPrefs.GetInt("AchLevel", 0);
         achCoins = ObscuredPrefs.GetLong("AchCoins", 0);
         achMaxCoins = ObscuredPrefs.GetLong("AchMaxCoins", defaultDiff);
 
         mainSlider.value = (float)achCoins / achMaxCoins;
         mainText.text = achCoins.ToString() + "/" + achMaxCoins.ToString();
+    }
+
+    public void UpdateMenuUnclaimed()
+    {
+        int unclaimed = 0;
+
+        for(int i = 0; i < allAchievements.Length; i++)
+        {
+            if(allAchievements[i].completed && !
+                allAchievements[i].rewardCollected)
+            {
+                unclaimed++;
+            }
+        }
+
+        if(unclaimed > 0)
+        {
+            menuUnclaimed.SetActive(true);
+
+            string s = unclaimed.ToString();
+
+            if(unclaimed > 9)
+            {
+                s = "9+";
+            }
+
+            menuUnclaimed.transform.GetChild(0).
+                GetComponent<TextMeshProUGUI>().text = s;
+        } else
+        {
+            menuUnclaimed.SetActive(false);
+        }
+    }
+
+    public void CollectClicked(GameObject caller)
+    {
+        caller.GetComponent<AchHolder>().completedSprite.material =
+            completedMats[dissolveStep];
+
+        caller.GetComponent<Image>().color = new Color32(188, 188, 188, 255);
+
+        caller.GetComponent<AchHolder>().achievement.rewardCollected = true;
+        UpdateMenuUnclaimed();
+
+        caller.GetComponent<AchHolder>().uncollected.SetActive(false);
+        caller.GetComponent<AchHolder>().collected.SetActive(true);
+        caller.GetComponent<AchHolder>().collectButton.interactable = false;
+        caller.GetComponent<AchHolder>().sliderFiller.color = unlockedColor;
+
+        completedMats[dissolveStep].SetFloat("_DissolveAmount", 1);
+        dissolveAmounts[dissolveStep] = 1;
+
+        int oldStep = dissolveStep;
+
+        Tween temp = DOTween.To(() => dissolveAmounts[oldStep], x => dissolveAmounts[oldStep] = x, 0, 0.5f);
+        temp.OnUpdate(() =>
+        {
+            completedMats[oldStep].SetFloat("_DissolveAmount", dissolveAmounts[oldStep]);
+        });
+
+        dissolveStep++;
+        if (dissolveStep > 3)
+        {
+            dissolveStep = 0;
+        }
     }
 
     public void AddAchCoins(long newCoins)
@@ -78,8 +158,10 @@ public class AchievementHandler : MonoBehaviour
         }
     }
 
-    public void StartSpawnAchObjs(Vector3 startPos, long newCoins)
+    public void StartSpawnAchObjs(GameObject caller, Vector3 startPos, long newCoins)
     {
+        CollectClicked(caller);
+
         StartCoroutine(SpawnAchObjs(startPos, newCoins));
     }
 
@@ -104,7 +186,8 @@ public class AchievementHandler : MonoBehaviour
             ach.scaleUpTime = 0.2f; //zeit aber der sich zum ziel bewegt wird
             ach.scaleDownTime = 0.625f; //zeit ab der runtergescaled wird
             ach.maxTime = 0.8f;
-            ach.target = new Vector3(-648.2f, 1200, 0);
+            ach.target = 
+                new Vector3(-648.2f + Random.Range(-28, 28), 1200 + Random.Range(-28, 28), 0);
             ach.scaleUpDone = false;
             ach.scaleDownDone = false;
 
@@ -183,8 +266,6 @@ public class AchievementHandler : MonoBehaviour
             }
         }
 
-        Debug.Log(newAchCoins);
-
         handleRunning = false;
 
         yield return null;
@@ -228,7 +309,14 @@ public class AchievementHandler : MonoBehaviour
 
         string achString = ObscuredPrefs.GetString("AchievementString");
 
-        if(achString.Length > 0)
+        for (int a = 0; a < allAchievements.Length; a++)
+        {
+            allAchievements[a].step = 0;
+            allAchievements[a].completed = false;
+            allAchievements[a].rewardCollected = false;
+        }
+
+        if (achString.Length > 0)
         {
             string[] rawSplit = achString.Split('|');
             for(int i = 0; i < rawSplit.Length - 1; i++)
@@ -248,77 +336,114 @@ public class AchievementHandler : MonoBehaviour
 
                 for(int a = 0; a < allAchievements.Length; a++)
                 {
-                    allAchievements[a].step = 0;
-                    allAchievements[a].completed = false;
-                    allAchievements[a].rewardCollected = false;
-
-                    if(allAchievements[a].identifier.Equals(identifier))
+                    if(allAchievements[a].identifier.Contains(identifier))
                     { //assigned achievement found
                         allAchievements[a].step = currentStep;
-                        allAchievements[a].completed = true;//completed;
+                        allAchievements[a].completed = completed;
                         allAchievements[a].rewardCollected = rewardCollected;
                         //break; kein break da reset für alle erfolgen muss
                     }
                 }
             }
+
         }
 
-        for(int i = 0; i < allAchievements.Length; i++)
+        allAchHolders = new AchHolder[allAchievements.Length];
+
+        UpdateUI(true);
+    }
+
+    public void UpdateUI(bool create = false)
+    {
+        for (int i = 0; i < allAchievements.Length; i++)
         { //position wird automatisch angepasst
-            AchHolder ach = Instantiate(achPrefab, contentParent).GetComponent<AchHolder>();
+            AchHolder holder;
+            Achievement ach = allAchievements[i];
 
-            ach.achievement = allAchievements[i];
+            if (create)
+            {
+                holder = Instantiate(achPrefab, contentParent).GetComponent<AchHolder>();
+            }
+            else
+            {
+                holder = allAchHolders[i];
+            }
 
-            ach.titleText.text = allAchievements[i].titleString;
-            ach.descriptionText.text = allAchievements[i].descriptionString;
+            holder.achievement = ach;
 
-            ach.sprite.sprite = allAchievements[i].mainSprite;
+            holder.titleText.text = ach.titleString;
+            holder.descriptionText.text = ach.descriptionString;
 
-            ach.progressText.text =
-                allAchievements[i].step.ToString() + "/" + allAchievements[i].maxStep.ToString();
+            holder.sprite.sprite = ach.mainSprite[ach.upgradeStep];
 
-            ach.rewardText.text = allAchievements[i].rewards[0].amount.ToString();
+            holder.progressText.text =
+                ach.step.ToString() + "/" + ach.maxStep.ToString();
 
-            float val = (float)allAchievements[i].step / allAchievements[i].maxStep;
-            ach.progressSlider.value = val;
+            holder.rewardText.text = ach.rewards[ach.upgradeStep].amount.ToString();
+
+            float val = (float)ach.step / ach.maxStep;
+            holder.progressSlider.value = val;
 
             Color32 collectColor = lockedColor;
-            ach.collectButton.interactable = false;
+            holder.collectButton.interactable = false;
 
-            if(allAchievements[i].completed)
+            if (ach.completed)
             {
-                if(allAchievements[i].rewardCollected)
+                holder.completedSprite.gameObject.SetActive(true);
+
+                if (ach.rewardCollected)
                 {
+                    holder.gameObject.GetComponent<Image>().color = new Color32(188, 188, 188, 255);
+
                     collectColor = Color.white;
-                    ach.collectButton.interactable = false;
-                } else
+                    holder.collectButton.interactable = false;
+
+                    holder.completedSprite.gameObject.SetActive(false);
+                }
+                else
                 {
                     collectColor = unlockedColor;
-                    ach.collectButton.interactable = true;
+                    holder.collectButton.interactable = true;
+
+                    Color c = new Color32(200, 252, 255, 255);
+
+                    holder.completedSprite.color = c;
+                    holder.completedSprite.gameObject.SetActive(true);
                 }
+            }
+            else
+            {
+                holder.completedSprite.gameObject.SetActive(false);
             }
 
             byte alphaVal = 255;
-            if(!ach.collectButton.interactable)
+            if (!holder.collectButton.interactable)
             {
                 alphaVal = 180;
             }
 
             collectColor.a = alphaVal;
 
-            Color32 temp = ach.rewardSprite.color;
+            Color32 temp = holder.rewardSprite.color;
             temp.a = alphaVal;
-            ach.rewardSprite.color = temp;
+            holder.rewardSprite.color = temp;
 
-            temp = ach.rewardText.color;
+            temp = holder.rewardText.color;
             temp.a = alphaVal;
-            ach.rewardText.color = temp;
+            holder.rewardText.color = temp;
 
-            ach.collectSprite.color = collectColor;
+            holder.collectSprite.color = collectColor;
+
+            if(create)
+            {
+                allAchHolders[i] = holder;
+            }
         }
+
+        SortAchievements();
     }
 
-    private void SaveAchievements()
+    public void SaveAchievements()
     {
         string achString = "";
 
@@ -362,9 +487,73 @@ public class AchievementHandler : MonoBehaviour
             endY, contentParent.position.z);
     }
 
+    public Achievement GetAchievementByString(string identifier)
+    {
+        for(int i = 0; i< allAchievements.Length; i++)
+        {
+            if(allAchievements[i].identifier.Equals(identifier))
+            {
+                return allAchievements[i];
+            }
+        }
+
+        Debug.LogError("Achievement '" + identifier + "' not found!");
+        return null;
+    }
+
+    public void UnlockComplete(string identifier)
+    {
+        UnlockComplete(GetAchievementByString(identifier));
+    }
+
+    public void UnlockComplete(Achievement ach)
+    {
+        if(ach.completed)
+        {
+            return;
+        }
+
+        ach.step = ach.maxStep;
+        ach.completed = true;
+
+        UpdateMenuUnclaimed();
+
+        AchUnlockHandler.Instance.StartAchievementUnlock(ach);
+    }
+
+    public void UpdateStep(string identifier, int amount = 1)
+    {
+        UpdateStep(GetAchievementByString(identifier), amount);
+    }
+
+    public void UpdateStep(Achievement ach, int amount = 1)
+    {
+        if(ach.completed)
+        {
+            return;
+        }
+
+        ach.step += amount;
+        if(ach.step >= ach.maxStep)
+        {
+            ach.step = ach.maxStep;
+
+            ach.completed = true;
+            ach.rewardCollected = false;
+
+            UpdateMenuUnclaimed();
+
+            AchUnlockHandler.Instance.StartAchievementUnlock(ach);
+        }
+    }
+
     public void OpenAchievements()
     {
         hParent.SetActive(false);
+
+        //Update UI
+        UpdateUI();
+
         achParent.SetActive(true);
     }
 
@@ -374,9 +563,122 @@ public class AchievementHandler : MonoBehaviour
         achParent.SetActive(false);
     }
 
+    public void CollisionEnter(GameObject achObj)
+    {
+        AchMoveObj obj = achObj.GetComponent<AchMoveObj>();
+
+        if (obj.value > 0)
+        {
+            AddAchCoins(obj.value);
+        }
+
+        achObj.SetActive(false);
+        achMoveObjs.Remove(achObj);
+
+        if(achCollTween != null)
+        {
+            if(achCollTween.IsActive())
+            {
+                achCollTween.Kill();
+            }
+        }
+
+        if (achColorTween != null)
+        {
+            if (achColorTween.IsActive())
+            {
+                achColorTween.Kill();
+            }
+        }
+
+        achCoin.transform.localScale = new Vector3(2f, 2f, 2f);
+
+        Color32 c = Color.white;
+        c.a = 180;
+
+        achCoin.transform.GetChild(0).GetComponent<Image>().color = c;
+
+        achCollTween = achCoin.transform.DOScale(1, 0.25f);
+        achColorTween = achCoin.transform.GetChild(0).GetComponent<Image>().DOFade(0, 0.25f);
+    }
+
+    public void SortAchievements()
+    { //alle erreichten achs nach oben an die liste -> dann completed & reward uncollected -> rest darunter
+
+        List<Transform> completedAchs = new List<Transform>();
+        List<Transform> notCollectedAchs = new List<Transform>();
+
+        for (int i = 0; i < allAchHolders.Length; i++)
+        {
+            allAchHolders[i].transform.SetParent(transform);
+
+            if(allAchHolders[i].achievement.completed)
+            {
+                if(allAchHolders[i].achievement.rewardCollected)
+                {
+                    completedAchs.Add(allAchHolders[i].transform);
+                }
+                else
+                {
+                    notCollectedAchs.Add(allAchHolders[i].transform);
+                }
+            }
+        }
+
+        for(int i = 0; i < completedAchs.Count; i++)
+        {
+            completedAchs[i].SetParent(contentParent);
+        }
+
+        for(int i = 0; i < notCollectedAchs.Count; i++)
+        {
+            notCollectedAchs[i].SetParent(contentParent);
+        }
+
+        for(int i = 0; i < allAchHolders.Length; i++)
+        {
+            if(!completedAchs.Contains(allAchHolders[i].transform) &&
+                !notCollectedAchs.Contains(allAchHolders[i].transform))
+            {
+                allAchHolders[i].transform.SetParent(contentParent);
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if(flashDir == 0)
+        { //hoch
+            flashColor.a += Time.deltaTime;
+
+            if(flashColor.a >= 0.99f)
+            {
+                flashDir = 1;
+            }
+        } else
+        {
+            flashColor.a -= Time.deltaTime;
+
+            if(flashColor.a <= 0.01f)
+            {
+                flashColor.a = 0;
+                flashDir = 0;
+            }
+        }
+
+        if(allAchHolders != null)
+        {
+            for (int i = 0; i < allAchHolders.Length; i++)
+            {
+                if (allAchHolders[i].achievement.completed &&
+                    !allAchHolders[i].achievement.rewardCollected)
+                {
+                    allAchHolders[i].collectFlashSprite.color = flashColor;
+                    allAchHolders[i].sliderFiller.color = flashColor;
+                }
+            }
+        }
 
         for(int i = 0; i < achMoveObjs.Count; i++)
         {
@@ -408,14 +710,14 @@ public class AchievementHandler : MonoBehaviour
                 obj.scaleUpDone = true;
             }
 
-            if(obj.currentTime >= obj.scaleDownTime &&
+            /*if(obj.currentTime >= obj.scaleDownTime &&
                 !obj.scaleDownDone)
             {
                 achMoveObjs[i].transform.DOScale(0, obj.scaleDownTime - 0.01f);
                 obj.scaleDownDone = true;
-            }
+            }*/
 
-            if(obj.currentTime >= obj.maxTime)
+            /*if(obj.currentTime >= obj.maxTime)
             {
                 if(obj.value > 0)
                 {
@@ -424,7 +726,7 @@ public class AchievementHandler : MonoBehaviour
 
                 achMoveObjs[i].SetActive(false);
                 delList.Add(achMoveObjs[i]);
-            }
+            }*/
         }
 
         for(int i = 0; i < delList.Count; i++)

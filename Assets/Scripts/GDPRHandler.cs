@@ -65,6 +65,8 @@ public class GDPRHandler : MonoBehaviour
         { //bei deaktivierung gplay signin
             AccountHandler.Instance.StartGplayLogin();
 
+            TutorialHandler.Instance.Startup();
+
             if(inAppUpdate.activeSelf)
             {
                 raycaster.enabled = true;

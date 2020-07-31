@@ -12,13 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7ece0d8c080068499e03e32231b4348, type: 3}
   m_Name: OriginalPurple
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: ef4f59da2c1db364a8cfa835be8dcdfd, type: 3}
-  overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
-  animatedSprites: []
-  animated: 0
-  animationSpeed: 0.25
-  shopTime: 0
-  shopStep: 0
+  identifier: original_purple
+  itemID: 3
+  rarity: 0
   purchased: 0
   salePercent: 0
   cost:
@@ -30,12 +26,19 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
-  boughtWings: 
-  boughtHats: 
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  sprite: {fileID: 21300000, guid: 0c19a1652e990d44cb759d137124e22f, type: 3}
+  overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
+  animatedSprites: []
+  boughtWings: 00000000
+  boughtHats: 00000000
+  hatStart: 18.662
+  wingStart: 0
   wingSupport: 1
   hatSupport: 1
   boxCollider: 0
   colliderSize: {x: 0, y: 0}
   colliderOffset: {x: 0, y: 0}
-  skinID: 0
-  identifier: original_purple

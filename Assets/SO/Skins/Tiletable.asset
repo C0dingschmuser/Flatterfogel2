@@ -12,14 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7ece0d8c080068499e03e32231b4348, type: 3}
   m_Name: Tiletable
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 0eaa8a9a8abc7fc4685d302a5dbe8256, type: 3}
-  animated: 0
-  purchased: 1
-  wingSupport: 0
-  hatSupport: 1
-  boxCollider: 1
-  colliderSize: {x: 1.28, y: 0.59}
-  colliderOffset: {x: 0, y: -0.03}
+  identifier: tiletable
+  itemID: 11
+  rarity: 3
+  purchased: 0
+  salePercent: 0
   cost:
   - mineralID: 14
     amount: 150
@@ -29,5 +26,19 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
-  skinID: 7
-  identifier: tiletable
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  sprite: {fileID: 21300000, guid: 0eaa8a9a8abc7fc4685d302a5dbe8256, type: 3}
+  overrideWing: {fileID: 0}
+  animatedSprites: []
+  boughtWings: 00000000
+  boughtHats: 00000000
+  hatStart: 18.662
+  wingStart: 0
+  wingSupport: 0
+  hatSupport: 1
+  boxCollider: 1
+  colliderSize: {x: 1.28, y: 0.59}
+  colliderOffset: {x: 0, y: -0.03}

@@ -13,6 +13,16 @@ using Object = System.Object;
 using UnityEngine.Localization;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Linq;
+using UnityEditor.Build;
+
+public enum Rarity
+{
+    Casual, //Grau
+    Uncommon, //Grün
+    Rare, //Blau
+    Epic, //Lila
+    Mystic //Gold
+}
 
 public class ShopHandler : MonoBehaviour
 {
@@ -48,6 +58,8 @@ public class ShopHandler : MonoBehaviour
     public Material fadeMat;
 
     public Color32 pipeColor = new Color32(238, 77, 46, 255);
+    public Color[] rarityColors;
+
     private int pipeColorID = 0;
 
     private Tween coinEffectPosition = null, coinEffectScale = null, coinColorTween = null;
@@ -76,26 +88,88 @@ public class ShopHandler : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+    }
 
-        for(int i = 0; i < allSkins.Count; i++)
+    private void SetupID()
+    {
+        for (int i = 0; i < allSkins.Count; i++)
         {
             allSkins[i].itemID = i;
         }
 
-        for(int i = 0; i < allWings.Count; i++)
+        for (int i = 0; i < allWings.Count; i++)
         {
             allWings[i].itemID = i;
         }
 
-        for(int i = 0; i < allHats.Count; i++)
+        for (int i = 0; i < allHats.Count; i++)
         {
             allHats[i].itemID = i;
         }
+
+        for(int i = 0; i < allPipes.Count; i++)
+        {
+            allPipes[i].itemID = i;
+        }
+    }
+
+    private void SortShopItems()
+    {
+        List<ShopItem> shopItems;
+
+        shopItems = allSkins.Cast<ShopItem>().ToList();
+
+        List<ShopItem> allPurchased = new List<ShopItem>();
+        List<ShopItem> result = new List<ShopItem>();
+
+        //Alle gekauften herausfiltern
+
+        for (int i = 0; i < shopItems.Count; i++)
+        {
+            if (shopItems[i].purchased)
+            {
+                allPurchased.Add(shopItems[i]);
+            }
+        }
+
+        //Die gekauften sortieren
+
+        int maxRarity = Enum.GetValues(typeof(Rarity)).Cast<int>().Max() + 1;
+
+        for (int i = 0; i < maxRarity; i++)
+        {
+            for (int a = 0; a < allPurchased.Count; a++)
+            {
+                if (allPurchased[a].rarity == (Rarity)i)
+                {
+                    result.Add(allPurchased[a]);
+                }
+            }
+        }
+
+        //Jetzt nicht gekaufte nach rarity sortieren
+
+        for (int i = 0; i < maxRarity; i++)
+        {
+            for(int a = 0; a < shopItems.Count; a++)
+            {
+                if(!shopItems[a].purchased && shopItems[a].rarity == (Rarity)i)
+                {
+                    result.Add(shopItems[a]);
+                }
+            }
+        }
+
+        //Sortierung fertig, result zuweisen
+
+        allSkins = result.Cast<Skin>().ToList();
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        SetupID();
+
         LoadPurchasedItems();
         TypeClicked(0, true);
 
@@ -128,6 +202,28 @@ public class ShopHandler : MonoBehaviour
 
         yield return handle = sale.GetLocalizedString();
         saleString = (string)handle.Result;
+    }
+
+    public Color32 GetRarity(CustomizationType type, int id, byte alpha = 255)
+    {
+        Color32 c;
+
+        switch(type)
+        {
+            default:
+                c = rarityColors[(int)allSkins[id].rarity];
+                break;
+            case CustomizationType.Wing:
+                c = rarityColors[(int)allWings[id].rarity];
+                break;
+            case CustomizationType.Hat:
+                c = rarityColors[(int)allHats[id].rarity];
+                break;
+        }
+
+        c.a = alpha;
+
+        return c;
     }
 
     public Sprite GetSkinSprite(int skinID)
@@ -649,6 +745,177 @@ public class ShopHandler : MonoBehaviour
         string selectedSkinString = ObscuredPrefs.GetString("SelectedSkinString", "original");
         string selectedWingString = ObscuredPrefs.GetString("SelectedWingString", "default");
         string selectedHatString = ObscuredPrefs.GetString("SelectedHatString", "default");
+        string selectedPipeString = ObscuredPrefs.GetString("SelectedPipeString", "default");
+
+        ResetAll();
+
+        string data = ObscuredPrefs.GetString("ShopPurchasedSkins", "");
+
+        if (data.Length > 0)
+        {
+            string types = data;
+            if (types.Contains(","))
+            { //gekaufte skins vorhanden -> einlesen
+                string[] skinData = types.Split(',');
+                for (int i = 0; i < skinData.Length; i++)
+                {
+                    if (skinData[i].Length > 0)
+                    {
+                        string[] type = skinData[i].Split('#');
+                        //0 = skin identifier
+                        //1 = gekaufte wings
+                        //2 = gekaufte hats
+
+                        if (type.Length > 0)
+                        {
+                            string identifier = type[0];
+
+                            string[] pWings = type[1].Split('~');
+                            int[] purchasedWings = new int[pWings.Length - 1];
+
+                            for (int a = 0; a < pWings.Length - 1; a++) //-1 weil letzte stelle leer
+                            {
+                                string wingIdentifier = pWings[a];
+
+                                for (int b = 0; b < allWings.Count; b++)
+                                {
+                                    if (allWings[b].identifier.Equals(wingIdentifier))
+                                    { //position in array gefunden -> zuweisen
+                                        purchasedWings[a] = b;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            string[] pHats = type[2].Split('~');
+                            int[] purchasedHats = new int[pHats.Length - 1];
+
+                            for (int a = 0; a < pHats.Length - 1; a++) //-1 weil letzte stelle leer
+                            {
+                                string hatIdentifier = pHats[a];
+
+                                for (int b = 0; b < allHats.Count; b++)
+                                {
+                                    if (allHats[b].identifier.Equals(hatIdentifier))
+                                    {
+                                        purchasedHats[a] = b;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            for (int a = 0; a < allSkins.Count; a++)
+                            {
+                                if (allSkins[a].identifier.Equals(identifier))
+                                { //gekaufter skin gefunden
+                                    allSkins[a].purchased = true;
+                                    allSkins[a].boughtWings = purchasedWings;
+                                    allSkins[a].boughtHats = purchasedHats;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        data = ObscuredPrefs.GetString("ShopPurchasedPipes", "");
+
+        if (data.Length > 0)
+        { //Wings
+            string types = data;
+            if (types.Contains(","))
+            {
+                string[] pipeData = types.Split(',');
+                for (int i = 0; i < pipeData.Length; i++)
+                {
+                    if (pipeData[i].Length > 0)
+                    {
+                        int id = Int32.Parse(pipeData[i]);
+                        allPipes[id].purchased = true;
+                    }
+                }
+
+            }
+        }
+
+        data = ObscuredPrefs.GetString("ShopPurchasedMineData", "");
+
+        if (data.Length > 0 && data.Contains("|"))
+        {
+            string[] types = data.Split('|');
+
+            if (types[0].Contains(','))
+            { //Miner
+                string[] minerData = types[0].Split(',');
+                for (int i = 0; i < minerData.Length; i++)
+                {
+                    if (minerData[i].Length > 0)
+                    {
+                        int id = Int32.Parse(minerData[i]);
+                        allMiners[id].purchased = true;
+                    }
+                }
+            }
+
+            if (types[1].Contains(","))
+            { //Heatshields
+                string[] heatShieldData = types[1].Split(',');
+                for (int i = 0; i < heatShieldData.Length; i++)
+                {
+                    if (heatShieldData[i].Length > 0)
+                    {
+                        int id = Int32.Parse(heatShieldData[i]);
+                        allHeatShields[id].purchased = true;
+                    }
+                }
+            }
+
+            if (types[2].Contains(","))
+            { //mine items
+                string[] mineItemData = types[2].Split(',');
+                for (int i = 0; i < mineItemData.Length; i++)
+                {
+                    if (mineItemData[i].Length > 0)
+                    {
+                        int amount = Int32.Parse(mineItemData[i]);
+                        allMineItems[i].amount = amount;
+                    }
+                }
+            }
+        }
+
+        /*if(types[4].Contains(","))
+        {
+            string[] backgroundData = types[4].Split(',');
+            for(int i = 0; i < backgroundData.Length; i++)
+            {
+                if(backgroundData[i].Length > 0)
+                {
+                    int id = Int32.Parse(backgroundData[i]);
+                    allBackgrounds[id].purchased = true;
+                }
+            }
+        }*/
+
+        /*if(types.Length > 8)
+        {
+            if (types[8].Contains(","))
+            {
+                string[] hatData = types[8].Split(',');
+                for (int i = 0; i < hatData.Length; i++)
+                {
+                    if (hatData[i].Length > 0)
+                    {
+                        int id = Int32.Parse(hatData[i]);
+                        allHats[id].purchased = true;
+                    }
+                }
+            }
+        }*/
+
+        SortShopItems();
 
         selectedSkin = 0;
 
@@ -683,9 +950,19 @@ public class ShopHandler : MonoBehaviour
             }
         }
 
+        selectedPipe = 0;
+
+        for(int i = 0; i < allPipes.Count; i++)
+        {
+            if(allPipes[i].identifier.Equals(selectedPipeString))
+            {
+                selectedPipe = i;
+                break;
+            }
+        }
+
         selectedMiner = ObscuredPrefs.GetInt("SelectedMiner", 0);
 
-        selectedPipe = ObscuredPrefs.GetInt("SelectedPipe", 0);
         pipeColorID = ObscuredPrefs.GetInt("SelectedPipeColorID", 1);
 
         pipeCustomizationHandler.GetPipeColor(pipeColorID); //Pipe Color laden
@@ -695,180 +972,6 @@ public class ShopHandler : MonoBehaviour
         selectedHeatShield = ObscuredPrefs.GetInt("SelectedHeatShield", 0);
 
         MineHandler.Instance.currentHeatShield = allHeatShields[selectedHeatShield];
-
-        ResetAll();
-
-        string data = ObscuredPrefs.GetString("ShopPurchasedItems", "");
-        if(data.Length > 0 && data.Contains("|"))
-        {
-            string[] types = data.Split('|');
-            if(types[0].Contains(","))
-            { //gekaufte skins vorhanden -> einlesen
-                string[] skinData = types[0].Split(',');
-                for(int i = 0; i < skinData.Length; i++)
-                {
-                    if(skinData[i].Length > 0)
-                    {
-                        string[] type = skinData[i].Split('#');
-                        //0 = skin identifier
-                        //1 = gekaufte wings
-                        //2 = gekaufte hats
-
-                        string identifier = type[0];
-
-                        string[] pWings = type[1].Split('~');
-                        int[] purchasedWings = new int[pWings.Length - 1];
-
-                        for(int a = 0; a < pWings.Length - 1; a++) //-1 weil letzte stelle leer
-                        {
-                            string wingIdentifier = pWings[a];
-
-                            for(int b = 0; b < allWings.Count; b++)
-                            {
-                                if(allWings[b].identifier.Equals(wingIdentifier))
-                                { //position in array gefunden -> zuweisen
-                                    purchasedWings[a] = b;
-                                    break;
-                                }
-                            }
-                        }
-
-                        string[] pHats = type[2].Split('~');
-                        int[] purchasedHats = new int[pHats.Length - 1];
-
-                        for(int a = 0; a < pHats.Length - 1; a++) //-1 weil letzte stelle leer
-                        {
-                            string hatIdentifier = pHats[a];
-
-                            for(int b = 0; b < allHats.Count; b++)
-                            {
-                                if(allHats[b].identifier.Equals(hatIdentifier))
-                                {
-                                    purchasedHats[a] = b;
-                                    break;
-                                }
-                            }
-                        }
-
-                        for(int a = 0; a < allSkins.Count; a++)
-                        {
-                            if(allSkins[a].identifier.Equals(identifier))
-                            { //gekaufter skin gefunden
-                                allSkins[a].purchased = true;
-                                allSkins[a].boughtWings = purchasedWings;
-                                allSkins[a].boughtHats = purchasedHats;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            /*if(types[1].Contains(","))
-            {
-                string[] wingData = types[1].Split(',');
-                for(int i = 0; i < wingData.Length; i++)
-                {
-                    if(wingData[i].Length > 0)
-                    {
-                        int id = Int32.Parse(wingData[i]);
-                        allWings[id].purchased = true;
-                    }
-                }
-            }*/
-            if(types[2].Contains(","))
-            {
-                string[] minerData = types[2].Split(',');
-                for(int i = 0; i < minerData.Length; i++)
-                {
-                    if(minerData[i].Length > 0)
-                    {
-                        int id = Int32.Parse(minerData[i]);
-                        allMiners[id].purchased = true;
-                    }
-                }
-            }
-            if(types[3].Contains(","))
-            {
-                string[] pipeData = types[3].Split(',');
-                for (int i = 0; i < pipeData.Length; i++)
-                {
-                    if (pipeData[i].Length > 0)
-                    {
-                        int id = Int32.Parse(pipeData[i]);
-                        allPipes[id].purchased = true;
-                    }
-                }
-            }
-            if(types[4].Contains(","))
-            {
-                string[] backgroundData = types[4].Split(',');
-                for(int i = 0; i < backgroundData.Length; i++)
-                {
-                    if(backgroundData[i].Length > 0)
-                    {
-                        int id = Int32.Parse(backgroundData[i]);
-                        allBackgrounds[id].purchased = true;
-                    }
-                }
-            }
-            if(types[5].Contains(","))
-            {
-                /*string[] minerData = types[5].Split(',');
-                for(int i = 0; i < minerData.Length; i++)
-                {
-                    if(minerData[i].Length > 0)
-                    {
-                        int id = Int32.Parse(minerData[i]);
-                        allMiners[id].purchased = true;
-                    }
-                }*/
-            }
-            if(types.Length > 6)
-            {
-                if (types[6].Contains(","))
-                {
-                    string[] heatShieldData = types[6].Split(',');
-                    for (int i = 0; i < heatShieldData.Length; i++)
-                    {
-                        if (heatShieldData[i].Length > 0)
-                        {
-                            int id = Int32.Parse(heatShieldData[i]);
-                            allHeatShields[id].purchased = true;
-                        }
-                    }
-                }
-            }
-            if(types.Length > 7)
-            {
-                if(types[7].Contains(","))
-                {
-                    string[] mineItemData = types[7].Split(',');
-                    for(int i = 0; i < mineItemData.Length; i++)
-                    {
-                        if(mineItemData[i].Length > 0)
-                        {
-                            int amount = Int32.Parse(mineItemData[i]);
-                            allMineItems[i].amount = amount;
-                        }
-                    }
-                }
-            }
-            /*if(types.Length > 8)
-            {
-                if (types[8].Contains(","))
-                {
-                    string[] hatData = types[8].Split(',');
-                    for (int i = 0; i < hatData.Length; i++)
-                    {
-                        if (hatData[i].Length > 0)
-                        {
-                            int id = Int32.Parse(hatData[i]);
-                            allHats[id].purchased = true;
-                        }
-                    }
-                }
-            }*/
-        }
 
         PlayerMiner.currentMiner = allMiners[selectedMiner];
 
@@ -901,25 +1004,9 @@ public class ShopHandler : MonoBehaviour
                 data += allSkins[i].identifier + "#" + wingString + "#" + hatString + ",";
             }
         }
-        data += "|";
 
-        for(int i = 0; i < allWings.Count; i++)
-        {
-            if(allWings[i].purchased)
-            {
-                data += i.ToString() + ",";
-            }
-        }
-        data += "|";
-
-        for(int i = 0; i < allMiners.Count; i++)
-        {
-            if(allMiners[i].purchased)
-            {
-                data += i.ToString() + ",";
-            }
-        }
-        data += "|";
+        ObscuredPrefs.SetString("ShopPurchasedSkins", data);
+        data = "";
 
         for (int i = 0; i < allPipes.Count; i++)
         {
@@ -928,18 +1015,11 @@ public class ShopHandler : MonoBehaviour
                 data += i.ToString() + ",";
             }
         }
-        data += "|";
 
-        for (int i = 0; i < allBackgrounds.Count; i++)
-        {
-            if (allBackgrounds[i].purchased)
-            {
-                data += i.ToString() + ",";
-            }
-        }
-        data += "|";
+        ObscuredPrefs.SetString("ShopPurchasedPipes", data);
+        data = "";
 
-        for(int i = 0; i < allMiners.Count; i++)
+        for (int i = 0; i < allMiners.Count; i++)
         {
             if(allMiners[i].purchased)
             {
@@ -961,22 +1041,12 @@ public class ShopHandler : MonoBehaviour
         {
             data += allMineItems[i].amount + ",";
         }
-        data += "|";
 
-        for (int i = 0; i < allHats.Count; i++)
-        {
-            if (allHats[i].purchased)
-            {
-                data += i.ToString() + ",";
-            }
-        }
-        data += "|";
-
-        ObscuredPrefs.SetString("ShopPurchasedItems", data);
+        ObscuredPrefs.SetString("ShopPurchasedMineData", data);
         ObscuredPrefs.SetULong("Blus", blus);
         ObscuredPrefs.SetString("SelectedSkinString", allSkins[selectedSkin].identifier);
         ObscuredPrefs.SetString("SelectedWingString", allWings[selectedWing].identifier);
-        ObscuredPrefs.SetInt("SelectedPipe", selectedPipe);
+        ObscuredPrefs.SetString("SelectedPipeString", allPipes[selectedPipe].identifier);
         ObscuredPrefs.SetInt("SelectedBackground", selectedBackground);
         ObscuredPrefs.SetInt("SelectedMiner", selectedMiner);
         ObscuredPrefs.SetInt("SelectedHeatShield", selectedHeatShield);
@@ -1599,10 +1669,12 @@ public class ShopHandler : MonoBehaviour
     {
         //if (currentType != 1) return;
 
+        int maxLen = playerData.currentWing.sprite.Length - 1;
+
         if(wingAnimationDir == 0)
         {
             wingAnimationCount++;
-            if (wingAnimationCount > 2)
+            if (wingAnimationCount > maxLen)
             {
                 wingAnimationCount = 1;
                 wingAnimationDir = 1;

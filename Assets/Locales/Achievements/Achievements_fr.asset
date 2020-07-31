@@ -22,5 +22,45 @@ MonoBehaviour:
     m_Localized: Placeholder
     m_Metadata:
       m_Items: []
+  - m_Id: 2
+    m_Localized: Jouer le tutoriel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3
+    m_Localized: Travailleur de tunnel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4
+    m_Localized: "Voler \xE0 travers un tunnel"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6
+    m_Localized: Victoire contre le mauvais chat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5
+    m_Localized: Bon chat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7
+    m_Localized: Capitaine de navigation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8
+    m_Localized: "Voler \xE0 travers un tuyau en mouvement"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 9
+    m_Localized: TBD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10
+    m_Localized: TBD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11
+    m_Localized: "Une r\xE9alisation d\xE9bloqu\xE9e !"
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

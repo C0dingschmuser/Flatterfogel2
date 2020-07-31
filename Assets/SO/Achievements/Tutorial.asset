@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Tutorial
   m_EditorClassIdentifier: 
   identifier: completeTutorial
-  mainSprite: {fileID: 21300024, guid: 80548166ca8b77a4b8a10c369d1890b3, type: 3}
+  mainSprite:
+  - {fileID: 21300000, guid: 0a6c9a4e29274c74abaa3f83d3e778e2, type: 3}
   rewards:
   - mineralID: 16
     amount: 5
@@ -21,17 +22,21 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:7300fd89b4d69cc41b25293fb5d9393c
     m_TableEntryReference:
-      m_KeyId: 1
+      m_KeyId: 2
       m_Key: 
   description:
     m_TableReference:
       m_TableCollectionName: GUID:7300fd89b4d69cc41b25293fb5d9393c
     m_TableEntryReference:
-      m_KeyId: 1
+      m_KeyId: 2
       m_Key: 
-  titleString: Placeholder
-  descriptionString: Placeholder
+  titleString: Spiele das Tutorial
+  descriptionString: Spiele das Tutorial
   step: 0
   maxStep: 1
+  upgradeStep: 0
+  maxUpgradeSteps: 0
+  stepMultiplier: 2
+  rewardMultiplier: 2
   completed: 0
   rewardCollected: 0

@@ -12,11 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 623ec2e6fbc1ddf4d8c9629db178bfba, type: 3}
   m_Name: 2
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: a72bde297fa55fb4c96688ddbff27dcb, type: 3}
-  yDist: 0
-  hatID: 2
+  identifier: cylinder
+  itemID: 2
+  purchased: 1
   salePercent: 0
-  purchased: 0
   cost:
   - mineralID: 14
     amount: 30
@@ -26,4 +25,11 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
-  identifier: cylinder
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  sprite: {fileID: 21300000, guid: a72bde297fa55fb4c96688ddbff27dcb, type: 3}
+  animatedSprites: []
+  yDist: 0
+  shopYDist: 0

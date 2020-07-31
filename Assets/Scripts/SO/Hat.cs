@@ -10,5 +10,5 @@ public class Hat : ShopItem
     public Sprite[] animatedSprites = null;
 
     [Header("Allgemein")]
-    public float yDist = 0;
+    public float yDist = 0, shopYDist = 0;
 }

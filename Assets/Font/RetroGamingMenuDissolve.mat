@@ -31,7 +31,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _ColorMask: 15
-    - _DissolveAmount: 0
+    - _DissolveAmount: 1
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
     - _NoiseScale: 100

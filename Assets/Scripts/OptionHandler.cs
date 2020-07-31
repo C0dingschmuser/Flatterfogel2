@@ -208,7 +208,6 @@ public class OptionHandler : MonoBehaviour
         if(load)
         {
             BackgroundHandler.Instance.SpawnCloud(true);
-            TutorialHandler.Instance.Startup();
         }
 
         //AccountHandler.Instance.StartLoadLocalization();

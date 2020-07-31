@@ -15,7 +15,16 @@ public class Skin : ShopItem
     public int[] boughtHats;
 
     [Header("Allgemein")]
-    public float hatDiff = 0;
+    public float hatStart = 18.662f, wingStart = 0;
+
+    /*private float shopHatStart, shopWingStart;
+
+    public float GetShopHatStart()
+    {
+        //bei player abstand 37.7f
+
+    }*/
+
     public bool wingSupport = true;
     public bool hatSupport = true;
     public bool boxCollider = false;

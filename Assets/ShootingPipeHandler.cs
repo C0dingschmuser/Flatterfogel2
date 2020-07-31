@@ -88,6 +88,27 @@ public class ShootingPipeHandler : MonoBehaviour
         FlatterFogelHandler.Instance.SetInternalScore(0);
 
         endComplete = true;
+
+        StartCoroutine(SpawnEndCoins(0.5f, 6));
+    }
+
+    private IEnumerator SpawnEndCoins(float time, int coins)
+    {
+        if (FF_PlayerData.Instance.dead)
+        { //return wenn tot
+            yield return null;
+        }
+
+        while (coins > 0)
+        {
+            Vector3 newPos = new Vector3(Random.Range(-438, -85),
+                Random.Range(223, 1052), 0);
+
+            FlatterFogelHandler.Instance.SpawnCoin(newPos);
+
+            coins--;
+            yield return new WaitForSeconds(time);
+        }
     }
 
     public void ZoomComplete()

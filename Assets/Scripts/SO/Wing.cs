@@ -7,6 +7,8 @@ public class Wing : ShopItem
 {
     [Header("Grafik")]
     public Sprite[] sprite;
+    public int middleID = 1;
+    public float xDist = 0;
 
     [Header("Preis")]
     public float shopScale = 3.333f;
