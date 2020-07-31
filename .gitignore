@@ -21,6 +21,7 @@
 /Assets/GoogleService-Info.plist
 /Assets/google-services.json
 /Flatterfogel2.zip
+/Flatterfogel2.tar.gz
 
 # Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
