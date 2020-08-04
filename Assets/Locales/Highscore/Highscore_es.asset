@@ -23,8 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2
-    m_Localized: Necesitas crear una cuenta para comparar tus puntuaciones con las
-      de otros jugadores.
+    m_Localized: "Reg\xEDstrate y accede a la tabla de clasificaci\xF3n mundial!"
     m_Metadata:
       m_Items: []
   - m_Id: 3

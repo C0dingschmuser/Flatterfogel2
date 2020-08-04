@@ -327,17 +327,18 @@ public class BlusData : MonoBehaviour
         if(blusActive && !isDestroyed && TutorialHandler.Instance.mainTut != 0)
         {
             Vector3 pos = transform.position;
+            float dist = speed * Time.deltaTime;
 
             if(!moveDir)
             { //hoch
-                pos.y += speed * Time.deltaTime;
+                pos.y += dist;
 
-                yDiff += speed * Time.deltaTime;
+                yDiff += dist;
             } else
             { //runter
-                pos.y -= speed * Time.deltaTime;
+                pos.y -= dist;
 
-                yDiff -= speed * Time.deltaTime;
+                yDiff -= dist;
             }
 
             transform.position = pos;

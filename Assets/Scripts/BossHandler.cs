@@ -32,6 +32,11 @@ public class BossHandler : MonoBehaviour
         pooler = ObjectPooler.Instance;
     }
 
+    public bool GetActive()
+    {
+        return isActive;
+    }
+
     public void StartBoss()
     {
         isActive = true;
@@ -54,6 +59,8 @@ public class BossHandler : MonoBehaviour
 
         attackMode = 0;//Random.Range(0, 2);
         fullReload = false;
+
+        FlatterFogelHandler.Instance.StartZoomOnBoss(new Vector3(-192, startY), 0.5f, 2f);
 
         //InvokeRepeating("PlayerShoot", 1f, 0.5f);
         InvokeRepeating("LaserState", 0f, 0.5f);
@@ -142,7 +149,8 @@ public class BossHandler : MonoBehaviour
 
         laserObj.SetActive(false);
 
-        Invoke("DeathTimeout", 5f);
+        StopBoss(2f);
+        //Invoke("DeathTimeout", 5f);
     }
 
     private void DeathTimeout()

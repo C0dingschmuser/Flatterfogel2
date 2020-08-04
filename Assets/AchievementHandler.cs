@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MEC;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using CodeStage.AntiCheat.ObscuredTypes;
@@ -9,10 +10,12 @@ using System;
 using UnityEngine.UI;
 using TMPro;
 using Random = UnityEngine.Random;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class AchievementHandler : MonoBehaviour
 {
-    public GameObject achPrefab, achCoin, menuUnclaimed;
+    public AchUnlockHandler achUnlockHandler;
+    public GameObject achPrefab, achCoin, menuUnclaimed, windowUnclaimed;
     public Transform contentParent;
 
     public Achievement[] allAchievements;
@@ -45,6 +48,8 @@ public class AchievementHandler : MonoBehaviour
     private float sliderValue = 0;
     private float[] dissolveAmounts;
 
+    private CoroutineHandle mainHandle;
+
     private ObscuredInt achLvl = 0;
     private ObscuredLong newAchCoins = 0, defaultDiff = 50;
     private ObscuredLong achCoins = 0, achMaxCoins = 50;
@@ -64,6 +69,7 @@ public class AchievementHandler : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        //achUnlockHandler.Startup();
     }
 
     private void Start()
@@ -98,6 +104,7 @@ public class AchievementHandler : MonoBehaviour
         if(unclaimed > 0)
         {
             menuUnclaimed.SetActive(true);
+            windowUnclaimed.SetActive(true);
 
             string s = unclaimed.ToString();
 
@@ -108,9 +115,13 @@ public class AchievementHandler : MonoBehaviour
 
             menuUnclaimed.transform.GetChild(0).
                 GetComponent<TextMeshProUGUI>().text = s;
+
+            windowUnclaimed.transform.GetChild(0).
+                GetComponent<TextMeshProUGUI>().text = s;
         } else
         {
             menuUnclaimed.SetActive(false);
+            windowUnclaimed.SetActive(false);
         }
     }
 
@@ -154,7 +165,7 @@ public class AchievementHandler : MonoBehaviour
         if (!handleRunning)
         { //coroutine starten wenn sie noch nicht läuft
             handleRunning = true;
-            StartCoroutine(HandleAddAchCoins());
+            Timing.RunCoroutine(HandleAddAchCoins());
         }
     }
 
@@ -162,10 +173,10 @@ public class AchievementHandler : MonoBehaviour
     {
         CollectClicked(caller);
 
-        StartCoroutine(SpawnAchObjs(startPos, newCoins));
+        Timing.RunCoroutine(_SpawnAchObjs(startPos, newCoins));
     }
 
-    private IEnumerator SpawnAchObjs(Vector3 startPos, long newCoins)
+    private IEnumerator<float> _SpawnAchObjs(Vector3 startPos, long newCoins)
     {
         long amount = 10;
 
@@ -209,11 +220,11 @@ public class AchievementHandler : MonoBehaviour
             newAchObj.transform.DOScale(1, ach.scaleUpTime - 0.01f);
 
             achMoveObjs.Add(newAchObj);
-            yield return new WaitForSeconds(0.05f);
+            yield return Timing.WaitForSeconds(0.05f);
         }
     }
 
-    private IEnumerator HandleAddAchCoins()
+    private IEnumerator<float> HandleAddAchCoins()
     {
         bool ok = false;
         while(!ok)
@@ -250,7 +261,7 @@ public class AchievementHandler : MonoBehaviour
                 mainText.text = achCoins.ToString() + "/" + achMaxCoins.ToString();
             });
 
-            yield return new WaitForSeconds(waitTime);
+            yield return Timing.WaitForSeconds(waitTime);
 
             if (achCoins >= achMaxCoins)
             { //neues lvl
@@ -267,8 +278,6 @@ public class AchievementHandler : MonoBehaviour
         }
 
         handleRunning = false;
-
-        yield return null;
     }
 
     private void LevelUp()
@@ -554,6 +563,8 @@ public class AchievementHandler : MonoBehaviour
         //Update UI
         UpdateUI();
 
+        mainHandle = Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
+
         achParent.SetActive(true);
     }
 
@@ -561,6 +572,8 @@ public class AchievementHandler : MonoBehaviour
     {
         hParent.SetActive(true);
         achParent.SetActive(false);
+
+        Timing.KillCoroutines(mainHandle);
     }
 
     public void CollisionEnter(GameObject achObj)
@@ -645,8 +658,14 @@ public class AchievementHandler : MonoBehaviour
         }
     }
 
+    public void CloseClicked()
+    {
+        Timing.KillCoroutines(mainHandle);
+        ScoreHandler.Instance.CloseAchievements();
+    }
+
     // Update is called once per frame
-    void Update()
+    void _MainUpdate()
     {
         if(flashDir == 0)
         { //hoch

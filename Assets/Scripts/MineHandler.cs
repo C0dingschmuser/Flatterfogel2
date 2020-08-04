@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MEC;
 using UnityEngine;
 using UnityEngine.Localization;
 using DG.Tweening;
@@ -1060,9 +1061,9 @@ public class MineHandler : MonoBehaviour
         return result;
     }
 
-    private IEnumerator WaitMineObj(int nextMinePos, float waitTime, bool playerMine = true, bool update = true)
+    private IEnumerator<float> WaitMineObj(int nextMinePos, float waitTime, bool playerMine = true, bool update = true)
     {
-        yield return new WaitForSeconds(waitTime);
+        yield return Timing.WaitForSeconds(waitTime);
         MineObj(nextMinePos, playerMine, update);
     }
 
@@ -1182,7 +1183,7 @@ public class MineHandler : MonoBehaviour
             {
                 if(playerMine)
                 {
-                    StartCoroutine(DestroyAbove(abovePos, 0.75f));
+                    Timing.RunCoroutine(DestroyAbove(abovePos, 0.75f));
                 }
             }
         }
@@ -1205,10 +1206,10 @@ public class MineHandler : MonoBehaviour
        // mineObjs[nextMinePos].SetActive(false);
     }
 
-    IEnumerator DestroyAbove(int pos, float waitTime)
+    IEnumerator<float> DestroyAbove(int pos, float waitTime)
     {
         mineObjs[pos].GetComponent<MineData>().StartVibrate();
-        yield return new WaitForSeconds(waitTime);
+        yield return Timing.WaitForSeconds(waitTime);
         MineObj(pos, false);
         mineObjs[pos].GetComponent<MineData>().EnableFall();
     }
@@ -1230,10 +1231,10 @@ public class MineHandler : MonoBehaviour
         switch(id)
         {
             case 0: //Bombe
-                StartCoroutine(ExplodeRadius(100, 0.15f));
+                Timing.RunCoroutine(ExplodeRadius(100, 0.15f));
 
                 GameObject effect = objPooler.SpawnFromPool("MineBombEffect", player.transform.position, Quaternion.identity);
-                StartCoroutine(DeactivateDelayed(effect, 4));
+                Timing.RunCoroutine(DeactivateDelayed(effect, 4));
                 break;
             case 1: //Kanister (35% fuel wiederherstellen)
                 float t = player.GetComponent<FF_PlayerData>().GetMaxFuel() * 0.35f;
@@ -1242,9 +1243,9 @@ public class MineHandler : MonoBehaviour
         }
     }
 
-    IEnumerator ExplodeRadius(float radius, float time)
+    IEnumerator<float> ExplodeRadius(float radius, float time)
     { //Zerstört alle Blöcke im Radius
-        yield return new WaitForSeconds(time);
+        yield return Timing.WaitForSeconds(time);
 
 
         /*int startPos = nextMinePos;
@@ -1331,9 +1332,9 @@ public class MineHandler : MonoBehaviour
         }
     }
 
-    IEnumerator DeactivateDelayed(GameObject obj, float time)
+    IEnumerator<float> DeactivateDelayed(GameObject obj, float time)
     {
-        yield return new WaitForSeconds(time);
+        yield return Timing.WaitForSeconds(time);
         obj.SetActive(false);
     }
 
@@ -1554,7 +1555,7 @@ public class MineHandler : MonoBehaviour
 
         StartShake(time, 1.5f);
 
-        StartCoroutine(WaitMineObj(nextMinePos, time + 0.01f));
+        Timing.RunCoroutine(WaitMineObj(nextMinePos, time + 0.01f));
     }
 
     private void StartShake(float time, float amount)

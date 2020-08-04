@@ -623,7 +623,7 @@ public class ScoreHandler : MonoBehaviour
 
         if(open)
         {
-            string url;
+            string url = "https://google.com";
 
             if(OptionHandler.playStore)
             {

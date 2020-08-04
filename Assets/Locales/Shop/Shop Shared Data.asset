@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Shop Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 16
+  m_NextAvailableId: 17
   m_TableCollectionName: Shop
   m_TableCollectionNameGuidString: f5ac6f4f39103ca4ba3eda2dfe409d2b
   m_Entries:
@@ -74,6 +74,10 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 15
     m_Key: SALE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Key: Filter
     m_Metadata:
       m_Items: []
   m_Metadata:

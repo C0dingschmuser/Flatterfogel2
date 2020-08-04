@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MEC;
 using UnityEngine;
 
 public class Flakhandler : MonoBehaviour
@@ -12,6 +13,8 @@ public class Flakhandler : MonoBehaviour
     private Transform[] barrelObjs = null;
 
     private ObjectPooler objectPooler;
+    private CoroutineHandle mainHandle;
+    
     private bool canShoot = false;
 
     private int currentBarrel = 0;
@@ -60,8 +63,19 @@ public class Flakhandler : MonoBehaviour
         return result;
     }
 
+    private void OnEnable()
+    {
+        Timing.KillCoroutines(mainHandle);
+        mainHandle = Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
+    }
+
+    private void OnDisable()
+    {
+        Timing.KillCoroutines(mainHandle);
+    }
+
     // Update is called once per frame
-    void Update()
+    void _MainUpdate()
     {
         Vector3 pos = PredictedPosition(player.transform.position,
             topFlak.transform.position, new Vector3(FlatterFogelHandler.scrollSpeed / 2, 0, 0), bulletSpeed);

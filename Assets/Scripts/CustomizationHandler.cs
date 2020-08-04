@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MEC;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
@@ -71,9 +72,14 @@ public class CustomizationHandler : MonoBehaviour
         pricePos = priceParent.transform.position;
     }
 
+    private void Start()
+    {
+        Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
+    }
 
     public void StartCustomizationHandler()
     {
+        FilterHandler.SetupFilter();
         SetType(CustomizationType.Skin, true);
 
         switchRunning = true;
@@ -375,6 +381,11 @@ public class CustomizationHandler : MonoBehaviour
         }
     }
 
+    public void FilterUpdate()
+    {
+        TypeClicked((int)type);
+    }
+
     public void TypeClicked(int itype)
     {
         CustomizationType newType = (CustomizationType)itype;
@@ -549,6 +560,18 @@ public class CustomizationHandler : MonoBehaviour
                 {
                     smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.white;
                 }
+
+                //Farbe von Obj Sprite
+                Color32 c = smallPreviewParent.GetChild(i).GetChild(1).GetComponent<Image>().color;
+                if (shop.HasPurchased(type, newID) == 2)
+                {
+                    c.a = 255;
+                } else
+                {
+                    c.a = 168;
+                }
+
+                smallPreviewParent.GetChild(i).GetChild(1).GetComponent<Image>().color = c;
 
                 smallPreviewParent.GetChild(i).GetChild(0).gameObject.SetActive(true);
                 smallPreviewParent.GetChild(i).GetChild(1).gameObject.SetActive(true);
@@ -1035,7 +1058,7 @@ public class CustomizationHandler : MonoBehaviour
         buyInfo.SetActive(true);
     }
 
-    private void Update()
+    private void _MainUpdate()
     {
         Skin pSkin;
 

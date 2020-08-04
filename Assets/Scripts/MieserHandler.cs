@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MEC;
 using UnityEngine;
 using DG.Tweening;
 
@@ -83,7 +84,7 @@ public class MieserHandler : MonoBehaviour
 
         float stepTime = 1.5f / coins;
 
-        StartCoroutine(SpawnEndCoins(stepTime, coins));
+        Timing.RunCoroutine(SpawnEndCoins(stepTime, coins));
 
         isDead = true;
 
@@ -92,7 +93,7 @@ public class MieserHandler : MonoBehaviour
         Invoke("EndDeath", timeTillDeath);
     }
 
-    private IEnumerator SpawnEndCoins(float time, int coins)
+    private IEnumerator<float> SpawnEndCoins(float time, int coins)
     {
         while(coins > 0)
         {
@@ -103,7 +104,7 @@ public class MieserHandler : MonoBehaviour
             FlatterFogelHandler.Instance.SpawnCoin(newPos);
 
             coins--;
-            yield return new WaitForSeconds(time);
+            yield return Timing.WaitForSeconds(time);
         }
     }
 

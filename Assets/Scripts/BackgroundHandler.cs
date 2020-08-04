@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MEC;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -60,6 +61,7 @@ public class BackgroundHandler : MonoBehaviour
     public BackgroundData currentBG = new BackgroundData();
     public AnimationCurve dayLight, nightLight;
     public GameObject sunMoon, sunObj, moonObj, sunLightObj, moonLightObj, topExtent;
+    public SpriteRenderer topExtentRenderer;
 
     public UnityEngine.Experimental.Rendering.Universal.Light2D globalLight, moonLight, sunLight;
     public Sprite[] sunMoonSprites = new Sprite[2];
@@ -68,6 +70,8 @@ public class BackgroundHandler : MonoBehaviour
     private Transform lightLayerParent = null;
     [SerializeField]
     private GameObject train = null;
+
+    private Vector3 oldTopExtentPos, oldTopExtentScale;
 
     private Tween globalLightTween, globalColorTween, moonLightTween, sunLightTween, cameraColorTween;
     private Background currentBackground;
@@ -112,6 +116,8 @@ public class BackgroundHandler : MonoBehaviour
 
         cycleTime = sunMoon.GetComponent<DOTweenPath>().duration;
         StartDayFirst();
+
+        Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
     }
 
     public void ScaleLights(bool normal)
@@ -237,6 +243,47 @@ public class BackgroundHandler : MonoBehaviour
         cloudObject.transform.position = new Vector3(startX, topY - 129);
     }
 
+    public void UpdateTopExtent(Vector3 pos, float ySize)
+    {
+        float yScale = ySize * 1.64f;
+
+        topExtent.transform.localScale =
+            new Vector3(topExtent.transform.localScale.x,
+                yScale, 0);
+
+        pos.z = 20;
+
+        oldTopExtentPos = pos;
+        oldTopExtentScale = topExtent.transform.localScale;
+
+        topExtent.transform.position = pos;
+    }
+
+    public void EnlargeTopExtent(Vector3 pos)
+    {
+        Vector3 scale = topExtent.transform.localScale;
+        scale.x *= 1.512f;
+        scale.y *= 1.465f;
+
+        pos.z = 20;
+
+        topExtent.transform.localScale = scale;
+        topExtent.transform.position = pos;
+    }
+
+    public void ReduceTopExtent()
+    {
+        Timing.RunCoroutine(EndReduceTopExtent());
+    }
+
+    private IEnumerator<float> EndReduceTopExtent()
+    {
+        yield return Timing.WaitForSeconds(1.01f);
+
+        topExtent.transform.localScale = oldTopExtentScale;
+        topExtent.transform.position = oldTopExtentPos;
+    }
+
     public void SetNewBackground(Background bg)
     {
         if(currentBackground != null)
@@ -312,8 +359,8 @@ public class BackgroundHandler : MonoBehaviour
             nonScrollingObj.SetActive(false);
         }
 
-        topExtent.GetComponent<SpriteRenderer>().sprite = bg.topExtentSprite;
-        topExtent.GetComponent<SpriteRenderer>().color = bg.topExtentColor;
+        //topExtent.GetComponent<SpriteRenderer>().sprite = bg.topExtentSprite;
+        //topExtent.GetComponent<SpriteRenderer>().color = bg.topExtentColor;
 
         for (int spriteLayer = 0; spriteLayer < 4; spriteLayer++)
         {
@@ -508,9 +555,9 @@ public class BackgroundHandler : MonoBehaviour
     { //lightt
         if(currentBackground.supportsDayNight)
         {
-            camera.backgroundColor = nightBackgroundColor;
+            topExtentRenderer.color = nightBackgroundColor;
             cameraColorTween =
-                DOTween.To(() => camera.backgroundColor, x => camera.backgroundColor = x, dayBackgroundColor, cycleTime / 6);
+                DOTween.To(() => topExtentRenderer.color, x => topExtentRenderer.color = x, dayBackgroundColor, cycleTime / 6);
 
             globalColorTween =
                 DOTween.To(() => globalLight.color, x => globalLight.color = x, dayColor, cycleTime / 8);
@@ -538,15 +585,15 @@ public class BackgroundHandler : MonoBehaviour
         //globalLight.GetComponent<UnityEngine.Experimental.Rendering.LWRP.Light2D>().DO
 
         SetNight(false);
-        StartCoroutine(EndNightLights(cycleTime / 5));
+        Timing.RunCoroutine(EndNightLights(cycleTime / 5));
 
         Invoke("StartNight", cycleTime - (cycleTime / 5));
         //Invoke("SetMoon", cycleTime);
     }
 
-    private IEnumerator EndNightLights(float waitTime)
+    private IEnumerator<float> EndNightLights(float waitTime)
     {
-        yield return new WaitForSeconds(waitTime);
+        yield return Timing.WaitForSeconds(waitTime);
         SetNight(false);
     }
 
@@ -569,7 +616,7 @@ public class BackgroundHandler : MonoBehaviour
                 }
 
                 cameraColorTween =
-                    DOTween.To(() => camera.backgroundColor, x => camera.backgroundColor = x, nightBackgroundColor, cycleTime / 6);
+                    DOTween.To(() => topExtentRenderer.color, x => topExtentRenderer.color = x, nightBackgroundColor, cycleTime / 6);
 
                 globalColorTween = DOTween.To(() => globalLight.color, x => globalLight.color = x, nightColor, cycleTime / 8);
 
@@ -656,9 +703,9 @@ public class BackgroundHandler : MonoBehaviour
         
         if (OptionHandler.lightEnabled == 1 && currentBackground.supportsDayNight)
         {
-            camera.backgroundColor = nightBackgroundColor;
+            topExtentRenderer.color = nightBackgroundColor;
             cameraColorTween =
-                DOTween.To(() => camera.backgroundColor, x => camera.backgroundColor = x, dayBackgroundColor, cycleTime / 6);
+                DOTween.To(() => topExtentRenderer.color, x => topExtentRenderer.color = x, dayBackgroundColor, cycleTime / 6);
 
             globalColorTween =
                 DOTween.To(() => globalLight.color, x => globalLight.color = x, dayColor, cycleTime / 8);
@@ -832,7 +879,7 @@ public class BackgroundHandler : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void _MainUpdate()
     {
 
         float realScrollSpeed = 0;

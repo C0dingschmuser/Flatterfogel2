@@ -23,8 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2
-    m_Localized: You need to create an Account to compare your Highscores with other
-      Players
+    m_Localized: Sign up and get access to the global leaderboard!
     m_Metadata:
       m_Items: []
   - m_Id: 3

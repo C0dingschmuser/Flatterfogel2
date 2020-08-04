@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MEC;
 using UnityEngine;
 using System;
 using DG.Tweening;
@@ -23,6 +24,8 @@ public class PipeData : MonoBehaviour
     
     public float colorTime, abstand;
     public Transform particleParent;
+
+    private CoroutineHandle mainHandle;
 
     private float fadeTime = 0.4f, lightTime = 1f, yDiffToWall = 0, divConst = 1;
     private bool destructionStarted = false, fullDestructionStarted = false, physicsCalculated = false;
@@ -85,6 +88,14 @@ public class PipeData : MonoBehaviour
 
         lightObj.intensity = 0f;
         colorTime = 0f;
+
+        Timing.KillCoroutines(mainHandle);
+        mainHandle = Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
+    }
+
+    private void OnDisable()
+    {
+        Timing.KillCoroutines(mainHandle);
     }
 
     public void SetLightIntensity(float i)
@@ -417,7 +428,7 @@ public class PipeData : MonoBehaviour
         Invoke("ScaleDown", 5f);
     }
 
-    private void Update()
+    private void _MainUpdate()
     {
         /*if(!scaleDone)
         {

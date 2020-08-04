@@ -635,6 +635,20 @@ public class OptionHandler : MonoBehaviour
         }
 
         ShopHandler.Instance.UIScaleFinished();
+
+        //Obere Grenze
+        float topY = 1434;
+        float bottomY = 150;
+
+        if (!normalAspect)
+        {
+            topY = defaultCameraPos.y + cameraBounds.extents.y;
+        }
+
+        float center = (topY + bottomY) / 2;
+        pos.y = center;
+
+        backgroundHandler.UpdateTopExtent(pos, cameraHeight);
         //DestructionEnlarge();
     }
 
@@ -696,6 +710,8 @@ public class OptionHandler : MonoBehaviour
 
         c.transform.DOMove(pos, 1f);
 
+        backgroundHandler.EnlargeTopExtent(pos);
+
         Invoke("ReEnableColl", 1.01f);
     }
 
@@ -710,6 +726,8 @@ public class OptionHandler : MonoBehaviour
         c.transform.DOMove(defaultCameraPos , 1f);
 
         destructionEnlargeActive = false;
+
+        backgroundHandler.ReduceTopExtent();
 
         Invoke("ReEnableColl", 1.01f);
     }
@@ -1079,7 +1097,7 @@ public class OptionHandler : MonoBehaviour
     private IEnumerator UpdateEnhancedFramerate()
     {
 #if UNITY_STANDALONE_WIN
-        return;
+        yield return null;
 #endif
 
         AsyncOperationHandle handle;

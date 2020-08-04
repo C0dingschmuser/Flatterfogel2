@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MEC;
 using UnityEngine;
 using UnityEditor;
 using DG.Tweening;
@@ -198,8 +199,10 @@ public class FlatterFogelHandler : MonoBehaviour
 #if UNITY_ANDROID || UNITY_IOS
         cullingEnabled = true;
         FirebaseAnalytics.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
-        
+
 #endif
+
+        Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
     }
 
     public void UpdateTap()
@@ -1022,7 +1025,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
             if(tutHandler.mainTut != 0)
             {
-                StartCoroutine(SpawnPipesWait(1f, false));
+                Timing.RunCoroutine(SpawnPipesWait(1f, false));
             }
         }
         
@@ -1081,7 +1084,7 @@ public class FlatterFogelHandler : MonoBehaviour
         FF_PlayerData.Instance.ResetMine();
 
         pipeSpawnAllowed = true;
-        StartCoroutine(SpawnPipesWait(1f, false));
+        Timing.RunCoroutine(SpawnPipesWait(1f, false));
     }
 
     public Vector3[] GetAllPipePositions(float overrideHeight = -9999)
@@ -1183,12 +1186,12 @@ public class FlatterFogelHandler : MonoBehaviour
         player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX;
     }
 
-    private IEnumerator CheckBlusCircle(int current)
+    private IEnumerator<float> CheckBlusCircle(int current)
     {
         int newCounter = current; //zuweisung da evtl mehrmals aufgerufen
         int len = 0;
 
-        yield return new WaitForSeconds(0.125f); //warte bis particle system effekt anfängt
+        yield return Timing.WaitForSeconds(0.125f); //warte bis particle system effekt anfängt
 
         float currentRadius = 10;
         DOTween.To(() => currentRadius, x => currentRadius = x, 400, 0.7f);
@@ -1246,7 +1249,7 @@ public class FlatterFogelHandler : MonoBehaviour
                 }
             }
 
-            yield return new WaitForSeconds(0.03f);
+            yield return Timing.WaitForSeconds(0.03f);
         }
     }
 
@@ -1343,9 +1346,9 @@ public class FlatterFogelHandler : MonoBehaviour
 
                 blusEffects[blusEffectCounter].SetActive(false);
 
-                StartCoroutine(HandleBlusEffectFade(0.4f));
+                Timing.RunCoroutine(HandleBlusEffectFade(0.4f));
 
-                IEnumerator HandleBlusEffectFade(float wait)
+                IEnumerator<float> HandleBlusEffectFade(float wait)
                 {
                     int old = blusEffectCounter;
 
@@ -1356,7 +1359,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
                     blusEffects[old].SetActive(true);
 
-                    yield return new WaitForSeconds(wait);
+                    yield return Timing.WaitForSeconds(wait);
 
                     Tween bTween = DOTween.To(() => blusEffectsDissolve[old],
                         x => blusEffectsDissolve[old] = x, 0, 0.3f);
@@ -1368,7 +1371,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
                 if (!destructionMode)
                 {
-                    StartCoroutine(CheckBlusCircle(blusEffectCounter));
+                    Timing.RunCoroutine(CheckBlusCircle(blusEffectCounter));
                 }
             }
 
@@ -1593,10 +1596,10 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public void StartZoomOnBoss(Vector3 pos, float zoomInTime, float waitTime)
     {
-        StartCoroutine(ZoomOnBoss(pos, zoomInTime, waitTime));
+        Timing.RunCoroutine(ZoomOnBoss(pos, zoomInTime, waitTime));
     }
 
-    private IEnumerator ZoomOnBoss(Vector3 pos, float zoomInTime, float waitTime)
+    private IEnumerator<float> ZoomOnBoss(Vector3 pos, float zoomInTime, float waitTime)
     {
         //reinzoomen
         player.GetComponent<Rigidbody2D>().simulated = false;
@@ -1628,7 +1631,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         cameraObj.transform.DOMove(pos, zoomInTime);
 
-        yield return new WaitForSeconds(zoomInTime);
+        yield return Timing.WaitForSeconds(zoomInTime);
 
         if(shootingPipehandler.shootingPipesActive)
         {
@@ -1668,7 +1671,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         //warten dass waittime vorbei ist
 
-        yield return new WaitForSeconds(waitTime);
+        yield return Timing.WaitForSeconds(waitTime);
 
         bossWarning.SetActive(false);
 
@@ -1692,7 +1695,7 @@ public class FlatterFogelHandler : MonoBehaviour
             }
         }
 
-        yield return new WaitForSeconds(zoomInTime);
+        yield return Timing.WaitForSeconds(zoomInTime);
 
         //zoomout complete
 
@@ -1707,9 +1710,9 @@ public class FlatterFogelHandler : MonoBehaviour
         }
     }
 
-    private IEnumerator SpawnPipesWait(float wait, bool empty = false, bool moveAllowed = true)
+    private IEnumerator<float> SpawnPipesWait(float wait, bool empty = false, bool moveAllowed = true)
     {
-        yield return new WaitForSeconds(wait);
+        yield return Timing.WaitForSeconds(wait);
 
         SpawnPipes(empty, moveAllowed);
     }
@@ -1812,7 +1815,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         int maxChance = 4;
 
-        if(Random.Range(0, maxChance) == 0 && score > 25)
+        if(Random.Range(0, maxChance) == 0 && score > 60)
         {
             abstand = 125;
         } else
@@ -1820,10 +1823,10 @@ public class FlatterFogelHandler : MonoBehaviour
             abstand = 150;
         }
 
-        if(score < 9)
+        if(score < 20)
         {
             abstand = 225;
-        } else if(score < 13)
+        } else if(score < 40)
         {
             abstand = 175;
         }
@@ -1907,7 +1910,25 @@ public class FlatterFogelHandler : MonoBehaviour
         bool ok = false, destOk = false;
         float speed = 100;
 
-        switch (OptionHandler.GetDifficulty())
+        if(score < 15)
+        {
+            ok = false;
+        } else if(score < 30)
+        {
+            ok = true;
+            speed = 75;
+        } else if(score < 70)
+        {
+            ok = true;
+            speed = 100;
+        } else
+        {
+            ok = true;
+            speed = 125;
+        }
+
+        #region oldMove
+        /*switch (OptionHandler.GetDifficulty())
         {
             case 0: //leicht
 
@@ -1954,9 +1975,10 @@ public class FlatterFogelHandler : MonoBehaviour
                 }
 
                 break;
-        }
+        }*/
+        #endregion
 
-        if(!moveAllowed)
+        if (!moveAllowed)
         {
             ok = false;
         }
@@ -2233,7 +2255,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         if(splatterHandler.splatterActive)
         {
-            splatterHandler.EndSplatter();
+            splatterHandler.EndSplatter(true);
         }
 
         float anTime = 0.2f;
@@ -2409,6 +2431,18 @@ public class FlatterFogelHandler : MonoBehaviour
 
         Invoke("ChangeModeOver", 0.251f);
     }
+    private void ChangeModeOver()
+    {
+        if(BossHandler.Instance.GetActive())
+        { //bei boss bleibt deaktiviert da zoomIn
+            player.GetComponent<Rigidbody2D>().simulated = false;
+        } else
+        {
+            player.GetComponent<Rigidbody2D>().simulated = true;
+        }
+
+        modeChanging = false;
+    }
 
     private void StartSplatter()
     {
@@ -2530,12 +2564,6 @@ public class FlatterFogelHandler : MonoBehaviour
 #endregion
 
         player.GetComponent<FF_PlayerData>().RegeneratePhysics(high);
-    }
-
-    private void ChangeModeOver()
-    {
-        player.GetComponent<Rigidbody2D>().simulated = true;
-        modeChanging = false;
     }
 
     IEnumerator HandleAI()
@@ -2712,7 +2740,7 @@ public class FlatterFogelHandler : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void _MainUpdate()
     {
         Touch[] touches = Input.touches;
         bool touchOK = false;
@@ -3081,7 +3109,8 @@ public class FlatterFogelHandler : MonoBehaviour
                                 { //neue pipes nur spawnen wenn tutorial abgeschlossen
                                     if (Random.Range(0, 15) == 0
                                         && !shootingPipehandler.shootingPipesActive
-                                        && shootingPipehandler.endComplete)
+                                        && shootingPipehandler.endComplete
+                                        && internalScoreCount > 50)
                                     {
                                         SpawnTunnel();
                                     }

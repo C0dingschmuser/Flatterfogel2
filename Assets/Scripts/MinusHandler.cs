@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MEC;
 using UnityEngine;
 using DG.Tweening;
 
@@ -11,11 +12,12 @@ public class MinusHandler : MonoBehaviour
     [SerializeField]
     private ParticleSystem trailSystem = null;
 
+    private CoroutineHandle mainUpdate;
     private Vector3 targetPosition;
     private Vector2 dir;
     private float speed = 100f, targetY = -999, defaultEmission = 10;
 
-    private void ResetMinus()
+    private void ResetMinus(bool start = false)
     {
         isActive = true;
 
@@ -35,6 +37,11 @@ public class MinusHandler : MonoBehaviour
 
         ParticleSystem.EmissionModule em = trailSystem.emission;
         em.rateOverTime = defaultEmission;
+
+        if(start)
+        {
+            mainUpdate = Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
+        }
     }
 
     public void StartMinusFlak(GameObject player, Vector3 target, float speed)
@@ -44,7 +51,7 @@ public class MinusHandler : MonoBehaviour
         targetPosition = target;
 
         this.player = player;
-        ResetMinus();
+        ResetMinus(true);
 
         exploded = false;
 
@@ -63,7 +70,7 @@ public class MinusHandler : MonoBehaviour
 
         this.player = player;
 
-        ResetMinus();
+        ResetMinus(true);
 
         this.dir = dir;
         this.speed = speed;
@@ -105,8 +112,13 @@ public class MinusHandler : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    private void OnDisable()
+    {
+        Timing.KillCoroutines(mainUpdate);
+    }
+
     // Update is called once per frame
-    void Update()
+    void _MainUpdate()
     {
         //Debug.Log(isActive);
 

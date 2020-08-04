@@ -23,12 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2
-    m_Localized: 'Bevor du deine Highscores mit
-
-      denen von anderen Spielern
-      vergleichen kannst musst
-
-      du einen Account erstellen.'
+    m_Localized: Melde dich an und erhalte Zugang zu der globalen Bestenliste!
     m_Metadata:
       m_Items: []
   - m_Id: 3

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MEC;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Localization;
@@ -102,6 +103,11 @@ public class FF_PlayerData : MonoBehaviour
 
         SwipeDetector.OnSwipe += SwipeDetector_OnSwipe;
         //LoadPlayerSkin(0, 0);
+    }
+
+    private void Start()
+    {
+        Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
     }
 
     public void StartLoadLocalization()
@@ -1399,7 +1405,7 @@ public class FF_PlayerData : MonoBehaviour
         return ok;
     }
 
-    private void Update()
+    private void _MainUpdate()
     {
         if (FlatterFogelHandler.gamePaused) return;
 

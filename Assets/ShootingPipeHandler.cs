@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MEC;
 using UnityEngine;
 using DG.Tweening;
 
@@ -11,6 +12,8 @@ public class ShootingPipeHandler : MonoBehaviour
         firstZoomDone = false, firstZoomComplete = false, movementStopped = false,
         shootingOK = false;
     private float lastScrollSpeed;
+
+    private CoroutineHandle mainHandle;
 
     private GameObject firstPipe = null;
     private Coroutine endRoutine = null;
@@ -34,6 +37,7 @@ public class ShootingPipeHandler : MonoBehaviour
         shootingOK = false;
 
         endRoutine = StartCoroutine(EndShootingPipes(30f));
+        mainHandle = Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
     }
 
     public void FirstPipeSpawn(GameObject pipe)
@@ -61,16 +65,18 @@ public class ShootingPipeHandler : MonoBehaviour
             scrollSpeedTween.Kill();
         }
 
-        endRoutine = StartCoroutine(EndShootingPipes(0, false));
+        endRoutine = StartCoroutine(EndShootingPipes(0, false, true));
 
         firstPipeSpawned = false;
         firstZoomDone = false;
         shootingPipesActive = false;
         movementStopped = false;
         shootingOK = false;
+
+        Timing.KillCoroutines(mainHandle);
     }
 
-    private IEnumerator EndShootingPipes(float waitTime, bool fade = true)
+    private IEnumerator EndShootingPipes(float waitTime, bool fade = true, bool force = false)
     {
         if(fade)
         {
@@ -89,26 +95,29 @@ public class ShootingPipeHandler : MonoBehaviour
 
         endComplete = true;
 
-        StartCoroutine(SpawnEndCoins(0.5f, 6));
+        if(!force)
+        {
+            Timing.RunCoroutine(SpawnEndCoins(0.5f, 6));
+        }
     }
 
-    private IEnumerator SpawnEndCoins(float time, int coins)
+    private IEnumerator<float> SpawnEndCoins(float time, int coins)
     {
-        if (FF_PlayerData.Instance.dead)
-        { //return wenn tot
-            yield return null;
+        if (!FF_PlayerData.Instance.dead)
+        { //nur ausführen wenn alive
+            while (coins > 0)
+            {
+                Vector3 newPos = new Vector3(Random.Range(-438, -85),
+                    Random.Range(223, 1052), 0);
+
+                FlatterFogelHandler.Instance.SpawnCoin(newPos);
+
+                coins--;
+                yield return Timing.WaitForSeconds(time);
+            }
         }
 
-        while (coins > 0)
-        {
-            Vector3 newPos = new Vector3(Random.Range(-438, -85),
-                Random.Range(223, 1052), 0);
 
-            FlatterFogelHandler.Instance.SpawnCoin(newPos);
-
-            coins--;
-            yield return new WaitForSeconds(time);
-        }
     }
 
     public void ZoomComplete()
@@ -120,7 +129,7 @@ public class ShootingPipeHandler : MonoBehaviour
             FlatterFogelHandler.defaultScrollSpeed;
     }
 
-    private void Update()
+    private void _MainUpdate()
     {
         if(shootingPipesActive)
         {

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MEC;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -13,7 +14,6 @@ using Object = System.Object;
 using UnityEngine.Localization;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Linq;
-using UnityEditor.Build;
 
 public enum Rarity
 {
@@ -45,6 +45,8 @@ public class ShopHandler : MonoBehaviour
     public TextMeshProUGUI typeInfoText, bgType, bgTypeInfo, bgPreis;
 
     public List<Skin> allSkins = new List<Skin>();
+    public List<Skin> allFilterSkins = new List<Skin>();
+
     public List<Wing> allWings = new List<Wing>();
     public List<Hat> allHats = new List<Hat>();
     public List<MinerTool> allMiners = new List<MinerTool>();
@@ -88,6 +90,8 @@ public class ShopHandler : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
+        allFilterSkins = allSkins;
     }
 
     private void SetupID()
@@ -163,6 +167,7 @@ public class ShopHandler : MonoBehaviour
         //Sortierung fertig, result zuweisen
 
         allSkins = result.Cast<Skin>().ToList();
+        allFilterSkins = allSkins;
     }
 
     // Start is called before the first frame update
@@ -180,6 +185,8 @@ public class ShopHandler : MonoBehaviour
         fadeMat.DOColor(Color.blue, 0.5f).SetEase(Ease.Linear);
         InvokeRepeating("NextColorStep", 0.51f, 0.251f);
         InvokeRepeating("HandleWingAnimation", 0.25f, 0.25f);
+
+        Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
     }
 
     public void StartLoadLocalization()
@@ -334,6 +341,7 @@ public class ShopHandler : MonoBehaviour
     {
         switch(type)
         {
+            default:
             case CustomizationType.Skin:
                 if (id < 0) id = allSkins.Count + id;
                 if (id >= allSkins.Count) id = id - allSkins.Count;
@@ -965,7 +973,7 @@ public class ShopHandler : MonoBehaviour
 
         pipeColorID = ObscuredPrefs.GetInt("SelectedPipeColorID", 1);
 
-        pipeCustomizationHandler.GetPipeColor(pipeColorID); //Pipe Color laden
+        pipeColor = pipeCustomizationHandler.GetPipeColor(pipeColorID); //Pipe Color laden
         FF_PlayerData.Instance.LoadPipe();
 
         selectedBackground = 0; //ObscuredPrefs.GetInt("SelectedBackground", 0); OVERRIDE
@@ -1721,7 +1729,7 @@ public class ShopHandler : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void _MainUpdate()
     {
         if(shopActive)
         {

@@ -23,8 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2
-    m_Localized: "Vous devez cr\xE9er un compte pour comparer vos Highscores avec
-      ceux des autres joueurs"
+    m_Localized: "Inscrivez-vous et acc\xE9dez au classement mondial !"
     m_Metadata:
       m_Items: []
   - m_Id: 3
