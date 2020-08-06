@@ -5,6 +5,7 @@ using DG.Tweening;
 using UnityEngine.UI;
 using CodeStage.AntiCheat.ObscuredTypes;
 using TMPro;
+using MEC;
 
 public class PipeCustomizationHandler : MonoBehaviour
 {
@@ -26,7 +27,15 @@ public class PipeCustomizationHandler : MonoBehaviour
         smallPreviewParent = null;
 
     [SerializeField]
-    private GameObject priceText = null, priceImage = null, saleObj = null;
+    private GameObject priceText = null, priceImage = null, saleObj = null, buyInfo = null;
+
+    [SerializeField]
+    private Image pipeTypeImage, pipeColorImage;
+
+    [SerializeField]
+    private Sprite[] pipeTypeSprites, pipeColorSprites;
+
+    private int typeAnimationStep = 0;
 
     private Tween[] priceTextTween = new Tween[4];
     private Tween[] priceImageTween = new Tween[4];
@@ -59,10 +68,31 @@ public class PipeCustomizationHandler : MonoBehaviour
         Instance = this;
     }
 
+    private void Start()
+    {
+        Timing.RunCoroutine(_HandleTypeAnimation());
+    }
+
+    private IEnumerator<float> _HandleTypeAnimation()
+    {
+        while(true)
+        {
+            pipeTypeImage.sprite = pipeTypeSprites[typeAnimationStep];
+            pipeColorImage.sprite = pipeColorSprites[typeAnimationStep];
+
+            typeAnimationStep++;
+            if(typeAnimationStep > 2)
+            {
+                typeAnimationStep = 0;
+            }
+
+            yield return Timing.WaitForSeconds(1.5f);
+        }
+    }
+
     public void StartPipeCustomizationHandler()
     {
         SetType(CustomizationType.Pipe);
-        smallPreviewParent.GetChild(0).GetComponent<Image>().color = Color.green;
 
         switchRunning = true;
 
@@ -375,7 +405,7 @@ public class PipeCustomizationHandler : MonoBehaviour
 
         for(int i = 0; i < smallPreviewParent.childCount; i++)
         {
-            smallPreviewParent.GetChild(i).GetChild(0).GetComponent<Button>().interactable =
+            smallPreviewParent.GetChild(i).GetChild(1).GetComponent<Button>().interactable =
                 interactable;
         }
 
@@ -419,31 +449,36 @@ public class PipeCustomizationHandler : MonoBehaviour
 
     public void UpdateSmallPreviews(int dir = 1)
     {
-        if(type == CustomizationType.PipeColor)
-        {
-            return;
-        }
-
         int max = shop.GetMax(type);
+
+        int currentPage = selectedID / 10;
+        //int posInSmallPreviews = selectedID - (currentPage * 10);
 
         for (int i = 0; i < smallPreviewParent.childCount; i++)
         {
             int newID = i;
 
             if (smallPreviewParent.childCount < max)
-            {
-                if (dir == 1)
+            { //wenn neue seite
+                #region alt
+                /*if(dir == 1) alter code für continuos
                 {//rechts (start ist 0)
-                    newID = shop.CheckSelected(type, selectedID + i);
-                }
-                else
+                    newID = selectedID + i;//shop.CheckSelected(type, selectedID + i);
+
+                    newID = (currentPage * 10) + i;
+                } else
                 { //links (start ist pmax - 1)
-                    newID = shop.CheckSelected(type,
-                        (selectedID - (smallPreviewParent.childCount - 1)) + i);
-                }
+                    newID =
+                        (selectedID - (smallPreviewParent.childCount - 1)) + i;
+
+                    newID = (currentPage * 10) + i;
+                }*/
+                #endregion
+
+                newID = (currentPage * 10) + i;
             }
 
-            if (newID < max)
+            if (newID < max && newID >= 0)
             {
                 Sprite newSprite = null;
 
@@ -458,23 +493,41 @@ public class PipeCustomizationHandler : MonoBehaviour
 
                 if (newID == selectedID)
                 {
-                    smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.green;
+                    smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.black;
                 }
                 else
                 {
                     smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.white;
                 }
 
+                //Farbe von Obj Sprite
+                Color32 c = smallPreviewParent.GetChild(i).GetChild(1).GetComponent<Image>().color;
+                if (shop.HasPurchased(type, newID) == 2)
+                {
+                    c.a = 255;
+                }
+                else
+                {
+                    c.a = 168;
+                }
+
+                smallPreviewParent.GetChild(i).GetChild(1).GetComponent<Image>().color = c;
+
                 smallPreviewParent.GetChild(i).GetChild(0).gameObject.SetActive(true);
-                smallPreviewParent.GetChild(i).GetChild(0).GetComponent<Image>().sprite =
+                smallPreviewParent.GetChild(i).GetChild(1).gameObject.SetActive(true);
+
+                smallPreviewParent.GetChild(i).GetChild(0).GetComponent<Image>().color =
+                    shop.GetRarity(type, newID, 170);
+
+                smallPreviewParent.GetChild(i).GetChild(1).GetComponent<Image>().sprite =
                     newSprite;
             }
             else
             {
                 smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.white;
                 smallPreviewParent.GetChild(i).GetChild(0).gameObject.SetActive(false);
+                smallPreviewParent.GetChild(i).GetChild(1).gameObject.SetActive(false);
             }
-
         }
     }
 
@@ -1013,5 +1066,7 @@ public class PipeCustomizationHandler : MonoBehaviour
             ShopHandler.Instance.boughtString;
 
         shop.BuyCustom(type, selectedID);
+
+        buyInfo.SetActive(true);
     }
 }

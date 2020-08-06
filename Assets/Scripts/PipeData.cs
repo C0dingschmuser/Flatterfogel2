@@ -233,7 +233,7 @@ public class PipeData : MonoBehaviour
             startPos.y += 18.225f;
         }
 
-        Sprite[,] endSprites = FF_PlayerData.Instance.pipeEndSprite;
+        PipeSpriteData[,] endSprites = FF_PlayerData.Instance.pipeEndSprite;
         Color pipeColor = ShopHandler.Instance.pipeColor;
 
         SpriteRenderer tmpRenderer = null;
@@ -242,6 +242,11 @@ public class PipeData : MonoBehaviour
         {
             for (int x = 0; x < 4; x++)
             {
+                if(endSprites[3 - y, x].isEmpty)
+                { //überspringen wenn nur transparent
+                    continue;
+                }
+
                 dPart = objectPooler.SpawnPipePart(
                     new Vector3(startPos.x + (x * xAdd), startPos.y + (y * yAdd)),
                     Quaternion.identity, true);
@@ -255,14 +260,14 @@ public class PipeData : MonoBehaviour
                     //if (x == 0 && y == 0)
                     //{
                     tmpRenderer.sprite =
-                        endSprites[3 - y, x];
+                        endSprites[3 - y, x].sprite;
                     //}
                 }
                 else
                 {
                     dPart.transform.Rotate(new Vector3(180, 0, 0));
                     tmpRenderer.sprite =
-                        endSprites[3 - y, x];
+                        endSprites[3 - y, x].sprite;
                 }
 
                 tmpRenderer.drawMode = SpriteDrawMode.Sliced;
@@ -290,12 +295,12 @@ public class PipeData : MonoBehaviour
         if (isTop)
         { //nach oben / unten verschieben da dort ende-objs benutzt werden
             transform.position =
-                new Vector3(transform.position.x, transform.position.y + endDiff);
+                new Vector3(transform.position.x, transform.position.y + endDiff - 75);
         }
         else
         {
             transform.position =
-                new Vector3(transform.position.x, transform.position.y - endDiff);
+                new Vector3(transform.position.x, transform.position.y - endDiff + 75);
         }
 
         count -= 4;
@@ -305,7 +310,7 @@ public class PipeData : MonoBehaviour
             if (count > 4) count = 4;
         }
 
-        Sprite[,] pipeSprites = FF_PlayerData.Instance.pipeSprite;
+        PipeSpriteData[,] pipeSprites = FF_PlayerData.Instance.pipeSprite;
 
         int yCount = 0;
 
@@ -320,6 +325,11 @@ public class PipeData : MonoBehaviour
 
                 for (int i = 0; i < 4; i++)
                 {
+                    if(pipeSprites[3 - yCount, i].isEmpty)
+                    {
+                        continue;
+                    }
+
                     dPart = objectPooler.SpawnPipePart(
                                 new Vector3(newX + 18.675f * i, transform.position.y + ((realMax / 2) * 18.675f)),
                                 Quaternion.identity, true);
@@ -340,7 +350,7 @@ public class PipeData : MonoBehaviour
                     }
 
                     tmpRenderer.sprite =
-                        pipeSprites[3 - yCount, i];
+                        pipeSprites[3 - yCount, i].sprite;
 
                     tmpRenderer.drawMode =
                         SpriteDrawMode.Sliced;
@@ -362,6 +372,11 @@ public class PipeData : MonoBehaviour
 
                 for (int i = 0; i < 4; i++)
                 {
+                    if (pipeSprites[3 - yCount, i].isEmpty)
+                    {
+                        continue;
+                    }
+
                     dPart = objectPooler.SpawnPipePart(
                                 new Vector3(newX + 18.675f * i, transform.position.y - ((realMax / 2) * 18.675f)),
                                 Quaternion.identity, true);
@@ -383,7 +398,7 @@ public class PipeData : MonoBehaviour
 
                     dPart.transform.Rotate(new Vector3(180, 0, 0));
                     tmpRenderer.sprite =
-                        pipeSprites[3 - yCount, i];
+                        pipeSprites[3 - yCount, i].sprite;
 
                     tmpRenderer.drawMode =
                         SpriteDrawMode.Sliced;

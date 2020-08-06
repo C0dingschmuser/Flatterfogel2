@@ -12,13 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d48881e5ac2c1d744bea0b64a035233b, type: 3}
   m_Name: 2
   m_EditorClassIdentifier: 
-  sprite:
-  - {fileID: 21300000, guid: 2b2d814569a656043ba0b6f67c744224, type: 3}
-  endSprite:
-  - {fileID: 21300000, guid: b1fab6c8e13ac824280c354989d88484, type: 3}
-  defaultColor: {r: 1, g: 1, b: 1, a: 1}
-  purchased: 0
-  colorChangeSupported: 0
+  identifier: rainbow
+  itemID: 2
+  rarity: 0
+  purchased: 1
+  salePercent: 0
   cost:
   - mineralID: 14
     amount: 60
@@ -28,5 +26,13 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
-  pipeID: 2
-  identifier: rainbow
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  sprite:
+  - {fileID: 21300000, guid: 2b2d814569a656043ba0b6f67c744224, type: 3}
+  endSprite:
+  - {fileID: 21300000, guid: b1fab6c8e13ac824280c354989d88484, type: 3}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  colorChangeSupported: 0

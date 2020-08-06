@@ -25,6 +25,13 @@ public enum DeathCause
     Suicide,
 }
 
+[System.Serializable]
+public class PipeSpriteData
+{
+    public bool isEmpty = false;
+    public Sprite sprite;
+}
+
 public class FF_PlayerData : MonoBehaviour
 {
     public UnityEngine.Experimental.Rendering.Universal.Light2D playerLightObj, playerHardcoreLightObj;
@@ -40,8 +47,8 @@ public class FF_PlayerData : MonoBehaviour
 
     public Transform bottomPlane;
 
-    public Sprite[,] pipeSprite = new Sprite[4,4]; //2D 4x4 Array a 8x8Px Sprites
-    public Sprite[,] pipeEndSprite = new Sprite[4, 4]; //2D 4x4 Array a 10x10 Sprites
+    public PipeSpriteData[,] pipeSprite = new PipeSpriteData[4,4]; //2D 4x4 Array a 8x8Px Sprites
+    public PipeSpriteData[,] pipeEndSprite = new PipeSpriteData[4, 4]; //2D 4x4 Array a 10x10 Sprites
 
     private float jumpTime = 0f;
 
@@ -100,6 +107,15 @@ public class FF_PlayerData : MonoBehaviour
 #if UNITY_EDITOR
         //maxFuel = 10000;
 #endif
+
+        for(int i = 0; i < 4; i++)
+        {
+            for(int a = 0; a < 4; a++)
+            {
+                pipeSprite[i, a] = new PipeSpriteData();
+                pipeEndSprite[i, a] = new PipeSpriteData();
+            }
+        }
 
         SwipeDetector.OnSwipe += SwipeDetector_OnSwipe;
         //LoadPlayerSkin(0, 0);
@@ -526,13 +542,30 @@ public class FF_PlayerData : MonoBehaviour
         {
             for(int x = 0; x < 4; x++)
             {
-                pipeSprite[y,x] = 
+                pipeSprite[y,x].sprite = 
                     Sprite.Create(fDT, new Rect(0 + (x * width), 0 + (y * height), width, height), 
                     new Vector2(0.5f, 0.5f), 100, 1, SpriteMeshType.FullRect);
 
-                pipeEndSprite[y,x] =
+                if(ImageHelpers.IsTransparent(pipeSprite[y,x].sprite.texture)) {
+                    pipeSprite[y, x].isEmpty = true;
+                    Debug.Log(true + " " + y + " " + x);
+                } else
+                {
+                    pipeSprite[y, x].isEmpty = false;
+                }
+
+                pipeEndSprite[y,x].sprite =
                     Sprite.Create(fDT_End, new Rect(0 + (x * widthEnd), 0 + (y * heightEnd), widthEnd, heightEnd),
                     new Vector2(0.5f, 0.5f), 100, 1, SpriteMeshType.FullRect);
+
+                if (ImageHelpers.IsTransparent(pipeEndSprite[y, x].sprite.texture))
+                {
+                    pipeEndSprite[y, x].isEmpty = true;
+                }
+                else
+                {
+                    pipeEndSprite[y, x].isEmpty = false;
+                }
             }
         }
     }
@@ -1093,6 +1126,7 @@ public class FF_PlayerData : MonoBehaviour
 
                     break;
                 case "FF_Pipe":
+                case "FF_PipeEnd":
                 case "FF_World":
                 case "FF_WorldGround":
                 case "DestructablePipe":

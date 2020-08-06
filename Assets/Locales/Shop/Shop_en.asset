@@ -82,5 +82,13 @@ MonoBehaviour:
     m_Localized: Filter
     m_Metadata:
       m_Items: []
+  - m_Id: 17
+    m_Localized: COLOR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18
+    m_Localized: TYPE
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

@@ -1324,6 +1324,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   topFlak: {fileID: 778171635418921224}
   player: {fileID: 0}
+  onPipe: 0
+  barrelObjs:
+  - {fileID: 778171635335664508}
+  - {fileID: 778171636124273128}
 --- !u!1 &3440686792732559885
 GameObject:
   m_ObjectHideFlags: 0

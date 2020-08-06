@@ -1817,25 +1817,25 @@ public class FlatterFogelHandler : MonoBehaviour
 
         if(Random.Range(0, maxChance) == 0 && score > 60)
         {
-            abstand = 125;
+            abstand = 175;
         } else
         {
-            abstand = 150;
+            abstand = 200;
         }
 
         if(score < 20)
         {
-            abstand = 225;
+            abstand = 275;
         } else if(score < 40)
         {
-            abstand = 175;
+            abstand = 225;
         }
 
         if (overrideDistance) {
-            abstand = 150;
+            abstand = 200;
         } else if(flakActive)
         {
-            abstand = 300;
+            abstand = 350;
         }
 
         GameObject middleObj = pipeHolder.transform.GetChild(3).gameObject;
@@ -1887,8 +1887,8 @@ public class FlatterFogelHandler : MonoBehaviour
 
         pipeBottom.transform.position = new Vector3(xPos, newBottomY);
 
-        pipeTop.transform.GetChild(0).position = new Vector3(xPos, yPos + abstand + 37.5f);
-        pipeBottom.transform.GetChild(0).position = new Vector3(xPos, yPos - abstand - 37.5f);
+        pipeTop.transform.GetChild(0).position = new Vector3(xPos, yPos + abstand - 37.5f);// + 37.5f);
+        pipeBottom.transform.GetChild(0).position = new Vector3(xPos, yPos - abstand + 37.5f);// - 37.5f);
 
         //BoxCollider2D pTB2D = pipeTop.GetComponent<BoxCollider2D>();
         //BoxCollider2D pBB2D = pipeBottom.GetComponent<BoxCollider2D>();
@@ -1901,7 +1901,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         float maxYDiff = 50;
 
-        if(abstand == 150)
+        if(abstand == 200)
         {
             maxYDiff = 65;
         }
