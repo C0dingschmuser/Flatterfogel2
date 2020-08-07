@@ -75,6 +75,18 @@ public class ShopMenuHandler : MonoBehaviour
         miningSkinImage.sprite = skinImage.sprite;
 
         minerImage.sprite = shop.GetMinerSprite(shop.GetSelectedMiner());
+
+        int selectedPipe = shop.GetSelectedPipe();
+
+        pipeImage.sprite = shop.GetPipeSprite(selectedPipe, true);
+        Color pipeColor = Color.white;
+
+        if(shop.HasColorSupport(selectedPipe))
+        {
+            pipeColor = shop.pipeColor;
+        }
+
+        pipeImage.color = pipeColor;
     }
 
     public void TypeClicked(int id)

@@ -1040,184 +1040,209 @@ public class FF_PlayerData : MonoBehaviour
         }
     }
 
+    public void CollisionEnter2D(Collision2D collision)
+    {
+        if(!dead)
+        {
+            Debug.Log(collision.gameObject.tag);
+
+            switch(collision.gameObject.tag)
+            {
+                case "D2DObj":
+                    HandleCollision(collision.gameObject);
+                    break;
+            }
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!dead)
         {
-            switch (collision.gameObject.tag)
-            {
-                case "Blus":
+            HandleCollision(collision.gameObject);
+        }
+    }
 
-                    GameObject blus = collision.gameObject;
+    private void HandleCollision(GameObject collObj)
+    {
+        switch (collObj.tag)
+        {
+            case "Blus":
+                GameObject blus = collObj;
 
-                    lastBlusPosition = blus.transform.position;
+                lastBlusPosition = blus.transform.position;
 
-                    float yDiff = Mathf.Abs(lastBlusPosition.y - transform.position.y);
+                float yDiff = Mathf.Abs(lastBlusPosition.y - transform.position.y);
 
-                    float min = 55;
+                float min = 55;
 
-                    if(FlatterFogelHandler.Instance.zigZag)
+                if (FlatterFogelHandler.Instance.zigZag)
+                {
+                    min = 65;
+                }
+
+                bool pHit = false;
+
+                if (yDiff > min)
+                {
+                    FlatterFogelHandler.nextCompleteDestruction = false;
+                    ffHandler.SetScore(1, 1, 2, blus);
+                }
+                else
+                { //näher dran -> mehr punkte
+                    pHit = true;
+
+                    FlatterFogelHandler.nextCompleteDestruction = true;
+                    FlatterFogelHandler.Instance.AddPerfectHit();
+
+                    ffHandler.SetScore(2, 1, 3, blus);
+
+                    GameObject infoText =
+                        ObjectPooler.Instance.SpawnFromPool("InfoText", transform.position, Quaternion.identity);
+
+                    infoText.GetComponent<InfoText>().StartFlashing(ScoreHandler.Instance.perfectHitString);
+                }
+
+                if (TutorialHandler.Instance.mainTut == 0)
+                {
+                    if (blus.transform.parent.GetComponent<BlusData>().isCoin)
                     {
-                        min = 65;
-                    }
-
-                    bool pHit = false;
-
-                    if (yDiff > min)
-                    {
-                        FlatterFogelHandler.nextCompleteDestruction = false;
-                        ffHandler.SetScore(1, 1, 2, blus);
+                        TutorialHandler.Instance.StartCoinGreat();
                     }
                     else
-                    { //näher dran -> mehr punkte
-                        pHit = true;
-
-                        FlatterFogelHandler.nextCompleteDestruction = true;
-                        FlatterFogelHandler.Instance.AddPerfectHit();
-
-                        ffHandler.SetScore(2, 1, 3, blus);
-
-                        GameObject infoText =
-                            ObjectPooler.Instance.SpawnFromPool("InfoText", transform.position, Quaternion.identity);
-
-                        infoText.GetComponent<InfoText>().StartFlashing(ScoreHandler.Instance.perfectHitString);
-                    }
-
-                    if(TutorialHandler.Instance.mainTut == 0)
                     {
-                        if(blus.transform.parent.GetComponent<BlusData>().isCoin)
+                        if (TutorialHandler.Instance.mainTutStep < 2)
                         {
-                            TutorialHandler.Instance.StartCoinGreat();
-                        } else
-                        {
-                            if(TutorialHandler.Instance.mainTutStep < 2)
+                            TutorialHandler.Instance.StartMainTutGreat2();
+                        }
+                        else if (TutorialHandler.Instance.mainTutStep == 3)
+                        { //perfect hit check
+                            if (pHit)
                             {
-                                TutorialHandler.Instance.StartMainTutGreat2();
-                            } else if(TutorialHandler.Instance.mainTutStep == 3)
-                            { //perfect hit check
-                                if(pHit)
-                                {
-                                    TutorialHandler.Instance.StartRealPerfectHit();
-                                } else
-                                {
-                                    TutorialHandler.Instance.StartAlmostHit();
-                                }
+                                TutorialHandler.Instance.StartRealPerfectHit();
+                            }
+                            else
+                            {
+                                TutorialHandler.Instance.StartAlmostHit();
                             }
                         }
                     }
+                }
 
-                    //if(blus.transform.parent.GetComponent<BlusData>().isCoin)
-                    //{
-                    //    ShopHandler.Instance.UpdateBlus(1, 1, true);
-                    //}
+                //if(blus.transform.parent.GetComponent<BlusData>().isCoin)
+                //{
+                //    ShopHandler.Instance.UpdateBlus(1, 1, true);
+                //}
 
-                    if(blus.transform.parent.GetComponent<BlusData>().modeChangeBlus)
-                    { //neuer Modus
-                        ffHandler.ChangeMode();
-                    } else
+                if (blus.transform.parent.GetComponent<BlusData>().modeChangeBlus)
+                { //neuer Modus
+                    ffHandler.ChangeMode();
+                }
+                else
+                {
+                    ffHandler.modeCurrentlyChanged = false;
+                }
+
+                break;
+            case "Coin":
+                GameObject coin = collObj.transform.parent.gameObject;
+                coin.GetComponent<CoinHandler>().DestroyCoin();
+
+                break;
+            case "FF_Pipe":
+            case "FF_PipeEnd":
+            case "FF_World":
+            case "FF_WorldGround":
+            case "DestructablePipe":
+            case "D2DObj":
+                if (!ffHandler.gameActive ||
+                    SROptions.Current.IgnorePipes ||
+                    FlatterFogelHandler.Instance.miningMode)
+                {
+                    return;
+                }
+
+                if (ffHandler.tutHandler.mainTut == 0)
+                {
+                    bool isPipe = false;
+
+                    if (collObj.CompareTag("FF_Pipe"))
+                    { //pipe weg teleportieren
+                        isPipe = true;
+
+                        collObj.transform.parent.GetComponent<PipeHolder>().
+                            GetAssignedBlus().transform.Translate(1250, 0, 0);
+
+                        collObj.transform.parent.GetChild(0).Translate(1250, 0, 0);
+                        collObj.transform.parent.GetChild(1).Translate(1250, 0, 0);
+                    }
+                    else if (collObj.CompareTag("FF_PipeEnd"))
                     {
-                        ffHandler.modeCurrentlyChanged = false;
+                        isPipe = true;
+
+                        collObj.transform.parent.parent.GetComponent<PipeHolder>().
+                            GetAssignedBlus().transform.Translate(1250, 0, 0);
+
+                        collObj.transform.parent.parent.GetChild(0).Translate(1000, 0, 0);
+                        collObj.transform.parent.parent.GetChild(1).Translate(1000, 0, 0);
                     }
 
-                    break;
-                case "Coin":
-                    GameObject coin = collision.transform.parent.gameObject;
-                    coin.GetComponent<CoinHandler>().DestroyCoin();
-
-                    break;
-                case "FF_Pipe":
-                case "FF_PipeEnd":
-                case "FF_World":
-                case "FF_WorldGround":
-                case "DestructablePipe":
-                case "D2DObj":
-                    if (!ffHandler.gameActive || 
-                        SROptions.Current.IgnorePipes || 
-                        FlatterFogelHandler.Instance.miningMode)
+                    if (isPipe)
                     {
-                        return;
+                        ffHandler.tutHandler.StartPipeHit();
                     }
+                }
+                else
+                {
+                    Die(DeathCause.Collision);
+                }
 
-                    if (ffHandler.tutHandler.mainTut == 0)
-                    {
-                        bool isPipe = false;
+                break;
+            case "Spike":
 
-                        if(collision.gameObject.CompareTag("FF_Pipe"))
-                        { //pipe weg teleportieren
-                            isPipe = true;
+                if (SROptions.Current.IgnoreMinus)
+                {
+                    return;
+                }
 
-                            collision.transform.parent.GetComponent<PipeHolder>().
-                                GetAssignedBlus().transform.Translate(1250, 0, 0);
+                Die(DeathCause.Minus);
 
-                            collision.transform.parent.GetChild(0).Translate(1250, 0, 0);
-                            collision.transform.parent.GetChild(1).Translate(1250, 0, 0);
-                        } else if(collision.gameObject.CompareTag("FF_PipeEnd"))
-                        {
-                            isPipe = true;
+                break;
+            case "Minus":
 
-                            collision.transform.parent.parent.GetComponent<PipeHolder>().
-                                GetAssignedBlus().transform.Translate(1250, 0, 0);
+                bool ok = false;
 
-                            collision.transform.parent.parent.GetChild(0).Translate(1000, 0, 0);
-                            collision.transform.parent.parent.GetChild(1).Translate(1000, 0, 0);
-                        }
-
-                        if(isPipe)
-                        {
-                            ffHandler.tutHandler.StartPipeHit();
-                        }
-                    } else
-                    {
-                        Die(DeathCause.Collision);
-                    }
-
-                    break;
-                case "Spike":
-
-                    if(SROptions.Current.IgnoreMinus)
-                    {
-                        return;
-                    }
-
-                    Die(DeathCause.Minus);
-
-                    break;
-                case "Minus":
-
-                    bool ok = false;
-
-                    if(MieserHandler.Instance != null)
-                    {
-                        if (!MieserHandler.Instance.IsDead())
-                        {
-                            ok = true;
-                        }
-                    }
-
-                    if(ShootingPipeHandler.Instance.shootingPipesActive ||
-                        !ShootingPipeHandler.Instance.endComplete)
+                if (MieserHandler.Instance != null)
+                {
+                    if (!MieserHandler.Instance.IsDead())
                     {
                         ok = true;
                     }
+                }
 
-                    if(ok)
-                    {
-                        GameObject minus = collision.gameObject;
-                        minus.GetComponent<MinusHandler>().Explode();
+                if (ShootingPipeHandler.Instance.shootingPipesActive ||
+                    !ShootingPipeHandler.Instance.endComplete)
+                {
+                    ok = true;
+                }
 
-                        Die(DeathCause.MieserMinus);
-                    }
+                if (ok)
+                {
+                    GameObject minus = collObj;
+                    minus.GetComponent<MinusHandler>().Explode();
 
-                    break;
-                case "Laser":
+                    Die(DeathCause.MieserMinus);
+                }
 
-                    if (!MieserHandler.Instance.IsDead())
-                    {
-                        Die(DeathCause.MieserLaser);
-                    }
+                break;
+            case "Laser":
 
-                    break;
-            }
+                if (!MieserHandler.Instance.IsDead())
+                {
+                    Die(DeathCause.MieserLaser);
+                }
+
+                break;
         }
     }
 

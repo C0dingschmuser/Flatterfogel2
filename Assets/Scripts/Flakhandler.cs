@@ -35,6 +35,11 @@ public class Flakhandler : MonoBehaviour
             maxReload = 2.5f;
             //maxReload = 0.1f;
             //bulletSpeed = 400;
+        } else
+        {
+            reload = 2f;
+            maxReload = 2f;
+            bulletSpeed = 300;
         }
     }
 

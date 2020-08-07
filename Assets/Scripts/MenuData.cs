@@ -312,7 +312,7 @@ public class MenuData : MonoBehaviour
 
         if(!again)
         {
-            OptionHandler.Instance.UpdateResolution(1);
+            //OptionHandler.Instance.UpdateResolution(1);
             PlayDestruction();
         }
 
@@ -414,7 +414,7 @@ public class MenuData : MonoBehaviour
 
         if(activate)
         {
-            OptionHandler.Instance.UpdateResolution(0);
+            //OptionHandler.Instance.UpdateResolution(0);
 
             shopButton.SetActive(true);
             ffGoBtn.SetActive(true);

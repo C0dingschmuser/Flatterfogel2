@@ -440,6 +440,30 @@ public class PipeCustomizationHandler : MonoBehaviour
 
         interaction = false;
 
+        if (newType == CustomizationType.PipeColor)
+        {
+            if(!shop.allPipes[shop.GetSelectedPipe()].colorChangeSupported)
+            {
+                return;
+            }
+        } else
+        {
+            CheckPipeColorSupport();
+        }
+
+        for (int i = 0; i < typeParent.childCount; i++)
+        {
+            typeParent.GetChild(i).GetComponent<Image>().color = Color.white;
+        }
+
+        if(newType == CustomizationType.Pipe)
+        {
+            typeParent.GetChild(1).GetComponent<Image>().color = Color.black;
+        } else
+        {
+            typeParent.GetChild(0).GetComponent<Image>().color = Color.black;
+        }
+
         type = newType;
         UpdateDisplay(newType);
         UpdateSmallPreviews();
@@ -501,7 +525,13 @@ public class PipeCustomizationHandler : MonoBehaviour
                 }
 
                 //Farbe von Obj Sprite
-                Color32 c = smallPreviewParent.GetChild(i).GetChild(1).GetComponent<Image>().color;
+                Color32 c = Color.white; //smallPreviewParent.GetChild(i).GetChild(1).GetComponent<Image>().color;
+
+                if(shop.allPipes[newID].colorChangeSupported)
+                {
+                    c = GetPipeColor(shop.GetPipeColorID());
+                }
+
                 if (shop.HasPurchased(type, newID) == 2)
                 {
                     c.a = 255;
@@ -546,7 +576,7 @@ public class PipeCustomizationHandler : MonoBehaviour
             smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.white;
         }
 
-        smallPreviewParent.GetChild(newID).GetComponent<Image>().color = Color.green;
+        smallPreviewParent.GetChild(newID).GetComponent<Image>().color = Color.black;
 
         changeApplied = false;
 
@@ -985,7 +1015,7 @@ public class PipeCustomizationHandler : MonoBehaviour
                     smallPreviewParent.GetChild(i).GetChild(0).gameObject.activeSelf)
                 {
                     found = true;
-                    smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.green;
+                    smallPreviewParent.GetChild(i).GetComponent<Image>().color = Color.black;
                 }
                 else
                 {
@@ -1000,11 +1030,11 @@ public class PipeCustomizationHandler : MonoBehaviour
                 if (dir == 0)
                 {
                     smallPreviewParent.GetChild(smallPreviewParent.childCount - 1).
-                        GetComponent<Image>().color = Color.green;
+                        GetComponent<Image>().color = Color.black;
                 }
                 else
                 {
-                    smallPreviewParent.GetChild(0).GetComponent<Image>().color = Color.green;
+                    smallPreviewParent.GetChild(0).GetComponent<Image>().color = Color.black;
                 }
             }
         }
@@ -1068,5 +1098,10 @@ public class PipeCustomizationHandler : MonoBehaviour
         shop.BuyCustom(type, selectedID);
 
         buyInfo.SetActive(true);
+
+        if(shop.allPipes[shop.GetSelectedPipe()].colorChangeSupported)
+        {
+            buyInfo.GetComponent<BuyInfoHandler>().SetColor(shop.pipeColor);
+        }
     }
 }

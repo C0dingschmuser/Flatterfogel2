@@ -33,6 +33,8 @@ public class MinusHandler : MonoBehaviour
         GetComponent<SpriteRenderer>().enabled = true;
 
         GetComponent<CircleCollider2D>().enabled = true;
+        GetComponent<CircleCollider2D>().isTrigger = true;
+
         GetComponent<Rigidbody2D>().simulated = true;
 
         ParticleSystem.EmissionModule em = trailSystem.emission;

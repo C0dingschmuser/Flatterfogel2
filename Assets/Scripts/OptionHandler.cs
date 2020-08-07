@@ -717,19 +717,9 @@ public class OptionHandler : MonoBehaviour
 
     public void DestructionReduce()
     {
-        FlatterFogelHandler.Instance.DisableCameraShake();
-        destructionTransition = true;
-
-        Camera c = Camera.main;
-
-        DOTween.To(() => c.orthographicSize, x => c.orthographicSize = x, defaultOrthoSize, 1);
-        c.transform.DOMove(defaultCameraPos , 1f);
-
         destructionEnlargeActive = false;
 
         backgroundHandler.ReduceTopExtent();
-
-        Invoke("ReEnableColl", 1.01f);
     }
 
     private void ReEnableColl()

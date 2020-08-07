@@ -255,6 +255,7 @@ public class BackgroundHandler : MonoBehaviour
 
         oldTopExtentPos = pos;
         oldTopExtentScale = topExtent.transform.localScale;
+        Debug.Log(oldTopExtentScale);
 
         topExtent.transform.position = pos;
     }
@@ -273,13 +274,6 @@ public class BackgroundHandler : MonoBehaviour
 
     public void ReduceTopExtent()
     {
-        Timing.RunCoroutine(EndReduceTopExtent());
-    }
-
-    private IEnumerator<float> EndReduceTopExtent()
-    {
-        yield return Timing.WaitForSeconds(1.01f);
-
         topExtent.transform.localScale = oldTopExtentScale;
         topExtent.transform.position = oldTopExtentPos;
     }
@@ -881,7 +875,6 @@ public class BackgroundHandler : MonoBehaviour
     // Update is called once per frame
     void _MainUpdate()
     {
-
         float realScrollSpeed = 0;
 
         if (isScrolling)

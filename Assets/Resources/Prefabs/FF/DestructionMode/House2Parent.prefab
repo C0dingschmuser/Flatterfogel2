@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 5088079257914001702}
   m_Layer: 15
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: D2DObj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2673,10 +2673,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stats:
     type: 0
-    minRightDist: 800
+    minRightDist: 500
+    speed: 0
     spawnPos: {x: 2748.066, y: 449.3, z: -200}
+    maxAmount: -1
+    supportsSwap: 1
+    instantFracture: 1
+    doRotate: 0
     obj: {fileID: 0}
   yStartPos: 790
+  deathY: 0
+  lowestY: 0
+  lifeTime: 0
   destroyed: 0
   endInvoked: 0
   completeDestroyed: 0
@@ -2703,7 +2711,7 @@ GameObject:
   - component: {fileID: 5088079258539309546}
   m_Layer: 15
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: D2DObj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2763,7 +2771,7 @@ GameObject:
   - component: {fileID: 5088079258583744110}
   m_Layer: 15
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: D2DObj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3577,7 +3585,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
-  damageRequired: 2250
+  damageRequired: 3000
   damageMultiplier: 2
   pointsPerSolidPixel: 0.015
   factorInSharpness: 1

@@ -553,6 +553,7 @@ public class FlatterFogelHandler : MonoBehaviour
         {
 #if UNITY_EDITOR
             SetScore(0, 0);
+            internalScoreCount = 40;
 #else
             SetScore(0, 0);
 #endif
@@ -2321,6 +2322,11 @@ public class FlatterFogelHandler : MonoBehaviour
         DOTween.To(() => Time.fixedDeltaTime, x => Time.fixedDeltaTime = x, fixedStep, anTime);
 
         deathText.SetActive(false);
+
+        if(destructionMode)
+        {
+            OptionHandler.Instance.DestructionReduce();
+        }
 
         //SoundManager.Instance.SetMusicSpeed(1);
         //SoundManager.Instance.PlayMusicFade(MusicID.Menu);

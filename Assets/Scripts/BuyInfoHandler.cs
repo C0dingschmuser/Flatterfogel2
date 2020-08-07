@@ -17,6 +17,17 @@ public class BuyInfoHandler : MonoBehaviour
 
     private Coroutine anRoutine = null;
 
+    private void OnEnable()
+    {
+        //Farbe zurücksetzen
+        buyMat.SetColor("_MainColor", Color.white);
+    }
+
+    public void SetColor(Color newColor)
+    {
+        buyMat.SetColor("_MainColor", newColor);
+    }
+
     public void SetBuyData(Sprite newSprite)
     {
         mainImage.sprite = newSprite;

@@ -226,6 +226,9 @@ public class ShopHandler : MonoBehaviour
             case CustomizationType.Hat:
                 c = rarityColors[(int)allHats[id].rarity];
                 break;
+            case CustomizationType.Pipe:
+                c = rarityColors[(int)allPipes[id].rarity];
+                break;
         }
 
         c.a = alpha;
@@ -972,6 +975,8 @@ public class ShopHandler : MonoBehaviour
         selectedMiner = ObscuredPrefs.GetInt("SelectedMiner", 0);
 
         pipeColorID = ObscuredPrefs.GetInt("SelectedPipeColorID", 1);
+
+        Debug.Log(pipeColorID);
 
         pipeColor = pipeCustomizationHandler.GetPipeColor(pipeColorID); //Pipe Color laden
         FF_PlayerData.Instance.LoadPipe();

@@ -89,9 +89,7 @@ public class DestructionHandler : MonoBehaviour
         if (Random.Range(0, 15) >= 0) //== 0
         {
 
-            int type = Random.Range(0, 3);
-
-            type = 1;
+            int type = Random.Range(0, 2);
 
             if (type == 0)
             {
@@ -99,11 +97,6 @@ public class DestructionHandler : MonoBehaviour
                 SpawnBlussiPlane();
             }
             else if (type == 1)
-            {
-                flakActive = true;
-                SpawnFlak();
-            }
-            else if (type == 2)
             {
                 if (enemyPlanesActive > 0)
                 {
@@ -136,7 +129,7 @@ public class DestructionHandler : MonoBehaviour
 
         if(flakActive)
         {
-            ok = false;
+            //ok = false;
         }
 
         skyscraper = ok;
@@ -157,14 +150,20 @@ public class DestructionHandler : MonoBehaviour
                 {
                     ok = false;
                 }
-            } /*else
+            } else
             {
                 if (newHousePrefab.GetComponent<D2D_HouseHandler>().stats.type !=
                     DestructionMode.Type.Skyscraper)
                 {
                     ok = false;
                 }
-            }*/
+            }
+        }
+
+        if(skyscraper)
+        { //vor jedem hochhaus 1 flak
+            flakActive = true;
+            SpawnFlak();
         }
 
         GameObject prefab = newHousePrefab;
@@ -217,7 +216,8 @@ public class DestructionHandler : MonoBehaviour
             lastSpawnedDestructionObjs.RemoveAt(lastSpawnedDestructionObjs.Count - 1);
         }
 
-        SetLayerRecursively(newObj, 15 + d2dLayerCounter);
+        //Deaktiviert da eigl nur für kollision prevention zwischen hochhäusern benötigt
+        //SetLayerRecursively(newObj, 15 + d2dLayerCounter);
 
         Transform d2dObjs = newObj.GetComponent<D2D_HouseHandler>().GetD2DObjParent();
 
@@ -294,6 +294,7 @@ public class DestructionHandler : MonoBehaviour
             }
         }
 
+        ok = true;
         if (!ok) return;
 
         Vector3 pos = new Vector3(647, 790, -200);

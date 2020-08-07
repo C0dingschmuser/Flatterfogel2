@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 6889566982409213533}
   m_Layer: 15
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: D2DObj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -148,15 +148,24 @@ MonoBehaviour:
   stats:
     type: 1
     minRightDist: 148
+    speed: 0
     spawnPos: {x: 1490.5793, y: 790, z: -200}
+    maxAmount: -1
+    supportsSwap: 1
+    instantFracture: 1
+    doRotate: 0
     obj: {fileID: 0}
   yStartPos: 449.3
+  deathY: 0
+  lowestY: 0
+  lifeTime: 0
   destroyed: 0
   endInvoked: 0
   completeDestroyed: 0
   wasHit: 0
   scoreAdded: 0
   weaponDone: 0
+  rdyEnable: 0
   lastHitPos: {x: 0, y: 0, z: 0}
   defChildCount: 1
   currentWeaponDamage: 0
@@ -1295,7 +1304,7 @@ MonoBehaviour:
   mask:
     serializedVersion: 2
     m_Bits: 2064897
-  threshold: 650
+  threshold: 850
   scale: 1
   delay: 0.1
   onImpact:
