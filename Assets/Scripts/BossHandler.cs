@@ -63,8 +63,8 @@ public class BossHandler : MonoBehaviour
         FlatterFogelHandler.Instance.StartZoomOnBoss(new Vector3(-192, startY), 0.5f, 2f);
 
         //InvokeRepeating("PlayerShoot", 1f, 0.5f);
-        InvokeRepeating("LaserState", 0f, 0.5f);
-        Invoke("StartIdle", 2.1f);
+        InvokeRepeating(nameof(LaserState), 0f, 0.5f);
+        Invoke(nameof(StartIdle), 2.1f);
     }
 
     public void StopBoss(float moveTime = 2f)
@@ -74,9 +74,9 @@ public class BossHandler : MonoBehaviour
         currentBoss.transform.DOMoveX(223, moveTime);
 
         //CancelInvoke("PlayerShoot");
-        CancelInvoke("ResetLaser");
-        CancelInvoke("LaserState");
-        Invoke("EndBoss", moveTime + 0.01f);
+        CancelInvoke(nameof(ResetLaser));
+        CancelInvoke(nameof(LaserState));
+        Invoke(nameof(EndBoss), moveTime + 0.01f);
 
         ResetLaser();
 
@@ -301,7 +301,7 @@ public class BossHandler : MonoBehaviour
 
                             laserActive = true;
                             laserObj.gameObject.SetActive(true);
-                            Invoke("ResetLaser", Random.Range(2.5f, 5.5f));
+                            Invoke(nameof(ResetLaser), Random.Range(2.5f, 5.5f));
                         }
                     }
                 }

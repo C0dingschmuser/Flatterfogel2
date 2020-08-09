@@ -676,7 +676,7 @@ public class OptionHandler : MonoBehaviour
 
         //c.transform.DOMove(pos, 0.5f);
 
-        Invoke("ReEnableColl", 0.51f);
+        Invoke(nameof(ReEnableColl), 0.51f);
     }
 
     public void DestructionEnlarge()
@@ -712,7 +712,7 @@ public class OptionHandler : MonoBehaviour
 
         backgroundHandler.EnlargeTopExtent(pos);
 
-        Invoke("ReEnableColl", 1.01f);
+        Invoke(nameof(ReEnableColl), 1.01f);
     }
 
     public void DestructionReduce()

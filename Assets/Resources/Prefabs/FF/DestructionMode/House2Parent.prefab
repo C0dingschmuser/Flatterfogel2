@@ -2673,7 +2673,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stats:
     type: 0
-    minRightDist: 500
+    minRightDist: 600
+    minLeftDist: 150
     speed: 0
     spawnPos: {x: 2748.066, y: 449.3, z: -200}
     maxAmount: -1
@@ -3585,7 +3586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
-  damageRequired: 3000
+  damageRequired: 4500
   damageMultiplier: 2
   pointsPerSolidPixel: 0.015
   factorInSharpness: 1

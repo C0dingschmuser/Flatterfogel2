@@ -77,8 +77,8 @@ public class MinusHandler : MonoBehaviour
         this.dir = dir;
         this.speed = speed;
 
-        Invoke("StartAimAssist", 0.5f);
-        Invoke("EndMinus", 7f);
+        Invoke(nameof(StartAimAssist), 0.5f);
+        Invoke(nameof(EndMinus), 7f);
     }
 
     private void EndMinus()
@@ -106,7 +106,7 @@ public class MinusHandler : MonoBehaviour
         isActive = false;
 
         FlatterFogelHandler.Instance.AddFlakEffect(transform.position);
-        Invoke("DisableMinus", 3f);
+        Invoke(nameof(DisableMinus), 3f);
     }
 
     private void DisableMinus()

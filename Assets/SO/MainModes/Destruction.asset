@@ -20,4 +20,6 @@ MonoBehaviour:
     m_TableEntryReference:
       m_KeyId: 1
       m_Key: 
+  unlocked: 0
   modeID: 0
+  unlockLevel: 11

@@ -124,31 +124,37 @@ public class Flakhandler : MonoBehaviour
 
         if(reload <= 0 && canShoot)
         {
-            reload = maxReload;
+            float dist = Vector3.Distance(pos, topFlak.transform.position);
 
-            GameObject newMinus = objectPooler.SpawnFromPool("Minus", 
-                barrelObjs[currentBarrel].position, Quaternion.identity);
-
-            //pos.x += Random.Range(-100, 200);
-            //pos.y += Random.Range(-150, 75);
-
-            //Debug.Log(pos);
-
-            pos = PredictedPosition(player.transform.position,
-                topFlak.transform.position, new Vector3(0, 0, 0), bulletSpeed);
-
-            //Debug.Log(pos);
-
-            pos.z = topFlak.transform.position.z;
-
-            newMinus.GetComponent<MinusHandler>().StartMinusFlak(player, pos, bulletSpeed);
-
-            if (currentBarrel == 0)
+            if(dist < 1200)
             {
-                currentBarrel = 1;
-            } else
-            {
-                currentBarrel = 0;
+                reload = maxReload;
+
+                GameObject newMinus = objectPooler.SpawnFromPool("Minus",
+                    barrelObjs[currentBarrel].position, Quaternion.identity);
+
+                //pos.x += Random.Range(-100, 200);
+                //pos.y += Random.Range(-150, 75);
+
+                //Debug.Log(pos);
+
+                pos = PredictedPosition(player.transform.position,
+                    topFlak.transform.position, new Vector3(0, 0, 0), bulletSpeed);
+
+                //Debug.Log(pos);
+
+                pos.z = topFlak.transform.position.z;
+
+                newMinus.GetComponent<MinusHandler>().StartMinusFlak(player, pos, bulletSpeed);
+
+                if (currentBarrel == 0)
+                {
+                    currentBarrel = 1;
+                }
+                else
+                {
+                    currentBarrel = 0;
+                }
             }
         }
 

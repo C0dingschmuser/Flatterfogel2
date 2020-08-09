@@ -194,7 +194,7 @@ public class FF_PlayerData : MonoBehaviour
 
         heatPaused = true;
         DOTween.To(() => currentHeat, x => currentHeat = x, newHeat, time);
-        Invoke("ResetHeatPause", time + 0.01f);
+        Invoke(nameof(ResetHeatPause), time + 0.01f);
 
         UpdateHeatSlider();
     }
@@ -582,7 +582,7 @@ public class FF_PlayerData : MonoBehaviour
     {
         staminaFlashing = true;
         staminaText.GetComponent<TextMeshProUGUI>().text = text;
-        InvokeRepeating("StaminaFlash", 0f, 0.5f);
+        InvokeRepeating(nameof(StaminaFlash), 0f, 0.5f);
     }
 
     private void StaminaFlash()
@@ -600,7 +600,7 @@ public class FF_PlayerData : MonoBehaviour
     {
         staminaFlashing = false;
         staminaText.SetActive(false);
-        CancelInvoke("StaminaFlash");
+        CancelInvoke(nameof(StaminaFlash));
     }
 
     public void SetWingAnimation(int step)
@@ -796,7 +796,7 @@ public class FF_PlayerData : MonoBehaviour
             goLocked = true;
 
             ResetPos();
-            Invoke("GoDead", 0.75f);
+            Invoke(nameof(GoDead), 0.75f);
             return;
         }
 
@@ -917,7 +917,7 @@ public class FF_PlayerData : MonoBehaviour
         hatObj.transform.DOMove(hPos, 0.7f);
         hatObj.transform.DORotate(new Vector3(0, 0, 0), 0.7f);
 
-        Invoke("ResetImage", 0.7f);
+        Invoke(nameof(ResetImage), 0.7f);
     }
 
     public void PlayerFly(Vector3 mPos, bool zigZag, bool release = false)
@@ -1226,6 +1226,11 @@ public class FF_PlayerData : MonoBehaviour
                     ok = true;
                 }
 
+                if(FlatterFogelHandler.Instance.destructionMode)
+                {
+                    ok = true;
+                }
+
                 if (ok)
                 {
                     GameObject minus = collObj;
@@ -1296,7 +1301,7 @@ public class FF_PlayerData : MonoBehaviour
         DOTween.To(() => rb2D.velocity, x => rb2D.velocity = x, new Vector2(0, 0), 0.2f);
 
         //transform.DOMoveY(263.6f, 0.2f);
-        Invoke("EndMineLanding", 0.2f);
+        Invoke(nameof(EndMineLanding), 0.2f);
     }
 
     private void EndMineLanding()

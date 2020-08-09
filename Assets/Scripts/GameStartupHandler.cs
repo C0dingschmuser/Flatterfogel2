@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using CodeStage.AntiCheat.Storage;
 
 public class GameStartupHandler : MonoBehaviour
 {
@@ -49,6 +50,15 @@ public class GameStartupHandler : MonoBehaviour
         #else
                 StartCoroutine(LoadScene());
         #endif*/
+
+        int clear = ObscuredPrefs.GetInt("PreBetaClear", 0);
+        if(clear == 0)
+        { //Clear Data from previous version(s) if pre beta version
+            ObscuredPrefs.DeleteAll();
+            PlayerPrefs.DeleteAll();
+
+            ObscuredPrefs.SetInt("PreBetaClear", 1);
+        }
 
         StartCoroutine(LoadScene());
     }

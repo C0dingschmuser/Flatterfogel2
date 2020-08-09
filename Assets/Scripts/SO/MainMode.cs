@@ -7,5 +7,6 @@ public class MainMode : ScriptableObject
     public Sprite previewSprite;
     public string modeName;
     public LocalizedString modeNameLocalized;
-    public int modeID;
+    public bool unlocked = false;
+    public int modeID, unlockLevel;
 }

@@ -15,7 +15,7 @@ public class DestructionMode
     }
 
     public Type type;
-    public float minRightDist = 0;
+    public float minRightDist = 0, minLeftDist = 0;
     public float speed = 0;
     public Vector3 spawnPos;
     public int maxAmount = -1;

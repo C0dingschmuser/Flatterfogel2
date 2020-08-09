@@ -93,7 +93,7 @@ public class D2D_HouseHandler : MonoBehaviour
         if(!ok && !endInvoked)
         {
             endInvoked = true;
-            Invoke("End", 2f);
+            Invoke(nameof(End), 2f);
         }
 
         return ok;
@@ -326,7 +326,7 @@ public class D2D_HouseHandler : MonoBehaviour
         if(!endInvoked)
         {
             endInvoked = true;
-            Invoke("End", 2f);
+            Invoke(nameof(End), 2f);
         }
     }
 

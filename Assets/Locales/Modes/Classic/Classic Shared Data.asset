@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Classic Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 17
+  m_NextAvailableId: 18
   m_TableCollectionName: Classic
   m_TableCollectionNameGuidString: 8b1c0bf9100fe06438781f6ffd3c2d39
   m_Entries:
@@ -74,6 +74,10 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 16
     m_Key: Suicide
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17
+    m_Key: Unlock
     m_Metadata:
       m_Items: []
   m_Metadata:

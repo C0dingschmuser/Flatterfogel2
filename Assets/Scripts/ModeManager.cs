@@ -30,6 +30,8 @@ public class ModeManager : MonoBehaviour
     public RenderTexture[] renderTextures;
     public RawImage rawImage;
 
+    public GameObject goBtn;
+
     public SwipeDetector swDetector;
     public TextMeshProUGUI modeText, modeBGText, oldModeText, oldModeBGText, 
         descriptionText, oldDescriptionText;
@@ -39,6 +41,10 @@ public class ModeManager : MonoBehaviour
     public VideoPlayer normalPlayer;
     public Vector3[] previewPositions;
     public Vector3 startPosition, endPosition;
+
+    public LocalizedString unlockText;
+    private string unlockTextString;
+
     public static Color modeColor;
 
     private ObscuredInt oldIndex = 0;
@@ -58,13 +64,7 @@ public class ModeManager : MonoBehaviour
 
         currentIndex = ObscuredPrefs.GetInt("Player_SelectedMode", 0);
 
-        /*modeSprites[0].sprites = Resources.LoadAll<Sprite>("ModeAnimations/Classic");
-        modeSprites[1].sprites = Resources.LoadAll<Sprite>("ModeAnimations/Hardcore");
-        modeSprites[2].sprites = Resources.LoadAll<Sprite>("ModeAnimations/Royale");
-        modeSprites[3].sprites = Resources.LoadAll<Sprite>("ModeAnimations/Mining");
-        modeSprites[4].sprites = Resources.LoadAll<Sprite>("ModeAnimations/Destruction");*/
-
-        Invoke("DisableSwipe", 0.25f);
+        Invoke(nameof(DisableSwipe), 0.25f);
     }
 
     public void StartLoadLocalization()
@@ -85,6 +85,9 @@ public class ModeManager : MonoBehaviour
             }
         }
 
+        yield return handle = unlockText.GetLocalizedString();
+        unlockTextString = (string)handle.Result;
+
         SetModeText(mainModes[currentIndex].modeName, modeColor);
     }
 
@@ -99,6 +102,28 @@ public class ModeManager : MonoBehaviour
         return modeDisplayActive;
     }
 
+    private void CheckUnlocked()
+    {
+        if (mainModes[currentIndex].unlocked)
+        {
+            goBtn.GetComponent<Image>().raycastTarget = true;
+            goBtn.GetComponent<Button>().interactable = true;
+            displayParents[0].transform.GetChild(1).GetChild(1).gameObject.SetActive(false);
+        }
+        else
+        {
+            goBtn.GetComponent<Image>().raycastTarget = false;
+            goBtn.GetComponent<Button>().interactable = false;
+
+            Transform lockParent = displayParents[0].transform.GetChild(1).GetChild(1);
+            string temp = unlockTextString + mainModes[currentIndex].unlockLevel.ToString();
+
+            lockParent.gameObject.SetActive(true);
+            lockParent.GetChild(1).GetComponent<TextMeshProUGUI>().text = temp;
+            lockParent.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().text = temp;
+        }
+    }
+
     public void ActivateModeChange()
     {
         swDetector.enabled = true;
@@ -111,6 +136,8 @@ public class ModeManager : MonoBehaviour
         transform.GetChild(0).position = startPosition;
 
         transform.GetChild(0).DOMove(endPosition, moveTime).SetEase(Ease.OutQuad);
+
+        CheckUnlocked();
 
         normalPlayer.clip = modeClips[currentIndex];
         normalPlayer.Play();
@@ -132,7 +159,10 @@ public class ModeManager : MonoBehaviour
 
         transform.GetChild(0).DOMove(startPosition, moveTime).SetEase(Ease.OutQuad);
 
-        Invoke("DisableAllChilds", moveTime + 0.01f);
+        goBtn.GetComponent<Image>().raycastTarget = true;
+        goBtn.GetComponent<Button>().interactable = true;
+
+        Invoke(nameof(DisableAllChilds), moveTime + 0.01f);
     }
 
     /*IEnumerator HandleModeAnimation()
@@ -179,6 +209,19 @@ public class ModeManager : MonoBehaviour
         if(!start)
         {
             previewOldImage.sprite = modeSprites[oldIndex];
+
+            if(!mainModes[oldIndex].unlocked)
+            {
+                Transform lockParent = displayParents[1].transform.GetChild(1).GetChild(0);
+                string temp = unlockTextString + mainModes[oldIndex].unlockLevel.ToString();
+
+                lockParent.gameObject.SetActive(true);
+                lockParent.GetChild(1).GetComponent<TextMeshProUGUI>().text = temp;
+                lockParent.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().text = temp;
+            } else
+            {
+                displayParents[1].transform.GetChild(1).GetChild(0).gameObject.SetActive(false);
+            }
         }
 
         previewImage.gameObject.SetActive(true);
@@ -222,7 +265,12 @@ public class ModeManager : MonoBehaviour
         descriptionText.transform.parent.GetComponent<TextMeshProUGUI>().text =
             descriptionText.text;
 
-        Invoke("SetIndexDataLate", 0.25f);
+        if(!start)
+        {
+            CheckUnlocked();
+        }
+
+        Invoke(nameof(SetIndexDataLate), 0.25f);
     }
 
     private void SetModeText(string newText, Color modeColor)
@@ -289,8 +337,8 @@ public class ModeManager : MonoBehaviour
         if (currentIndex < 0) currentIndex = mainModes.Length - 1;
         if (currentIndex >= mainModes.Length) currentIndex = 0;
 
-        while(currentIndex >= 1 && currentIndex <= 2)
-        { //hardcore + royale ausschließen da überarbeitung
+        while(currentIndex >= 1 && currentIndex <= 2 || currentIndex == 5)
+        { //hardcore + royale + zickzack ausschließen da überarbeitung
             if (direction == false)
             {
                 currentIndex--;
@@ -316,7 +364,7 @@ public class ModeManager : MonoBehaviour
 
         float mTime = 0.2f;
 
-        Invoke("ResetChangeRunning", mTime + 0.01f);
+        Invoke(nameof(ResetChangeRunning), mTime + 0.01f);
 
         if(direction == false)
         { //links

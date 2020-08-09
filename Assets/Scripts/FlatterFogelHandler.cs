@@ -320,82 +320,10 @@ public class FlatterFogelHandler : MonoBehaviour
                 coins[i].SetActive(false);
             }
             coins.Clear();
-
-            #region oldPipeDestruction
-            /*for(int i = 0; i < pipes.Count; i += 2)
-            {
-                Color c = pipes[i].GetComponent<Image>().color;
-
-                pipes[i].SetActive(false);
-                pipes[i + 1].SetActive(false);
-
-                int[] anzahl = new int[2];
-
-                anzahl[0] = (int)(pipes[i].GetComponent<RectTransform>().sizeDelta.y / 75f);
-                anzahl[1] = (int)(pipes[i + 1].GetComponent<RectTransform>().sizeDelta.y / 75f);
-
-                int internalCount = 0;
-
-                for(int a = 0; a < anzahl[internalCount]; a++)
-                {
-                    Vector3 newPos = pipes[i + internalCount].transform.position;
-                    if(internalCount == 0)
-                    {
-                        newPos.y += 37.5f + (75 * a);
-                    } else
-                    {
-                        newPos.y -= 37.5f + (75 * a);
-                    }
-
-                    GameObject dObj = 
-                        Instantiate(pipeDestructionParent, newPos, Quaternion.identity, pipes[i].transform.parent);
-                    for(int b = 0; b < 4; b++)
-                    {
-                        dObj.transform.GetChild(b).GetComponent<Image>().color = c;
-                        //if(Random.Range(0, 4) == 0)
-                        //{
-                            dObj.transform.GetChild(b).GetComponent<Rigidbody2D>().AddForce(
-                                new Vector2(Random.Range(-100, 100), 0));
-                        //}
-                    }
-
-                    if(internalCount == 0)
-                    { //setz for loop für 2. durchlauf zurück
-                        if(a == anzahl[0] - 1)
-                        {
-                            a = -1;
-                            internalCount = 1;
-                        }
-                    }
-                }
-            }*/
-
-            //-----------
-
-            /*for(int i = 0; i < pipes.Count; i += 2)
-            { //i ist immer top und i+1 = bottom
-                GameObject pDP = Instantiate(pipeDestructionPrefab,
-                    new Vector3(pipes[i].transform.position.x, 1306),
-                    pipeDestructionPrefab.transform.rotation,
-                    particleParent.transform);
-
-                pDP.transform.Rotate(new Vector3(0, 0, 180));
-
-                GameObject pDP2 = Instantiate(pipeDestructionPrefab,
-                    new Vector3(pipes[i].transform.position.x, 124),
-                    pipeDestructionPrefab.transform.rotation,
-                    particleParent.transform);
-
-                Destroy(pDP, 1.5f);
-                Destroy(pDP2, 1.5f);
-            }
-
-            Invoke("BeginPipeDestruction", 0.1f);*/
-            #endregion
             
-            Invoke("BeginPipeDestruction", 0.7f);
-            Invoke("BeginGroundDestruction", 0.7f);
-            Invoke("DeadRestart", 0.75f);
+            Invoke(nameof(BeginPipeDestruction), 0.7f);
+            Invoke(nameof(BeginGroundDestruction), 0.7f);
+            Invoke(nameof(DeadRestart), 0.75f);
             return;
         } else
         {
@@ -423,7 +351,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         if(!destructionMode && !battleRoyale && !miningMode)
         {
-            switch(OptionHandler.GetDifficulty())
+            /*switch(OptionHandler.GetDifficulty())
             {
                 case 0:
                     scrollSpeed -= 25;
@@ -431,7 +359,9 @@ public class FlatterFogelHandler : MonoBehaviour
                 case 2:
                     scrollSpeed += 35;
                     break;
-            }
+            }*/
+
+            scrollSpeed = defaultScrollSpeed + 75;
         }
 
         if(hardcore)
@@ -553,7 +483,6 @@ public class FlatterFogelHandler : MonoBehaviour
         {
 #if UNITY_EDITOR
             SetScore(0, 0);
-            internalScoreCount = 40;
 #else
             SetScore(0, 0);
 #endif
@@ -565,7 +494,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
             highscoreLineShowed = false;
 
-            CancelInvoke("FlashHighscoreObj");
+            CancelInvoke(nameof(FlashHighscoreObj));
             highscoreLineObj.SetActive(false);
         }
 
@@ -852,7 +781,7 @@ public class FlatterFogelHandler : MonoBehaviour
             SoundManager.Instance.PlayMusicFade((MusicID)Random.Range(1, 3));
         }
 
-        InvokeRepeating("StartTimerStep", 0f, 1f);
+        InvokeRepeating(nameof(StartTimerStep), 0f, 1f);
         //Invoke("EndStart", 2f);
         //Invoke("StartGround", 5f);
     }
@@ -933,7 +862,7 @@ public class FlatterFogelHandler : MonoBehaviour
     {
         if(startTimer == 0)
         {
-            CancelInvoke("StartTimerStep");
+            CancelInvoke(nameof(StartTimerStep));
 
             startTimerObj.SetActive(false);
 
@@ -986,7 +915,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         //Camera.main.transform.DOMove(new Vector3(-381, 642, -10), 0.5f);
 
-        Invoke("EndEndGame", 0.5f);
+        Invoke(nameof(EndEndGame), 0.5f);
     }
 
     private void EndEndGame()
@@ -1019,7 +948,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         isStarting = false;
 
-        InvokeRepeating("HandleRotation", 0f, 0.05f);
+        InvokeRepeating(nameof(HandleRotation), 0f, 0.05f);
         if(!destructionMode && !miningMode)
         {
             pipeSpawnAllowed = true;
@@ -1047,7 +976,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
                 modeChangeInfo.SetActive(true);
                 modeChangeInfo.GetComponent<TextMeshProUGUI>().text = "FLIEG!";
-                Invoke("DisableModeChangeText", 2f);
+                Invoke(nameof(DisableModeChangeText), 2f);
 
                 break;
         }
@@ -1112,7 +1041,7 @@ public class FlatterFogelHandler : MonoBehaviour
         mineHandler.gameObject.SetActive(true);
         mineHandler.StartMining();
 
-        CancelInvoke("FlashHighscoreObj");
+        CancelInvoke(nameof(FlashHighscoreObj));
         highscoreLineObj.SetActive(false);
 
         groundHandler.StartMiningGround();
@@ -1179,7 +1108,7 @@ public class FlatterFogelHandler : MonoBehaviour
         //player.transform.DOMoveX(-568, 0.5f);
         player.transform.position = new Vector3(-568, player.transform.position.y);
 
-        Invoke("EnablePlayerConstraints", 0.55f);
+        Invoke(nameof(EnablePlayerConstraints), 0.55f);
     }
 
     private void EnablePlayerConstraints()
@@ -1450,7 +1379,7 @@ public class FlatterFogelHandler : MonoBehaviour
                         pData.isChecked = true;
                         if(pData.highscorePipe)
                         {
-                            CancelInvoke("FlashHighscoreObj");
+                            CancelInvoke(nameof(FlashHighscoreObj));
                             highscoreLineObj.SetActive(false);
                         }
 
@@ -1816,7 +1745,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         int maxChance = 4;
 
-        if(Random.Range(0, maxChance) == 0 && score > 60)
+        if(Random.Range(0, maxChance) == 0 && score > 80)
         {
             abstand = 175;
         } else
@@ -1824,16 +1753,25 @@ public class FlatterFogelHandler : MonoBehaviour
             abstand = 200;
         }
 
-        if(score < 20)
+        if(score < 30)
         {
             abstand = 275;
-        } else if(score < 40)
+        } else if(score < 50)
         {
             abstand = 225;
         }
 
         if (overrideDistance) {
-            abstand = 200;
+            if(score < 100)
+            {
+                abstand = 250;
+            } else if(score < 130)
+            {
+                abstand = 225;
+            } else
+            {
+                abstand = 200;
+            }
         } else if(flakActive)
         {
             abstand = 350;
@@ -2080,7 +2018,7 @@ public class FlatterFogelHandler : MonoBehaviour
                 highscoreLineShowed = true;
 
                 highscoreLineObj.SetActive(true);
-                InvokeRepeating("FlashHighscoreObj", 0f, 0.25f);
+                InvokeRepeating(nameof(FlashHighscoreObj), 0f, 0.25f);
 
                 Vector3 hObjPos = highscoreLineObj.transform.position;
                 hObjPos.x = pipeTop.transform.position.x + 50f;
@@ -2247,7 +2185,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         backgroundHandler.GetComponent<BackgroundHandler>().SetScrolling(false);
 
-        CancelInvoke("HandleRotation");
+        CancelInvoke(nameof(HandleRotation));
         pipeSpawnAllowed = false;
 
         destructionHandler.DisableEnable(false);
@@ -2309,9 +2247,9 @@ public class FlatterFogelHandler : MonoBehaviour
         pos.y += 125;
         deathText.transform.position = pos;
 
-        Invoke("ResetTime", 0.35f);
+        Invoke(nameof(ResetTime), 0.35f);
         //Invoke("ResetCamera", 0.75f);
-        Invoke("CallMenuDeath", 0.75f);
+        Invoke(nameof(CallMenuDeath), 0.75f);
     }
 
     private void ResetTime()
@@ -2390,7 +2328,7 @@ public class FlatterFogelHandler : MonoBehaviour
         DOTween.To(() => lensDisto.intensity.value, x => lensDisto.intensity.value = x, -100, 0.25f);
         DOTween.To(() => lensDisto.scale.value, x => lensDisto.scale.value = x, 0.05f, 0.25f);
 
-        Invoke("ChangeModeFull", 0.251f);
+        Invoke(nameof(ChangeModeFull), 0.251f);
     }
 
     public void ChangeModeFull()
@@ -2435,7 +2373,7 @@ public class FlatterFogelHandler : MonoBehaviour
         DOTween.To(() => lensDisto.intensity.value, x => lensDisto.intensity.value = x, 0, 0.25f);
         DOTween.To(() => lensDisto.scale.value, x => lensDisto.scale.value = x, 1, 0.25f);
 
-        Invoke("ChangeModeOver", 0.251f);
+        Invoke(nameof(ChangeModeOver), 0.251f);
     }
     private void ChangeModeOver()
     {
@@ -2467,7 +2405,7 @@ public class FlatterFogelHandler : MonoBehaviour
             }
         }
 
-        CancelInvoke("FlashHighscoreObj");
+        CancelInvoke(nameof(FlashHighscoreObj));
         highscoreLineObj.SetActive(false);
 
         splatterHandler.StartSplatter();
@@ -2492,7 +2430,7 @@ public class FlatterFogelHandler : MonoBehaviour
             }
         }
 
-        CancelInvoke("FlashHighscoreObj");
+        CancelInvoke(nameof(FlashHighscoreObj));
         highscoreLineObj.SetActive(false);
 
         shootingPipehandler.StartShootingPipes();
@@ -2521,7 +2459,7 @@ public class FlatterFogelHandler : MonoBehaviour
             }
         }
 
-        CancelInvoke("FlashHighscoreObj");
+        CancelInvoke(nameof(FlashHighscoreObj));
         highscoreLineObj.SetActive(false);
 
         Vector3 newPos = playerStartPos;
@@ -3116,7 +3054,7 @@ public class FlatterFogelHandler : MonoBehaviour
                                     if (Random.Range(0, 15) == 0
                                         && !shootingPipehandler.shootingPipesActive
                                         && shootingPipehandler.endComplete
-                                        && internalScoreCount > 50)
+                                        && score > 50)
                                     {
                                         SpawnTunnel();
                                     }
@@ -3139,7 +3077,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
                             if (del)
                             {
-                                CancelInvoke("FlashHighscoreObj");
+                                CancelInvoke(nameof(FlashHighscoreObj));
                                 highscoreLineObj.SetActive(false);
                             }
                         }

@@ -33,10 +33,10 @@ public class DestructionHandler : MonoBehaviour
     {
         if(enable)
         {
-            InvokeRepeating("SpawnD2DObj", 0f, 0.25f);
+            InvokeRepeating(nameof(SpawnD2DObj), 0f, 0.25f);
         } else
         {
-            CancelInvoke("SpawnD2DObj");
+            CancelInvoke(nameof(SpawnD2DObj));
         }
     }
 
@@ -86,7 +86,7 @@ public class DestructionHandler : MonoBehaviour
 
     private void SpawnD2DObj()
     {
-        if (Random.Range(0, 15) >= 0) //== 0
+        if (Random.Range(0, 15) == 0) //== 0
         {
 
             int type = Random.Range(0, 2);
@@ -189,7 +189,7 @@ public class DestructionHandler : MonoBehaviour
             }
 
             pos.x += last.minRightDist +
-                newStats.minRightDist;
+                newStats.minLeftDist;
         }
 
         newObj.transform.position = pos;
@@ -320,7 +320,7 @@ public class DestructionHandler : MonoBehaviour
             }
 
             pos.x += last.minRightDist +
-                newStats.minRightDist;
+                newStats.minLeftDist;
         }
 
         newObj.transform.position = pos;

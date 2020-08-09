@@ -183,8 +183,8 @@ public class ShopHandler : MonoBehaviour
 
         fadeMat.color = Color.red;
         fadeMat.DOColor(Color.blue, 0.5f).SetEase(Ease.Linear);
-        InvokeRepeating("NextColorStep", 0.51f, 0.251f);
-        InvokeRepeating("HandleWingAnimation", 0.25f, 0.25f);
+        InvokeRepeating(nameof(NextColorStep), 0.51f, 0.251f);
+        InvokeRepeating(nameof(HandleWingAnimation), 0.25f, 0.25f);
 
         Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
     }
@@ -602,6 +602,7 @@ public class ShopHandler : MonoBehaviour
         }
 
         blusText.GetComponent<TextMeshProUGUI>().text = blus.ToString();
+        blusText.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = blus.ToString();
     }
 
     public void CoinAddEffect()
@@ -641,7 +642,7 @@ public class ShopHandler : MonoBehaviour
 
         blusText.transform.parent.position = bottomPos;//new Vector3(-669.3f, 1359.3f, 100);
         blusText.transform.parent.localScale = new Vector3(2.5f, 2.5f, 2.5f);
-        blusText.GetComponent<TextMeshProUGUI>().color = Color.white;
+        blusText.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = Color.white;
 
         coinEffectPosition = //zurück zu original Pos
             blusText.transform.parent.DOMove(originalBlusTextPos, 0.5f); //new Vector3(-710.3f, 1396, 100)
@@ -650,7 +651,7 @@ public class ShopHandler : MonoBehaviour
             blusText.transform.parent.DOScale(1, 0.5f);
 
         coinColorTween =
-            blusText.GetComponent<TextMeshProUGUI>().DOColor(new Color32(192, 115, 0, 255), 0.5f);
+            blusText.transform.GetChild(0).GetComponent<TextMeshProUGUI>().DOColor(new Color32(233, 175, 0, 255), 0.5f);
     }
 
     public void UIScaleFinished()
@@ -1177,7 +1178,7 @@ public class ShopHandler : MonoBehaviour
         shopObj.transform.DOMove(defaultPos, moveTime).SetEase(Ease.OutBack);
         //shopObj.transform.DOScale(new Vector3(1, 1, 1), moveTime);
 
-        Invoke("ReactivateEventSystem", moveTime + 0.01f);
+        Invoke(nameof(ReactivateEventSystem), moveTime + 0.01f);
     }
 
     private void ReactivateEventSystem()
@@ -1221,7 +1222,7 @@ public class ShopHandler : MonoBehaviour
         customizationHandler.CloseCustomization(true);
         pipeCustomizationHandler.CloseCustomization(true);
 
-        Invoke("ReactivateEventSystem", moveTime + 0.01f);
+        Invoke(nameof(ReactivateEventSystem), moveTime + 0.01f);
     }
 
     public void TypeClicked(int id)

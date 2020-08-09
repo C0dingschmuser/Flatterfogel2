@@ -162,6 +162,7 @@ MonoBehaviour:
   stats:
     type: 1
     minRightDist: 105
+    minLeftDist: 105
     speed: 0
     spawnPos: {x: 2247.1204, y: 396, z: -200}
     maxAmount: -1
