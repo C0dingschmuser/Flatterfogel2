@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   previewSprite: {fileID: 21300000, guid: 61f77e3c955d3e94cb1d67b2a48b9800, type: 3}
   modeName: Mining
+  identifier: mining
   modeNameLocalized:
     m_TableReference:
       m_TableCollectionName: GUID:e01e314ccb4b8344299bb340a47791d6

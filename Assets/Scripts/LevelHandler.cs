@@ -171,6 +171,9 @@ public class LevelHandler : MonoBehaviour
             { //neues lvl
                 currentXP = 0;
                 currentLVL++;
+
+                UpdateLevel();
+
                 currentLVLDiff += defaultDiff;
 
                 SetXPText(parent, true, waitTime);
@@ -186,6 +189,12 @@ public class LevelHandler : MonoBehaviour
         }
 
         SaveXP();
+    }
+
+    private void UpdateLevel()
+    {
+        AchievementHandler.Instance.UpdateStep("destructionUnlock");
+        AchievementHandler.Instance.UpdateStep("miningUnlock");
     }
 
     public void ResetEffects(GameObject parent)

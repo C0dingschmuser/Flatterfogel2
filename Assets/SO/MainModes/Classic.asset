@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   previewSprite: {fileID: 21300000, guid: 6a8b5e3013964f84babbd2b3b1bdc68c, type: 3}
   modeName: Klassisch
+  identifier: classic
   modeNameLocalized:
     m_TableReference:
       m_TableCollectionName: GUID:8b1c0bf9100fe06438781f6ffd3c2d39

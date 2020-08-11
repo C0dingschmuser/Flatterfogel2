@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Mining Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 16
+  m_NextAvailableId: 17
   m_TableCollectionName: Mining
   m_TableCollectionNameGuidString: e01e314ccb4b8344299bb340a47791d6
   m_Entries:
@@ -74,6 +74,10 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 15
     m_Key: Lava
+    m_Metadata:
+      m_Items: []
+  - m_Id: 16
+    m_Key: UnlockText
     m_Metadata:
       m_Items: []
   m_Metadata:

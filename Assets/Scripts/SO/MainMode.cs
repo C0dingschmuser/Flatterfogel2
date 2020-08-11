@@ -5,7 +5,7 @@ using UnityEngine.Localization;
 public class MainMode : ScriptableObject
 {
     public Sprite previewSprite;
-    public string modeName;
+    public string modeName, identifier;
     public LocalizedString modeNameLocalized;
     public bool unlocked = false;
     public int modeID, unlockLevel;

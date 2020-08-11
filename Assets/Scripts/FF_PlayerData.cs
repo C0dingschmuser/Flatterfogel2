@@ -1044,8 +1044,6 @@ public class FF_PlayerData : MonoBehaviour
     {
         if(!dead)
         {
-            Debug.Log(collision.gameObject.tag);
-
             switch(collision.gameObject.tag)
             {
                 case "D2DObj":

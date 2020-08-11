@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   identifier: mieserBoss
   mainSprite:
-  - {fileID: 21300000, guid: 0c3e5b90880411240bbdfb3aee0ffb79, type: 3}
+  - {fileID: 21300000, guid: 65f53ab072ad87a438e7469fde00de24, type: 3}
   rewards:
   - mineralID: 16
     amount: 15
@@ -30,13 +30,14 @@ MonoBehaviour:
     m_TableEntryReference:
       m_KeyId: 6
       m_Key: 
+  unlockMode: {fileID: 0}
   titleString: Schmuser
   descriptionString: Besiege den Mieserkadser
-  step: 0
+  step: 1
   maxStep: 1
   upgradeStep: 0
   maxUpgradeSteps: 0
   stepMultiplier: 2
   rewardMultiplier: 2
-  completed: 0
+  completed: 1
   rewardCollected: 0

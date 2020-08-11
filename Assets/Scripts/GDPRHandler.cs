@@ -67,6 +67,8 @@ public class GDPRHandler : MonoBehaviour
 
             TutorialHandler.Instance.Startup();
 
+            DiscordHandler.Instance.CheckStart();
+
             if(inAppUpdate.activeSelf)
             {
                 raycaster.enabled = true;

@@ -193,7 +193,7 @@ public class ScoreHandler : MonoBehaviour
 
         if(accountHandler.accountState == AccountStates.LoggedOut)
         {
-            bool overrideAuth = false;
+            bool overrideAuth = true; //DEBUG da test
 #if UNITY_EDITOR
             overrideAuth = true;
 #endif

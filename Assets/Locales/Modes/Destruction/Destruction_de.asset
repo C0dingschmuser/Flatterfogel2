@@ -22,5 +22,9 @@ MonoBehaviour:
     m_Localized: "Zerst\xF6rung"
     m_Metadata:
       m_Items: []
+  - m_Id: 2
+    m_Localized: "Zerst\xF6rungsmodus freischalten"
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

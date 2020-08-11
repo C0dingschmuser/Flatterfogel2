@@ -14,10 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   previewSprite: {fileID: 21300000, guid: 73a86f321b8661d4ca924f1e1d57c694, type: 3}
   modeName: Classique
+  identifier: hardcore
   modeNameLocalized:
     m_TableReference:
       m_TableCollectionName: GUID:8b1c0bf9100fe06438781f6ffd3c2d39
     m_TableEntryReference:
       m_KeyId: 1
       m_Key: 
+  unlocked: 0
   modeID: 0
+  unlockLevel: 0

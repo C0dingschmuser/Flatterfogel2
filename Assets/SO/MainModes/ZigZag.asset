@@ -14,10 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   previewSprite: {fileID: 0}
   modeName: ZickZack
+  identifier: zigzag
   modeNameLocalized:
     m_TableReference:
       m_TableCollectionName: GUID:6dc24f2556b80d846b6f73a0b2d4269a
     m_TableEntryReference:
       m_KeyId: 1
       m_Key: 
+  unlocked: 0
   modeID: 0
+  unlockLevel: 0

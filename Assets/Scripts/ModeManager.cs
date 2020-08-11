@@ -64,7 +64,53 @@ public class ModeManager : MonoBehaviour
 
         currentIndex = ObscuredPrefs.GetInt("Player_SelectedMode", 0);
 
+        for(int i = 0; i < mainModes.Length; i++)
+        {
+            bool unlocked = ObscuredPrefs.GetBool("Player_Mode_" + mainModes[i].identifier, false);
+            if(mainModes[i].identifier.Equals("classic"))
+            { //classic standardmäßig unlocked
+                unlocked = true;
+            }
+
+            mainModes[i].unlocked = unlocked;
+        }
+
         Invoke(nameof(DisableSwipe), 0.25f);
+    }
+
+    private void OnApplicationPause(bool pause)
+    {
+        if(pause)
+        {
+            SaveModes();
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveModes();
+    }
+
+    private void SaveModes()
+    {
+        for(int i = 0; i < mainModes.Length; i++)
+        {
+            ObscuredPrefs.SetBool("Player_Mode_" + mainModes[i].identifier, mainModes[i].unlocked);
+        }
+    }
+
+    public void UnlockMode(string identifier)
+    {
+        for(int i = 0; i < mainModes.Length; i++)
+        {
+            if(mainModes[i].identifier.Contains(identifier))
+            {
+                mainModes[i].unlocked = true;
+                break;
+            }
+        }
+
+        SaveModes();
     }
 
     public void StartLoadLocalization()

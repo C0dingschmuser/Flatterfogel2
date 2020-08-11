@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26c3513d95ea7144b921b27da79a4251, type: 3}
+  m_Name: MiningUnlock
+  m_EditorClassIdentifier: 
+  identifier: miningUnlock
+  mainSprite:
+  - {fileID: 21300000, guid: 4075f0d8a6621014ca1dad487af81e88, type: 3}
+  rewards:
+  - mineralID: 16
+    amount: 15
+  title:
+    m_TableReference:
+      m_TableCollectionName: GUID:e01e314ccb4b8344299bb340a47791d6
+    m_TableEntryReference:
+      m_KeyId: 1
+      m_Key: 
+  description:
+    m_TableReference:
+      m_TableCollectionName: GUID:e01e314ccb4b8344299bb340a47791d6
+    m_TableEntryReference:
+      m_KeyId: 16
+      m_Key: 
+  unlockMode: {fileID: 11400000, guid: 642382ddbb8dd9b47884ca49c94d5a36, type: 2}
+  titleString: Mining
+  descriptionString: Mining Modus freischalten
+  step: 8
+  maxStep: 25
+  upgradeStep: 0
+  maxUpgradeSteps: 0
+  stepMultiplier: 2
+  rewardMultiplier: 2
+  completed: 0
+  rewardCollected: 0

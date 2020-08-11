@@ -30,10 +30,10 @@ public class PipeCustomizationHandler : MonoBehaviour
     private GameObject priceText = null, priceImage = null, saleObj = null, buyInfo = null;
 
     [SerializeField]
-    private Image pipeTypeImage, pipeColorImage;
+    private Image pipeTypeImage = null, pipeColorImage = null;
 
     [SerializeField]
-    private Sprite[] pipeTypeSprites, pipeColorSprites;
+    private Sprite[] pipeTypeSprites = null, pipeColorSprites = null;
 
     private int typeAnimationStep = 0;
 

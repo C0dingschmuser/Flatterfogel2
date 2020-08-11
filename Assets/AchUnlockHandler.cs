@@ -28,20 +28,27 @@ public class AchUnlockHandler : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        unlockObj.SetActive(false);
+        unlockObj.transform.parent.gameObject.SetActive(false);
     }
 
     public void StartAchievementUnlock(Achievement ach)
     {
         if(!unlockedAchievements.Contains(ach))
         {
+            if(ach.unlockMode != null)
+            { //Achievement schaltet Modus frei -> modemanager aufrufen
+                ModeManager.Instance.UnlockMode(ach.unlockMode.identifier);
+            }
+
             unlockedAchievements.Add(ach);
         }
 
-        if(achRoutine == null)
+        if (achRoutine == null)
         {
+            Debug.Log("start");
             StartCoroutine(AchievementUnlock());
         }
+        else Debug.Log("running!");
     }
 
     private IEnumerator AchievementUnlock()
@@ -50,7 +57,7 @@ public class AchUnlockHandler : MonoBehaviour
 
         bool ok = false;
 
-        unlockObj.SetActive(true);
+        unlockObj.transform.parent.gameObject.SetActive(true);
 
         while(!ok)
         {
@@ -81,7 +88,7 @@ public class AchUnlockHandler : MonoBehaviour
             }
         }
 
-        unlockObj.SetActive(false);
+        unlockObj.transform.parent.gameObject.SetActive(false);
         StopCoroutine(temp);
 
         yield return achRoutine = null;

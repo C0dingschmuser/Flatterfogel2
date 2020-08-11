@@ -78,5 +78,9 @@ MonoBehaviour:
     m_Localized: Magma
     m_Metadata:
       m_Items: []
+  - m_Id: 16
+    m_Localized: Mining Modus freischalten
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

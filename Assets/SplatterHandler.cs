@@ -7,7 +7,7 @@ using DG.Tweening;
 public class SplatterHandler : MonoBehaviour
 {
     [SerializeField]
-    private BackgroundHandler bgHandler;
+    private BackgroundHandler bgHandler = null;
 
     [SerializeField]
     private GameObject[] splatterObjs = null;

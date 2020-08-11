@@ -24,22 +24,22 @@ public class AchievementHandler : MonoBehaviour
     private Vector3 achStartPos;
 
     [SerializeField]
-    private GameObject hParent, achParent;
+    private GameObject hParent = null, achParent = null;
 
     [SerializeField]
-    private Transform achMoveParent;
+    private Transform achMoveParent = null;
 
     [SerializeField]
-    private ObjectPooler objPooler;
+    private ObjectPooler objPooler = null;
 
     [SerializeField]
-    private Slider mainSlider;
+    private Slider mainSlider = null;
 
     [SerializeField]
-    private Material[] completedMats;
+    private Material[] completedMats = null;
 
     [SerializeField]
-    private TextMeshProUGUI mainText;
+    private TextMeshProUGUI mainText = null;
 
     [SerializeField]
     private Color lockedColor, unlockedColor;
@@ -130,7 +130,7 @@ public class AchievementHandler : MonoBehaviour
         caller.GetComponent<AchHolder>().completedSprite.material =
             completedMats[dissolveStep];
 
-        caller.GetComponent<Image>().color = new Color32(188, 188, 188, 255);
+        caller.GetComponent<Image>().DOColor(new Color32(188, 188, 188, 255), 0.5f); ;
 
         caller.GetComponent<AchHolder>().achievement.rewardCollected = true;
         UpdateMenuUnclaimed();
@@ -139,8 +139,9 @@ public class AchievementHandler : MonoBehaviour
         caller.GetComponent<AchHolder>().collected.SetActive(true);
         caller.GetComponent<AchHolder>().collectButton.interactable = false;
         caller.GetComponent<AchHolder>().sliderFiller.color = unlockedColor;
+        caller.GetComponent<AchHolder>().collectSprite.color = unlockedColor;
 
-        completedMats[dissolveStep].SetFloat("_DissolveAmount", 1);
+        /*completedMats[dissolveStep].SetFloat("_DissolveAmount", 1);
         dissolveAmounts[dissolveStep] = 1;
 
         int oldStep = dissolveStep;
@@ -155,7 +156,7 @@ public class AchievementHandler : MonoBehaviour
         if (dissolveStep > 3)
         {
             dissolveStep = 0;
-        }
+        }*/
     }
 
     public void AddAchCoins(long newCoins)
@@ -360,6 +361,7 @@ public class AchievementHandler : MonoBehaviour
         allAchHolders = new AchHolder[allAchievements.Length];
 
         UpdateUI(true);
+        UpdateMenuUnclaimed();
     }
 
     public void UpdateUI(bool create = false)
@@ -398,7 +400,8 @@ public class AchievementHandler : MonoBehaviour
 
             if (ach.completed)
             {
-                holder.completedSprite.gameObject.SetActive(true);
+                //alt -> deswegen deaktivieren
+                holder.completedSprite.gameObject.SetActive(false);
 
                 if (ach.rewardCollected)
                 {
@@ -407,17 +410,26 @@ public class AchievementHandler : MonoBehaviour
                     collectColor = Color.white;
                     holder.collectButton.interactable = false;
 
-                    holder.completedSprite.gameObject.SetActive(false);
+                    holder.uncollected.SetActive(false);
+                    holder.collected.SetActive(true);
+                    holder.collectButton.interactable = false;
+                    holder.sliderFiller.color = unlockedColor;
+
+                    collectColor = unlockedColor;
+
+                    //holder.completedSprite.gameObject.SetActive(false);
                 }
                 else
                 {
                     collectColor = unlockedColor;
                     holder.collectButton.interactable = true;
 
-                    Color c = new Color32(200, 252, 255, 255);
+                    holder.gameObject.GetComponent<Image>().color = new Color32(200, 252, 255, 255);
 
-                    holder.completedSprite.color = c;
-                    holder.completedSprite.gameObject.SetActive(true);
+                    //Color c = new Color32(200, 252, 255, 255);
+
+                    //holder.completedSprite.color = c;
+                    //holder.completedSprite.gameObject.SetActive(true);
                 }
             }
             else

@@ -66,15 +66,15 @@ public class AccountHandler : MonoBehaviour
         accountState = (AccountStates)ObscuredPrefs.GetInt("Player_AccountState", 0);
 
 #if UNITY_ANDROID
-        PlayGamesPlatform.DebugLogEnabled = false;
-        PlayGamesPlatform.Activate();
+        //PlayGamesPlatform.DebugLogEnabled = false;
+        //PlayGamesPlatform.Activate();
 #endif
     }
 
     public void StartGplayLogin()
     {
 #if UNITY_ANDROID || UNITY_IOS
-        if (!OptionHandler.playStore)
+        /*if (!OptionHandler.playStore)
         {
             FirebaseAnalytics.SetUserProperty("PlayStoreVersion", "0");
             return;
@@ -100,7 +100,7 @@ public class AccountHandler : MonoBehaviour
         else
         {
             Debug.Log("User Authenticated");
-        }
+        }*/
 #endif
     } 
 
@@ -263,7 +263,8 @@ public class AccountHandler : MonoBehaviour
         if (running) return;
         running = true;
 
-        string username = Social.localUser.userName;
+        string username = //Social.localUser.userName;
+            "User_" + Random.Range(100000, 999999).ToString(); //DEBUG für Test
 
 #if UNITY_EDITOR
         username = "C0dingschmuser";

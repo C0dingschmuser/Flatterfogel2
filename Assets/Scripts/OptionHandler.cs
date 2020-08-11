@@ -7,7 +7,6 @@ using UnityEngine.Localization;
 using UnityEngine.UI;
 using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.Localization.Settings;
-using UnityEngine.SceneManagement;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using CodeStage.AntiCheat.Storage;
 #if UNITY_ANDROID
@@ -19,6 +18,7 @@ using DG.Tweening;
 public class OptionHandler : MonoBehaviour
 {
     public IngameMenuHandler ingameMenu;
+    public DiscordHandler discord;
     public Canvas menuCanvas, windowCanvas;
     public GameObject mainCamera;
     public GameObject introParent, introHold;
@@ -110,7 +110,7 @@ public class OptionHandler : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        firstLaunch = PlayerPrefs.GetInt("FirstLaunch", 1);
+        firstLaunch = ObscuredPrefs.GetInt("FirstLaunch", 1);
 
         currentPost = PlayerPrefs.GetString("Post", currentPost);
 
@@ -119,10 +119,12 @@ public class OptionHandler : MonoBehaviour
 #if UNITY_ANDROID
             FirebaseAnalytics.SetUserProperty("WantsMessages", "1");
 #endif
-            PlayerPrefs.SetInt("FirstLaunch", 0);
+            ObscuredPrefs.SetInt("FirstLaunch", 0);
         }
 
         DOTween.SetTweensCapacity(500, 50);
+
+        discord.Setup();
     }
 
     // Start is called before the first frame update
@@ -143,6 +145,27 @@ public class OptionHandler : MonoBehaviour
         introHold.SetActive(true);
 #endif
     }
+
+    public void KekDetected()
+    {
+
+    }
+
+    /*void OnEnable() Deaktiviert da von Crashlytics gehandelt
+    {
+        Application.logMessageReceived += LogCallback;
+    }
+
+    //Called when there is an exception
+    void LogCallback(string condition, string stackTrace, LogType type)
+    {
+        Debug.Log("CALLBACK " + condition + " " + stackTrace + " " + type);
+    }
+
+    void OnDisable()
+    {
+        Application.logMessageReceived -= LogCallback;
+    }*/
 
     IEnumerator LoadLocalization()
     {

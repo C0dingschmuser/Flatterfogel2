@@ -78,5 +78,9 @@ MonoBehaviour:
     m_Localized: Lava
     m_Metadata:
       m_Items: []
+  - m_Id: 16
+    m_Localized: "Desbloquear el modo de miner\xEDa"
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

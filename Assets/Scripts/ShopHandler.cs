@@ -11,7 +11,6 @@ using CodeStage.AntiCheat.Storage;
 using System;
 using Random = UnityEngine.Random;
 using Object = System.Object;
-using UnityEngine.Localization;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Linq;
 
@@ -81,6 +80,7 @@ public class ShopHandler : MonoBehaviour
 #endif
 
     private Vector3 originalBlusTextPos;
+    private CoroutineHandle uiScaleHandle;
 
     private int currentPage = 0, currentType = 0, wingAnimationCount = 0, wingAnimationDir = 0;
     private int colorFadeID = 0, lastSlotID = -1, minerType = 0, selectedSkin = 0, selectedWing = 0, selectedMiner = 0,
@@ -656,6 +656,14 @@ public class ShopHandler : MonoBehaviour
 
     public void UIScaleFinished()
     {
+        Timing.KillCoroutines(uiScaleHandle);
+        uiScaleHandle = Timing.RunCoroutine(_WaitUIScale());
+    }
+
+    private IEnumerator<float> _WaitUIScale()
+    {
+        yield return Timing.WaitForOneFrame;
+
         originalBlusTextPos = blusText.transform.parent.position;
     }
 
