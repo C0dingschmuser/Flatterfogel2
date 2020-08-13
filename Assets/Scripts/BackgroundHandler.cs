@@ -255,7 +255,6 @@ public class BackgroundHandler : MonoBehaviour
 
         oldTopExtentPos = pos;
         oldTopExtentScale = topExtent.transform.localScale;
-        Debug.Log(oldTopExtentScale);
 
         topExtent.transform.position = pos;
     }

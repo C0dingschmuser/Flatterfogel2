@@ -54,6 +54,10 @@ public class ShopHandler : MonoBehaviour
     public List<Pipe> allPipes = new List<Pipe>();
     public List<Background> allBackgrounds = new List<Background>();
 
+    public List<GraveTop> allGraveTops = new List<GraveTop>();
+    public List<GraveSide> allGraveSides = new List<GraveSide>();
+    public List<GraveBottom> allGraveBottoms = new List<GraveBottom>();
+
     public Transform slotParent, bgSlotParent, colorSlotParent, minerSlotParent, shieldSlotParent, mineItemParent,
         minerParent, minigItemButtonParent;
     public Material fadeMat;
@@ -84,7 +88,8 @@ public class ShopHandler : MonoBehaviour
 
     private int currentPage = 0, currentType = 0, wingAnimationCount = 0, wingAnimationDir = 0;
     private int colorFadeID = 0, lastSlotID = -1, minerType = 0, selectedSkin = 0, selectedWing = 0, selectedMiner = 0,
-        selectedPipe = 0, selectedBackground = 0, selectedHeatShield = 0, selectedHat = 0;
+        selectedPipe = 0, selectedBackground = 0, selectedHeatShield = 0, selectedHat = 0, selectedGraveTop = 0,
+        selectedGraveSide = 0, selectedGraveBottom = 0;
     private bool shopActive = false;
 
     private void Awake()
@@ -96,6 +101,21 @@ public class ShopHandler : MonoBehaviour
 
     private void SetupID()
     {
+        for(int i = 0; i < allGraveTops.Count; i++)
+        {
+            allGraveTops[i].itemID = i;
+        }
+
+        for(int i = 0; i < allGraveSides.Count; i++)
+        {
+            allGraveSides[i].itemID = i;
+        }
+
+        for(int i = 0; i < allGraveBottoms.Count; i++)
+        {
+            allGraveBottoms[i].itemID = i;
+        }
+
         for (int i = 0; i < allSkins.Count; i++)
         {
             allSkins[i].itemID = i;
@@ -295,6 +315,15 @@ public class ShopHandler : MonoBehaviour
                 break;
             case CustomizationType.PipeColor:
                 id = pipeColorID;
+                break;
+            case CustomizationType.GraveTop:
+                id = selectedGraveTop;
+                break;
+            case CustomizationType.GraveSide:
+                id = selectedGraveSide;
+                break;
+            case CustomizationType.GraveBottom:
+                id = selectedGraveBottom;
                 break;
         }
 
@@ -684,6 +713,21 @@ public class ShopHandler : MonoBehaviour
 
     private void ResetAll()
     {
+        for(int i = 1; i < allGraveTops.Count; i++)
+        {
+            allGraveTops[i].purchased = false;
+        }
+
+        for(int i = 1; i < allGraveSides.Count; i++)
+        {
+            allGraveSides[i].purchased = false;
+        }
+
+        for(int i = 1; i < allGraveBottoms.Count; i++)
+        {
+            allGraveBottoms[i].purchased = false;
+        }
+
         for (int i = 0; i < allSkins.Count; i++)
         {
             if(i > 0)
@@ -767,9 +811,91 @@ public class ShopHandler : MonoBehaviour
         string selectedHatString = ObscuredPrefs.GetString("SelectedHatString", "default");
         string selectedPipeString = ObscuredPrefs.GetString("SelectedPipeString", "default");
 
+        string selectedGraveTopString = ObscuredPrefs.GetString("SelectedGraveTopString", "default");
+        string selectedGraveSideString = ObscuredPrefs.GetString("SelectedGraveSideString", "default");
+        string selectedGraveBottomString = ObscuredPrefs.GetString("SelectedGraveBottomString", "default");
+
         ResetAll();
 
-        string data = ObscuredPrefs.GetString("ShopPurchasedSkins", "");
+        string data = ObscuredPrefs.GetString("ShopPurchasedGraveTops", "");
+
+        if(data.Length > 0)
+        {
+            if(data.Contains(","))
+            {
+                string[] split = data.Split(',');
+                for(int i = 0; i < split.Length; i++)
+                {
+                    if(split[i].Length > 0)
+                    {
+                        string identifier = split[i];
+
+                        for(int a = 0; a < allGraveTops.Count; a++)
+                        {
+                            if(allGraveTops[a].identifier.Equals(identifier))
+                            {
+                                allGraveTops[a].purchased = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        data = ObscuredPrefs.GetString("ShopPurchasedGraveSides", "");
+
+        if (data.Length > 0)
+        {
+            if (data.Contains(","))
+            {
+                string[] split = data.Split(',');
+                for (int i = 0; i < split.Length; i++)
+                {
+                    if (split[i].Length > 0)
+                    {
+                        string identifier = split[i];
+
+                        for (int a = 0; a < allGraveSides.Count; a++)
+                        {
+                            if (allGraveSides[a].identifier.Equals(identifier))
+                            {
+                                allGraveSides[a].purchased = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        data = ObscuredPrefs.GetString("ShopPurchasedGraveBottoms", "");
+
+        if (data.Length > 0)
+        {
+            if (data.Contains(","))
+            {
+                string[] split = data.Split(',');
+                for (int i = 0; i < split.Length; i++)
+                {
+                    if (split[i].Length > 0)
+                    {
+                        string identifier = split[i];
+
+                        for (int a = 0; a < allGraveBottoms.Count; a++)
+                        {
+                            if (allGraveBottoms[a].identifier.Equals(identifier))
+                            {
+                                allGraveBottoms[a].purchased = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        data = ObscuredPrefs.GetString("ShopPurchasedSkins", "");
 
         if (data.Length > 0)
         {
@@ -843,7 +969,7 @@ public class ShopHandler : MonoBehaviour
         data = ObscuredPrefs.GetString("ShopPurchasedPipes", "");
 
         if (data.Length > 0)
-        { //Wings
+        { //Pipes
             string types = data;
             if (types.Contains(","))
             {
@@ -937,6 +1063,39 @@ public class ShopHandler : MonoBehaviour
 
         SortShopItems();
 
+        selectedGraveTop = 0;
+
+        for(int i = 0; i < allGraveTops.Count; i++)
+        {
+            if(allGraveTops[i].identifier.Equals(selectedGraveTopString))
+            {
+                selectedGraveTop = i;
+                break;
+            }
+        }
+
+        selectedGraveSide = 0;
+
+        for (int i = 0; i < allGraveSides.Count; i++)
+        {
+            if (allGraveSides[i].identifier.Equals(selectedGraveSideString))
+            {
+                selectedGraveSide = i;
+                break;
+            }
+        }
+
+        selectedGraveBottom = 0;
+
+        for (int i = 0; i < allGraveBottoms.Count; i++)
+        {
+            if (allGraveBottoms[i].identifier.Equals(selectedGraveBottomString))
+            {
+                selectedGraveBottom = i;
+                break;
+            }
+        }
+
         selectedSkin = 0;
 
         for(int i = 0; i < allSkins.Count; i++)
@@ -1001,10 +1160,86 @@ public class ShopHandler : MonoBehaviour
         playerData.LoadHat(allHats[selectedHat]);
     }
 
+    public GraveTop GetGraveTop(string identifier)
+    {
+        for(int i = 0; i < allGraveTops.Count; i++)
+        {
+            if(allGraveTops[i].identifier.Equals(identifier))
+            {
+                return allGraveTops[i];
+            }
+        }
+
+        Debug.LogError("Wrong GraveTop ident: " + identifier);
+        return null;
+    }
+
+    public GraveSide GetGraveSide(string identifier)
+    {
+        for (int i = 0; i < allGraveSides.Count; i++)
+        {
+            if (allGraveSides[i].identifier.Equals(identifier))
+            {
+                return allGraveSides[i];
+            }
+        }
+
+        Debug.LogError("Wrong GraveSide ident: " + identifier);
+        return null;
+    }
+
+    public GraveBottom GetGraveBottom(string identifier)
+    {
+        for (int i = 0; i < allGraveBottoms.Count; i++)
+        {
+            if (allGraveBottoms[i].identifier.Equals(identifier))
+            {
+                return allGraveBottoms[i];
+            }
+        }
+
+        Debug.LogError("Wrong GraveBottom ident: " + identifier);
+        return null;
+    }
+
     public void SavePurchasedItems()
     {
         string data = "";
-        for(int i = 0; i < allSkins.Count; i++)
+
+        for(int i = 0; i < allGraveTops.Count; i++)
+        {
+            if(allGraveTops[i].purchased)
+            {
+                data += allGraveTops[i].identifier + ",";
+            }
+        }
+
+        ObscuredPrefs.SetString("ShopPurchasedGraveTops", data);
+        data = "";
+
+        for (int i = 0; i < allGraveSides.Count; i++)
+        {
+            if (allGraveSides[i].purchased)
+            {
+                data += allGraveSides[i].identifier + ",";
+            }
+        }
+
+        ObscuredPrefs.SetString("ShopPurchasedGraveSides", data);
+        data = "";
+
+        for (int i = 0; i < allGraveBottoms.Count; i++)
+        {
+            if (allGraveBottoms[i].purchased)
+            {
+                data += allGraveBottoms[i].identifier + ",";
+            }
+        }
+
+        ObscuredPrefs.SetString("ShopPurchasedGraveBottoms", data);
+        data = "";
+
+        for (int i = 0; i < allSkins.Count; i++)
         {
             if(allSkins[i].purchased)
             {

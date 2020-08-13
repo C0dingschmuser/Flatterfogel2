@@ -258,13 +258,26 @@ public class AccountHandler : MonoBehaviour
         return ok;
     }
 
+    private char GetRandomChar()
+    {
+        string data = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        return data[Random.Range(0, data.Length)];
+    }
+
     public void StartGplayRegister()
     {
         if (running) return;
         running = true;
 
+        string id = "";
+
+        for(int i = 0; i < 10; i++)
+        {
+            id += GetRandomChar();
+        }
+
         string username = //Social.localUser.userName;
-            "User_" + Random.Range(100000, 999999).ToString(); //DEBUG für Test
+            "User_" + id; //DEBUG für test
 
 #if UNITY_EDITOR
         username = "C0dingschmuser";

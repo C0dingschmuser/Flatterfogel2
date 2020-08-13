@@ -62,6 +62,9 @@ public class ScoreHandler : MonoBehaviour
     public class ScoreHolder
     {
         public string username;
+        public GraveTop gTop;
+        public GraveSide gSide;
+        public GraveBottom gBottom;
         public ulong score;
         public float offset = 0;
     }
@@ -189,7 +192,7 @@ public class ScoreHandler : MonoBehaviour
         //hParent.transform.DOScale(new Vector3(1, 1, 1), moveTime);
 
         opening = true;
-        Invoke("ReactivateEventSystem", moveTime + 0.01f);
+        Invoke(nameof(ReactivateEventSystem), moveTime + 0.01f);
 
         if(accountHandler.accountState == AccountStates.LoggedOut)
         {
@@ -206,8 +209,8 @@ public class ScoreHandler : MonoBehaviour
             bool ok = false;
 
             if (Social.localUser.authenticated || overrideAuth)
-            { //registrierung mit gplay daten
-#if UNITY_ANDROID
+            { //registrierung mit test daten
+#if UNITY_ANDROID || UNITY_IOS
                 AccountHandler.Instance.StartGplayRegister();
 #endif          
                 ok = true;
@@ -578,13 +581,20 @@ public class ScoreHandler : MonoBehaviour
 
         string authHash = AccountHandler.Md5Sum(username + AccountHandler.authKey);
 
+        ShopHandler shop = ShopHandler.Instance;
+
+        string gTop = shop.allGraveTops[shop.GetSelected(CustomizationType.GraveTop)].identifier;
+        string gSide = shop.allGraveSides[shop.GetSelected(CustomizationType.GraveSide)].identifier;
+        string gBottom = shop.allGraveBottoms[shop.GetSelected(CustomizationType.GraveBottom)].identifier;
+
         string link = "https://bruh.games/manager.php?setscore=1&lastscore=" +
                         lastS.ToString() + hsString + "&name=" + username + "&last50=1&diff=" + diff.ToString() +
                         "&v=" + Application.version + "&lvl=" + currentLvl.ToString() + "&pr=" + currentPrestige.ToString() +
+                        "&setgrave=1&gtop=" + gTop + "&gside=" + gSide + "&gbottom=" + gBottom +
                         "&hash=" + authHash;
 
         if(accountHandler.accountState == AccountStates.LoggedOut ||
-            accountHandler.accountState == AccountStates.Synced)
+            accountHandler.accountState != AccountStates.Synced)
         { //username nicht gesetzt bzw nicht gesynced-> abfrage ohne score set
             string tempName = AccountHandler.tempNames[Random.Range(0, 4)];
             authHash = AccountHandler.Md5Sum(tempName + AccountHandler.authKey);
@@ -592,6 +602,8 @@ public class ScoreHandler : MonoBehaviour
             link = "https://bruh.games/manager.php?last50=1&diff=" + diff.ToString() +
                         "&v=" + Application.version + "&name=" + tempName + "&hash=" + authHash;
         }
+
+        Debug.Log(link);
 
         string os = "0";
 
@@ -753,10 +765,19 @@ public class ScoreHandler : MonoBehaviour
         {
             string[] scoreData = rawData[i].Split(',');
 
+            string topIdentifier = scoreData[2];
+            string sideIdentifier = scoreData[3];
+            string bottomIdentifier = scoreData[4];
+
+            Debug.Log(scoreData[1] + " " + topIdentifier);
+
             ScoreHolder nH = new ScoreHolder
             {
                 score = ulong.Parse(scoreData[0]),
-                username = scoreData[1]
+                username = scoreData[1],
+                gTop = ShopHandler.Instance.GetGraveTop(topIdentifier),
+                gSide = ShopHandler.Instance.GetGraveSide(sideIdentifier),
+                gBottom = ShopHandler.Instance.GetGraveBottom(bottomIdentifier)
             };
 
             int count = 0;

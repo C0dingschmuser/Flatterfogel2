@@ -1961,9 +1961,10 @@ public class FlatterFogelHandler : MonoBehaviour
                         }
                     }
 
+                    ScoreHandler.ScoreHolder temp = scoreHandler.scoreData[i];
+
                     GameObject nG = 
-                        SpawnGravestone(lastGraveX, 
-                        scoreHandler.scoreData[i].username);
+                        SpawnGravestone(lastGraveX, temp.username, temp.gTop, temp.gSide, temp.gBottom);
 
                     gravestoneObjs.Add(nG);
                 }
@@ -2043,12 +2044,12 @@ public class FlatterFogelHandler : MonoBehaviour
         pipes.Add(pipeBottom);
     }
 
-    private GameObject SpawnGravestone(float xPos, string name)
+    private GameObject SpawnGravestone(float xPos, string name, GraveTop top, GraveSide side, GraveBottom bottom)
     {
         float yPos = 278.1f;
 
-        GameObject nG = objectPooler.SpawnFromPool("Gravestone", new Vector3(xPos, yPos), Quaternion.identity);
-        nG.GetComponent<GravestoneHandler>().StartGravstone(player, scrollSpeed, name);
+        GameObject nG = objectPooler.SpawnFromPool("Gravestone", new Vector3(xPos, yPos, 100), Quaternion.identity);
+        nG.GetComponent<GravestoneHandler>().StartGravstone(player, top, side, bottom, scrollSpeed, name);
 
         return nG;
     }

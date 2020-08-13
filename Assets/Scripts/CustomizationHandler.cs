@@ -15,6 +15,9 @@ public enum CustomizationType
     Pipe = 2,
     PipeColor = 3,
     Hat = 4,
+    GraveTop = 5,
+    GraveSide = 6,
+    GraveBottom = 7,
 }
 
 public class CustomizationHandler : MonoBehaviour

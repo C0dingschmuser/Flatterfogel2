@@ -5,15 +5,38 @@ using UnityEngine.UI;
 
 public class GravestoneHandler : MonoBehaviour
 {
-    public GameObject player;
+    public GameObject player, topSprite, sideLeftSprite, sideRightSprite, bottomSprite;
     public Text[] stoneName;
+
     private float opacity = 0;
 
     private const float maxDistance = 150;
 
-    public void StartGravstone(GameObject player, float scrollSpeed, string name)
+    private void ApplyOffset(GameObject obj, Vector3 offset)
+    {
+        Vector3 pos = transform.position;
+
+        pos.x += offset.x;
+        pos.y += offset.y;
+        pos.z += offset.z;
+
+        obj.transform.position = pos;
+    }
+
+    public void StartGravstone(GameObject player, GraveTop top, GraveSide side, GraveBottom bottom,
+        float scrollSpeed, string name)
     {
         this.player = player;
+
+        ApplyOffset(topSprite, top.offset);
+        ApplyOffset(sideLeftSprite, side.offset[0]);
+        ApplyOffset(sideRightSprite, side.offset[1]);
+        ApplyOffset(bottomSprite, bottom.offset);
+
+        topSprite.GetComponent<SpriteRenderer>().sprite = top.sprite;
+        sideLeftSprite.GetComponent<SpriteRenderer>().sprite = side.sprite;
+        sideRightSprite.GetComponent<SpriteRenderer>().sprite = side.sprite;
+        bottomSprite.GetComponent<SpriteRenderer>().sprite = bottom.sprite;
 
         opacity = 0;
 
