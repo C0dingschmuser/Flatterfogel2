@@ -31,6 +31,8 @@ public class ShopHandler : MonoBehaviour
     private CustomizationHandler customizationHandler = null;
     [SerializeField]
     private PipeCustomizationHandler pipeCustomizationHandler = null;
+    [SerializeField]
+    private GraveCustomizationHandler graveCustomizationHandler = null;
 
     public Canvas windowCanvas;
     public GameObject shopObj, eventSystem;
@@ -464,6 +466,15 @@ public class ShopHandler : MonoBehaviour
             case CustomizationType.Pipe:
                 s = allPipes[id].endSprite[0];
                 break;
+            case CustomizationType.GraveTop:
+                s = allGraveTops[id].sprite;
+                break;
+            case CustomizationType.GraveSide:
+                s = allGraveSides[id].sprite;
+                break;
+            case CustomizationType.GraveBottom:
+                s = allGraveBottoms[id].sprite;
+                break;
         }
 
         return s;
@@ -486,6 +497,15 @@ public class ShopHandler : MonoBehaviour
                 break;
             case CustomizationType.Hat:
                 cost = allHats[id].cost;
+                break;
+            case CustomizationType.GraveTop:
+                cost = allGraveTops[id].cost;
+                break;
+            case CustomizationType.GraveSide:
+                cost = allGraveSides[id].cost;
+                break;
+            case CustomizationType.GraveBottom:
+                cost = allGraveBottoms[id].cost;
                 break;
         }
 
@@ -522,6 +542,15 @@ public class ShopHandler : MonoBehaviour
                 break;
             case CustomizationType.Hat:
                 shopItems = allHats.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.GraveTop:
+                shopItems = allGraveTops.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.GraveSide:
+                shopItems = allGraveSides.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.GraveBottom:
+                shopItems = allGraveBottoms.Cast<ShopItem>().ToList();
                 break;
         }
 
@@ -1144,8 +1173,6 @@ public class ShopHandler : MonoBehaviour
 
         pipeColorID = ObscuredPrefs.GetInt("SelectedPipeColorID", 1);
 
-        Debug.Log(pipeColorID);
-
         pipeColor = pipeCustomizationHandler.GetPipeColor(pipeColorID); //Pipe Color laden
         FF_PlayerData.Instance.LoadPipe();
 
@@ -1309,6 +1336,10 @@ public class ShopHandler : MonoBehaviour
         ObscuredPrefs.SetInt("SelectedHeatShield", selectedHeatShield);
         ObscuredPrefs.SetString("SelectedHatString", allHats[selectedHat].identifier);
         ObscuredPrefs.SetInt("SelectedPipeColorID", pipeColorID);
+
+        ObscuredPrefs.SetString("SelectedGraveTopString", allGraveTops[selectedGraveTop].identifier);
+        ObscuredPrefs.SetString("SelectedGraveSideString", allGraveSides[selectedGraveSide].identifier);
+        ObscuredPrefs.SetString("SelectedGraveBottomString", allGraveBottoms[selectedGraveBottom].identifier);
     }
 
     private void OnApplicationPause(bool pause)
@@ -1412,6 +1443,7 @@ public class ShopHandler : MonoBehaviour
         slotParent.gameObject.SetActive(false);
         customizationHandler.gameObject.SetActive(false);
         pipeCustomizationHandler.gameObject.SetActive(false);
+        graveCustomizationHandler.gameObject.SetActive(false);
         buyButton.gameObject.SetActive(false);
 
         shopMenuHandler.OpenMenu(true);
@@ -1464,6 +1496,7 @@ public class ShopHandler : MonoBehaviour
 
         customizationHandler.CloseCustomization(true);
         pipeCustomizationHandler.CloseCustomization(true);
+        graveCustomizationHandler.CloseCustomization(true);
 
         Invoke(nameof(ReactivateEventSystem), moveTime + 0.01f);
     }
@@ -1749,6 +1782,15 @@ public class ShopHandler : MonoBehaviour
             case CustomizationType.Hat:
                 shopItems = allHats.Cast<ShopItem>().ToList();
                 break;
+            case CustomizationType.GraveTop:
+                shopItems = allGraveTops.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.GraveSide:
+                shopItems = allGraveSides.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.GraveBottom:
+                shopItems = allGraveBottoms.Cast<ShopItem>().ToList();
+                break;
         }
 
         price = shopItems[id].cost;
@@ -1792,6 +1834,15 @@ public class ShopHandler : MonoBehaviour
                 newBoughtHats[newBoughtHats.Length - 1] = id;
 
                 allSkins[selectedSkin].boughtHats = newBoughtHats;
+                break;
+            case CustomizationType.GraveTop:
+                allGraveTops[id].purchased = true;
+                break;
+            case CustomizationType.GraveSide:
+                allGraveSides[id].purchased = true;
+                break;
+            case CustomizationType.GraveBottom:
+                allGraveBottoms[id].purchased = true;
                 break;
         }
 
@@ -1865,6 +1916,15 @@ public class ShopHandler : MonoBehaviour
                     break;
                 case CustomizationType.PipeColor:
                     pipeColorID = id;
+                    break;
+                case CustomizationType.GraveTop:
+                    selectedGraveTop = id;
+                    break;
+                case CustomizationType.GraveSide:
+                    selectedGraveSide = id;
+                    break;
+                case CustomizationType.GraveBottom:
+                    selectedGraveBottom = id;
                     break;
             }
         } else

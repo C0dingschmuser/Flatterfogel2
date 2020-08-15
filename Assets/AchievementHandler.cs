@@ -668,6 +668,8 @@ public class AchievementHandler : MonoBehaviour
                 allAchHolders[i].transform.SetParent(contentParent);
             }
         }
+
+        SetContentPos(completedAchs.Count - 1);
     }
 
     public void CloseClicked()

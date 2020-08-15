@@ -15,12 +15,27 @@ MonoBehaviour:
   identifier: default
   itemID: 0
   rarity: 0
-  purchased: 0
+  purchased: 1
   salePercent: 0
-  cost: []
+  cost:
+  - mineralID: 14
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
   animated: 0
   animationSpeed: 0.25
   shopTime: 0
   shopStep: 0
   sprite: {fileID: 21300000, guid: 80a5c5fc05419954babd2a267bc7e50e, type: 3}
   offset: {x: 0, y: 0, z: -131.035}
+  menuOffset: {x: 0, y: 0, z: 0}
+  wingOffset:
+  - {x: -52.414, y: 26.207, z: 0}
+  - {x: 44.552, y: 26.207, z: 0}
+  wingMenuOffset:
+  - {x: -49.75, y: 24.25, z: 0}
+  - {x: 42.375, y: 24.25, z: 0}

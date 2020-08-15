@@ -2,19 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using MEC;
 
 public class GravestoneHandler : MonoBehaviour
 {
     public GameObject player, topSprite, sideLeftSprite, sideRightSprite, bottomSprite;
     public Text[] stoneName;
 
+    public CoroutineHandle handle;
+
     private float opacity = 0;
 
     private const float maxDistance = 150;
 
-    private void ApplyOffset(GameObject obj, Vector3 offset)
+    private void ApplyOffset(GameObject obj, Transform parent, Vector3 offset)
     {
         Vector3 pos = transform.position;
+
+        if(parent != null)
+        {
+            pos = parent.position;
+        }
 
         pos.x += offset.x;
         pos.y += offset.y;
@@ -28,10 +36,14 @@ public class GravestoneHandler : MonoBehaviour
     {
         this.player = player;
 
-        ApplyOffset(topSprite, top.offset);
-        ApplyOffset(sideLeftSprite, side.offset[0]);
-        ApplyOffset(sideRightSprite, side.offset[1]);
-        ApplyOffset(bottomSprite, bottom.offset);
+        //Bodenposition ist standard
+        //toppart ist von bodenposition + offset abhängig
+        //sides sind von topposition & jeweiligem offset abhängig
+
+        ApplyOffset(bottomSprite, null, bottom.offset);
+        ApplyOffset(topSprite, bottomSprite.transform, top.offset);
+        ApplyOffset(sideLeftSprite, topSprite.transform, top.wingOffset[0]);
+        ApplyOffset(sideRightSprite, topSprite.transform, top.wingOffset[1]);
 
         topSprite.GetComponent<SpriteRenderer>().sprite = top.sprite;
         sideLeftSprite.GetComponent<SpriteRenderer>().sprite = side.sprite;
@@ -48,7 +60,7 @@ public class GravestoneHandler : MonoBehaviour
             SetAlpha(stoneName[1].GetComponent<Text>().color, 0);
         stoneName[1].GetComponent<Text>().text = name;
 
-        StartCoroutine(UpdateAlpha());
+        handle = Timing.RunCoroutine(_UpdateAlpha());
     }
 
     private Color SetAlpha(Color c, float alpha)
@@ -57,13 +69,43 @@ public class GravestoneHandler : MonoBehaviour
         return c;
     }
 
+    public void FadeOutGravestone(float time)
+    {
+        Timing.KillCoroutines(handle);
+        Timing.RunCoroutine(_WaitFadeOut(time));
+    }
+
+    IEnumerator<float> _WaitFadeOut(float time = 0.3f)
+    {
+        float opacity = stoneName[0].GetComponent<Text>().color.a;
+        float maxTime = time;
+        while(time > 0)
+        {
+            opacity = time / maxTime;
+
+            Color c1 = stoneName[0].GetComponent<Text>().color;
+            c1.a = opacity;
+
+            Color c2 = stoneName[1].GetComponent<Text>().color;
+            c2.a = opacity;
+
+            stoneName[0].GetComponent<Text>().color = c1;
+            stoneName[1].GetComponent<Text>().color = c2;
+
+            time -= 0.1f;
+            yield return Timing.WaitForSeconds(0.1f);
+        }
+
+        StopGravestone();
+    }
+
     public void StopGravestone()
     {
-        StopCoroutine(UpdateAlpha());
+        Timing.KillCoroutines(handle);
         gameObject.SetActive(false);
     }
 
-    IEnumerator UpdateAlpha()
+    IEnumerator<float> _UpdateAlpha()
     {
         while(true)
         {
@@ -84,7 +126,7 @@ public class GravestoneHandler : MonoBehaviour
                 stoneName[1].GetComponent<Text>().color =
                     SetAlpha(stoneName[1].GetComponent<Text>().color, opacity);
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return Timing.WaitForSeconds(0.1f);
         }
     }
 }

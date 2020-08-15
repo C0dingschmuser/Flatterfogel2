@@ -320,7 +320,12 @@ public class FlatterFogelHandler : MonoBehaviour
                 coins[i].SetActive(false);
             }
             coins.Clear();
-            
+
+            for (int i = 0; i < gravestoneObjs.Count; i++)
+            {
+                gravestoneObjs[i].GetComponent<GravestoneHandler>().FadeOutGravestone(0.5f);
+            }
+
             Invoke(nameof(BeginPipeDestruction), 0.7f);
             Invoke(nameof(BeginGroundDestruction), 0.7f);
             Invoke(nameof(DeadRestart), 0.75f);
@@ -404,11 +409,6 @@ public class FlatterFogelHandler : MonoBehaviour
         player.GetComponent<FF_PlayerData>().EnableDisableHardcore(hardcore);
 
         pipeParent.GetComponent<Dissolver>().ResetDissolve();
-
-        for (int i = 0; i < gravestoneObjs.Count; i++)
-        {
-            gravestoneObjs[i].GetComponent<GravestoneHandler>().StopGravestone();
-        }
 
         gravestoneObjs.Clear();
 
@@ -2247,6 +2247,35 @@ public class FlatterFogelHandler : MonoBehaviour
         pos.z = deathText.transform.position.z;
         pos.y += 125;
         deathText.transform.position = pos;
+
+        if (!destructionMode && !zigZag && !miningMode && !battleRoyale && !hardcore && score > 0)
+        { //Eigenen Grabstein bei Classic spawnen
+            ShopHandler temp = ShopHandler.Instance;
+
+            GameObject nG = SpawnGravestone(player.transform.position.x, AccountHandler.Instance.username,
+                temp.allGraveTops[temp.GetSelected(CustomizationType.GraveTop)],
+                temp.allGraveSides[temp.GetSelected(CustomizationType.GraveSide)],
+                temp.allGraveBottoms[temp.GetSelected(CustomizationType.GraveBottom)]);
+
+            Vector3 pPos = nG.transform.position;
+
+            for (int i = 0; i < gravestoneObjs.Count; i++)
+            {
+                float dist = Vector2.Distance(pPos, gravestoneObjs[i].transform.position);
+
+                if (dist < 121.5f)
+                { //zu nah -> würde überlappen -> nach unten verlegen
+                    gravestoneObjs[i].GetComponent<GravestoneHandler>().FadeOutGravestone(0.3f);
+                    gravestoneObjs[i].transform.DOMoveY(gravestoneObjs[i].transform.position.y - 200, 0.3f);
+                }
+            }
+
+            pPos.y -= 200;
+
+            nG.transform.DOMoveY(pPos.y + 200, 0.3f);
+
+            gravestoneObjs.Add(nG);
+        }
 
         Invoke(nameof(ResetTime), 0.35f);
         //Invoke("ResetCamera", 0.75f);

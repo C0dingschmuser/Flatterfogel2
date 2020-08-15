@@ -407,10 +407,20 @@ public class ScoreHandler : MonoBehaviour
 
         string username = AccountHandler.Instance.username;
 
-        string link = "https://bruh.games/main.php?setscore=1&lastscore=" +
+        ShopHandler shop = ShopHandler.Instance;
+
+        string gTop = shop.allGraveTops[shop.GetSelected(CustomizationType.GraveTop)].identifier;
+        string gSide = shop.allGraveSides[shop.GetSelected(CustomizationType.GraveSide)].identifier;
+        string gBottom = shop.allGraveBottoms[shop.GetSelected(CustomizationType.GraveBottom)].identifier;
+
+        string authHash = AccountHandler.Md5Sum(username + AccountHandler.authKey);
+
+        string link = "https://bruh.games/manager.php?setscore=1&lastscore=" +
                         lastS.ToString() + hsString + "&name=" + username + "&hs=1&diff=" +
                         diff.ToString() + "&mode=" + modeSelected.ToString() +
-                        "&lvl=" + currentLvl.ToString() + "&pr=" + currentPrestige.ToString();
+                        "&lvl=" + currentLvl.ToString() + "&pr=" + currentPrestige.ToString() +
+                        "&setgrave=1&gtop=" + gTop + "&gside=" + gSide + "&gbottom=" + gBottom +
+                        "&hash=" + authHash;
 
         UnityWebRequest www = UnityWebRequest.Get(link);
         yield return www.SendWebRequest();

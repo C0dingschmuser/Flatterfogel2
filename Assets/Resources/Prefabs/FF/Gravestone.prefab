@@ -74,7 +74,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 4c0f721cd5b0ec3458aa5b5538def573, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
@@ -160,7 +160,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 99e0550c288be444a8ba9ebc3eab8989, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -302,18 +302,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  topSprite: {fileID: 5172081464852069476}
+  topSprite: {fileID: 6249445588541985919}
   sideLeftSprite: {fileID: 8999401530973439512}
   sideRightSprite: {fileID: 417911215713438411}
   bottomSprite: {fileID: 1857416849600843113}
   stoneName:
   - {fileID: 4415965792662303259}
   - {fileID: 4415965793157687019}
-  defaultTopOffset: {x: 0, y: 0, z: -131.035}
-  defaultBottomOffset: {x: 0, y: 0, z: -131.035}
-  defaultSideOffsets:
-  - {x: -52.414, y: 26.207, z: -131.035}
-  - {x: 44.552, y: 26.207, z: -131.035}
 --- !u!1 &4415965793157687017
 GameObject:
   m_ObjectHideFlags: 0
@@ -503,7 +498,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 80a5c5fc05419954babd2a267bc7e50e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -627,7 +622,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 4c0f721cd5b0ec3458aa5b5538def573, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

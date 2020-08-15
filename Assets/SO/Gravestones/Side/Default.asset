@@ -15,14 +15,19 @@ MonoBehaviour:
   identifier: default
   itemID: 0
   rarity: 0
-  purchased: 0
+  purchased: 1
   salePercent: 0
-  cost: []
+  cost:
+  - mineralID: 14
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
   animated: 0
   animationSpeed: 0.25
   shopTime: 0
   shopStep: 0
   sprite: {fileID: 21300000, guid: 4c0f721cd5b0ec3458aa5b5538def573, type: 3}
-  offset:
-  - {x: -52.414, y: 26.207, z: -131.035}
-  - {x: 44.552, y: 26.207, z: -131.035}

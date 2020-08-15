@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b7c16dfbf0327a48acf506d0aca48f4, type: 3}
+  m_Name: Thin
+  m_EditorClassIdentifier: 
+  identifier: thin
+  itemID: 0
+  rarity: 0
+  purchased: 0
+  salePercent: 0
+  cost:
+  - mineralID: 14
+    amount: 35
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  sprite: {fileID: 21300000, guid: 646a45fd22a99d7478c317b9edd6ae70, type: 3}
+  offset: {x: 0, y: 0, z: -131.035}
+  menuOffset: {x: 0, y: 0, z: 0}
+  wingOffset:
+  - {x: -39.206, y: 17.139, z: 0}
+  - {x: 31.344, y: 17.139, z: 0}
+  wingMenuOffset:
+  - {x: -37.5, y: 15.25, z: 0}
+  - {x: 29.925, y: 15.25, z: 0}

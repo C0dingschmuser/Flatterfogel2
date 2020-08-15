@@ -15,11 +15,15 @@ public class ShopMenuHandler : MonoBehaviour
     [SerializeField]
     private MinerCustomizationHandler minerCustomizationHandler = null;
     [SerializeField]
+    private GraveCustomizationHandler graveCustomizationHandler = null;
+    [SerializeField]
     private Image skinImage = null, wingImage = null;
     [SerializeField]
     private Image miningSkinImage = null, minerImage = null;
     [SerializeField]
     private Image pipeImage = null;
+    [SerializeField]
+    private Image topGrave, sideLeftGrave, sideRightGrave, bottomGrave;
 
     [SerializeField]
     private Material fontMat = null, imageMat = null;
@@ -87,6 +91,33 @@ public class ShopMenuHandler : MonoBehaviour
         }
 
         pipeImage.color = pipeColor;
+
+
+        Transform graveMenuParent = topGrave.transform.parent.parent;
+
+        GraveTop currentTop = shop.allGraveTops[shop.GetSelected(CustomizationType.GraveTop)];
+        GraveSide currentSide = shop.allGraveSides[shop.GetSelected(CustomizationType.GraveSide)];
+        GraveBottom currentBottom = shop.allGraveBottoms[shop.GetSelected(CustomizationType.GraveBottom)];
+
+        topGrave.sprite = currentTop.sprite;
+        sideLeftGrave.sprite = currentSide.sprite;
+        sideRightGrave.sprite = currentSide.sprite;
+        bottomGrave.sprite = currentBottom.sprite;
+
+        ApplyOffset(graveMenuParent, bottomGrave.transform, currentBottom.menuOffset);
+        ApplyOffset(bottomGrave.transform, topGrave.transform, currentTop.menuOffset);
+        ApplyOffset(topGrave.transform, sideLeftGrave.transform, currentTop.wingMenuOffset[0]);
+        ApplyOffset(topGrave.transform, sideRightGrave.transform, currentTop.wingMenuOffset[1]);
+    }
+
+    private void ApplyOffset(Transform baseObj, Transform target, Vector3 offset)
+    {
+        Vector3 pos = baseObj.transform.position;
+        pos.x += offset.x;
+        pos.y += offset.y;
+        pos.z += offset.z;
+
+        target.transform.position = pos;
     }
 
     public void TypeClicked(int id)
@@ -128,6 +159,10 @@ public class ShopMenuHandler : MonoBehaviour
                 break;
             case 3: //backgrounds
                 shop.TypeClicked(4);
+                break;
+            case 4: //graves
+                graveCustomizationHandler.gameObject.SetActive(true);
+                graveCustomizationHandler.StartGraveCustomizationHandler();
                 break;
         }
         gameObject.SetActive(false);

@@ -7,7 +7,4 @@ public class GraveSide : ShopItem
 {
     [Header("Grafik")]
     public Sprite sprite = null;
-
-    [Header("Allgemein")]
-    public Vector3[] offset;
 }
