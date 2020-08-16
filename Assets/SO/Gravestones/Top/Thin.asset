@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Thin
   m_EditorClassIdentifier: 
   identifier: thin
-  itemID: 0
+  itemID: 2
   rarity: 0
   purchased: 0
   salePercent: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
   shopTime: 0
   shopStep: 0
   sprite: {fileID: 21300000, guid: 646a45fd22a99d7478c317b9edd6ae70, type: 3}
-  offset: {x: 0, y: 0, z: -131.035}
+  offset: {x: 0, y: 0, z: 0}
   menuOffset: {x: 0, y: 0, z: 0}
   wingOffset:
   - {x: -39.206, y: 17.139, z: 0}

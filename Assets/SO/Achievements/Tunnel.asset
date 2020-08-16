@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   identifier: tunnelCompleted
   mainSprite:
-  - {fileID: 21300000, guid: 3c041ebf968670241abb9ae784d573a1, type: 3}
+  - {fileID: 21300000, guid: a12d5736bf8ba1f4db5f99c089863133, type: 3}
   rewards:
   - mineralID: 16
     amount: 60
@@ -30,9 +30,10 @@ MonoBehaviour:
     m_TableEntryReference:
       m_KeyId: 4
       m_Key: 
+  unlockMode: {fileID: 0}
   titleString: Tunnelarbeiter
   descriptionString: Fliege durch einen Tunnel
-  step: 0
+  step: 1
   maxStep: 5
   upgradeStep: 0
   maxUpgradeSteps: 0

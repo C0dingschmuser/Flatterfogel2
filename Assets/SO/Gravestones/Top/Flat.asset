@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Flat
   m_EditorClassIdentifier: 
   identifier: flat
-  itemID: 0
+  itemID: 1
   rarity: 0
   purchased: 0
   salePercent: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
   shopTime: 0
   shopStep: 0
   sprite: {fileID: 21300000, guid: dc261e1c0ae15c448a0c9daede7a343a, type: 3}
-  offset: {x: 0, y: 0, z: -131.035}
+  offset: {x: 0, y: 0, z: 0}
   menuOffset: {x: 0, y: 0, z: 0}
   wingOffset:
   - {x: -52.414, y: 26.207, z: 0}

@@ -1346,8 +1346,6 @@ public class FlatterFogelHandler : MonoBehaviour
                         {
                             PipeHolder pH = tempPipes[i].transform.parent.GetComponent<PipeHolder>();
 
-                            pH.StopMove();
-
                             if(tutHandler.mainTut == 1)
                             { //achs erst updaten wenn tutorial abgeschlossen
                                 if (pH.isMoving)
@@ -1368,6 +1366,8 @@ public class FlatterFogelHandler : MonoBehaviour
                                     }
                                 }
                             }
+
+                            pH.StopMove();
                         }
 
                         if(tutHandler.mainTut == 0)
@@ -1854,15 +1854,27 @@ public class FlatterFogelHandler : MonoBehaviour
             ok = false;
         } else if(score < 30)
         {
-            ok = true;
+            if(Random.Range(0, 7) == 0)
+            {
+                ok = true;
+            }
+
             speed = 75;
         } else if(score < 70)
         {
-            ok = true;
+            if(Random.Range(0, 5) == 0)
+            {
+                ok = true;
+            }
+
             speed = 100;
         } else
         {
-            ok = true;
+            if(Random.Range(0, 2) == 0)
+            {
+                ok = true;
+            }
+
             speed = 125;
         }
 

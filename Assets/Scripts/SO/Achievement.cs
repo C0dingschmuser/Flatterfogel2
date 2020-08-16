@@ -14,6 +14,6 @@ public class Achievement : ScriptableObject
     public string titleString, descriptionString; //assigned beim laden
     public int step = 0, maxStep = 10, upgradeStep = 0, maxUpgradeSteps = 0;
     public float stepMultiplier = 2, rewardMultiplier = 2;
-    public bool completed = false, rewardCollected = false;
+    public bool completed = false, rewardCollected = false, upgradable = false;
 
 }

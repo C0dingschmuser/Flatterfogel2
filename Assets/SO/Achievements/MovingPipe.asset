@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   identifier: movingPipe
   mainSprite:
-  - {fileID: 21300000, guid: 54cfff652c29eb5469067507d63123da, type: 3}
+  - {fileID: 21300000, guid: 272642521839a004dad5454918945d74, type: 3}
   rewards:
   - mineralID: 16
     amount: 45
@@ -30,9 +30,10 @@ MonoBehaviour:
     m_TableEntryReference:
       m_KeyId: 8
       m_Key: 
+  unlockMode: {fileID: 0}
   titleString: Navigationsmeister
   descriptionString: "Fliege durch eine sich bewegende R\xF6hre"
-  step: 0
+  step: 11
   maxStep: 25
   upgradeStep: 0
   maxUpgradeSteps: 0

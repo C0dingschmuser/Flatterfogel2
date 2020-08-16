@@ -613,8 +613,6 @@ public class ScoreHandler : MonoBehaviour
                         "&v=" + Application.version + "&name=" + tempName + "&hash=" + authHash;
         }
 
-        Debug.Log(link);
-
         string os = "0";
 
 #if UNITY_IOS

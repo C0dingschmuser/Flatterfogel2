@@ -31,7 +31,7 @@ MonoBehaviour:
   shopTime: 0
   shopStep: 0
   sprite: {fileID: 21300000, guid: 80a5c5fc05419954babd2a267bc7e50e, type: 3}
-  offset: {x: 0, y: 0, z: -131.035}
+  offset: {x: 0, y: 0, z: 0}
   menuOffset: {x: 0, y: 0, z: 0}
   wingOffset:
   - {x: -52.414, y: 26.207, z: 0}
