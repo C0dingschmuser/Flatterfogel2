@@ -162,7 +162,7 @@ public class AccountHandler : MonoBehaviour
             if ((username[i] >= 'a' && username[i] <= 'z') ||
                 (username[i] >= 'A' && username[i] <= 'Z') ||
                 username[i] == '.' ||
-                username[i] == ',' ||
+                //username[i] == ',' ||
                 username[i] == '_' ||
                 username[i] == '-' ||
                 (username[i] >= '0' && username[i] <= '9'))

@@ -287,12 +287,12 @@ public class AchievementHandler : MonoBehaviour
         mainText.text = achCoins.ToString() + "/" + achMaxCoins.ToString();
     }
 
-    public void StartLoadLocalization()
+    public void StartLoadLocalization(bool load)
     {
-        StartCoroutine(LoadLocalization());
+        StartCoroutine(LoadLocalization(load));
     }
 
-    private IEnumerator LoadLocalization()
+    private IEnumerator LoadLocalization(bool load)
     {
         AsyncOperationHandle handle;
 
@@ -307,11 +307,16 @@ public class AchievementHandler : MonoBehaviour
             allAchievements[i].descriptionString = (string)handle.Result;
         }
 
-        LoadAchievements();
+        LoadAchievements(load);
     }
 
-    private void LoadAchievements()
+    private void LoadAchievements(bool load)
     {
+        if(!load)
+        { //wenn nicht startup achievements vor reset abspeichern
+            SaveAchievements();
+        }
+
         for(int i = 0; i < contentParent.childCount; i++)
         {
             Destroy(contentParent.GetChild(i).gameObject);

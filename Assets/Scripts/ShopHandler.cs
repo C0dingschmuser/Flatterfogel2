@@ -296,6 +296,31 @@ public class ShopHandler : MonoBehaviour
         return allPipes[pipeID].sprite[0];
     }
 
+    public ShopItem GetItemByString(CustomizationType type, string identifier)
+    {
+        List<ShopItem> allItems = allSkins.Cast<ShopItem>().ToList();
+
+        switch(type)
+        {
+            case CustomizationType.Wing:
+                allItems = allWings.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.Hat:
+                allItems = allHats.Cast<ShopItem>().ToList();
+                break;
+        }
+
+        for(int i = 0; i < allItems.Count; i++)
+        {
+            if(allItems[i].identifier.Contains(identifier))
+            {
+                return allItems[i];
+            }
+        }
+
+        return allItems[0];
+    }
+
     public int GetSelected(CustomizationType type)
     {
         int id;

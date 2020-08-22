@@ -17,7 +17,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 1a4101d01c54e694ea16505a06bdcf56, type: 3}
   rewards:
   - mineralID: 16
-    amount: 75
+    amount: 35
   title:
     m_TableReference:
       m_TableCollectionName: GUID:7300fd89b4d69cc41b25293fb5d9393c
@@ -30,13 +30,15 @@ MonoBehaviour:
     m_TableEntryReference:
       m_KeyId: 10
       m_Key: 
+  unlockMode: {fileID: 0}
   titleString: Immer weiter
   descriptionString: "Fliege durch eine normale R\xF6hre"
-  step: 0
+  step: 50
   maxStep: 50
   upgradeStep: 0
   maxUpgradeSteps: 0
   stepMultiplier: 2
   rewardMultiplier: 2
-  completed: 0
-  rewardCollected: 0
+  completed: 1
+  rewardCollected: 1
+  upgradable: 0

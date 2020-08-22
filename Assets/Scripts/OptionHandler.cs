@@ -175,9 +175,26 @@ public class OptionHandler : MonoBehaviour
 
         string selectedLocaleName = PlayerPrefs.GetString("SelectedLocale", "");
 
+        Debug.Log(selectedLocaleName);
+
         if(selectedLocaleName.Length == 0)
         { //system default
-            selectedLocaleName = LocalizationSettings.SelectedLocale.name;
+            switch(Application.systemLanguage)
+            {
+                default:
+                case SystemLanguage.English:
+                    selectedLocaleName = "en";
+                    break;
+                case SystemLanguage.German:
+                    selectedLocaleName = "de";
+                    break;
+                case SystemLanguage.French:
+                    selectedLocaleName = "fr";
+                    break;
+                case SystemLanguage.Spanish:
+                    selectedLocaleName = "es";
+                    break;
+            }
         }
 
         for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
@@ -226,7 +243,7 @@ public class OptionHandler : MonoBehaviour
         MineHandler.Instance.StartLoadLocalozation();
         ThinkHandler.Instance.StartLoadLocalization();
         FF_PlayerData.Instance.StartLoadLocalization();
-        AchievementHandler.Instance.StartLoadLocalization();
+        AchievementHandler.Instance.StartLoadLocalization(load);
 
         if(load)
         {

@@ -11,6 +11,7 @@ using CodeStage.AntiCheat.Storage;
 using CodeStage.AntiCheat.ObscuredTypes;
 using System;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using System.Net.Configuration;
 #if UNITY_ANDROID
 using UnityEngine.SocialPlatforms;
 using Firebase.Analytics;
@@ -24,7 +25,7 @@ public class ScoreHandler : MonoBehaviour
     public GameObject[] medalObjs;
     public GameObject scoreObj, perfectHitObj, highscoreObj, coinObj, tapObj, highscoreList, okButton, personalCoinsObj,
         continueEffects, xpParent, goAgainButton, menuButton;
-    public GameObject inputParent, hParent, eventSystem, achParent, fullParent;
+    public GameObject inputParent, hParent, eventSystem, achParent, fullParent, smallPipePrefab, playerObj, levelTextObj;
 
     public GameObject inAppUpdate, inAppDialogue, inAppProgress, inAppProgressButton, inAppError;
     public TextMeshProUGUI progressText, dialogueSize;
@@ -32,7 +33,9 @@ public class ScoreHandler : MonoBehaviour
 
     public Color[] prestigeColors;
     public Transform nameParent, scoreParent, postParent, levelParent, highscoreDataParent, updateParent,
-        positionParent;
+        positionParent, playersParent, pipeParent;
+
+    public GameObject playerObjPrefab;
     public GraphicRaycaster raycaster;
 
     public TMP_InputField nameInput, backupInput;
@@ -55,9 +58,11 @@ public class ScoreHandler : MonoBehaviour
     public static ScoreHandler Instance;
 
     private Tween moveTween = null;
-    private Coroutine highscoreAnimationRoutine = null;
+    private Coroutine highscoreDisplay = null;
     private int diffClicked = -1, modeSelected = 1, newBundleCode = 0, bundleSize = 18000000;
-    private bool registerRunning = false, fetchRunning = false, closing = false, highscoreActive = false, opening = false;
+    private bool registerRunning = false, fetchRunning = false, closing = false, highscoreActive = false,
+        opening = false, dataFetched = false, highscoreDisplayRunning = false;
+    private string[] hsDataString;
 
     public class ScoreHolder
     {
@@ -71,6 +76,7 @@ public class ScoreHandler : MonoBehaviour
 
     private void Awake()
     {
+        hsDataString = new string[3];
         accountHandler.Initialize();
         Instance = this;
     }
@@ -153,12 +159,31 @@ public class ScoreHandler : MonoBehaviour
 
             windowCanvas.sortingOrder = 10;
 
+            for (int a = 0; a < playersParent.childCount; a++)
+            { //alte playerobjs löschen
+                Destroy(playersParent.GetChild(a).gameObject);
+            }
+
+            for (int a = 0; a < pipeParent.childCount; a++)
+            { //alte smallpipes löschen
+                if (pipeParent.GetChild(a).CompareTag("SmallPipe"))
+                {
+                    Destroy(pipeParent.GetChild(a).gameObject);
+                }
+            }
+
+            playerObj.SetActive(true);
+            levelTextObj.SetActive(true);
+
             //MenuData.Instance.DoScaleUp();
             StartCoroutine(MenuData.Instance.DoMoveIn());
         } else if(opening)
         {
             opening = false;
         }
+
+        playersParent.SetParent(highscoreList.transform);
+        playersParent.SetAsLastSibling();
     }
 
     private void ReactivateEventSystemFull()
@@ -193,6 +218,9 @@ public class ScoreHandler : MonoBehaviour
 
         opening = true;
         Invoke(nameof(ReactivateEventSystem), moveTime + 0.01f);
+
+        playersParent.SetParent(hParent.transform.parent);
+        playersParent.SetAsLastSibling();
 
         if(accountHandler.accountState == AccountStates.LoggedOut)
         {
@@ -231,9 +259,15 @@ public class ScoreHandler : MonoBehaviour
         HandleColor(0, modeSelected);
         HandleColor(1, OptionHandler.GetDifficulty());
 
-        if (!fetchRunning)
+        if(!dataFetched)
         {
-            StartCoroutine(FetchHighscores());
+            if (!fetchRunning)
+            {
+                StartCoroutine(FetchHighscores());
+            }
+        } else
+        {
+            highscoreDisplay = StartCoroutine(FetchHighscoreData(RealModeToArrayID(modeSelected)));
         }
     }
 
@@ -248,10 +282,13 @@ public class ScoreHandler : MonoBehaviour
 
         eventSystem.SetActive(false);
 
+        playersParent.SetParent(hParent.transform.parent);
+        playersParent.SetAsLastSibling();
+
         hParent.transform.DOMove(highscoreStartPos, moveTime).SetEase(Ease.InBack);
         //hParent.transform.DOScale(0, moveTime);
 
-        Invoke("ReactivateEventSystem", moveTime + 0.01f);
+        Invoke(nameof(ReactivateEventSystem), moveTime + 0.01f);
     }
 
     public void CloseAchievements()
@@ -346,7 +383,7 @@ public class ScoreHandler : MonoBehaviour
 
     public void ModeClicked(int mode)
     {
-        if (fetchRunning)
+        if (fetchRunning || !dataFetched || highscoreDisplayRunning)
         {
             return;
         }
@@ -355,16 +392,18 @@ public class ScoreHandler : MonoBehaviour
 
         HandleColor(0, mode);
 
-        StartCoroutine(FetchHighscores());
+        //StartCoroutine(FetchHighscores());
+
+        highscoreDisplay = StartCoroutine(FetchHighscoreData(RealModeToArrayID(mode)));
     }
 
     IEnumerator FetchHighscores()
     {
         fetchRunning = true;
 
-        if(highscoreAnimationRoutine != null)
+        if(highscoreDisplay != null)
         {
-            StopCoroutine(highscoreAnimationRoutine);
+            StopCoroutine(highscoreDisplay);
         }
 
         for(int i = 0; i < nameParent.childCount; i++)
@@ -413,13 +452,26 @@ public class ScoreHandler : MonoBehaviour
         string gSide = shop.allGraveSides[shop.GetSelected(CustomizationType.GraveSide)].identifier;
         string gBottom = shop.allGraveBottoms[shop.GetSelected(CustomizationType.GraveBottom)].identifier;
 
+        Skin currentSkin = shop.allSkins[shop.GetSelected(CustomizationType.Skin)];
+
+        string skinString = currentSkin.identifier;
+        string wingString = "null";
+
+        if (currentSkin.overrideWing == null)
+        { //wenn kein override
+            wingString = shop.allWings[shop.GetSelected(CustomizationType.Wing)].identifier;
+        }
+
+        string hatString = shop.allHats[shop.GetSelected(CustomizationType.Hat)].identifier;
+
         string authHash = AccountHandler.Md5Sum(username + AccountHandler.authKey);
 
         string link = "https://bruh.games/manager.php?setscore=1&lastscore=" +
                         lastS.ToString() + hsString + "&name=" + username + "&hs=1&diff=" +
-                        diff.ToString() + "&mode=" + modeSelected.ToString() +
+                        diff.ToString() + "&mode=-1" +
                         "&lvl=" + currentLvl.ToString() + "&pr=" + currentPrestige.ToString() +
                         "&setgrave=1&gtop=" + gTop + "&gside=" + gSide + "&gbottom=" + gBottom +
+                        "&setskin=1&skin=" + skinString + "&wing=" + wingString + "&hat=" + hatString +
                         "&hash=" + authHash;
 
         UnityWebRequest www = UnityWebRequest.Get(link);
@@ -438,7 +490,7 @@ public class ScoreHandler : MonoBehaviour
 
             string wwwData = www.downloadHandler.text;
 
-            if (!wwwData.Contains("#") || !wwwData.Contains(","))
+            if (!wwwData.Contains("#") || !wwwData.Contains(",") || !wwwData.Contains("|"))
             {
                 nameParent.GetChild(0).GetComponent<TextMeshProUGUI>().text =
                     "Error while Parsing:\n" + wwwData;
@@ -452,121 +504,194 @@ public class ScoreHandler : MonoBehaviour
                 //Debug.Log("UString: " + wwwData);
             }
 
-            nameParent.GetChild(0).gameObject.SetActive(true);
-            scoreParent.GetChild(0).gameObject.SetActive(true);
-            levelParent.GetChild(0).gameObject.SetActive(true);
-            positionParent.GetChild(0).gameObject.SetActive(true);
+            string[] rawData = wwwData.Split('|'); //split nach modi
 
-            string[] rawData = wwwData.Split('#');
-
-            for(int i = 0; i < nameParent.childCount; i++)
+            if(rawData.Length > 2)
             {
-                positionParent.GetChild(i).GetComponent<TextMeshProUGUI>().text = "";
-                positionParent.GetChild(i).GetComponent<TextMeshProUGUI>().color = Color.black;
-                nameParent.GetChild(i).GetComponent<TextMeshProUGUI>().text = "";
-                nameParent.GetChild(i).GetComponent<TextMeshProUGUI>().color = Color.black;
-                scoreParent.GetChild(i).GetComponent<TextMeshProUGUI>().text = "";
-                scoreParent.GetChild(i).GetComponent<TextMeshProUGUI>().color = Color.black;
-                levelParent.GetChild(i).GetComponent<Image>().color = prestigeColors[0];
-                levelParent.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = "1";
+                hsDataString[0] = rawData[0]; //classic
+                hsDataString[1] = rawData[1]; //destruction
+                hsDataString[2] = rawData[2]; //mining
+
+                int arrayID = RealModeToArrayID(modeSelected);
+
+                highscoreDisplay = StartCoroutine(FetchHighscoreData(arrayID));
+
+                dataFetched = true;
             }
-
-            bool userInHS = false;
-
-            for (int i = 0; i < rawData.Length - 1; i++)
-            {
-                string[] scoreData = rawData[i].Split(',');
-
-                int num = i + 1;
-
-                if(i < nameParent.childCount - 1)
-                {
-                    string s = "";
-                    string tName = scoreData[1];
-                    string lvl = scoreData[2];
-                    int prestige = Int32.Parse(scoreData[3]);
-
-                    if(tName.Equals(username))
-                    {
-                        userInHS = true;
-                        nameParent.GetChild(i).GetComponent<TextMeshProUGUI>().color =
-                            Color.red;
-                        scoreParent.GetChild(i).GetComponent<TextMeshProUGUI>().color =
-                            Color.red;
-                        positionParent.GetChild(i).GetComponent<TextMeshProUGUI>().color =
-                            Color.red;
-                    }
-
-                    positionParent.GetChild(i).GetComponent<TextMeshProUGUI>().text =
-                        num.ToString() + ".";
-                    nameParent.GetChild(i).GetComponent<TextMeshProUGUI>().text = 
-                        tName;
-
-                    scoreParent.GetChild(i).GetComponent<TextMeshProUGUI>().text =
-                        scoreData[0];
-
-                    levelParent.GetChild(i).GetComponent<Image>().color = 
-                        prestigeColors[prestige];
-                    levelParent.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                        lvl;
-                }
-            }
-
-            if(!userInHS)
-            { //name nicht in top 15 -> unten anzeigen
-                nameParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().text =
-                    username;
-                nameParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().color =
-                    Color.red;
-
-                ulong score = ffHandler.GetHighscore(modeSelected - 1, diff);
-
-                scoreParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().text =
-                    score.ToString();
-                scoreParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().color =
-                    Color.red;
-
-                long lvl = lvlHandler.GetLVL();
-                int prestige = lvlHandler.GetPrestige();
-
-                levelParent.GetChild(levelParent.childCount - 1).GetComponent<Image>().color =
-                    prestigeColors[prestige];
-                levelParent.GetChild(levelParent.childCount - 1).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                    lvl.ToString();
-            }
-
-            nameParent.GetChild(nameParent.childCount - 1).gameObject.SetActive(false);
-            scoreParent.GetChild(nameParent.childCount - 1).gameObject.SetActive(false);
-            levelParent.GetChild(levelParent.childCount - 1).gameObject.SetActive(false);
-            positionParent.GetChild(levelParent.childCount - 1).gameObject.SetActive(false);
-
-            highscoreAnimationRoutine = StartCoroutine(HighscoreAnimation(userInHS));
         }
 
         fetchRunning = false;
     }
 
-    IEnumerator HighscoreAnimation(bool userInHS)
+    private int RealModeToArrayID(int mode)
     {
-        int max = nameParent.childCount - 1;
-        for (int i = 1; i < max; i++)
+        int arrayID = 0;
+
+        switch (mode) //real id
         {
-            nameParent.GetChild(i).gameObject.SetActive(true);
-            scoreParent.GetChild(i).gameObject.SetActive(true);
-            levelParent.GetChild(i).gameObject.SetActive(true);
-            positionParent.GetChild(i).gameObject.SetActive(true);
-            yield return new WaitForSeconds(0.025f);
+            case 1: //classic
+                arrayID = 0;
+                break;
+            case 5: //destruction
+                arrayID = 1;
+                break;
+            case 4: //mining
+                arrayID = 2;
+                break;
         }
 
-        if(!userInHS)
+        return arrayID;
+    }
+
+    private IEnumerator FetchHighscoreData(int arrayID)
+    { //fetcht die bereits erhaltenen daten und zeigt sie an
+        highscoreDisplayRunning = true;
+
+        string username = AccountHandler.Instance.username;
+
+        ShopHandler shop = ShopHandler.Instance;
+
+        nameParent.GetChild(0).gameObject.SetActive(true);
+        scoreParent.GetChild(0).gameObject.SetActive(true);
+        levelParent.GetChild(0).gameObject.SetActive(true);
+        positionParent.GetChild(0).gameObject.SetActive(true);
+
+        string[] rawData = hsDataString[arrayID].Split('#');
+
+        for (int i = 0; i < nameParent.childCount; i++)
         {
-            nameParent.GetChild(max).gameObject.SetActive(true);
-            scoreParent.GetChild(max).gameObject.SetActive(true);
-            levelParent.GetChild(max).gameObject.SetActive(true);
-            positionParent.GetChild(max).gameObject.SetActive(true);
+            positionParent.GetChild(i).GetComponent<TextMeshProUGUI>().text = "";
+            positionParent.GetChild(i).GetComponent<TextMeshProUGUI>().color = Color.black;
+            nameParent.GetChild(i).GetComponent<TextMeshProUGUI>().text = "";
+            nameParent.GetChild(i).GetComponent<TextMeshProUGUI>().color = Color.black;
+            scoreParent.GetChild(i).GetComponent<TextMeshProUGUI>().text = "";
+            scoreParent.GetChild(i).GetComponent<TextMeshProUGUI>().color = Color.black;
+            levelParent.GetChild(i).GetComponent<Image>().color = prestigeColors[0];
+            levelParent.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = "1";
         }
 
-        yield return null;
+        for (int a = 0; a < playersParent.childCount; a++)
+        { //alte playerobjs löschen
+            Destroy(playersParent.GetChild(a).gameObject);
+        }
+
+        for (int a = 0; a < pipeParent.childCount; a++)
+        {
+            if (pipeParent.GetChild(a).CompareTag("SmallPipe"))
+            {
+                Destroy(pipeParent.GetChild(a).gameObject);
+            } else
+            {
+                pipeParent.GetChild(a).gameObject.SetActive(false);
+            }
+        }
+
+        playerObj.SetActive(false);
+        levelTextObj.SetActive(false);
+
+        bool userInHS = false;
+
+        ulong ceiling = 1000;
+        float lastP = 1;
+
+        int temp = 0;
+
+        for (int i = 0; i < rawData.Length - 1; i++)
+        {
+            string[] scoreData = rawData[i].Split(',');
+
+            int num = i + 1;
+
+            GameObject newPlayer = Instantiate(playerObjPrefab, playersParent);
+            Vector3 pos = new Vector3(-655 + (100 * i), 264, -0.1f);
+
+            ulong score = ulong.Parse(scoreData[0]);
+
+            //1015 max y
+            //320 min y
+            //diff 695
+            if (i == 0)
+            {
+                ceiling = score;
+            }
+
+            float p = (score / (float)ceiling);
+
+            /*if(i > 0)
+            {
+                if(lastP - p > 0.45f)
+                { //wenn abstand zu groß glätten
+                    p = Mathf.Abs(lastP - 0.15f);
+
+                    ceiling = (ulong)((float)ceiling * 0.85f);
+                }
+            }*/
+            lastP = p;
+
+            float yPos = 320 + (p * 695);
+
+            pos.y = yPos;
+
+            newPlayer.transform.position = pos;
+
+            GameObject smallPipe = Instantiate(smallPipePrefab, pipeParent);
+            smallPipe.SetActive(true);
+
+            pos.y -= 443; //pipe 443 unter skin
+
+            smallPipe.transform.position = new Vector3(pos.x, -200, pos.z);
+            smallPipe.transform.DOMoveY(pos.y, 0.2f);
+
+            Skin playerSkin = (Skin)shop.GetItemByString(CustomizationType.Skin, scoreData[4]);
+            Wing playerWing = (Wing)shop.GetItemByString(CustomizationType.Wing, scoreData[5]);
+            Hat playerHat = (Hat)shop.GetItemByString(CustomizationType.Hat, scoreData[6]);
+
+            bool isTop = true;
+
+            temp++;
+            if (temp == 2)
+            {
+                isTop = false;
+                temp = 0;
+            }
+
+            newPlayer.GetComponent<PlayerHolder>().LoadPlayer(playerSkin, playerWing, playerHat,
+                scoreData[1], scoreData[0], isTop);
+
+            newPlayer.SetActive(true);
+
+            yield return new WaitForSeconds(0.075f);
+        }
+
+        if (!userInHS)
+        { //name nicht in top 15 -> unten anzeigen
+            nameParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().text =
+                username;
+            nameParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().color =
+                Color.red;
+
+            ulong score = ffHandler.GetHighscore(modeSelected - 1, 1);
+
+            scoreParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().text =
+                score.ToString();
+            scoreParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().color =
+                Color.red;
+
+            long lvl = lvlHandler.GetLVL();
+            int prestige = lvlHandler.GetPrestige();
+
+            levelParent.GetChild(levelParent.childCount - 1).GetComponent<Image>().color =
+                prestigeColors[prestige];
+            levelParent.GetChild(levelParent.childCount - 1).GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                lvl.ToString();
+        }
+
+        nameParent.GetChild(nameParent.childCount - 1).gameObject.SetActive(false);
+        scoreParent.GetChild(nameParent.childCount - 1).gameObject.SetActive(false);
+        levelParent.GetChild(levelParent.childCount - 1).gameObject.SetActive(false);
+        positionParent.GetChild(levelParent.childCount - 1).gameObject.SetActive(false);
+
+        highscoreDisplayRunning = false;
     }
 
     IEnumerator GetStatus()
@@ -597,10 +722,23 @@ public class ScoreHandler : MonoBehaviour
         string gSide = shop.allGraveSides[shop.GetSelected(CustomizationType.GraveSide)].identifier;
         string gBottom = shop.allGraveBottoms[shop.GetSelected(CustomizationType.GraveBottom)].identifier;
 
+        Skin currentSkin = shop.allSkins[shop.GetSelected(CustomizationType.Skin)];
+
+        string skinString = currentSkin.identifier;
+        string wingString = "null";
+
+        if(currentSkin.overrideWing == null)
+        { //wenn kein override
+            wingString = shop.allWings[shop.GetSelected(CustomizationType.Wing)].identifier;
+        }
+
+        string hatString = shop.allHats[shop.GetSelected(CustomizationType.Hat)].identifier;
+
         string link = "https://bruh.games/manager.php?setscore=1&lastscore=" +
                         lastS.ToString() + hsString + "&name=" + username + "&last50=1&diff=" + diff.ToString() +
                         "&v=" + Application.version + "&lvl=" + currentLvl.ToString() + "&pr=" + currentPrestige.ToString() +
                         "&setgrave=1&gtop=" + gTop + "&gside=" + gSide + "&gbottom=" + gBottom +
+                        "&setskin=1&skin=" + skinString + "&wing=" + wingString + "&hat=" + hatString + 
                         "&hash=" + authHash;
 
         if(accountHandler.accountState == AccountStates.LoggedOut ||

@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Sticks
   m_EditorClassIdentifier: 
   identifier: sticks
-  itemID: 0
+  itemID: 3
   rarity: 0
   purchased: 0
   salePercent: 0
   cost:
-  - mineralID: 0
-    amount: 0
+  - mineralID: 14
+    amount: 55
   - mineralID: 0
     amount: 0
   - mineralID: 0

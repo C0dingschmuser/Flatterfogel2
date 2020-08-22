@@ -28,12 +28,12 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2
-    m_Localized: 'There are different Gamemodes that you can unlock.
+    m_Localized: 'There are different gamemodes that you can unlock.
 
 
 
       Tap
-      here to play Classic'
+      here to play classic'
     m_Metadata:
       m_Items: []
   - m_Id: 3
@@ -41,15 +41,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 4
-    m_Localized: Super!
+    m_Localized: Great!
     m_Metadata:
       m_Items: []
   - m_Id: 5
-    m_Localized: Fly through Pipes to collect Points
+    m_Localized: Fly through pipes to collect points
     m_Metadata:
       m_Items: []
   - m_Id: 6
-    m_Localized: Hit the middle perfectly to get more Points
+    m_Localized: Hit the middle perfectly to get more points
     m_Metadata:
       m_Items: []
   - m_Id: 7
@@ -60,7 +60,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 8
-    m_Localized: You can buy Upgrades and Skins with Coins
+    m_Localized: You can buy upgrades and skins with coins
     m_Metadata:
       m_Items: []
   - m_Id: 9

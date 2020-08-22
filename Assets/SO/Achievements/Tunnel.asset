@@ -17,7 +17,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a12d5736bf8ba1f4db5f99c089863133, type: 3}
   rewards:
   - mineralID: 16
-    amount: 60
+    amount: 55
   title:
     m_TableReference:
       m_TableCollectionName: GUID:7300fd89b4d69cc41b25293fb5d9393c
@@ -41,3 +41,4 @@ MonoBehaviour:
   rewardMultiplier: 2
   completed: 0
   rewardCollected: 0
+  upgradable: 0
