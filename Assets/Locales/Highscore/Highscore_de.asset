@@ -158,5 +158,9 @@ MonoBehaviour:
     m_Localized: NAME
     m_Metadata:
       m_Items: []
+  - m_Id: 37
+    m_Localized: Lade...
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

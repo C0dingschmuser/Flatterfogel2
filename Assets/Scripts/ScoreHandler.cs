@@ -20,6 +20,9 @@ using Random = UnityEngine.Random;
 
 public class ScoreHandler : MonoBehaviour
 {
+    public ShopHandler shop;
+    public PipeCustomizationHandler pipeCustomizationHandler;
+
     public Canvas windowCanvas;
     public Material medalMat;
     public GameObject[] medalObjs;
@@ -27,6 +30,7 @@ public class ScoreHandler : MonoBehaviour
         continueEffects, xpParent, goAgainButton, menuButton;
     public GameObject inputParent, hParent, eventSystem, achParent, fullParent, smallPipePrefab, playerObj, levelTextObj;
 
+    public ObjectPooler objPooler;
     public GameObject inAppUpdate, inAppDialogue, inAppProgress, inAppProgressButton, inAppError;
     public TextMeshProUGUI progressText, dialogueSize;
     public Slider progressSlider;
@@ -35,7 +39,7 @@ public class ScoreHandler : MonoBehaviour
     public Transform nameParent, scoreParent, postParent, levelParent, highscoreDataParent, updateParent,
         positionParent, playersParent, pipeParent;
 
-    public GameObject playerObjPrefab;
+    public GameObject playerObjPrefab, loadingObj;
     public GraphicRaycaster raycaster;
 
     public TMP_InputField nameInput, backupInput;
@@ -50,8 +54,8 @@ public class ScoreHandler : MonoBehaviour
     public Vector3 highscoreStartPos, defaultHighscorePos;
     public Transform modeButtonParent, diffButtonParent;
 
-    public LocalizedString perfectHit;
-    public string perfectHitString;
+    public LocalizedString perfectHit, loading;
+    public string perfectHitString, loadingString;
 
     public static float moveTime = 0.25f;
     public static ObscuredInt personalCoins = 0;
@@ -102,6 +106,9 @@ public class ScoreHandler : MonoBehaviour
 
         yield return handle = perfectHit.GetLocalizedString();
         perfectHitString = (string)handle.Result;
+
+        yield return handle = loading.GetLocalizedString();
+        loadingString = (string)handle.Result;
 
         yield return handle = accountHandler.connecting.GetLocalizedString();
         accountHandler.connectionString = (string)handle.Result;
@@ -159,18 +166,9 @@ public class ScoreHandler : MonoBehaviour
 
             windowCanvas.sortingOrder = 10;
 
-            for (int a = 0; a < playersParent.childCount; a++)
-            { //alte playerobjs löschen
-                Destroy(playersParent.GetChild(a).gameObject);
-            }
+            DisableHighscoreObjs();
 
-            for (int a = 0; a < pipeParent.childCount; a++)
-            { //alte smallpipes löschen
-                if (pipeParent.GetChild(a).CompareTag("SmallPipe"))
-                {
-                    Destroy(pipeParent.GetChild(a).gameObject);
-                }
-            }
+            FF_PlayerData.Instance.inHighscores = false;
 
             playerObj.SetActive(true);
             levelTextObj.SetActive(true);
@@ -186,6 +184,31 @@ public class ScoreHandler : MonoBehaviour
         playersParent.SetAsLastSibling();
     }
 
+    public void DisableHighscoreObjs()
+    {
+        for (int a = 0; a < playersParent.childCount; a++)
+        { //alte playerobjs löschen
+            Destroy(playersParent.GetChild(a).gameObject);
+        }
+
+        List<Transform> smallPipes = new List<Transform>();
+
+        for (int a = 0; a < pipeParent.childCount; a++)
+        { //alte smallpipes deaktivieren
+            if (pipeParent.GetChild(a).CompareTag("SmallPipe"))
+            {
+                pipeParent.GetChild(a).gameObject.SetActive(false);
+
+                smallPipes.Add(pipeParent.GetChild(a));
+            }
+        }
+
+        for(int a = 0; a < smallPipes.Count; a++)
+        {
+            smallPipes[a].SetParent(objPooler.transform);
+        }
+    }
+
     private void ReactivateEventSystemFull()
     {
         eventSystem.SetActive(true);
@@ -195,7 +218,7 @@ public class ScoreHandler : MonoBehaviour
     {
         if (hParent.activeSelf || opening || closing) return;
 
-        windowCanvas.sortingOrder = 11;
+        //windowCanvas.sortingOrder = 11;
         StartCoroutine(MenuData.Instance.DoMoveAway());
 
         ModeManager.Instance.BackClicked();
@@ -213,11 +236,13 @@ public class ScoreHandler : MonoBehaviour
 
         transform.localScale = Vector3.one;
 
-        hParent.transform.DOMove(defaultHighscorePos, moveTime).SetEase(Ease.OutBack);
+        hParent.transform.DOMove(defaultHighscorePos, moveTime);
         //hParent.transform.DOScale(new Vector3(1, 1, 1), moveTime);
 
         opening = true;
         Invoke(nameof(ReactivateEventSystem), moveTime + 0.01f);
+
+        FF_PlayerData.Instance.inHighscores = true;
 
         playersParent.SetParent(hParent.transform.parent);
         playersParent.SetAsLastSibling();
@@ -282,11 +307,29 @@ public class ScoreHandler : MonoBehaviour
 
         eventSystem.SetActive(false);
 
+        loadingObj.SetActive(false);
+
         playersParent.SetParent(hParent.transform.parent);
         playersParent.SetAsLastSibling();
 
-        hParent.transform.DOMove(highscoreStartPos, moveTime).SetEase(Ease.InBack);
+        hParent.transform.DOMove(highscoreStartPos, moveTime);
         //hParent.transform.DOScale(0, moveTime);
+
+        if(highscoreActive)
+        {
+            for(int i = 0; i < playersParent.childCount; i++)
+            {
+                playersParent.GetChild(i).DOMoveY(-200, 0.2f);
+            }
+
+            for(int i = 0; i < pipeParent.childCount; i++)
+            {
+                if(pipeParent.GetChild(i).CompareTag("SmallPipe"))
+                {
+                    pipeParent.GetChild(i).DOMoveY(-200, 0.2f);
+                }
+            }
+        }
 
         Invoke(nameof(ReactivateEventSystem), moveTime + 0.01f);
     }
@@ -300,7 +343,7 @@ public class ScoreHandler : MonoBehaviour
         achParent.transform.DOMove(highscoreStartPos, moveTime).SetEase(Ease.InBack);
         //hParent.transform.DOScale(0, moveTime);
 
-        Invoke("ReactivateEventSystem", moveTime + 0.01f);
+        Invoke(nameof(ReactivateEventSystem), moveTime + 0.01f);
     }
 
     public void NameTextChanged()
@@ -455,6 +498,8 @@ public class ScoreHandler : MonoBehaviour
         Skin currentSkin = shop.allSkins[shop.GetSelected(CustomizationType.Skin)];
 
         string skinString = currentSkin.identifier;
+        string pipeString = shop.allPipes[shop.GetSelected(CustomizationType.Pipe)].identifier;
+        string pipeColorID = shop.GetPipeColorID().ToString();
         string wingString = "null";
 
         if (currentSkin.overrideWing == null)
@@ -464,7 +509,7 @@ public class ScoreHandler : MonoBehaviour
 
         string hatString = shop.allHats[shop.GetSelected(CustomizationType.Hat)].identifier;
 
-        string authHash = AccountHandler.Md5Sum(username + AccountHandler.authKey);
+        string authHash = AccountHandler.Md5Sum(username + Auth.authKey);
 
         string link = "https://bruh.games/manager.php?setscore=1&lastscore=" +
                         lastS.ToString() + hsString + "&name=" + username + "&hs=1&diff=" +
@@ -472,7 +517,13 @@ public class ScoreHandler : MonoBehaviour
                         "&lvl=" + currentLvl.ToString() + "&pr=" + currentPrestige.ToString() +
                         "&setgrave=1&gtop=" + gTop + "&gside=" + gSide + "&gbottom=" + gBottom +
                         "&setskin=1&skin=" + skinString + "&wing=" + wingString + "&hat=" + hatString +
+                        "&pipe=" + pipeString + "&pipecolor=" + pipeColorID +
                         "&hash=" + authHash;
+
+        loadingObj.SetActive(true);
+        loadingObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = Color.black;
+        loadingObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+            loadingString;
 
         UnityWebRequest www = UnityWebRequest.Get(link);
         yield return www.SendWebRequest();
@@ -482,10 +533,15 @@ public class ScoreHandler : MonoBehaviour
             Debug.Log(www.error);
             nameParent.GetChild(0).GetComponent<TextMeshProUGUI>().text =
                 AccountHandler.Instance.connectionFailedString;
-            //nameList.text = "Verbindung fehlgeschlagen!";
+
+            loadingObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = Color.red;
+            loadingObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                accountHandler.connectionFailedString;
         }
         else
         {
+            loadingObj.SetActive(false);
+
             //FetchString(www.downloadHandler.text)
 
             string wwwData = www.downloadHandler.text;
@@ -575,16 +631,24 @@ public class ScoreHandler : MonoBehaviour
             Destroy(playersParent.GetChild(a).gameObject);
         }
 
+        List<Transform> smallPipes = new List<Transform>();
+
         for (int a = 0; a < pipeParent.childCount; a++)
-        {
+        { //alte smallpipes deaktivieren
             if (pipeParent.GetChild(a).CompareTag("SmallPipe"))
             {
-                Destroy(pipeParent.GetChild(a).gameObject);
-            } else
-            {
                 pipeParent.GetChild(a).gameObject.SetActive(false);
+
+                smallPipes.Add(pipeParent.GetChild(a));
             }
         }
+
+        for (int a = 0; a < smallPipes.Count; a++)
+        {
+            smallPipes[a].SetParent(objPooler.transform);
+        }
+
+        FlatterFogelHandler.Instance.DisableOtherObjs();
 
         playerObj.SetActive(false);
         levelTextObj.SetActive(false);
@@ -603,7 +667,7 @@ public class ScoreHandler : MonoBehaviour
             int num = i + 1;
 
             GameObject newPlayer = Instantiate(playerObjPrefab, playersParent);
-            Vector3 pos = new Vector3(-655 + (100 * i), 264, -0.1f);
+            Vector3 pos = new Vector3(-655 + (100 * i), 264, 20f);
 
             ulong score = ulong.Parse(scoreData[0]);
 
@@ -632,19 +696,35 @@ public class ScoreHandler : MonoBehaviour
 
             pos.y = yPos;
 
-            newPlayer.transform.position = pos;
+            newPlayer.transform.position = new Vector3(pos.x, -200, pos.z);
+            newPlayer.transform.DOMoveY(pos.y, 0.2f);
 
-            GameObject smallPipe = Instantiate(smallPipePrefab, pipeParent);
+            GameObject smallPipe = objPooler.SpawnFromPool("SmallPipe", new Vector3(pos.x, -200, pos.z), Quaternion.identity);
+            smallPipe.transform.SetParent(pipeParent);
+                //Instantiate(smallPipePrefab, pipeParent);
             smallPipe.SetActive(true);
 
             pos.y -= 443; //pipe 443 unter skin
 
-            smallPipe.transform.position = new Vector3(pos.x, -200, pos.z);
+            //smallPipe.transform.position = new Vector3(pos.x, -200, pos.z);
             smallPipe.transform.DOMoveY(pos.y, 0.2f);
 
             Skin playerSkin = (Skin)shop.GetItemByString(CustomizationType.Skin, scoreData[4]);
             Wing playerWing = (Wing)shop.GetItemByString(CustomizationType.Wing, scoreData[5]);
             Hat playerHat = (Hat)shop.GetItemByString(CustomizationType.Hat, scoreData[6]);
+            Pipe playerPipe = (Pipe)shop.GetItemByString(CustomizationType.Pipe, scoreData[7]);
+            Color playerPipeColor = pipeCustomizationHandler.GetPipeColor(Int32.Parse(scoreData[8]));
+
+            if (!playerPipe.colorChangeSupported)
+            {
+                playerPipeColor = Color.white;
+            }
+
+            smallPipe.GetComponent<SpriteRenderer>().sprite = playerPipe.sprite[0];
+            smallPipe.GetComponent<SpriteRenderer>().color = playerPipeColor;
+
+            smallPipe.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = playerPipe.endSprite[0];
+            smallPipe.transform.GetChild(0).GetComponent<SpriteRenderer>().color = playerPipeColor;
 
             bool isTop = true;
 
@@ -655,8 +735,8 @@ public class ScoreHandler : MonoBehaviour
                 temp = 0;
             }
 
-            newPlayer.GetComponent<PlayerHolder>().LoadPlayer(playerSkin, playerWing, playerHat,
-                scoreData[1], scoreData[0], isTop);
+            newPlayer.GetComponent<PlayerHolder>().LoadPlayer(playerSkin, playerWing, playerHat, playerPipe,
+                playerPipeColor, scoreData[1], scoreData[0], isTop);
 
             newPlayer.SetActive(true);
 
@@ -714,7 +794,7 @@ public class ScoreHandler : MonoBehaviour
         long currentLvl = lvlHandler.GetLVL();
         int currentPrestige = lvlHandler.GetPrestige();
 
-        string authHash = AccountHandler.Md5Sum(username + AccountHandler.authKey);
+        string authHash = AccountHandler.Md5Sum(username + Auth.authKey);
 
         ShopHandler shop = ShopHandler.Instance;
 
@@ -725,6 +805,8 @@ public class ScoreHandler : MonoBehaviour
         Skin currentSkin = shop.allSkins[shop.GetSelected(CustomizationType.Skin)];
 
         string skinString = currentSkin.identifier;
+        string pipeString = shop.allPipes[shop.GetSelected(CustomizationType.Pipe)].identifier;
+        string pipeColorID = shop.GetPipeColorID().ToString();
         string wingString = "null";
 
         if(currentSkin.overrideWing == null)
@@ -738,14 +820,15 @@ public class ScoreHandler : MonoBehaviour
                         lastS.ToString() + hsString + "&name=" + username + "&last50=1&diff=" + diff.ToString() +
                         "&v=" + Application.version + "&lvl=" + currentLvl.ToString() + "&pr=" + currentPrestige.ToString() +
                         "&setgrave=1&gtop=" + gTop + "&gside=" + gSide + "&gbottom=" + gBottom +
-                        "&setskin=1&skin=" + skinString + "&wing=" + wingString + "&hat=" + hatString + 
+                        "&setskin=1&skin=" + skinString + "&wing=" + wingString + "&hat=" + hatString +
+                        "&pipe=" + pipeString + "&pipecolor=" + pipeColorID +
                         "&hash=" + authHash;
 
-        if(accountHandler.accountState == AccountStates.LoggedOut ||
+        if (accountHandler.accountState == AccountStates.LoggedOut ||
             accountHandler.accountState != AccountStates.Synced)
         { //username nicht gesetzt bzw nicht gesynced-> abfrage ohne score set
             string tempName = AccountHandler.tempNames[Random.Range(0, 4)];
-            authHash = AccountHandler.Md5Sum(tempName + AccountHandler.authKey);
+            authHash = AccountHandler.Md5Sum(tempName + Auth.authKey);
 
             link = "https://bruh.games/manager.php?last50=1&diff=" + diff.ToString() +
                         "&v=" + Application.version + "&name=" + tempName + "&hash=" + authHash;
@@ -1321,6 +1404,88 @@ public class ScoreHandler : MonoBehaviour
         transform.localScale = new Vector3(1, 1, 1);
     }
 
+    private void HandleItemAnimation()
+    {
+        Skin pSkin;
+        Hat cHat;
+
+        PlayerHolder pH = null;
+
+        List<Skin> doneSkins = new List<Skin>();
+        List<Hat> doneHats = new List<Hat>();
+
+        for (int i = 0; i < playersParent.childCount; i++)
+        {
+            pH = playersParent.GetChild(i).GetComponent<PlayerHolder>();
+
+            pSkin = pH.skin;
+            cHat = pH.hat;
+
+            bool ok = false;
+
+            if (!doneSkins.Contains(pSkin))
+            {
+                doneSkins.Add(pSkin);
+                ok = true;
+            }
+
+            if (pSkin.animated)
+            {   
+                if(ok)
+                {
+                    pSkin.shopTime += Time.deltaTime;
+
+                    if (pSkin.shopTime >= pSkin.animationSpeed)
+                    { //sprite update
+                        pSkin.shopTime = 0;
+
+                        pSkin.shopStep++;
+                        if (pSkin.shopStep >= pSkin.animatedSprites.Length)
+                        {
+                            pSkin.shopStep = 0;
+                        }
+                    }
+                }
+
+                pH.skinImage.sprite = pSkin.animatedSprites[pSkin.shopStep];
+            }
+
+            ok = false;
+
+            if (!doneHats.Contains(cHat))
+            {
+                doneHats.Add(cHat);
+                ok = true;
+            }
+
+            if (cHat.animated)
+            {
+                if(ok)
+                {
+                    cHat.shopTime += Time.deltaTime;
+
+                    if (cHat.shopTime >= cHat.animationSpeed)
+                    { //sprite update
+                        cHat.shopTime = 0;
+
+                        cHat.shopStep++;
+                        if (cHat.shopStep >= cHat.animatedSprites.Length)
+                        {
+                            cHat.shopStep = 0;
+                        }
+
+                        if (i == shop.GetSelectedHat())
+                        {
+                            FF_PlayerData.Instance.OverrideHatSprite(cHat.animatedSprites[cHat.shopStep]);
+                        }
+                    }
+                }
+
+                pH.hatImage.sprite = cHat.animatedSprites[cHat.shopStep];
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -1330,6 +1495,8 @@ public class ScoreHandler : MonoBehaviour
             {
                 CloseHighscores();
             }
+
+            HandleItemAnimation();
         }
     }
 }

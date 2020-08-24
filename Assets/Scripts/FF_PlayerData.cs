@@ -41,7 +41,7 @@ public class FF_PlayerData : MonoBehaviour
                 hatObj;
     public Camera mainCamera;
     public bool dead = false, isJumping = false, isGrounded = false, heatPaused = false, inShop = false,
-        animationRunning = false, hatAnimationRunning = false;
+        animationRunning = false, hatAnimationRunning = false, inHighscores = false;
     private bool goLocked = false, landing = false;
     public List<GameObject> deadChilds = new List<GameObject>();
 
@@ -345,7 +345,7 @@ public class FF_PlayerData : MonoBehaviour
 
     private void HandleAnimation()
     {
-        if (inShop) return;
+        if (inShop || inHighscores) return;
 
         currentSkin.shopTime += Time.deltaTime;
 
@@ -365,7 +365,7 @@ public class FF_PlayerData : MonoBehaviour
 
     private void HandleHatAnimation()
     {
-        if (inShop) return;
+        if (inShop || inHighscores) return;
 
         currentHat.shopTime += Time.deltaTime;
 

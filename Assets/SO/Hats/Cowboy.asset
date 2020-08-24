@@ -12,12 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 623ec2e6fbc1ddf4d8c9629db178bfba, type: 3}
   m_Name: Cowboy
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 0c2178f24dee132478756b4ae79401cd, type: 3}
-  animatedSprites: []
-  animated: 0
-  animationSpeed: 0.25
-  shopTime: 0
-  shopStep: 0
+  identifier: cowboy
+  itemID: 3
+  rarity: 0
   purchased: 0
   salePercent: 0
   cost:
@@ -29,6 +26,11 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
-  yDist: 0
-  hatID: 0
-  identifier: cowboy
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  sprite: {fileID: 21300000, guid: 0c2178f24dee132478756b4ae79401cd, type: 3}
+  animatedSprites: []
+  yDist: 16
+  shopYDist: 0

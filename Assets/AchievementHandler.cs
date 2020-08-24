@@ -575,6 +575,15 @@ public class AchievementHandler : MonoBehaviour
 
     public void OpenAchievements()
     {
+        ScoreHandler sH = ScoreHandler.Instance;
+        for (int a = 0; a < sH.pipeParent.childCount; a++)
+        { //alte smallpipes löschen
+            if (sH.pipeParent.GetChild(a).CompareTag("SmallPipe"))
+            {
+                sH.pipeParent.GetChild(a).gameObject.SetActive(false);
+            }
+        }
+
         hParent.SetActive(false);
 
         //Update UI
@@ -587,6 +596,15 @@ public class AchievementHandler : MonoBehaviour
 
     public void OpenHighscores()
     {
+        ScoreHandler sH = ScoreHandler.Instance;
+        for (int a = 0; a < sH.pipeParent.childCount; a++)
+        { //alte smallpipes löschen
+            if (sH.pipeParent.GetChild(a).CompareTag("SmallPipe"))
+            {
+                sH.pipeParent.GetChild(a).gameObject.SetActive(true);
+            }
+        }
+
         hParent.SetActive(true);
         achParent.SetActive(false);
 

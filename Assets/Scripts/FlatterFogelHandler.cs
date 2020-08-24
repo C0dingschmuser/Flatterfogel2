@@ -258,6 +258,47 @@ public class FlatterFogelHandler : MonoBehaviour
         return lastScore;
     }
 
+    public void DissolvePipes(float time)
+    {
+        if (pipes.Count > 0)
+        {
+            Color c = pipes[0].GetComponent<SpriteRenderer>().color;
+
+            for (int i = 0; i < pipes.Count; i++)
+            {
+                PipeData pipeData = pipes[i].GetComponent<PipeData>();
+                if (pipeData.isChecked)
+                {
+                    pipeData.SetLightIntensity(0);
+                }
+
+                pipes[i].transform.parent.GetComponent<PipeHolder>().StopMove();
+                /*if (OptionHandler.enhancedPipeDestruction == 1)
+                {
+                    if(!pipeData.isChecked || !pipeData.IsDestructionStarted(true))
+                    {
+                        pipeData.isChecked = true;
+                        pipeData.StartDestruction(0.4f, 0, true);
+                    }
+                }*/
+            }
+
+            //if(OptionHandler.enhancedPipeDestruction == 0)
+            //{
+            pipeParent.GetComponent<Dissolver>().StartDissolve(c, time);
+            //}
+        }
+    }
+
+    public void DisableOtherObjs()
+    {
+        for (int i = 0; i < otherObjs.Count; i++)
+        {
+            otherObjs[i].SetActive(false);
+        }
+        otherObjs.Clear();
+    }
+
     public void StartGame(bool fullReset = true)
     {
         startTimer = 2;
@@ -276,44 +317,13 @@ public class FlatterFogelHandler : MonoBehaviour
             }
             aiObjs.Clear();
 
-            if(pipes.Count > 0)
-            {
-                Color c = pipes[0].GetComponent<SpriteRenderer>().color;
-
-                for(int i = 0; i < pipes.Count; i++)
-                {
-                    PipeData pipeData = pipes[i].GetComponent<PipeData>();
-                    if(pipeData.isChecked)
-                    {
-                        pipeData.SetLightIntensity(0);
-                    }
-
-                    pipes[i].transform.parent.GetComponent<PipeHolder>().StopMove();
-                    /*if (OptionHandler.enhancedPipeDestruction == 1)
-                    {
-                        if(!pipeData.isChecked || !pipeData.IsDestructionStarted(true))
-                        {
-                            pipeData.isChecked = true;
-                            pipeData.StartDestruction(0.4f, 0, true);
-                        }
-                    }*/
-                }
-
-                //if(OptionHandler.enhancedPipeDestruction == 0)
-                //{
-                    pipeParent.GetComponent<Dissolver>().StartDissolve(c, 0.6f);
-                //}
-            }
+            DissolvePipes(0.6f);
 
             destructionHandler.ClearAll();
 
             groundHandler.DissolveGround(gameState);
 
-            for(int i = 0; i < otherObjs.Count; i++)
-            {
-                otherObjs[i].SetActive(false);
-            }
-            otherObjs.Clear();
+            DisableOtherObjs();
 
             for(int i = 0; i < coins.Count; i++)
             {

@@ -50,14 +50,13 @@ public class AccountHandler : MonoBehaviour
     public static string[] tempNames = 
         new string[] { "Hans", "Max", "Peter", "Gustav", "Anna" };
 
-    public static string authKey = ""; //Removed on Commit
     private int restoreStep = 0;
 
     public void Initialize()
     {
         Instance = this;
 
-        if(authKey.Length == 0)
+        if(Auth.authKey.Length == 0)
         {
             Debug.LogError("AuthKey not set!");
         }
@@ -290,7 +289,7 @@ public class AccountHandler : MonoBehaviour
 
     IEnumerator SignInRegister(string username)
     {
-        string authHash = Md5Sum(username + authKey);
+        string authHash = Md5Sum(username + Auth.authKey);
 
         string url = "https://bruh.games/manager.php?signedin=1&name=" + username + 
             "&hash=" + authHash;
@@ -402,7 +401,7 @@ public class AccountHandler : MonoBehaviour
     {
         passwort = Md5Sum(passwort);
 
-        string authHash = Md5Sum(newName + authKey);
+        string authHash = Md5Sum(newName + Auth.authKey);
 
         string url = "https://bruh.games/manager.php?register=1&name=" +
             newName + "&pw=" + passwort + "&email=" + email + "&hash=" + authHash;
@@ -475,7 +474,7 @@ public class AccountHandler : MonoBehaviour
     {
         passwort = Md5Sum(passwort);
 
-        string authHash = Md5Sum(username + authKey);
+        string authHash = Md5Sum(username + Auth.authKey);
 
         string url = "https://bruh.games/manager.php?login=1&name=" +
             username + "&pw=" + passwort + "&hash=" + authHash;
@@ -562,7 +561,7 @@ public class AccountHandler : MonoBehaviour
 
         string tempName = tempNames[Random.Range(0, tempNames.Length)];
 
-        string authHash = Md5Sum(tempName + authKey);
+        string authHash = Md5Sum(tempName + Auth.authKey);
 
         if (restoreStep == 0)
         { //email
@@ -676,7 +675,7 @@ public class AccountHandler : MonoBehaviour
     {
         passwort = Md5Sum(passwort);
 
-        string authHash = Md5Sum(oldName + authKey);
+        string authHash = Md5Sum(oldName + Auth.authKey);
 
         string url = "https://bruh.games/manager.php?alpha=1&name=" + oldName +
             "&newName=" + newUser + "&email=" + email + "&passwort=" + passwort +

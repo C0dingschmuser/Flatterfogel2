@@ -175,8 +175,6 @@ public class OptionHandler : MonoBehaviour
 
         string selectedLocaleName = PlayerPrefs.GetString("SelectedLocale", "");
 
-        Debug.Log(selectedLocaleName);
-
         if(selectedLocaleName.Length == 0)
         { //system default
             switch(Application.systemLanguage)

@@ -35,7 +35,7 @@ MonoBehaviour:
   animatedSprites: []
   boughtWings: 00000000
   boughtHats: 00000000
-  hatStart: 18.662
+  hatStart: 19.5
   wingStart: 0
   wingSupport: 1
   hatSupport: 1

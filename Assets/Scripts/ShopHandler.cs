@@ -308,6 +308,9 @@ public class ShopHandler : MonoBehaviour
             case CustomizationType.Hat:
                 allItems = allHats.Cast<ShopItem>().ToList();
                 break;
+            case CustomizationType.Pipe:
+                allItems = allPipes.Cast<ShopItem>().ToList();
+                break;
         }
 
         for(int i = 0; i < allItems.Count; i++)

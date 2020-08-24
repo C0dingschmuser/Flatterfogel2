@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d48881e5ac2c1d744bea0b64a035233b, type: 3}
+  m_Name: OldDefault
+  m_EditorClassIdentifier: 
+  identifier: 
+  itemID: 0
+  rarity: 0
+  purchased: 1
+  salePercent: 0
+  cost:
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  sprite:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  endSprite:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  colorChangeSupported: 1
