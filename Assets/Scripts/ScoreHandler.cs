@@ -23,6 +23,8 @@ public class ScoreHandler : MonoBehaviour
     public ShopHandler shop;
     public PipeCustomizationHandler pipeCustomizationHandler;
 
+    public SwipeDetector swDetector = null;
+
     public Canvas windowCanvas;
     public Material medalMat;
     public GameObject[] medalObjs;
@@ -61,11 +63,15 @@ public class ScoreHandler : MonoBehaviour
     public static ObscuredInt personalCoins = 0;
     public static ScoreHandler Instance;
 
+    private float mainTimer = 0;
+    private Coroutine timerRoutine = null;
+
     private Tween moveTween = null;
     private Coroutine highscoreDisplay = null;
-    private int diffClicked = -1, modeSelected = 1, newBundleCode = 0, bundleSize = 18000000;
+    private int diffClicked = -1, modeSelected = 1, newBundleCode = 0, bundleSize = 18000000, highscorePageIndex = 0, highscoreMaxPage = 1;
     private bool registerRunning = false, fetchRunning = false, closing = false, highscoreActive = false,
-        opening = false, dataFetched = false, highscoreDisplayRunning = false;
+        opening = false, dataFetched = false, highscoreDisplayRunning = false, moveRunning = false;
+    private Vector3 originalPipeParentPos, originalPlayerParentPos;
     private string[] hsDataString;
 
     public class ScoreHolder
@@ -82,6 +88,12 @@ public class ScoreHandler : MonoBehaviour
     {
         hsDataString = new string[3];
         accountHandler.Initialize();
+
+        SwipeDetector.OnSwipe += SwipeDetector_OnSwipe;
+
+        originalPipeParentPos = pipeParent.position;
+        originalPlayerParentPos = playersParent.transform.position;
+
         Instance = this;
     }
 
@@ -164,7 +176,12 @@ public class ScoreHandler : MonoBehaviour
             hParent.SetActive(false);
             achParent.SetActive(false);
 
+            swDetector.enabled = false;
+
             windowCanvas.sortingOrder = 10;
+
+            playersParent.transform.position = originalPlayerParentPos;
+            pipeParent.transform.position = originalPipeParentPos;
 
             DisableHighscoreObjs();
 
@@ -180,8 +197,15 @@ public class ScoreHandler : MonoBehaviour
             opening = false;
         }
 
-        playersParent.SetParent(highscoreList.transform);
-        playersParent.SetAsLastSibling();
+        if(!moveRunning)
+        {
+            playersParent.SetParent(highscoreList.transform);
+            playersParent.SetAsLastSibling();
+        } else
+        {
+            moveRunning = false;
+        }
+
     }
 
     public void DisableHighscoreObjs()
@@ -234,6 +258,8 @@ public class ScoreHandler : MonoBehaviour
         hParent.transform.position = highscoreStartPos;
         hParent.transform.localScale = Vector3.one;
 
+        swDetector.enabled = false;
+
         transform.localScale = Vector3.one;
 
         hParent.transform.DOMove(defaultHighscorePos, moveTime);
@@ -284,21 +310,18 @@ public class ScoreHandler : MonoBehaviour
         HandleColor(0, modeSelected);
         HandleColor(1, OptionHandler.GetDifficulty());
 
-        if(!dataFetched)
-        {
+        //if(!dataFetched)
+        //{
             if (!fetchRunning)
             {
                 StartCoroutine(FetchHighscores());
             }
-        } else
-        {
-            highscoreDisplay = StartCoroutine(FetchHighscoreData(RealModeToArrayID(modeSelected)));
-        }
+        //}
     }
 
     public void CloseHighscores()
     {
-        if(registerRunning || fetchRunning || AccountHandler.running)
+        if(registerRunning || fetchRunning || AccountHandler.running || moveRunning)
         {
             return;
         }
@@ -426,10 +449,16 @@ public class ScoreHandler : MonoBehaviour
 
     public void ModeClicked(int mode)
     {
-        if (fetchRunning || !dataFetched || highscoreDisplayRunning)
+        if (fetchRunning || !dataFetched || highscoreDisplayRunning || moveRunning ||
+            modeSelected == mode)
         {
             return;
         }
+
+        playersParent.position = originalPlayerParentPos;
+        pipeParent.position = originalPipeParentPos;
+
+        highscorePageIndex = 0;
 
         modeSelected = mode;
 
@@ -440,8 +469,20 @@ public class ScoreHandler : MonoBehaviour
         highscoreDisplay = StartCoroutine(FetchHighscoreData(RealModeToArrayID(mode)));
     }
 
+    IEnumerator StartTimer()
+    {
+        mainTimer = 0;
+        while(true)
+        {
+            yield return new WaitForSeconds(0.05f);
+            mainTimer += 0.05f;
+        }
+    }
+
     IEnumerator FetchHighscores()
     {
+        timerRoutine = StartCoroutine(StartTimer());
+
         fetchRunning = true;
 
         if(highscoreDisplay != null)
@@ -528,6 +569,14 @@ public class ScoreHandler : MonoBehaviour
         UnityWebRequest www = UnityWebRequest.Get(link);
         yield return www.SendWebRequest();
 
+        StopCoroutine(timerRoutine);
+        float remaining = 0.4f - mainTimer;
+
+        if(remaining > 0.01)
+        {
+            yield return new WaitForSeconds(remaining);
+        }
+
         if (www.isNetworkError || www.isHttpError)
         {
             Debug.Log(www.error);
@@ -599,9 +648,16 @@ public class ScoreHandler : MonoBehaviour
         return arrayID;
     }
 
-    private IEnumerator FetchHighscoreData(int arrayID)
+    private IEnumerator FetchHighscoreData(int arrayID, bool wait = false)
     { //fetcht die bereits erhaltenen daten und zeigt sie an
+
+        if(wait)
+        {
+            yield return new WaitForSeconds(0.4f);
+        }
+
         highscoreDisplayRunning = true;
+        swDetector.enabled = false;
 
         string username = AccountHandler.Instance.username;
 
@@ -660,7 +716,11 @@ public class ScoreHandler : MonoBehaviour
 
         int temp = 0;
 
-        for (int i = 0; i < rawData.Length - 1; i++)
+        int playerCount = rawData.Length - 1;
+
+        highscoreMaxPage = playerCount / 6;
+
+        for (int i = 0; i < playerCount; i++)
         {
             string[] scoreData = rawData[i].Split(',');
 
@@ -772,6 +832,55 @@ public class ScoreHandler : MonoBehaviour
         positionParent.GetChild(levelParent.childCount - 1).gameObject.SetActive(false);
 
         highscoreDisplayRunning = false;
+        swDetector.enabled = true;
+    }
+
+    public void SwipeDetector_OnSwipe(SwipeData data)
+    {
+        switch (data.Direction)
+        {
+            case SwipeDirection.Left:
+                DirClicked(0);
+                break;
+            case SwipeDirection.Right:
+                DirClicked(1);
+                break;
+        }
+    }
+
+    public void DirClicked(int dir)
+    {
+        if (fetchRunning || !dataFetched || highscoreDisplayRunning || moveRunning)
+        {
+            return;
+        }
+
+        //distance to move: 597
+
+        float amount = 597;
+        int indexA = -1;
+
+        if (dir == 1)
+        { //rechts
+            amount = -amount;
+            indexA = 1;
+        }
+
+        int newIndex = highscorePageIndex + indexA;
+
+        if(newIndex >= 0 && newIndex < highscoreMaxPage)
+        {
+            highscorePageIndex = newIndex;
+
+            eventSystem.SetActive(false);
+
+            moveRunning = true;
+
+            pipeParent.DOMoveX(pipeParent.transform.position.x + amount, 0.29f);
+            playersParent.DOMoveX(playersParent.transform.position.x + amount, 0.29f);
+
+            Invoke(nameof(ReactivateEventSystem), 0.3f);
+        }
     }
 
     IEnumerator GetStatus()

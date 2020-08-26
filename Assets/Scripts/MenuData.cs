@@ -162,6 +162,11 @@ public class MenuData : MonoBehaviour
         StartCoroutine(ResetMovingState(scaleTime + 0.01f));
     }
 
+    /*public IEnumerator DoMoveDown()
+    {
+        menuCanvas.sortingOrder = 10;
+    }*/
+
     public IEnumerator DoMoveIn()
     {
         menuCanvas.sortingOrder = 11;

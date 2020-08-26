@@ -584,6 +584,7 @@ public class AchievementHandler : MonoBehaviour
             }
         }
 
+        ScoreHandler.Instance.swDetector.enabled = false;
         hParent.SetActive(false);
 
         //Update UI

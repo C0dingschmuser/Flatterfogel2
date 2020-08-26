@@ -67,6 +67,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: MainBG
+    uniqueID: 3328169359
+    locked: 0
   - name: SonneMond
     uniqueID: 4153008269
     locked: 0
