@@ -158,7 +158,7 @@ public class SoundManager : MonoBehaviour
                 break;
 
             case Sound.Jump:
-                volume = 0.5f;
+                volume = effectVolume * 0.5f;
                 if(OptionHandler.jumpEffectMode == 0)
                 {
                     pitch = Random.Range(0.9f, 1.1f);
@@ -186,7 +186,7 @@ public class SoundManager : MonoBehaviour
                 break;
 
             case Sound.Laser:
-                volume = 0.2f;
+                volume = effectVolume * 0.2f;
 
                 pitch = Random.Range(0.9f, 1.1f);
                 clip = laserSoundClip;
@@ -202,7 +202,7 @@ public class SoundManager : MonoBehaviour
                 break;
 
             case Sound.PipeHit:
-                volume = 0.85f;
+                volume = effectVolume * 0.85f;
 
                 pitch = Random.Range(0.85f, 1.15f);
                 clip = dPipe_explosion_hit;

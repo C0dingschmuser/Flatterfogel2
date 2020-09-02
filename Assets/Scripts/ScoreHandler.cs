@@ -835,8 +835,11 @@ public class ScoreHandler : MonoBehaviour
             scoreDiff = (int)(ceiling - bottom);
         }
 
-        //alt (score / (float)ceiling);
-        float p = (scoreDiff - (int)(ceiling - score)) / scoreDiff;
+        //float p = (score / (float)ceiling); alt
+
+        int tempDiff = (int)(ceiling - score);
+
+        float p = ((float)scoreDiff - tempDiff) / (float)scoreDiff;
 
         /*if(i > 0)
         {
@@ -1554,7 +1557,7 @@ public class ScoreHandler : MonoBehaviour
         continueEffects.SetActive(false);
         ScaleDown();
 
-        Invoke("CallMenuDeath", moveTime + 0.01f);
+        Invoke(nameof(CallMenuDeath), moveTime + 0.01f);
     }
 
     private void CallMenuDeath()
