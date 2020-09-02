@@ -52,12 +52,14 @@ public class GameStartupHandler : MonoBehaviour
         #endif*/
 
         int clear = ObscuredPrefs.GetInt("PreBetaClear", 0);
-        if(clear == 0)
+        if(clear != 2)
         { //Clear Data from previous version(s) if pre beta version
             ObscuredPrefs.DeleteAll();
             PlayerPrefs.DeleteAll();
 
-            ObscuredPrefs.SetInt("PreBetaClear", 1);
+            Debug.Log("DeleteAll");
+
+            ObscuredPrefs.SetInt("PreBetaClear", 2);
         }
 
         StartCoroutine(LoadScene());

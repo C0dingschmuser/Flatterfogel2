@@ -15,6 +15,7 @@ public class TutorialHandler : MonoBehaviour
     public static TutorialHandler Instance;
 
     public int mainTut = 0, mainTutStep = 0;
+    public bool pipeFullOkay = false;
 
     private float dissolveAmount = 0f;
 
@@ -360,6 +361,6 @@ public class TutorialHandler : MonoBehaviour
         }
 
         PlayerPrefs.SetInt("TutorialPlayed", 1);
-        AchievementHandler.Instance.UnlockComplete("completeTutorial");
+        AchievementHandler.Instance.QueueStep("completeTutorial");
     }
 }

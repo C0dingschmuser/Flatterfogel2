@@ -25,6 +25,15 @@
       },
       "url": "https://unityregistry-pa.googleapis.com"
     },
+    "com.google.firebase.crashlytics": {
+      "version": "6.15.2",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.google.firebase.app": "6.15.2"
+      },
+      "url": "https://unityregistry-pa.googleapis.com"
+    },
     "com.google.firebase.messaging": {
       "version": "6.15.2",
       "depth": 0,
@@ -85,7 +94,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.device-simulator": {
-      "version": "2.2.2-preview",
+      "version": "2.2.3-preview",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -122,12 +131,12 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.localization": {
-      "version": "0.7.1-preview",
+      "version": "0.8.1-preview",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.addressables": "1.7.5",
-        "com.unity.nuget.newtonsoft-json": "1.1.2"
+        "com.unity.nuget.newtonsoft-json": "2.0.0"
       },
       "url": "https://packages.unity.com"
     },
@@ -148,7 +157,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
-      "version": "1.1.2",
+      "version": "2.0.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -235,7 +244,8 @@
       "depth": 0,
       "source": "builtin",
       "dependencies": {
-        "com.unity.modules.ui": "1.0.0"
+        "com.unity.modules.ui": "1.0.0",
+        "com.unity.modules.imgui": "1.0.0"
       }
     },
     "com.unity.visualeffectgraph": {

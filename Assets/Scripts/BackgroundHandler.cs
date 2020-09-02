@@ -35,7 +35,8 @@ public class BackgroundHandler : MonoBehaviour
     public bool mining = false;
 
     public MineHandler mineHandler;
-    public GameObject nonScrollingObj;
+    public GameObject nonScrollingObj, starObj;
+    public Material starMaterial;
     public GameObject[] bgObjs = new GameObject[6];
     public GameObject[] layerParents;
 
@@ -75,7 +76,7 @@ public class BackgroundHandler : MonoBehaviour
 
     private Tween globalLightTween, globalColorTween, moonLightTween, sunLightTween, cameraColorTween;
     private Background currentBackground;
-    private float cycleTime = 10;
+    private float cycleTime = 10, starBrightness = 0;
     public bool night = true, layersEnabled = true;
 
     [SerializeField]
@@ -115,6 +116,7 @@ public class BackgroundHandler : MonoBehaviour
         ScaleLights(true);
 
         cycleTime = sunMoon.GetComponent<DOTweenPath>().duration;
+
         StartDayFirst();
 
         Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
@@ -568,24 +570,34 @@ public class BackgroundHandler : MonoBehaviour
             }
         }
 
+        starObj.SetActive(true);
+
         StartDay();
 
-        Invoke("ResetMoonPos", cycleTime / 6);
+        Invoke(nameof(ResetMoonPos), cycleTime / 6);
     }
 
     public void StartDay()
     {
         //globalLight.GetComponent<UnityEngine.Experimental.Rendering.LWRP.Light2D>().DO
 
-        SetNight(false);
+        //SetNight(false);
         Timing.RunCoroutine(EndNightLights(cycleTime / 5));
 
-        Invoke("StartNight", cycleTime - (cycleTime / 5));
+        Invoke(nameof(StartNight), cycleTime - (cycleTime / 5));
         //Invoke("SetMoon", cycleTime);
     }
 
     private IEnumerator<float> EndNightLights(float waitTime)
     {
+        starBrightness = 1;
+
+        Tween tmp = DOTween.To(() => starBrightness, x => starBrightness = x, 0, cycleTime / 4);
+        tmp.OnUpdate(() =>
+        {
+            starMaterial.SetFloat("_DissolveAmount", starBrightness);
+        });
+
         yield return Timing.WaitForSeconds(waitTime);
         SetNight(false);
     }
@@ -613,7 +625,15 @@ public class BackgroundHandler : MonoBehaviour
 
                 globalColorTween = DOTween.To(() => globalLight.color, x => globalLight.color = x, nightColor, cycleTime / 8);
 
+                starMaterial.SetFloat("_DissolveAmount", 0);
                 SetNight(true);
+
+                starBrightness = 0;
+                Tween tmp = DOTween.To(() => starBrightness, x => starBrightness = x, 1, cycleTime / 4);
+                tmp.OnUpdate(() =>
+                {
+                    starMaterial.SetFloat("_DissolveAmount", starBrightness);
+                });
             }
         }
         
@@ -624,6 +644,8 @@ public class BackgroundHandler : MonoBehaviour
     private void SetNight(bool night)
     {
         this.night = night;
+
+        starObj.SetActive(night);
 
         StartCoroutine(train.GetComponent<TrainHandler>().SetNightDelayed(Random.Range(0, 2), night));
 

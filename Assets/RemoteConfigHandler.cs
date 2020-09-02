@@ -339,6 +339,11 @@ public class RemoteConfigHandler : MonoBehaviour
                 int maxStep = Int32.Parse(split[1]);
 
                 allAchievements[i].maxStep = maxStep;
+
+                if(allAchievements[i].unlockMode != null)
+                {
+                    allAchievements[i].unlockMode.unlockLevel = maxStep;
+                }
             }
         }
     }

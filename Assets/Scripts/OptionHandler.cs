@@ -11,8 +11,8 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using CodeStage.AntiCheat.Storage;
 #if UNITY_ANDROID
 using UnityEngine.SocialPlatforms;
-using Firebase.Analytics;
 #endif
+using Firebase.Analytics;
 using DG.Tweening;
 
 public class OptionHandler : MonoBehaviour
@@ -56,7 +56,7 @@ public class OptionHandler : MonoBehaviour
     public GameObject normalMapButton;
     [Header("Sound")]
     public GameObject jumpEffectButton;
-    public Slider volumeSlider;
+    public Slider volumeSlider, effevtVolumeSlider;
 
     //Grafik
     public static int physicsResolution = 0, screenResolution = 1, lightEnabled = 1,
@@ -70,13 +70,13 @@ public class OptionHandler : MonoBehaviour
     public static int jumpEffectMode = 0;
 
     //Allgemein
-    public static string currentPost = "3773890";
+    public static string currentPost = "3000000";
     public static OptionHandler Instance;
     public static int kreuzPos = 0, kreuzSize = 0, mineMode = 2, noPush = 0;
     public static bool hardcoreActive = false, normalAspect = false,
         destructionEnlargeActive = false, destructionTransition = false;
 
-    public static bool playStore = false, pr0 = false;
+    public static bool playStore = false, pr0 = true;
 
     public static Vector3 defaultCameraPos = new Vector3(-381, 790, -400);
     public static float defaultOrthoSize = 640, moveTime = 0.25f;
@@ -116,9 +116,16 @@ public class OptionHandler : MonoBehaviour
 
         if(firstLaunch == 1)
         {
-#if UNITY_ANDROID
             FirebaseAnalytics.SetUserProperty("WantsMessages", "1");
-#endif
+
+            if(pr0)
+            {
+                FirebaseAnalytics.SetUserProperty("ProVersion", "1");
+            } else
+            {
+                FirebaseAnalytics.SetUserProperty("ProVersion", "0");
+            }
+
             ObscuredPrefs.SetInt("FirstLaunch", 0);
         }
 
@@ -306,6 +313,7 @@ public class OptionHandler : MonoBehaviour
         UpdateVSync();
         StartCoroutine(UpdateMineMode());
         UpdateMusicVolume();
+        UpdateEffectVolume();
 
         if(!excludeEnergy)
         {
@@ -956,13 +964,13 @@ public class OptionHandler : MonoBehaviour
         if(noPush== 0)
         {
             noPush = 1;
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_IOS
             FirebaseAnalytics.SetUserProperty("WantsMessages", "0");
 #endif
         } else
         {
             noPush = 0;
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_IOS
             FirebaseAnalytics.SetUserProperty("WantsMessages", "1");
 #endif
         }
@@ -1175,9 +1183,31 @@ public class OptionHandler : MonoBehaviour
         SoundManager.Instance.SetMusicVolume(val);
     }
 
-#endregion
+    #endregion
 
-#region vsync
+    #region effectvolume
+
+    public void EffectVolumeSlider()
+    {
+        float val = effevtVolumeSlider.value;
+
+        PlayerPrefs.SetFloat("Player_EffectVolume", val);
+        UpdateEffectVolume(val);
+    }
+
+    private void UpdateEffectVolume(float val = -1)
+    {
+        if(val < 0)
+        {
+            val = PlayerPrefs.GetFloat("Player_EffectVolume", 1);
+            effevtVolumeSlider.value = val;
+        }
+        SoundManager.Instance.SetEffectVolume(val);
+    }
+
+    #endregion
+
+    #region vsync
     public void VSyncClicked()
     {
         if(vSyncEnabled == 0)

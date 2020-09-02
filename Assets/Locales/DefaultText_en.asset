@@ -164,5 +164,9 @@ MonoBehaviour:
     m_Localized: Language
     m_Metadata:
       m_Items: []
+  - m_Id: 12207159189504
+    m_Localized: Effect Volume
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

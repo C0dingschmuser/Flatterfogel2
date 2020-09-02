@@ -14762,6 +14762,9 @@ MonoBehaviour:
   assignedPipes:
   - {fileID: 0}
   - {fileID: 0}
+  defaultLightColor:
+    serializedVersion: 2
+    rgba: 4281224686
   effect: {fileID: 1796915834017027660}
   deathEffect: {fileID: 1024526344}
   lightObj: {fileID: 51873387}

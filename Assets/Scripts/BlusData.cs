@@ -15,13 +15,14 @@ public class BlusData : MonoBehaviour
     private List<Vector3> oldDestroyedPos = new List<Vector3>();
     private Coroutine animationRoutine = null;
 
+    public UnityEngine.Experimental.Rendering.Universal.Light2D lightObj = null;
+
     public GameObject[] assignedPipes = new GameObject[2];
+
+    public Color32 defaultLightColor;
 
     [SerializeField]
     private ParticleSystem effect = null, deathEffect = null;
-
-    [SerializeField]
-    private UnityEngine.Experimental.Rendering.Universal.Light2D lightObj = null;
 
     [SerializeField]
     private Sprite[] blusAnimation = null;
@@ -107,14 +108,14 @@ public class BlusData : MonoBehaviour
             blusLight.gameObject.SetActive(true);
         }
 
-        if(OptionHandler.hardcoreActive)
-        {
-            lightObj.intensity = 0;
-            blusLight.gameObject.SetActive(true);
-        } else
-        {
+       // if(OptionHandler.hardcoreActive)
+        //{
+        //    lightObj.intensity = 0;
+        //    blusLight.gameObject.SetActive(true);
+        //} else
+        //{
             lightObj.intensity = 1;
-        }
+        //}
 
         transform.position = cPos;
 
@@ -181,7 +182,7 @@ public class BlusData : MonoBehaviour
 
     public void SetBlusPipeType(int type)
     {
-        Color32 c = new Color32(238, 77, 46, 255);
+        Color32 c = defaultLightColor;
 
         switch(type)
         {

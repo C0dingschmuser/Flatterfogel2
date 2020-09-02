@@ -33,11 +33,14 @@ MonoBehaviour:
   unlockMode: {fileID: 0}
   titleString: Navigationsmeister
   descriptionString: "Fliege durch eine sich bewegende R\xF6hre"
-  step: 11
+  step: 25
   maxStep: 25
   upgradeStep: 0
   maxUpgradeSteps: 0
+  queuedSteps: 0
   stepMultiplier: 2
   rewardMultiplier: 2
-  completed: 0
+  completed: 1
   rewardCollected: 0
+  upgradable: 0
+  displayed: 1

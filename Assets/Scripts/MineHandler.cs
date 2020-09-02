@@ -176,7 +176,7 @@ public class MineHandler : MonoBehaviour
         player.GetComponent<FF_PlayerData>().EnableDisableWings(false);
         player.GetComponent<PlayerMiner>().InitializeMiner(); //setzt ausgewählte miner-textur & co.
 
-        InvokeRepeating("CheckBounds", 0f, 0.25f);
+        InvokeRepeating(nameof(CheckBounds), 0f, 0.25f);
     }
 
     public void UpdateMovementSizePos()
@@ -1200,7 +1200,7 @@ public class MineHandler : MonoBehaviour
         //Debug.Log(player.GetComponent<FF_PlayerData>().GetPlayerDepth());
         if (player.GetComponent<FF_PlayerData>().GetPlayerDepth() == 100)
         {
-            Invoke("Migrate", 0.01f);
+            Invoke(nameof(Migrate), 0.01f);
         }
 
        // mineObjs[nextMinePos].SetActive(false);
@@ -1328,7 +1328,7 @@ public class MineHandler : MonoBehaviour
 
         if (player.GetComponent<FF_PlayerData>().GetPlayerDepth() >= 100)
         {
-            Invoke("Migrate", 0.01f);
+            Invoke(nameof(Migrate), 0.01f);
         }
     }
 
@@ -1540,9 +1540,9 @@ public class MineHandler : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        time = 0.1f;
+        //time = 0.1f;
         baseMP = 0;
-        player.GetComponent<FF_PlayerData>().AddFuel(100);
+        //player.GetComponent<FF_PlayerData>().AddFuel(100);
 #endif
 
         if (baseMP > 0)
@@ -1551,7 +1551,7 @@ public class MineHandler : MonoBehaviour
         }
 
         playerMoveTween = player.transform.DOMove(pos, time);
-        Invoke("RestorePlayerMine", time);
+        Invoke(nameof(RestorePlayerMine), time);
 
         StartShake(time, 1.5f);
 
@@ -1562,7 +1562,7 @@ public class MineHandler : MonoBehaviour
     {
         isShaking = true;
 
-        Invoke("EndShake", time);
+        Invoke(nameof(EndShake), time);
         //Camera.main.transform.DOShakePosition(time, 1, 10, 90);
     }
 

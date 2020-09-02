@@ -58,7 +58,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public float minPipeY = 500, maxPipeY = 1065;
 
-    private ObscuredInt internalScoreCount = 0;
+    private ObscuredInt internalScoreCount = 0, tunnelRemaining = 0, tunnelDir = 0, tunnelMax = 10;
     private ObscuredULong score = 0, taps = 0, lastScore = 0, roundCoins = 0, perfectHits = 0;
 
     public class HighscoreHolder
@@ -68,7 +68,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
     private HighscoreHolder[] highscore = new HighscoreHolder[6];
     private bool modeChanging = false, isStarting = false, highscoreLineShowed = false, highscoreLineMode = false,
-        pipeSpawnAllowed = false, holdingDown = false, nextPipeTunnel = false;
+        pipeSpawnAllowed = false, holdingDown = false, nextPipeTunnel = false, inTunnel = false;
     
     public static Vector3 currentCameraPos;
 
@@ -401,9 +401,9 @@ public class FlatterFogelHandler : MonoBehaviour
 
         //if(OptionHandler.enhancedPipeDestruction == 0)
         //{
-            for(int i = 0; i < pipes.Count; i++)
+            for(int i = 0; i < pipeParent.childCount; i++)
             {
-                pipes[i].SetActive(false);
+                pipeParent.GetChild(i).gameObject.SetActive(false);
             }
             pipes.Clear();
         //}
@@ -493,6 +493,7 @@ public class FlatterFogelHandler : MonoBehaviour
         {
 #if UNITY_EDITOR
             SetScore(0, 0);
+            //internalScoreCount = 38;
 #else
             SetScore(0, 0);
 #endif
@@ -965,7 +966,8 @@ public class FlatterFogelHandler : MonoBehaviour
 
             if(tutHandler.mainTut != 0)
             {
-                Timing.RunCoroutine(SpawnPipesWait(1f, false));
+                Timing.RunCoroutine(SpawnPipesWait(1f, false)); //noDEBUG
+                //SpawnTunnel(10, true);
             }
         }
         
@@ -1271,7 +1273,7 @@ public class FlatterFogelHandler : MonoBehaviour
         {
             Color orig = scoreText.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color;
 
-            if(effect > 1)
+            if(effect > 2)
             {
                 blusEffectCounter++;
                 if(blusEffectCounter > 2)
@@ -1328,15 +1330,15 @@ public class FlatterFogelHandler : MonoBehaviour
             defaultVolume.profile.TryGetSettings(out ChromaticAberration chromeLayer);
             defaultVolume.profile.TryGetSettings(out ColorGrading colorGr);
 
-            bloomLayer.intensity.value = 15f;
-            bloomLayer.color.value = orig;
+            //bloomLayer.intensity.value = 15f;
+            //bloomLayer.color.value = orig;
 
             chromeLayer.intensity.value = 0.65f;
             colorGr.hueShift.value = -100f;
 
             DOTween.To(() => chromeLayer.intensity.value, x => chromeLayer.intensity.value = x, 0, 0.4f);
-            DOTween.To(() => bloomLayer.intensity.value, x => bloomLayer.intensity.value = x, 2f, 0.4f);
-            DOTween.To(() => bloomLayer.color.value, x => bloomLayer.color.value = x, Color.white, 0.4f);
+            //DOTween.To(() => bloomLayer.intensity.value, x => bloomLayer.intensity.value = x, 2f, 0.4f);
+            //DOTween.To(() => bloomLayer.color.value, x => bloomLayer.color.value = x, Color.white, 0.4f);
             DOTween.To(() => colorGr.hueShift.value, x => colorGr.hueShift.value = x, 0, 0.3f);
 
             if (blus != null)
@@ -1360,7 +1362,7 @@ public class FlatterFogelHandler : MonoBehaviour
                             { //achs erst updaten wenn tutorial abgeschlossen
                                 if (pH.isMoving)
                                 {
-                                    achHandler.UpdateStep("movingPipe", 1);
+                                    achHandler.QueueStep("movingPipe", 1);
                                 }
                                 else
                                 {
@@ -1368,11 +1370,11 @@ public class FlatterFogelHandler : MonoBehaviour
                                     {
                                         if(pH.lastInTunnel)
                                         {
-                                            achHandler.UpdateStep("tunnelCompleted", 1);
+                                            achHandler.QueueStep("tunnelCompleted", 1);
                                         }
                                     } else
                                     {
-                                        achHandler.UpdateStep("normalPipe", 1);
+                                        achHandler.QueueStep("normalPipe", 1);
                                     }
                                 }
                             }
@@ -1409,8 +1411,8 @@ public class FlatterFogelHandler : MonoBehaviour
                         else
                         { //"Zerstörung"
                             if(!pData.flakEnabled)
-                            { //nur obere pipe zerstören wenn flak da ist
-                                if (!FF_PlayerData.Instance.IsStaminaLow())
+                            { //nur obere pipe zerstören wenn keine flak da ist & kein tunnel
+                                if (!FF_PlayerData.Instance.IsStaminaLow() && !pData.pHolder.tunnel)
                                 {
                                     pData.StartDestruction(0.2f, i);
                                 }
@@ -2020,8 +2022,8 @@ public class FlatterFogelHandler : MonoBehaviour
 
         if(!empty)
         {
-            pipeHolder.GetComponent<PipeHolder>().GetAssignedBlus().
-                GetComponent<BlusData>().SetBlusPipeType(pipeType);
+            //pipeHolder.GetComponent<PipeHolder>().GetAssignedBlus().
+            //    GetComponent<BlusData>().SetBlusPipeType(pipeType);
 
             ulong bCount = 0;
             for (int i = 0; i < pipes.Count; i++)
@@ -2064,6 +2066,14 @@ public class FlatterFogelHandler : MonoBehaviour
 
         pipes.Add(pipeTop);
         pipes.Add(pipeBottom);
+    }
+
+    public void EnableDisableGravestones(bool enable)
+    {
+        for(int i = 0; i < gravestoneObjs.Count; i++)
+        {
+            gravestoneObjs[i].SetActive(enable);
+        }
     }
 
     private GameObject SpawnGravestone(float xPos, string name, GraveTop top, GraveSide side, GraveBottom bottom)
@@ -2124,6 +2134,7 @@ public class FlatterFogelHandler : MonoBehaviour
                 bData.modeChangeBlus = true;
 
                 newBlus.transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.blue;
+                bData.lightObj.color = Color.white;
 
                 modeChangeBlus = true;
             }
@@ -2678,57 +2689,73 @@ public class FlatterFogelHandler : MonoBehaviour
         }
     }
 
-    public void SpawnTunnel()
+    public void SpawnTunnel(int max = 10, bool start = false)
     {
-        nextPipeTunnel = true; //zurückgesetzt in spawnpipe
+        if(start)
+        {
+            nextPipeTunnel = true; //zurückgesetzt in spawnpipe
+            inTunnel = true;
 
-        SpawnPipes(true, false);
+            tunnelMax = max * 2;
+
+            tunnelRemaining = max * 2;
+
+            tunnelDir = Random.Range(0, 2);
+
+            SpawnPipes(true, false);
+        }
+
+        //Debug.Log("spawnT " + start + " rem: " + tunnelRemaining);
 
         float lastY = 
             pipes[pipes.Count - 1].transform.parent.GetComponent<PipeHolder>().GetStartY();
 
-        int dir;
+        if(tunnelRemaining == tunnelMax / 2)
+        { //neuzuweisung der richtung bei hälfte
+            tunnelDir = Random.Range(0, 2);
+        }
 
-        for(int a = 0; a < 2; a++)
+        int i = tunnelMax - tunnelRemaining;
+
+        float newY;
+
+        if (tunnelDir == 0)
+        { //hoch
+            newY = Random.Range(lastY + 5, lastY + 30);
+        }
+        else
+        { //runter
+            newY = Random.Range(lastY - 30, lastY - 5);
+        }
+
+        if (newY > maxPipeY)
         {
-            dir = Random.Range(0, 2); //richtung
+            newY = maxPipeY;
+            tunnelDir = 1;
+        }
+        else if (newY < minPipeY)
+        {
+            newY = minPipeY;
+            tunnelDir = 0;
+        }
 
-            for (int i = 0; i < 10; i++)
-            {
-                float newY;
+        lastY = newY;
 
-                if (dir == 0)
-                { //hoch
-                    newY = Random.Range(lastY + 5, lastY + 30);
-                }
-                else
-                { //runter
-                    newY = Random.Range(lastY - 30, lastY - 5);
-                }
+        bool empty = true;
 
-                if(newY > maxPipeY)
-                {
-                    newY = maxPipeY;
-                    dir = 1;
-                } else if(newY < minPipeY)
-                {
-                    newY = minPipeY;
-                    dir = 0;
-                }
+        if (i == 0 || i == 5 || i == 10 || i == 15)
+        {
+            empty = false;
+        }
 
-                lastY = newY;
+        nextPipeTunnel = true;
 
-                bool empty = true;
+        SpawnPipes(empty, false, newY, true, true);
 
-                if(i == 0 || i == 5 || (a == 1 && i == 9))
-                {
-                    empty = false;
-                }
-
-                nextPipeTunnel = true;
-
-                SpawnPipes(empty, false, newY, true, true);
-            }
+        tunnelRemaining--;
+        if(tunnelRemaining <= 0)
+        {
+            inTunnel = false;
         }
 
         pipes[pipes.Count - 1].transform.parent.
@@ -2738,6 +2765,8 @@ public class FlatterFogelHandler : MonoBehaviour
     // Update is called once per frame
     void _MainUpdate()
     {
+        float realSpeed = scrollSpeed * Time.deltaTime;
+
         Touch[] touches = Input.touches;
         bool touchOK = false;
 
@@ -2788,7 +2817,7 @@ public class FlatterFogelHandler : MonoBehaviour
         {
             if (gameActive && gameState != 2)
             {
-                gravestoneObjs[i].transform.Translate(Vector3.left * scrollSpeed * Time.deltaTime);
+                gravestoneObjs[i].transform.Translate(Vector3.left * realSpeed);
 
                 if(gravestoneObjs[i].transform.position.x < -879)
                 {
@@ -2821,14 +2850,14 @@ public class FlatterFogelHandler : MonoBehaviour
                         obj.GetComponent<Rigidbody2D>().gravityScale *= 3;
                     }
 
-                    obj.transform.Translate(Vector3.right * scrollSpeed * Time.deltaTime, Space.World);
+                    obj.transform.Translate(Vector3.right * realSpeed, Space.World);
                 }
             } else
             {
 
                 if (objHandler.IsGroundHit())
                 {
-                    obj.transform.Translate(Vector3.left * scrollSpeed * Time.deltaTime, Space.World);
+                    obj.transform.Translate(Vector3.left * realSpeed, Space.World);
                 }
             }
         }
@@ -2842,7 +2871,7 @@ public class FlatterFogelHandler : MonoBehaviour
                 //otherObjs[i].transform.Translate(Vector3.left * scrollSpeed * Time.deltaTime);
 
                 Vector3 pos = otherObjs[i].transform.position;
-                pos.x -= scrollSpeed * Time.deltaTime;
+                pos.x -= realSpeed;
 
                 otherObjs[i].transform.position = pos;
                 
@@ -2916,7 +2945,7 @@ public class FlatterFogelHandler : MonoBehaviour
             len = effects.Count;
             for(int i = 0; i < len; i++)
             {
-                effects[i].transform.Translate(-scrollSpeed * Time.deltaTime, 0, 0);
+                effects[i].transform.Translate(-realSpeed, 0, 0);
 
                 if(effects[i].transform.position.x < -920)
                 {
@@ -3067,7 +3096,7 @@ public class FlatterFogelHandler : MonoBehaviour
                 {
                     Vector3 pos = pipes[i].transform.position;
 
-                    pos.x -= scrollSpeed * Time.deltaTime;
+                    pos.x -= realSpeed;
 
                     PipeData pData = pipes[i].GetComponent<PipeData>();
 
@@ -3075,27 +3104,36 @@ public class FlatterFogelHandler : MonoBehaviour
 
                     bool del = false;
 
-                    if (pos.x < -1500)
-                    { //pipe löschen
+                    if(pos.x < -795 && !pData.destructionStarted ||
+                        pos.x < -1500 && pData.destructionStarted)
+                    {
                         del = true;
                         delList.Add(pipes[i]);
-                    } else if (pos.x < -795 && pData.renderDeactivated == 1)
-                    { //Deaktiviert Sprite Renderer out of bounds links
-                        pData.renderDeactivated = 0;
+                    }
 
-                        pipes[i].GetComponent<SpriteRenderer>().enabled = false;
-                    } else if(pos.x < 32 && pData.renderDeactivated == 2)
-                    { //Aktiviert Sprite Renderer wenn in bounds rechts
-                        pData.renderDeactivated = 1;
+                    if(!del)
+                    {
+                        if (pos.x < -795 && pData.renderDeactivated == 1)
+                        { //Deaktiviert Sprite Renderer out of bounds links
+                            pData.renderDeactivated = 0;
 
-                        pipes[i].GetComponent<SpriteRenderer>().enabled = true;
-                        pipes[i].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+                            pipes[i].GetComponent<SpriteRenderer>().enabled = false;
+                            pipes[i].GetComponent<BoxCollider2D>().enabled = false;
+                        }
+                        else if (pos.x < 32 && pData.renderDeactivated == 2)
+                        { //Aktiviert Sprite Renderer wenn in bounds rechts
+                            pData.renderDeactivated = 1;
+
+                            pipes[i].GetComponent<SpriteRenderer>().enabled = true;
+                            pipes[i].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+                        }
                     }
 
                     pipes[i].transform.position = pos;
                     if(pData.isTop)
                     {
-                        if(pos.x < -202 && (i == len - 2))
+                        if(((pos.x < -14 && inTunnel) || (pos.x < -202 && !inTunnel)) 
+                            && (i == len - 2))
                         { //wenn letzte pipe x in liste < -202
                             if(!pData.nextSpawned)
                             {
@@ -3106,13 +3144,19 @@ public class FlatterFogelHandler : MonoBehaviour
                                     if (Random.Range(0, 15) == 0
                                         && !shootingPipehandler.shootingPipesActive
                                         && shootingPipehandler.endComplete
-                                        && score > 50)
+                                        && score > 50 && !inTunnel)
                                     {
-                                        SpawnTunnel();
+                                        SpawnTunnel(10, true);
                                     }
                                     else
                                     {
-                                        SpawnPipes();
+                                        if(inTunnel)
+                                        {
+                                            SpawnTunnel(10, false);
+                                        } else
+                                        {
+                                            SpawnPipes();
+                                        }
                                     }
                                 }
 

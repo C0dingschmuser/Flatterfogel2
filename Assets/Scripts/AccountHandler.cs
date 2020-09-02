@@ -279,7 +279,7 @@ public class AccountHandler : MonoBehaviour
             "User_" + id; //DEBUG für test
 
 #if UNITY_EDITOR
-        username = "C0dingschmuser";
+        //username = "C0dingschmuser";
 #endif
 
         this.username = username;
@@ -466,6 +466,9 @@ public class AccountHandler : MonoBehaviour
                                                             "4-20 " + lengthString;
             return;
         }
+
+        loginInfo.GetComponent<TextMeshProUGUI>().color = Color.black;
+        loginInfo.GetComponent<TextMeshProUGUI>().text = checkingString;
 
         StartCoroutine(StartLogin(username, passwort));
     }

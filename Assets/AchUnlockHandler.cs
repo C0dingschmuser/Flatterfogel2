@@ -12,8 +12,6 @@ public class AchUnlockHandler : MonoBehaviour
 
     public GameObject unlockObj, effectObj;
     public Image unlockImage;
-    public TextMeshProUGUI[] unlockText;
-    public TextMeshProUGUI titleText;
 
     public static AchUnlockHandler Instance;
 
@@ -66,10 +64,9 @@ public class AchUnlockHandler : MonoBehaviour
             unlockedAchievements.Remove(latest);
 
             unlockImage.sprite = latest.mainSprite[latest.upgradeStep];
-            titleText.text = latest.titleString;
 
             unlockObj.transform.position = defaultStartPos;
-            unlockObj.transform.DOMoveX(-502, 0.5f).SetEase(Ease.OutExpo);
+            unlockObj.transform.DOMoveX(-138, 0.5f).SetEase(Ease.OutExpo);
 
             yield return new WaitForSeconds(0.51f);
 
@@ -98,9 +95,7 @@ public class AchUnlockHandler : MonoBehaviour
     {
         while(true)
         {
-            Color c = unlockText[0].color;
-            unlockText[0].color = unlockText[1].color;
-            unlockText[1].color = c;
+            
 
             yield return new WaitForSeconds(0.2f);
         }

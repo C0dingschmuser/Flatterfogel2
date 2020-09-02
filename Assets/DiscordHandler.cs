@@ -1,16 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using CodeStage.AntiCheat.Storage;
 using UnityEngine.EventSystems;
 
 public class DiscordHandler : MonoBehaviour
 {
     public static DiscordHandler Instance;
-    public BaseRaycaster raycaster;
+    public GraphicRaycaster raycaster;
+
+    private bool open = false;
+    
     public void Setup()
     {
         Instance = this;
+        open = false;
     }
 
     public void CheckStart()
@@ -30,6 +35,8 @@ public class DiscordHandler : MonoBehaviour
 
     public void ActivateDiscord()
     {
+        open = true;
+
         gameObject.SetActive(true);
         raycaster.enabled = true;
     }
@@ -42,7 +49,20 @@ public class DiscordHandler : MonoBehaviour
 
     public void CloseDiscord()
     {
+        open = false;
+
         raycaster.enabled = false;
         gameObject.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if(open)
+        {
+            if(!raycaster.enabled)
+            {
+                raycaster.enabled = true;
+            }
+        }
     }
 }

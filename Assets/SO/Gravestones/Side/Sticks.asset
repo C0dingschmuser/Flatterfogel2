@@ -24,8 +24,8 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
-  - mineralID: 14
-    amount: 32
+  - mineralID: 0
+    amount: 0
   animated: 0
   animationSpeed: 0.25
   shopTime: 0

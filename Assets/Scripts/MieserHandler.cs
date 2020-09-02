@@ -110,7 +110,7 @@ public class MieserHandler : MonoBehaviour
 
     private void EndDeath()
     {
-        achHandler.UnlockComplete("mieserBoss");
+        achHandler.QueueStep("mieserBoss", 1);
 
         FlatterFogelHandler.Instance.ChangeMode();
         bossHandler.BossDie(2f);

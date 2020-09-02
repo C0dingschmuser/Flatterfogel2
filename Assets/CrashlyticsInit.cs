@@ -11,7 +11,7 @@ public class CrashlyticsInit : MonoBehaviour
     void Start()
     {
         //Initialize Firebase
-        /*Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+        Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
             var dependencyStatus = task.Result;
             if (dependencyStatus == Firebase.DependencyStatus.Available)
             {
@@ -29,6 +29,6 @@ public class CrashlyticsInit : MonoBehaviour
                   "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
                 // Firebase Unity SDK is not safe to use here.
             }
-        }); */
+        }); 
     }
 }

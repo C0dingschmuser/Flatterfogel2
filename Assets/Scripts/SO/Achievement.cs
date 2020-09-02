@@ -12,8 +12,8 @@ public class Achievement : ScriptableObject
     public LocalizedString title, description;
     public MainMode unlockMode = null;
     public string titleString, descriptionString; //assigned beim laden
-    public int step = 0, maxStep = 10, upgradeStep = 0, maxUpgradeSteps = 0;
+    public int step = 0, maxStep = 10, upgradeStep = 0, maxUpgradeSteps = 0, queuedSteps = 0;
     public float stepMultiplier = 2, rewardMultiplier = 2;
-    public bool completed = false, rewardCollected = false, upgradable = false;
+    public bool completed = false, rewardCollected = false, upgradable = false, displayed = false;
 
 }

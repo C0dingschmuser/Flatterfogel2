@@ -21,7 +21,7 @@ public class PlayerHolder : MonoBehaviour
     public Pipe pipe;
     public Color pipeColor;
 
-    public void LoadPlayer(Skin skin, Wing wing, Hat hat, Pipe pipe, Color pipeColor, string username, string score, bool top = false)
+    public void LoadPlayer(Skin skin, Wing wing, Hat hat, Pipe pipe, Color pipeColor, string username, ulong score, bool top = false)
     {
         if(skin.overrideWing != null)
         {
@@ -54,10 +54,19 @@ public class PlayerHolder : MonoBehaviour
         }
 
         nameText.text = username;
-        scoreText.text = score;
+        scoreText.text = score.ToString();
+
+        nameText.color = Color.black;
+        scoreText.color = Color.black;
 
         nameObj.SetActive(false);
-        Timing.RunCoroutine(_EnableInfo(0.2f, top));
+        Timing.RunCoroutine(_EnableInfo(0.2f, top).CancelWith(this.gameObject));
+    }
+
+    public void SetPlayer()
+    {
+        nameText.color = Color.red;
+        scoreText.color = Color.red;
     }
 
     private IEnumerator<float> _EnableInfo(float waitTime, bool top)

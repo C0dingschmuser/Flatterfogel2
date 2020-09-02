@@ -11,15 +11,15 @@ using CodeStage.AntiCheat.Storage;
 using CodeStage.AntiCheat.ObscuredTypes;
 using System;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using System.Net.Configuration;
 #if UNITY_ANDROID
 using UnityEngine.SocialPlatforms;
-using Firebase.Analytics;
 #endif
+using Firebase.Analytics;
 using Random = UnityEngine.Random;
 
 public class ScoreHandler : MonoBehaviour
 {
+    public AchievementHandler achHandler;
     public ShopHandler shop;
     public PipeCustomizationHandler pipeCustomizationHandler;
 
@@ -39,7 +39,7 @@ public class ScoreHandler : MonoBehaviour
 
     public Color[] prestigeColors;
     public Transform nameParent, scoreParent, postParent, levelParent, highscoreDataParent, updateParent,
-        positionParent, playersParent, pipeParent;
+        positionParent, playersParent, pipeParent, arrowParent, windowParent, accountWindowParent;
 
     public GameObject playerObjPrefab, loadingObj;
     public GraphicRaycaster raycaster;
@@ -73,6 +73,12 @@ public class ScoreHandler : MonoBehaviour
         opening = false, dataFetched = false, highscoreDisplayRunning = false, moveRunning = false;
     private Vector3 originalPipeParentPos, originalPlayerParentPos;
     private string[] hsDataString;
+
+    ulong ceiling = 1000, bottom = 0;
+    int scoreDiff = 1000;
+    float lastP = 1;
+
+    int temp = 0;
 
     public class ScoreHolder
     {
@@ -224,8 +230,13 @@ public class ScoreHandler : MonoBehaviour
                 pipeParent.GetChild(a).gameObject.SetActive(false);
 
                 smallPipes.Add(pipeParent.GetChild(a));
+            } else
+            {
+                pipeParent.GetChild(a).gameObject.SetActive(true);
             }
         }
+
+        FlatterFogelHandler.Instance.EnableDisableGravestones(true);
 
         for(int a = 0; a < smallPipes.Count; a++)
         {
@@ -273,9 +284,12 @@ public class ScoreHandler : MonoBehaviour
         playersParent.SetParent(hParent.transform.parent);
         playersParent.SetAsLastSibling();
 
+        windowParent.gameObject.SetActive(true);
+        accountWindowParent.gameObject.SetActive(false);
+
         if(accountHandler.accountState == AccountStates.LoggedOut)
         {
-            bool overrideAuth = true; //DEBUG da test
+            bool overrideAuth = false; //DEBUG da test
 #if UNITY_EDITOR
             overrideAuth = true;
 #endif
@@ -287,12 +301,19 @@ public class ScoreHandler : MonoBehaviour
 
             bool ok = false;
 
-            if (Social.localUser.authenticated || overrideAuth)
+            /*if (Social.localUser.authenticated || overrideAuth)
             { //registrierung mit test daten
 #if UNITY_ANDROID || UNITY_IOS
                 AccountHandler.Instance.StartGplayRegister();
 #endif          
                 ok = true;
+            }*/
+
+            if(!ok)
+            { //öffnet login fenster
+                windowParent.gameObject.SetActive(false);
+                accountWindowParent.gameObject.SetActive(true);
+                windowCanvas.sortingOrder = 11;
             }
 
             accountHandler.ResetMenu(ok);
@@ -306,6 +327,10 @@ public class ScoreHandler : MonoBehaviour
     {
         inputParent.SetActive(false);
         highscoreList.SetActive(true);
+
+        windowParent.gameObject.SetActive(true);
+        accountWindowParent.gameObject.SetActive(false);
+        windowCanvas.sortingOrder = 10;
 
         HandleColor(0, modeSelected);
         HandleColor(1, OptionHandler.GetDifficulty());
@@ -656,6 +681,10 @@ public class ScoreHandler : MonoBehaviour
             yield return new WaitForSeconds(0.4f);
         }
 
+        string mName = ModeManager.Instance.mainModes[modeSelected - 1].modeName;
+        highscoreModeText.text = mName;
+        highscoreModeBGText.text = mName;
+
         highscoreDisplayRunning = true;
         swDetector.enabled = false;
 
@@ -696,6 +725,9 @@ public class ScoreHandler : MonoBehaviour
                 pipeParent.GetChild(a).gameObject.SetActive(false);
 
                 smallPipes.Add(pipeParent.GetChild(a));
+            } else
+            {
+                pipeParent.GetChild(a).gameObject.SetActive(false);
             }
         }
 
@@ -705,125 +737,76 @@ public class ScoreHandler : MonoBehaviour
         }
 
         FlatterFogelHandler.Instance.DisableOtherObjs();
+        FlatterFogelHandler.Instance.EnableDisableGravestones(false);
 
         playerObj.SetActive(false);
         levelTextObj.SetActive(false);
 
         bool userInHS = false;
 
-        ulong ceiling = 1000;
-        float lastP = 1;
+        if(hsDataString[arrayID].Contains(username))
+        { //user in hs
+            userInHS = true;
+        }
 
-        int temp = 0;
+        ceiling = 1000;
+        lastP = 1;
+        temp = 0;
 
         int playerCount = rawData.Length - 1;
 
-        highscoreMaxPage = playerCount / 6;
+        string[] scoreData = rawData[playerCount - 1].Split(',');
 
-        for (int i = 0; i < playerCount; i++)
+        bottom = ulong.Parse(scoreData[0]);
+
+        int p;
+
+        for (p = 0; p < playerCount; p++)
         {
-            string[] scoreData = rawData[i].Split(',');
+            scoreData = rawData[p].Split(',');
 
-            int num = i + 1;
-
-            GameObject newPlayer = Instantiate(playerObjPrefab, playersParent);
-            Vector3 pos = new Vector3(-655 + (100 * i), 264, 20f);
-
-            ulong score = ulong.Parse(scoreData[0]);
-
-            //1015 max y
-            //320 min y
-            //diff 695
-            if (i == 0)
-            {
-                ceiling = score;
-            }
-
-            float p = (score / (float)ceiling);
-
-            /*if(i > 0)
-            {
-                if(lastP - p > 0.45f)
-                { //wenn abstand zu groß glätten
-                    p = Mathf.Abs(lastP - 0.15f);
-
-                    ceiling = (ulong)((float)ceiling * 0.85f);
-                }
-            }*/
-            lastP = p;
-
-            float yPos = 320 + (p * 695);
-
-            pos.y = yPos;
-
-            newPlayer.transform.position = new Vector3(pos.x, -200, pos.z);
-            newPlayer.transform.DOMoveY(pos.y, 0.2f);
-
-            GameObject smallPipe = objPooler.SpawnFromPool("SmallPipe", new Vector3(pos.x, -200, pos.z), Quaternion.identity);
-            smallPipe.transform.SetParent(pipeParent);
-                //Instantiate(smallPipePrefab, pipeParent);
-            smallPipe.SetActive(true);
-
-            pos.y -= 443; //pipe 443 unter skin
-
-            //smallPipe.transform.position = new Vector3(pos.x, -200, pos.z);
-            smallPipe.transform.DOMoveY(pos.y, 0.2f);
-
-            Skin playerSkin = (Skin)shop.GetItemByString(CustomizationType.Skin, scoreData[4]);
-            Wing playerWing = (Wing)shop.GetItemByString(CustomizationType.Wing, scoreData[5]);
-            Hat playerHat = (Hat)shop.GetItemByString(CustomizationType.Hat, scoreData[6]);
-            Pipe playerPipe = (Pipe)shop.GetItemByString(CustomizationType.Pipe, scoreData[7]);
-            Color playerPipeColor = pipeCustomizationHandler.GetPipeColor(Int32.Parse(scoreData[8]));
-
-            if (!playerPipe.colorChangeSupported)
-            {
-                playerPipeColor = Color.white;
-            }
-
-            smallPipe.GetComponent<SpriteRenderer>().sprite = playerPipe.sprite[0];
-            smallPipe.GetComponent<SpriteRenderer>().color = playerPipeColor;
-
-            smallPipe.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = playerPipe.endSprite[0];
-            smallPipe.transform.GetChild(0).GetComponent<SpriteRenderer>().color = playerPipeColor;
-
-            bool isTop = true;
-
-            temp++;
-            if (temp == 2)
-            {
-                isTop = false;
-                temp = 0;
-            }
-
-            newPlayer.GetComponent<PlayerHolder>().LoadPlayer(playerSkin, playerWing, playerHat, playerPipe,
-                playerPipeColor, scoreData[1], scoreData[0], isTop);
-
-            newPlayer.SetActive(true);
+            CreatePlayerObj(p, ulong.Parse(scoreData[0]), scoreData[1],
+                scoreData[4], scoreData[5], scoreData[6], scoreData[7],
+                Int32.Parse(scoreData[8]));
 
             yield return new WaitForSeconds(0.075f);
         }
 
-        if (!userInHS)
-        { //name nicht in top 15 -> unten anzeigen
-            nameParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().text =
-                username;
-            nameParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().color =
-                Color.red;
+        if(!userInHS)
+        { //user am ende einfügen wenn nicht in highscore
+            p++; //extra abstand
+            playerCount += 2;
 
-            ulong score = ffHandler.GetHighscore(modeSelected - 1, 1);
+            //long lvl = lvlHandler.GetLVL();
+            //int prestige = lvlHandler.GetPrestige();
 
-            scoreParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().text =
-                score.ToString();
-            scoreParent.GetChild(nameParent.childCount - 1).GetComponent<TextMeshProUGUI>().color =
-                Color.red;
+            Skin currentSkin = shop.allSkins[shop.GetSelected(CustomizationType.Skin)];
 
-            long lvl = lvlHandler.GetLVL();
-            int prestige = lvlHandler.GetPrestige();
+            string wingString = "null";
+            string hatString = shop.allHats[shop.GetSelected(CustomizationType.Hat)].identifier;
+            string pipeString = shop.allPipes[shop.GetSelected(CustomizationType.Pipe)].identifier;
 
-            levelParent.GetChild(levelParent.childCount - 1).GetComponent<Image>().color =
-                prestigeColors[prestige];
-            levelParent.GetChild(levelParent.childCount - 1).GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                lvl.ToString();
+            if (currentSkin.overrideWing == null)
+            { //wenn kein override
+                wingString = shop.allWings[shop.GetSelected(CustomizationType.Wing)].identifier;
+            }
+
+            CreatePlayerObj(p, ffHandler.GetHighscore(modeSelected - 1, 1), username,
+                currentSkin.identifier, wingString, hatString, pipeString, shop.GetPipeColorID());
+        }
+
+        highscorePageIndex = 0;
+        highscoreMaxPage = (int)Math.Ceiling(playerCount / 6f);
+
+        arrowParent.GetChild(0).GetComponent<Button>().interactable = false;
+
+        if (highscoreMaxPage > 1)
+        {
+            arrowParent.GetChild(1).GetComponent<Button>().interactable = true;
+        }
+        else
+        {
+            arrowParent.GetChild(1).GetComponent<Button>().interactable = false;
         }
 
         nameParent.GetChild(nameParent.childCount - 1).gameObject.SetActive(false);
@@ -835,25 +818,112 @@ public class ScoreHandler : MonoBehaviour
         swDetector.enabled = true;
     }
 
+    private void CreatePlayerObj(int i, ulong score, string username,
+        string skin, string wing, string hat, string pipe, int pipeColor)
+    {
+        int num = i + 1;
+
+        GameObject newPlayer = Instantiate(playerObjPrefab, playersParent);
+        Vector3 pos = new Vector3(-655 + (100 * i), 264, 20f);
+
+        //1015 max y
+        //320 min y
+        //diff 695
+        if (i == 0)
+        {
+            ceiling = score;
+            scoreDiff = (int)(ceiling - bottom);
+        }
+
+        //alt (score / (float)ceiling);
+        float p = (scoreDiff - (int)(ceiling - score)) / scoreDiff;
+
+        /*if(i > 0)
+        {
+            if(lastP - p > 0.45f)
+            { //wenn abstand zu groß glätten
+                p = Mathf.Abs(lastP - 0.15f);
+
+                ceiling = (ulong)((float)ceiling * 0.85f);
+            }
+        }*/
+        lastP = p;
+
+        float yPos = 320 + (p * 695);
+
+        pos.y = yPos;
+
+        newPlayer.transform.position = new Vector3(pos.x, -200, pos.z);
+        newPlayer.transform.DOMoveY(pos.y, 0.2f);
+
+        GameObject smallPipe = objPooler.SpawnFromPool("SmallPipe", new Vector3(pos.x, -200, pos.z), Quaternion.identity);
+        smallPipe.transform.SetParent(pipeParent);
+        //Instantiate(smallPipePrefab, pipeParent);
+        smallPipe.SetActive(true);
+
+        pos.y -= 443; //pipe 443 unter skin
+
+        //smallPipe.transform.position = new Vector3(pos.x, -200, pos.z);
+        smallPipe.transform.DOMoveY(pos.y, 0.2f);
+
+        Skin playerSkin = (Skin)shop.GetItemByString(CustomizationType.Skin, skin);
+        Wing playerWing = (Wing)shop.GetItemByString(CustomizationType.Wing, wing);
+        Hat playerHat = (Hat)shop.GetItemByString(CustomizationType.Hat, hat);
+        Pipe playerPipe = (Pipe)shop.GetItemByString(CustomizationType.Pipe, pipe);
+        Color playerPipeColor = pipeCustomizationHandler.GetPipeColor(pipeColor);
+
+        if (!playerPipe.colorChangeSupported)
+        {
+            playerPipeColor = Color.white;
+        }
+
+        smallPipe.GetComponent<SpriteRenderer>().sprite = playerPipe.sprite[0];
+        smallPipe.GetComponent<SpriteRenderer>().color = playerPipeColor;
+
+        smallPipe.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = playerPipe.endSprite[0];
+        smallPipe.transform.GetChild(0).GetComponent<SpriteRenderer>().color = playerPipeColor;
+
+        bool isTop = true;
+
+        temp++;
+        if (temp == 2)
+        {
+            isTop = false;
+            temp = 0;
+        }
+
+        newPlayer.GetComponent<PlayerHolder>().LoadPlayer(playerSkin, playerWing, playerHat, playerPipe,
+            playerPipeColor, username, score, isTop);
+
+        if (AccountHandler.Instance.username.Equals(username))
+        { //spieler ist in highscores drin
+            newPlayer.GetComponent<PlayerHolder>().SetPlayer();
+        }
+
+        newPlayer.SetActive(true);
+    }
+
     public void SwipeDetector_OnSwipe(SwipeData data)
     {
         switch (data.Direction)
         {
             case SwipeDirection.Left:
-                DirClicked(0);
+                DirClicked(1);
                 break;
             case SwipeDirection.Right:
-                DirClicked(1);
+                DirClicked(0);
                 break;
         }
     }
 
     public void DirClicked(int dir)
     {
-        if (fetchRunning || !dataFetched || highscoreDisplayRunning || moveRunning)
+        if (fetchRunning || !dataFetched || highscoreDisplayRunning || moveRunning || !highscoreActive)
         {
             return;
         }
+
+        Debug.Log("enter");
 
         //distance to move: 597
 
@@ -871,6 +941,22 @@ public class ScoreHandler : MonoBehaviour
         if(newIndex >= 0 && newIndex < highscoreMaxPage)
         {
             highscorePageIndex = newIndex;
+
+            if(newIndex < highscoreMaxPage - 1)
+            { //geht noch weiter nach rechts
+                arrowParent.GetChild(1).GetComponent<Button>().interactable = true;
+            } else
+            {
+                arrowParent.GetChild(1).GetComponent<Button>().interactable = false;
+            }
+
+            if(newIndex > 0)
+            { //geht noch weiter nach links
+                arrowParent.GetChild(0).GetComponent<Button>().interactable = true;
+            } else
+            {
+                arrowParent.GetChild(0).GetComponent<Button>().interactable = false;
+            }
 
             eventSystem.SetActive(false);
 
@@ -942,6 +1028,8 @@ public class ScoreHandler : MonoBehaviour
             link = "https://bruh.games/manager.php?last50=1&diff=" + diff.ToString() +
                         "&v=" + Application.version + "&name=" + tempName + "&hash=" + authHash;
         }
+
+        Debug.Log(link);
 
         string os = "0";
 
@@ -1107,7 +1195,7 @@ public class ScoreHandler : MonoBehaviour
             string sideIdentifier = scoreData[3];
             string bottomIdentifier = scoreData[4];
 
-            Debug.Log(scoreData[1] + " " + topIdentifier);
+            //Debug.Log(scoreData[1] + " " + topIdentifier);
 
             ScoreHolder nH = new ScoreHolder
             {
@@ -1210,6 +1298,9 @@ public class ScoreHandler : MonoBehaviour
             lvlHandler.ResetEffects(xpParent);
             lvlHandler.SetXPText(xpParent);
 
+            achHandler.ResetScoreAchievementDisplay();
+            achHandler.UpdateScoreAchievementDisplay();
+
             scoreObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
             perfectHitObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
             highscoreObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "0";
@@ -1239,6 +1330,7 @@ public class ScoreHandler : MonoBehaviour
         buttons[1] = menuButton;
 
         lvlHandler.UpdateXP(xpParent, buttons);
+        achHandler.StartAnimateScoreAchievementDisplay();
 
         TextMeshProUGUI scoreText = scoreObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI perfectHitText = perfectHitObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>();

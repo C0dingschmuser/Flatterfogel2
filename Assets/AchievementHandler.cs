@@ -15,8 +15,8 @@ using UnityEngine.SocialPlatforms.Impl;
 public class AchievementHandler : MonoBehaviour
 {
     public AchUnlockHandler achUnlockHandler;
-    public GameObject achPrefab, achCoin, menuUnclaimed, windowUnclaimed;
-    public Transform contentParent;
+    public GameObject achPrefab, smallAchPrefab, achCoin, menuUnclaimed, windowUnclaimed, noProgressObj, scoreEffect;
+    public Transform contentParent, scoreContentParent;
 
     public Achievement[] allAchievements;
 
@@ -269,6 +269,13 @@ public class AchievementHandler : MonoBehaviour
                 achCoins = 0;
                 achLvl++;
                 achMaxCoins+= defaultDiff;
+
+                //DEBUG Belohnung
+                for(int c = 0; c < 5; c++)
+                {
+                    FlatterFogelHandler.Instance.SpawnCoin(new Vector3(-113.3f, 1200, 0));
+                }
+
                 LevelUp();
             }
 
@@ -327,8 +334,10 @@ public class AchievementHandler : MonoBehaviour
         for (int a = 0; a < allAchievements.Length; a++)
         {
             allAchievements[a].step = 0;
+            allAchievements[a].queuedSteps = 0;
             allAchievements[a].completed = false;
             allAchievements[a].rewardCollected = false;
+            allAchievements[a].displayed = false;
         }
 
         if (achString.Length > 0)
@@ -544,15 +553,15 @@ public class AchievementHandler : MonoBehaviour
 
         UpdateMenuUnclaimed();
 
-        AchUnlockHandler.Instance.StartAchievementUnlock(ach);
+        //AchUnlockHandler.Instance.StartAchievementUnlock(ach);
     }
 
-    public void UpdateStep(string identifier, int amount = 1)
+    public void UpdateStep(string identifier, int amount = 1, bool unlock = false)
     {
-        UpdateStep(GetAchievementByString(identifier), amount);
+        UpdateStep(GetAchievementByString(identifier), amount, unlock);
     }
 
-    public void UpdateStep(Achievement ach, int amount = 1)
+    public void UpdateStep(Achievement ach, int amount = 1, bool unlock = false)
     {
         if(ach.completed)
         {
@@ -569,8 +578,160 @@ public class AchievementHandler : MonoBehaviour
 
             UpdateMenuUnclaimed();
 
-            AchUnlockHandler.Instance.StartAchievementUnlock(ach);
+            if(unlock)
+            {
+                AchUnlockHandler.Instance.StartAchievementUnlock(ach);
+            }
         }
+    }
+
+    public void QueueStep(string identifier, int amount = 1)
+    {
+        QueueStep(GetAchievementByString(identifier), amount);
+    }
+
+    public void QueueStep(Achievement ach, int amount = 1)
+    {
+        if(ach.completed)
+        {
+            return;
+        }
+
+        ach.queuedSteps += amount;
+
+        if(ach.step + ach.queuedSteps >= ach.maxStep)
+        {
+            if(!ach.displayed)
+            {
+                ach.displayed = true;
+                AchUnlockHandler.Instance.StartAchievementUnlock(ach);
+                Debug.Log(ach.identifier);
+            }
+        }
+    }
+
+    public void ResetScoreAchievementDisplay()
+    {
+        for (int i = 0; i < scoreContentParent.childCount; i++)
+        {
+            Destroy(scoreContentParent.GetChild(i).gameObject);
+        }
+    }
+
+    public void UpdateScoreAchievementDisplay()
+    {
+        bool ok = false;
+
+        for(int i = 0; i < allAchievements.Length; i++)
+        {
+            if(!allAchievements[i].completed && allAchievements[i].queuedSteps > 0)
+            {
+                ok = true;
+
+                Achievement ach = allAchievements[i];
+
+                GameObject smallAch = Instantiate(smallAchPrefab, scoreContentParent);
+
+                AchHolder holder = smallAch.GetComponent<AchHolder>();
+                holder.achievement = ach;
+
+                holder.titleText.text = ach.titleString;
+
+                holder.sprite.sprite = ach.mainSprite[ach.upgradeStep];
+
+                holder.progressSlider.value = (float)ach.step / ach.maxStep;
+
+                holder.progressText.text =
+                    ach.step.ToString() + "/" + ach.maxStep.ToString();
+            }
+        }
+
+        if(!ok)
+        {
+            noProgressObj.SetActive(true);
+        } else
+        {
+            noProgressObj.SetActive(false);
+        }
+    }
+
+    public void StartAnimateScoreAchievementDisplay()
+    {
+        StartCoroutine(HandleScoreAchievementAnimation());
+    }
+
+    IEnumerator HandleScoreAchievementAnimation()
+    {
+        bool ok = true;
+        bool effect = false;
+
+        while(ok)
+        {
+            ok = false;
+
+            for (int i = 0; i < scoreContentParent.childCount; i++)
+            {
+                AchHolder holder = scoreContentParent.GetChild(i).GetComponent<AchHolder>();
+                Achievement ach = holder.achievement;
+
+                if(ach.queuedSteps > 0)
+                {
+                    ok = true;
+
+                    float start = ach.step;
+
+                    while(ach.queuedSteps > 0)
+                    {
+                        ach.queuedSteps--;
+                        UpdateStep(ach, 1);
+                    }
+
+                    holder.progressText.text =
+                        start.ToString() + "/" + ach.maxStep.ToString();
+
+                    float diff = ach.step - start;
+
+                    float mp = 0.1f;
+
+                    if(diff > 10 && diff < 25)
+                    {
+                        mp = 0.075f;
+                    } else if(diff >= 25)
+                    {
+                        mp = 0.05f;
+                    }
+
+                    //von start zu aktuellem step
+                    Tween stepTween = DOTween.To(() => start, x => start = x, ach.step, (mp - 0.01f) * diff);
+                    stepTween.OnUpdate(() =>
+                    {
+                        holder.progressSlider.value = start / ach.maxStep;
+
+                        holder.progressText.text =
+                            ((int)start).ToString() + "/" + ach.maxStep.ToString();
+                    });
+
+                    if(ach.step >= ach.maxStep)
+                    { //achievement completed -> effekt
+                        stepTween.OnComplete(() =>
+                        {
+                            holder.progressSlider.fillRect.GetComponent<Image>().color = unlockedColor;
+
+                            if(!effect)
+                            {
+                                effect = true;
+
+                                scoreEffect.SetActive(false);
+                                scoreEffect.SetActive(true);
+                            }
+                        });
+                    }
+                }
+            }
+
+            //yield return new WaitForSeconds(0.1f);
+        }
+        yield return null;
     }
 
     public void OpenAchievements()

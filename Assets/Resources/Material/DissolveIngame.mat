@@ -45,5 +45,6 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveColor: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _NoiseScale: {r: 2691, g: 100, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}

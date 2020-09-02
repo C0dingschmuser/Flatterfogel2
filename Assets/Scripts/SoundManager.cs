@@ -28,7 +28,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip[] dMode_Explosion;
     public AudioClip[] music;
 
-    public float musicVolume = 1;
+    public float musicVolume = 1, effectVolume = 1;
     public AudioClip origJump, origBlus, origDie;
 
     public static SoundManager Instance;
@@ -81,7 +81,7 @@ public class SoundManager : MonoBehaviour
         DOTween.To(() => musicObj.volume, x => musicObj.volume = x, 0f, fadeTime);
 
         nextMusicID = id;
-        Invoke("MusicBypass", fadeTime + 0.025f);
+        Invoke(nameof(MusicBypass), fadeTime + 0.025f);
     }
 
     private void MusicBypass()
@@ -102,7 +102,7 @@ public class SoundManager : MonoBehaviour
             {
                 DOTween.To(() => musicObj.volume, x => musicObj.volume = x, 0f, 0.5f);
                 nextMusicID = MusicID.Menu;
-                Invoke("MusicBypass", 0.5f);
+                Invoke(nameof(MusicBypass), 0.5f);
             }
         }
     }
@@ -125,12 +125,22 @@ public class SoundManager : MonoBehaviour
         musicVolume = vol;
     }
 
+    public void SetEffectVolume(float vol)
+    {
+        effectVolume = vol;
+    }
+
     public void PlaySound(Sound sound)
     {
         AudioClip clip = blus_simple[Random.Range(0, blus_simple.Length)];
 
         float pitch = 1f; //range -3 -> 3
-        float volume = 1f;
+        float volume = effectVolume;
+
+        if(volume < 0.001f)
+        {
+            return;
+        }
 
         GameObject newSound =
             pooler.SpawnFromPool("SoundEffects", new Vector3(2000, 0), Quaternion.identity);

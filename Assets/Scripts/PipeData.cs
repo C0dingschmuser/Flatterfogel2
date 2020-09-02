@@ -10,13 +10,14 @@ using Random = UnityEngine.Random;
 public class PipeData : MonoBehaviour
 {
 
-    public bool isChecked = false, beginDestruction = false, isTop = false, destructionComplete = false,
+    public bool isChecked = false, destructionStarted = false, beginDestruction = false, isTop = false, destructionComplete = false,
         highscorePipe = false, destructable = false, nextSpawned = false, emptyPipe = false,
         flakEnabled = false;
 
     public int renderDeactivated = 2;
 
     public GameObject middleObj = null;
+    public PipeHolder pHolder = null;
     public Pipe thisPipe = null;
 
     [SerializeField]
@@ -28,7 +29,7 @@ public class PipeData : MonoBehaviour
     private CoroutineHandle mainHandle;
 
     private float fadeTime = 0.4f, lightTime = 1f, yDiffToWall = 0, divConst = 1;
-    private bool destructionStarted = false, fullDestructionStarted = false, physicsCalculated = false;
+    private bool fullDestructionStarted = false, physicsCalculated = false;
 
     private int count = 0, max = 0, realMax = 0, pipeExpId = 0, frameWait = 1;
     private List<GameObject> destroyedParts = new List<GameObject>();
@@ -71,6 +72,8 @@ public class PipeData : MonoBehaviour
         renderDeactivated = 2;
         this.isTop = isTop;
         flakEnabled = enableFlak;
+
+        pHolder = transform.parent.GetComponent<PipeHolder>();
 
         GetComponent<SpriteRenderer>().enabled = false;
         GetComponent<BoxCollider2D>().enabled = true;

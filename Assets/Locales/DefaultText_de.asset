@@ -162,5 +162,9 @@ MonoBehaviour:
     m_Localized: Sprache
     m_Metadata:
       m_Items: []
+  - m_Id: 12207159189504
+    m_Localized: "Effektlautst\xE4rke"
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

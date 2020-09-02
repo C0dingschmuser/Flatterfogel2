@@ -36,6 +36,8 @@ public class FF_PlayerData : MonoBehaviour
 {
     public UnityEngine.Experimental.Rendering.Universal.Light2D playerLightObj, playerHardcoreLightObj;
 
+    public TutorialHandler tutHandler;
+
     public GameObject deadParent, playerLight, playerCollider2, deadPlayerPart,
                 wing, minerTool, staminaText, itemHolder, fuelParent, mineItemParent,
                 hatObj;
@@ -1077,6 +1079,11 @@ public class FF_PlayerData : MonoBehaviour
                 if (FlatterFogelHandler.Instance.zigZag)
                 {
                     min = 65;
+                }
+
+                if(tutHandler.mainTut == 0 && tutHandler.mainTutStep < 2)
+                { //am anfang kein perfekten treffer erlauben
+                    yDiff = 0;
                 }
 
                 bool pHit = false;

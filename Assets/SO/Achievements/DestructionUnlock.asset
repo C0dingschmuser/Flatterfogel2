@@ -33,11 +33,12 @@ MonoBehaviour:
   unlockMode: {fileID: 11400000, guid: 53854863d2834e245bb80a6013b53799, type: 2}
   titleString: "Zerst\xF6rung"
   descriptionString: "Zerst\xF6rungsmodus freischalten"
-  step: 10
-  maxStep: 10
+  step: 1
+  maxStep: 15
   upgradeStep: 0
   maxUpgradeSteps: 0
   stepMultiplier: 2
   rewardMultiplier: 2
   completed: 1
   rewardCollected: 1
+  upgradable: 0
