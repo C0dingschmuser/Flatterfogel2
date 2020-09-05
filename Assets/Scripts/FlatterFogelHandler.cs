@@ -493,7 +493,7 @@ public class FlatterFogelHandler : MonoBehaviour
         {
 #if UNITY_EDITOR
             SetScore(0, 0);
-            //internalScoreCount = 38;
+            //internalScoreCount = 40;
 #else
             SetScore(0, 0);
 #endif
@@ -1587,7 +1587,7 @@ public class FlatterFogelHandler : MonoBehaviour
                 bossWarning.transform.GetChild(i).gameObject.SetActive(false);
             }
 
-            bossWarning.transform.GetChild(1).gameObject.SetActive(true);
+            bossWarning.transform.GetChild(1).gameObject.SetActive(false);
 
             Vector3 lineEndPos = Vector3.zero;
 
@@ -2471,7 +2471,7 @@ public class FlatterFogelHandler : MonoBehaviour
         CancelInvoke(nameof(FlashHighscoreObj));
         highscoreLineObj.SetActive(false);
 
-        splatterHandler.StartSplatter();
+        splatterHandler.StartSplatter(score);
 
         SpawnPipes();
     }
@@ -2496,7 +2496,7 @@ public class FlatterFogelHandler : MonoBehaviour
         CancelInvoke(nameof(FlashHighscoreObj));
         highscoreLineObj.SetActive(false);
 
-        shootingPipehandler.StartShootingPipes();
+        shootingPipehandler.StartShootingPipes(score);
 
         SpawnPipes();
     } 

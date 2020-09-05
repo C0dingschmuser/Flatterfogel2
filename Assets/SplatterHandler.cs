@@ -28,9 +28,11 @@ public class SplatterHandler : MonoBehaviour
 
     private float dissolveAmount = 0, tempDissolveEnd;
 
+    private int diff = 0;
+
     private Tween anTween = null;
 
-    public void StartSplatter()
+    public void StartSplatter(ulong score)
     {
         splatterActive = true;
         transition = false;
@@ -38,7 +40,33 @@ public class SplatterHandler : MonoBehaviour
         dissolveAmount = 0;
         splatterMat.SetFloat("_DissolveAmount", dissolveAmount);
 
-        tempDissolveEnd = Random.Range(0.25f, 0.35f);
+        if(score < 50)
+        {
+            minTempDissolve = 0.1f;
+            dissolveEndValue = 0.2f;
+
+            diff = 0;
+        } else if(score < 100)
+        {
+            minTempDissolve = 0.13f;
+            dissolveEndValue = 0.23f;
+
+            diff = 1;
+        } else if(score < 150)
+        {
+            minTempDissolve = 0.16f;
+            dissolveEndValue = 0.25f;
+
+            diff = 2;
+        } else
+        {
+            minTempDissolve = 0.25f;
+            dissolveEndValue = 0.35f;
+
+            diff = 3;
+        }
+
+        tempDissolveEnd = Random.Range(minTempDissolve, dissolveEndValue);
 
         anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, dissolveEndValue, 1f);
         anTween.OnUpdate(() =>
@@ -86,7 +114,22 @@ public class SplatterHandler : MonoBehaviour
 
             if(!force)
             {
-                Timing.RunCoroutine(SpawnEndCoins(0.5f, 6));
+                int coins = 1;
+
+                switch(diff)
+                {
+                    case 1:
+                        coins = 2;
+                        break;
+                    case 2:
+                        coins = 5;
+                        break;
+                    case 3:
+                        coins = 10;
+                        break;
+                }
+
+                Timing.RunCoroutine(SpawnEndCoins(0.5f, coins));
             }
         });
 

@@ -21,6 +21,8 @@ public class MinusHandler : MonoBehaviour
     {
         isActive = true;
 
+        exploded = false;
+
         if (OptionHandler.lightEnabled == 1)
         {
             lightObj.SetActive(true);

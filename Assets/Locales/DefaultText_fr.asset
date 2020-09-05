@@ -167,5 +167,49 @@ MonoBehaviour:
     m_Localized: Volume des effets
     m_Metadata:
       m_Items: []
+  - m_Id: 725971726704640
+    m_Localized: "Se d\xE9connecter du compte"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 726551471792128
+    m_Localized: "D\xE9connexion"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 727174405627904
+    m_Localized: "Demander toutes les donn\xE9es personnelles au serveur"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 727558188638208
+    m_Localized: "Non connect\xE9 !"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 728292091174912
+    m_Localized: Demande
+    m_Metadata:
+      m_Items: []
+  - m_Id: 731237172060160
+    m_Localized: 'Votre nom d''utilisateur:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 739349266374656
+    m_Localized: "Vos donn\xE9es vous seront envoy\xE9es par E-Mail."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 740064277766144
+    m_Localized: E-Mail d'enregistrement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 740727384645632
+    m_Localized: "Demande de donn\xE9es"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 982444230778880
+    m_Localized: "E-Mail envoy\xE9 !"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 982654818394112
+    m_Localized: Mauvais e-mail ou mot de passe !
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

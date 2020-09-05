@@ -369,7 +369,6 @@ public class AchievementHandler : MonoBehaviour
                     }
                 }
             }
-
         }
 
         allAchHolders = new AchHolder[allAchievements.Length];

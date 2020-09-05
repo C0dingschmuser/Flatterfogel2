@@ -13,6 +13,8 @@ public class ShootingPipeHandler : MonoBehaviour
         shootingOK = false;
     private float lastScrollSpeed;
 
+    private int diff = 0;
+
     private CoroutineHandle mainHandle;
 
     private GameObject firstPipe = null;
@@ -24,7 +26,7 @@ public class ShootingPipeHandler : MonoBehaviour
         Instance = this;
     }
 
-    public void StartShootingPipes()
+    public void StartShootingPipes(ulong score)
     {
         StartSlowdown(FlatterFogelHandler.scrollSpeed);
         firstPipe = null;
@@ -35,6 +37,23 @@ public class ShootingPipeHandler : MonoBehaviour
         endComplete = false;
         movementStopped = false;
         shootingOK = false;
+
+        if (score < 50)
+        {
+            diff = 0;
+        }
+        else if (score < 100)
+        {
+            diff = 1;
+        }
+        else if (score < 150)
+        {
+            diff = 2;
+        }
+        else
+        {
+            diff = 3;
+        }
 
         endRoutine = StartCoroutine(EndShootingPipes(30f));
         mainHandle = Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
@@ -97,7 +116,22 @@ public class ShootingPipeHandler : MonoBehaviour
 
         if(!force)
         {
-            Timing.RunCoroutine(SpawnEndCoins(0.5f, 6));
+            int coins = 1;
+
+            switch (diff)
+            {
+                case 1:
+                    coins = 3;
+                    break;
+                case 2:
+                    coins = 8;
+                    break;
+                case 3:
+                    coins = 17;
+                    break;
+            }
+
+            Timing.RunCoroutine(SpawnEndCoins(0.5f, coins));
         }
     }
 

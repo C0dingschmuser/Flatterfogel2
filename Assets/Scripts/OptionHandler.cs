@@ -9,6 +9,7 @@ using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.Localization.Settings;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using CodeStage.AntiCheat.Storage;
+using UnityEngine.Networking;
 #if UNITY_ANDROID
 using UnityEngine.SocialPlatforms;
 #endif
@@ -35,6 +36,7 @@ public class OptionHandler : MonoBehaviour
     public GameObject allgObj;
     public GameObject graphicsObj;
     public GameObject soundObj;
+    public GameObject accountObj;
     [Header("Allgemein")]
     public GameObject languageButton;
     public GameObject difficultyButton;
@@ -57,6 +59,12 @@ public class OptionHandler : MonoBehaviour
     [Header("Sound")]
     public GameObject jumpEffectButton;
     public Slider volumeSlider, effevtVolumeSlider;
+    [Header("Account")]
+    public TextMeshProUGUI usernameText, infoText;
+    public GameObject logOutButton;
+    public GameObject requestDataButton, requestDataFullButton;
+    public GameObject mainAccountPage, requestAccountPage;
+    public TMP_InputField emailInput, passwordInput;
 
     //Grafik
     public static int physicsResolution = 0, screenResolution = 1, lightEnabled = 1,
@@ -70,7 +78,7 @@ public class OptionHandler : MonoBehaviour
     public static int jumpEffectMode = 0;
 
     //Allgemein
-    public static string currentPost = "3000000";
+    public static string currentPost = "4103089";
     public static OptionHandler Instance;
     public static int kreuzPos = 0, kreuzSize = 0, mineMode = 2, noPush = 0;
     public static bool hardcoreActive = false, normalAspect = false,
@@ -84,16 +92,19 @@ public class OptionHandler : MonoBehaviour
 
     private float defAspect = 0;
     private static int difficulty = 1;
-    private bool closing = false, optionsActive = false, ingame = false;
+    private bool closing = false, optionsActive = false, ingame = false, dataRequestRunning = false;
 
     private List<Locale> allLocales = new List<Locale>();
     private int selectedLocaleIndex = -1;
+
+    private string usernameString, emailSentString, emailNotSentString;
 
     public LocalizedString mineHalten, mineGesten, mineKreuz;
     public LocalizedString mineItemLeft, mineItemRight;
     public LocalizedString normal, gross, hoch;
     public LocalizedString yes, no, on, off, language;
     public LocalizedString tosLink, privacyLink;
+    public LocalizedString noNameSelected, emailSent, emailNotSent;
 
     [Header("Handler")]
     [SerializeField]
@@ -180,7 +191,7 @@ public class OptionHandler : MonoBehaviour
 
         selectedLocaleIndex = -1;
 
-        string selectedLocaleName = PlayerPrefs.GetString("SelectedLocale", "");
+        string selectedLocaleName = PlayerPrefs.GetString("SelectedLocale", "en");
 
         if(selectedLocaleName.Length == 0)
         { //system default
@@ -366,6 +377,8 @@ public class OptionHandler : MonoBehaviour
 
     public void CloseOptions()
     {
+        if (dataRequestRunning) return;
+
         closing = true;
 
         eventSystem.SetActive(false);
@@ -443,6 +456,33 @@ public class OptionHandler : MonoBehaviour
         yield return handle = language.GetLocalizedString();
 
         SetButtonText(languageButton.transform.GetChild(0).GetChild(0), (string)handle.Result);
+
+        yield return handle = noNameSelected.GetLocalizedString();
+
+        usernameString = (string)handle.Result;
+
+        yield return handle = emailSent.GetLocalizedString();
+
+        emailSentString = (string)handle.Result;
+
+        yield return handle = emailNotSent.GetLocalizedString();
+
+        emailNotSentString = (string)handle.Result;
+    }
+
+    public void UpdateUsernameString(bool loggedIn)
+    {
+        string s = usernameString;
+        Color c = Color.red;
+
+        if(loggedIn)
+        {
+            s = AccountHandler.Instance.username;
+            c = Color.black;
+        }
+
+        usernameText.text = s;
+        usernameText.color = c;
     }
 
     public void OpenDataPrivacy()
@@ -1288,21 +1328,138 @@ public class OptionHandler : MonoBehaviour
 
     public void UpdateCategory(int id)
     {
+        if (dataRequestRunning) return;
+
         if(id == 0)
         { //Allgemein
             allgObj.SetActive(true);
             graphicsObj.SetActive(false);
             soundObj.SetActive(false);
+            accountObj.SetActive(false);
         } else if(id == 1)
         { //Grafik
             graphicsObj.SetActive(true);
             soundObj.SetActive(false);
             allgObj.SetActive(false);
+            accountObj.SetActive(false);
         } else if(id == 2)
-        {
+        { //Sound
             graphicsObj.SetActive(false);
             soundObj.SetActive(true);
             allgObj.SetActive(false);
+            accountObj.SetActive(false);
+        } else if(id == 3)
+        { //Account
+            graphicsObj.SetActive(false);
+            soundObj.SetActive(false);
+            allgObj.SetActive(false);
+
+            accountObj.SetActive(true);
+            mainAccountPage.SetActive(true);
+            requestAccountPage.SetActive(false);
+
+            if(AccountHandler.Instance.accountState == AccountStates.LoggedOut)
+            {
+                logOutButton.GetComponent<Button>().interactable = false;
+                requestDataButton.GetComponent<Button>().interactable = false;
+            } else
+            {
+                logOutButton.GetComponent<Button>().interactable = true;
+                requestDataButton.GetComponent<Button>().interactable = true;
+            }
+        }
+    }
+
+    public void LogoutClicked()
+    {
+        logOutButton.GetComponent<Button>().interactable = false;
+        requestDataButton.GetComponent<Button>().interactable = false;
+
+        UpdateUsernameString(false);
+
+        AccountHandler.Instance.LogoutUser();
+    }
+
+    public void OpenDataRequest()
+    {
+        mainAccountPage.SetActive(false);
+        requestAccountPage.SetActive(true);
+
+        emailInput.text = "";
+        passwordInput.text = "";
+
+        dataRequestRunning = false;
+
+        infoText.gameObject.SetActive(false);
+        requestDataFullButton.GetComponent<Button>().interactable = true;
+    }
+
+    public void DataRequestClicked()
+    {
+        if (dataRequestRunning) return;
+
+        dataRequestRunning = true;
+
+        string email = emailInput.text;
+        string pw = passwordInput.text;
+        string name = AccountHandler.Instance.username;
+
+        requestDataFullButton.GetComponent<Button>().interactable = false;
+
+        infoText.gameObject.SetActive(true);
+        infoText.color = Color.black;
+        infoText.text = AccountHandler.Instance.connectionString;
+
+        StartCoroutine(HandleDataRequest(email, pw, name));
+    }
+
+    IEnumerator HandleDataRequest(string email, string pw, string name)
+    {
+        string authHash = AccountHandler.Md5Sum(name + Auth.dataAuthKey);
+
+        pw = AccountHandler.Md5Sum(pw);
+
+        WWWForm form = new WWWForm();
+        form.AddField("name", name);
+        form.AddField("pw", pw);
+        form.AddField("email", email);
+        form.AddField("hash", authHash);
+
+        using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/datarequest.php", form))
+        {
+#pragma warning disable CS0618 // Typ oder Element ist veraltet
+            www.chunkedTransfer = false;
+#pragma warning restore CS0618 // Typ oder Element ist veraltet
+
+            yield return www.SendWebRequest();
+
+            if (www.isNetworkError || www.isHttpError)
+            {
+                infoText.color = Color.red;
+                infoText.text = AccountHandler.Instance.connectionFailedString;
+                requestDataFullButton.GetComponent<Button>().interactable = true;
+            }
+            else
+            { //datenabfrage erfolgreich
+                string response = www.downloadHandler.text;
+
+                if(response.Contains("1"))
+                { //erfolgreich
+                    emailInput.text = "";
+                    passwordInput.text = "";
+
+                    infoText.color = new Color32(0, 130, 0, 255);
+                    infoText.text = emailSentString;
+                } else
+                {
+                    infoText.color = Color.red;
+                    infoText.text = emailNotSentString;
+
+                    requestDataFullButton.GetComponent<Button>().interactable = true;
+                }
+            }
+
+            dataRequestRunning = false;
         }
     }
 

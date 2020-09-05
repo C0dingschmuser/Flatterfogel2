@@ -32,5 +32,5 @@ MonoBehaviour:
   shopStep: 0
   sprite: {fileID: 21300000, guid: 0c2178f24dee132478756b4ae79401cd, type: 3}
   animatedSprites: []
-  yDist: 16
+  yDist: 0
   shopYDist: 0

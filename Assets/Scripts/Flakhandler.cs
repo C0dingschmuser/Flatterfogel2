@@ -17,7 +17,7 @@ public class Flakhandler : MonoBehaviour
     
     private bool canShoot = false;
 
-    private int currentBarrel = 0;
+    private int currentBarrel = 0, diff = 0;
     private float reload = 1f, maxReload = 1f, bulletSpeed = 350;
 
     private void Awake()
@@ -72,6 +72,39 @@ public class Flakhandler : MonoBehaviour
     {
         Timing.KillCoroutines(mainHandle);
         mainHandle = Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
+
+        if(onPipe)
+        {
+            ulong score = FlatterFogelHandler.Instance.GetScore();
+
+            score = 25;
+
+            if(score < 50)
+            {
+                diff = 0;
+
+                bulletSpeed = 290;
+                maxReload = 3.25f;
+            } else if(score < 100)
+            {
+                diff = 1;
+
+                bulletSpeed = 300;
+                maxReload = 3f;
+            } else if(score < 150)
+            {
+                diff = 2;
+
+                bulletSpeed = 325;
+                maxReload = 2.5f;
+            } else
+            {
+                diff = 3;
+
+                bulletSpeed = 350;
+                maxReload = 2.5f;
+            }
+        }
     }
 
     private void OnDisable()
@@ -141,7 +174,28 @@ public class Flakhandler : MonoBehaviour
                 pos = PredictedPosition(player.transform.position,
                     topFlak.transform.position, new Vector3(0, 0, 0), bulletSpeed);
 
-                //Debug.Log(pos);
+                if(onPipe)
+                {
+                    switch (diff)
+                    {
+                        default:
+                            pos.x += Random.Range(100, 150);
+                            pos.y += Random.Range(100, 150);
+                            break;
+                        case 1:
+                            pos.x += Random.Range(70, 110);
+                            pos.y += Random.Range(70, 110);
+                            break;
+                        case 2:
+                            pos.x += Random.Range(40, 90);
+                            pos.y += Random.Range(40, 90);
+                            break;
+                        case 3:
+                            pos.x += Random.Range(10, 25);
+                            pos.y += Random.Range(10, 25);
+                            break;
+                    }
+                }
 
                 pos.z = topFlak.transform.position.z;
 

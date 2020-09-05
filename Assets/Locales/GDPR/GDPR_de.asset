@@ -23,7 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2
-    m_Localized: "Flatterfogel 2 verfolgt deinen Spielfortschritt in einem Benuterprofil
+    m_Localized: "Flatterfogel 2 verfolgt deinen Spielfortschritt in einem Benutzerprofil
       mit Informationen \xFCber dein Level und deinen Highscores, sofern du dich
       anmeldest. Wir sammeln ebenfalls eine Reihe von Daten, die anonym dein Spielverhalten
       analysieren, um das Spiel zu verbessern."

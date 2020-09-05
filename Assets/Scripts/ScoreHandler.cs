@@ -206,7 +206,9 @@ public class ScoreHandler : MonoBehaviour
         if(!moveRunning)
         {
             playersParent.SetParent(highscoreList.transform);
+
             playersParent.SetAsLastSibling();
+            playersParent.SetSiblingIndex(playersParent.GetSiblingIndex() - 1);
         } else
         {
             moveRunning = false;
@@ -225,15 +227,15 @@ public class ScoreHandler : MonoBehaviour
 
         for (int a = 0; a < pipeParent.childCount; a++)
         { //alte smallpipes deaktivieren
-            if (pipeParent.GetChild(a).CompareTag("SmallPipe"))
-            {
+            //if (pipeParent.GetChild(a).CompareTag("SmallPipe"))
+            //{
                 pipeParent.GetChild(a).gameObject.SetActive(false);
 
-                smallPipes.Add(pipeParent.GetChild(a));
-            } else
-            {
-                pipeParent.GetChild(a).gameObject.SetActive(true);
-            }
+            //    smallPipes.Add(pipeParent.GetChild(a));
+            //} else
+            //{
+            //    pipeParent.GetChild(a).gameObject.SetActive(true);
+            //}
         }
 
         FlatterFogelHandler.Instance.EnableDisableGravestones(true);
@@ -282,12 +284,18 @@ public class ScoreHandler : MonoBehaviour
         FF_PlayerData.Instance.inHighscores = true;
 
         playersParent.SetParent(hParent.transform.parent);
+
         playersParent.SetAsLastSibling();
+        playersParent.SetSiblingIndex(playersParent.GetSiblingIndex() - 1);
 
         windowParent.gameObject.SetActive(true);
         accountWindowParent.gameObject.SetActive(false);
 
-        if(accountHandler.accountState == AccountStates.LoggedOut)
+        if (accountHandler.accountState != AccountStates.LoggedOut)
+        {
+            ForceHighscoreStart();
+        }
+        else
         {
             bool overrideAuth = false; //DEBUG da test
 #if UNITY_EDITOR
@@ -309,7 +317,7 @@ public class ScoreHandler : MonoBehaviour
                 ok = true;
             }*/
 
-            if(!ok)
+            if (!ok)
             { //öffnet login fenster
                 windowParent.gameObject.SetActive(false);
                 accountWindowParent.gameObject.SetActive(true);
@@ -317,9 +325,6 @@ public class ScoreHandler : MonoBehaviour
             }
 
             accountHandler.ResetMenu(ok);
-        } else
-        {
-            ForceHighscoreStart();
         }
     }
 
@@ -346,7 +351,7 @@ public class ScoreHandler : MonoBehaviour
 
     public void CloseHighscores()
     {
-        if(registerRunning || fetchRunning || AccountHandler.running || moveRunning)
+        if(registerRunning || AccountHandler.running || moveRunning || highscoreDisplayRunning || fetchRunning) //fetchrunning alt
         {
             return;
         }
@@ -358,7 +363,9 @@ public class ScoreHandler : MonoBehaviour
         loadingObj.SetActive(false);
 
         playersParent.SetParent(hParent.transform.parent);
+
         playersParent.SetAsLastSibling();
+        playersParent.SetSiblingIndex(playersParent.GetSiblingIndex() - 1);
 
         hParent.transform.DOMove(highscoreStartPos, moveTime);
         //hParent.transform.DOScale(0, moveTime);
@@ -595,7 +602,7 @@ public class ScoreHandler : MonoBehaviour
         yield return www.SendWebRequest();
 
         StopCoroutine(timerRoutine);
-        float remaining = 0.4f - mainTimer;
+        float remaining = 0.2f - mainTimer;
 
         if(remaining > 0.01)
         {
@@ -736,6 +743,8 @@ public class ScoreHandler : MonoBehaviour
             smallPipes[a].SetParent(objPooler.transform);
         }
 
+        DestructionHandler.Instance.ClearAll();
+
         FlatterFogelHandler.Instance.DisableOtherObjs();
         FlatterFogelHandler.Instance.EnableDisableGravestones(false);
 
@@ -769,7 +778,13 @@ public class ScoreHandler : MonoBehaviour
                 scoreData[4], scoreData[5], scoreData[6], scoreData[7],
                 Int32.Parse(scoreData[8]));
 
-            yield return new WaitForSeconds(0.075f);
+            if(p < 8)
+            {
+                yield return new WaitForSeconds(0.075f);
+            } else
+            {
+                yield return null;
+            }
         }
 
         if(!userInHS)
@@ -819,7 +834,7 @@ public class ScoreHandler : MonoBehaviour
     }
 
     private void CreatePlayerObj(int i, ulong score, string username,
-        string skin, string wing, string hat, string pipe, int pipeColor)
+        string skin, string wing, string hat, string pipe, int pipeColor, bool player = false)
     {
         int num = i + 1;
 
@@ -839,7 +854,8 @@ public class ScoreHandler : MonoBehaviour
 
         int tempDiff = (int)(ceiling - score);
 
-        float p = ((float)scoreDiff - tempDiff) / (float)scoreDiff;
+        //Höhe in Prozent
+        float p = Mathf.Clamp(((float)scoreDiff - tempDiff) / (float)scoreDiff, 0, 1);
 
         /*if(i > 0)
         {
@@ -907,7 +923,13 @@ public class ScoreHandler : MonoBehaviour
     }
 
     public void SwipeDetector_OnSwipe(SwipeData data)
-    {
+    { //1392 max y
+
+        if(data.StartPosition.y > 1392 || data.EndPosition.y > 1392)
+        { //swipen nur unten möglich
+            return;
+        }
+
         switch (data.Direction)
         {
             case SwipeDirection.Left:
@@ -925,8 +947,6 @@ public class ScoreHandler : MonoBehaviour
         {
             return;
         }
-
-        Debug.Log("enter");
 
         //distance to move: 597
 
@@ -972,6 +992,7 @@ public class ScoreHandler : MonoBehaviour
         }
     }
 
+    [Obsolete]
     IEnumerator GetStatus()
     {
         ulong hs = ffHandler.GetHighscore();
@@ -1025,11 +1046,11 @@ public class ScoreHandler : MonoBehaviour
         if (accountHandler.accountState == AccountStates.LoggedOut ||
             accountHandler.accountState != AccountStates.Synced)
         { //username nicht gesetzt bzw nicht gesynced-> abfrage ohne score set
-            string tempName = AccountHandler.tempNames[Random.Range(0, 4)];
-            authHash = AccountHandler.Md5Sum(tempName + Auth.authKey);
+            username = AccountHandler.tempNames[Random.Range(0, 4)];
+            authHash = AccountHandler.Md5Sum(username + Auth.authKey);
 
             link = "https://bruh.games/manager.php?last50=1&diff=" + diff.ToString() +
-                        "&v=" + Application.version + "&name=" + tempName + "&hash=" + authHash;
+                        "&v=" + Application.version + "&name=" + username + "&hash=" + authHash;
         }
 
         Debug.Log(link);
@@ -1041,6 +1062,37 @@ public class ScoreHandler : MonoBehaviour
 #endif
 
         link += "&os=" + os;
+
+        string exceptionString = ExceptionHandler.exceptionString;
+
+        exceptionString += "--------------------------------------------------------";
+
+        if (exceptionString.Contains("LogType.Error"))
+        {
+            byte[] encodedByte = System.Text.ASCIIEncoding.ASCII.GetBytes(exceptionString);
+            string base64Encoded = Convert.ToBase64String(encodedByte);
+
+            WWWForm form = new WWWForm();
+            form.AddField("name", username);
+            form.AddField("hash", authHash);
+            form.AddField("stack", base64Encoded);
+
+            using (UnityWebRequest wwwError = UnityWebRequest.Post("https://bruh.games/errorhandler.php", form))
+            {
+                wwwError.chunkedTransfer = false;
+
+                yield return wwwError.SendWebRequest();
+
+                if(wwwError.isNetworkError || wwwError.isHttpError)
+                {
+                    Debug.Log(wwwError.error);
+                } else
+                { //stacktrace übermittelt, kann gelöscht werden
+                    ExceptionHandler.exceptionString = "";
+                    ObscuredPrefs.SetString("ExceptionString", "");
+                }
+            }
+        }
 
         UnityWebRequest www = UnityWebRequest.Get(link);
         yield return www.SendWebRequest(); //wartet das abfrage fertig ist
@@ -1055,6 +1107,16 @@ public class ScoreHandler : MonoBehaviour
 
             FetchString(www.downloadHandler.text);
         }
+    }
+
+    public void OpenAchievements()
+    {
+        if(highscoreDisplayRunning || fetchRunning)
+        {
+            return;
+        }
+
+        achHandler.OpenAchievements();
     }
 
     public void OpenUpdate(bool open)

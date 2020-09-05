@@ -64,6 +64,15 @@ public class AccountHandler : MonoBehaviour
         username = ObscuredPrefs.GetString("Player_Username", "");
         accountState = (AccountStates)ObscuredPrefs.GetInt("Player_AccountState", 0);
 
+        bool ok = true;
+
+        if(accountState == AccountStates.LoggedOut)
+        {
+            ok = false;
+        }
+
+        OptionHandler.Instance.UpdateUsernameString(ok);
+
 #if UNITY_ANDROID
         //PlayGamesPlatform.DebugLogEnabled = false;
         //PlayGamesPlatform.Activate();
@@ -136,6 +145,15 @@ public class AccountHandler : MonoBehaviour
         restoreCode.GetComponent<TMP_InputField>().enabled = true;
     }
 
+    public void LogoutUser()
+    {
+        accountState = AccountStates.LoggedOut;
+        username = "";
+
+        ObscuredPrefs.SetInt("Player_AccountState", 0);
+        ObscuredPrefs.SetString("Player_Username", "");
+    }
+
     public void EnablePage(int id)
     {
         if (running) return;
@@ -194,6 +212,10 @@ public class AccountHandler : MonoBehaviour
                 passwort[i] == ',' ||
                 passwort[i] == '_' ||
                 passwort[i] == '-' ||
+                passwort[i] == '+' ||
+                passwort[i] == '*' ||
+                passwort[i] == '~' ||
+                passwort[i] == '#' ||
                 (passwort[i] >= '0' && passwort[i] <= '9'))
             {
                 pwOk = true;
@@ -357,7 +379,7 @@ public class AccountHandler : MonoBehaviour
         {
             regInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
             regInfo.GetComponent<TextMeshProUGUI>().text = invalidPasswordString + "\n" +
-                                                            "(a-z A-Z 0-9 .,-_)\n" +
+                                                            "(a-z A-Z 0-9 .,-_+*~#)\n" +
                                                             "4-20 " + lengthString;
             return;
         }
@@ -401,39 +423,52 @@ public class AccountHandler : MonoBehaviour
     {
         passwort = Md5Sum(passwort);
 
-        string authHash = Md5Sum(newName + Auth.authKey);
+        string authHash = Md5Sum(newName + Auth.accountAuthKey);
 
-        string url = "https://bruh.games/manager.php?register=1&name=" +
-            newName + "&pw=" + passwort + "&email=" + email + "&hash=" + authHash;
+        WWWForm form = new WWWForm();
+        form.AddField("register", "1");
+        form.AddField("pw", passwort);
+        form.AddField("email", email);
+        form.AddField("hash", authHash);
+        form.AddField("name", newName);
 
-        UnityWebRequest www = UnityWebRequest.Get(url);
-        yield return www.SendWebRequest();
-
-        if (www.isNetworkError || www.isHttpError)
+        using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/account.php", form))
         {
-            regInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            regInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
-        } else
-        {
-            string response = www.downloadHandler.text;
+#pragma warning disable CS0618 // Typ oder Element ist veraltet
+            www.chunkedTransfer = false;
+#pragma warning restore CS0618 // Typ oder Element ist veraltet
+            
+            yield return www.SendWebRequest();
 
-            string[] split = response.Split('#');
-
-            if(split[0].Equals("1"))
-            { //registrierung erfolgreich
-                this.username = newName;
-
-                EndLoginStart();
-            } else
-            { //name bereits vorhanden
+            if (www.isNetworkError || www.isHttpError)
+            {
                 regInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
+                regInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
+            }
+            else
+            {
+                string response = www.downloadHandler.text;
 
-                if(split[1].Equals("0"))
-                {
-                    regInfo.GetComponent<TextMeshProUGUI>().text = nameExistsString;
-                } else
-                {
-                    regInfo.GetComponent<TextMeshProUGUI>().text = emailRegisteredString;
+                string[] split = response.Split('#');
+
+                if (split[0].Equals("1"))
+                { //registrierung erfolgreich
+                    this.username = newName;
+
+                    EndLoginStart();
+                }
+                else
+                { //name bereits vorhanden
+                    regInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
+
+                    if (split[1].Equals("0"))
+                    {
+                        regInfo.GetComponent<TextMeshProUGUI>().text = nameExistsString;
+                    }
+                    else
+                    {
+                        regInfo.GetComponent<TextMeshProUGUI>().text = emailRegisteredString;
+                    }
                 }
             }
         }
@@ -462,7 +497,7 @@ public class AccountHandler : MonoBehaviour
         {
             loginInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
             loginInfo.GetComponent<TextMeshProUGUI>().text = invalidPasswordString + "\n" +
-                                                            "(a-z A-Z 0-9 .,-_)\n" +
+                                                            "(a-z A-Z 0-9 .,-_+*~#)\n" +
                                                             "4-20 " + lengthString;
             return;
         }
@@ -477,31 +512,45 @@ public class AccountHandler : MonoBehaviour
     {
         passwort = Md5Sum(passwort);
 
-        string authHash = Md5Sum(username + Auth.authKey);
+        string authHash = Md5Sum(username + Auth.accountAuthKey);
 
         string url = "https://bruh.games/manager.php?login=1&name=" +
             username + "&pw=" + passwort + "&hash=" + authHash;
 
-        UnityWebRequest www = UnityWebRequest.Get(url);
-        yield return www.SendWebRequest();
+        WWWForm form = new WWWForm();
+        form.AddField("login", "1");
+        form.AddField("name", username);
+        form.AddField("pw", passwort);
+        form.AddField("hash", authHash);
 
-        if (www.isNetworkError || www.isHttpError)
+        using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/account.php", form))
         {
-            loginInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-            loginInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
-        } else
-        {
-            string response = www.downloadHandler.text;
+#pragma warning disable CS0618 // Typ oder Element ist veraltet
+            www.chunkedTransfer = false;
+#pragma warning restore CS0618 // Typ oder Element ist veraltet
 
-            if(response.Contains("1"))
-            { //login erfolgreich
-                this.username = username;
+            yield return www.SendWebRequest();
 
-                EndLoginStart();
-            } else
-            { 
+            if (www.isNetworkError || www.isHttpError)
+            {
                 loginInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-                loginInfo.GetComponent<TextMeshProUGUI>().text = loginFailedString;
+                loginInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
+            }
+            else
+            {
+                string response = www.downloadHandler.text;
+
+                if (response.Contains("1"))
+                { //login erfolgreich
+                    this.username = username;
+
+                    EndLoginStart();
+                }
+                else
+                {
+                    loginInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
+                    loginInfo.GetComponent<TextMeshProUGUI>().text = loginFailedString;
+                }
             }
         }
 
@@ -564,70 +613,92 @@ public class AccountHandler : MonoBehaviour
 
         string tempName = tempNames[Random.Range(0, tempNames.Length)];
 
-        string authHash = Md5Sum(tempName + Auth.authKey);
+        string authHash = Md5Sum(tempName + Auth.accountAuthKey);
 
         if (restoreStep == 0)
         { //email
-            string url = "https://bruh.games/manager.php?restore=0&email=" +
-                email + "&name=" + tempName + "&hash=" + authHash;
+            WWWForm form = new WWWForm();
+            form.AddField("restore", "0");
+            form.AddField("email", email);
+            form.AddField("name", tempName);
+            form.AddField("hash", authHash);
 
-            UnityWebRequest www = UnityWebRequest.Get(url);
-            yield return www.SendWebRequest();
-
-            if (www.isNetworkError || www.isHttpError)
+            using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/account.php", form))
             {
-                restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-                restoreInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
-            }
-            else
-            {
-                restoreStep = 1;
+#pragma warning disable CS0618 // Typ oder Element ist veraltet
+                www.chunkedTransfer = false;
+#pragma warning restore CS0618 // Typ oder Element ist veraltet
 
-                restorePasswort.transform.parent.gameObject.SetActive(true);
-                restoreCode.transform.parent.gameObject.SetActive(true);
+                yield return www.SendWebRequest();
 
-                restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.blue;
-                restoreInfo.GetComponent<TextMeshProUGUI>().text = lookInSpamString;
+                if (www.isNetworkError || www.isHttpError)
+                {
+                    restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
+                    restoreInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
+                }
+                else
+                {
+                    restoreStep = 1;
 
-                restoreButton.GetComponent<TextMeshProUGUI>().text = resetPasswordString;
+                    restorePasswort.transform.parent.gameObject.SetActive(true);
+                    restoreCode.transform.parent.gameObject.SetActive(true);
+
+                    restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.blue;
+                    restoreInfo.GetComponent<TextMeshProUGUI>().text = lookInSpamString;
+
+                    restoreButton.GetComponent<TextMeshProUGUI>().text = resetPasswordString;
+                }
             }
         }
         else
         { //code
-            string url = "https://bruh.games/manager.php?restore=1&email=" +
-                email + "&code=" + code + "&passwort=" + passwort + "&name=" + tempName + "&hash=" + authHash;
+            WWWForm form = new WWWForm();
+            form.AddField("restore", "1");
+            form.AddField("email", email);
+            form.AddField("code", code);
+            form.AddField("passwort", passwort);
+            form.AddField("name", tempName);
+            form.AddField("hash", authHash);
 
-            UnityWebRequest www = UnityWebRequest.Get(url);
-            yield return www.SendWebRequest();
-
-            if (www.isNetworkError || www.isHttpError)
+            using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/account.php", form))
             {
-                restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-                restoreInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
-            } else
-            {
-                string response = www.downloadHandler.text;
+#pragma warning disable CS0618 // Typ oder Element ist veraltet
+                www.chunkedTransfer = false;
+#pragma warning restore CS0618 // Typ oder Element ist veraltet
 
-                string[] split = response.Split('#');
+                yield return www.SendWebRequest();
 
-                if(split.Length == 2)
-                {
-                    if (split[0].Equals("0"))
-                    { //failed
-                        restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
-                        restoreInfo.GetComponent<TextMeshProUGUI>().text = invalidCodeString;
-                    }
-                    else if (split[0].Equals("1"))
-                    { //success
-                        string name = split[1];
-                        this.username = name;
-
-                        EndLoginStart();
-                    }
-                } else
+                if (www.isNetworkError || www.isHttpError)
                 {
                     restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
                     restoreInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
+                }
+                else
+                {
+                    string response = www.downloadHandler.text;
+
+                    string[] split = response.Split('#');
+
+                    if (split.Length == 2)
+                    {
+                        if (split[0].Equals("0"))
+                        { //failed
+                            restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
+                            restoreInfo.GetComponent<TextMeshProUGUI>().text = invalidCodeString;
+                        }
+                        else if (split[0].Equals("1"))
+                        { //success
+                            string name = split[1];
+                            this.username = name;
+
+                            EndLoginStart();
+                        }
+                    }
+                    else
+                    {
+                        restoreInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
+                        restoreInfo.GetComponent<TextMeshProUGUI>().text = connectionFailedString;
+                    }
                 }
             }
         }
@@ -658,7 +729,7 @@ public class AccountHandler : MonoBehaviour
         {
             alphaInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
             alphaInfo.GetComponent<TextMeshProUGUI>().text = invalidPasswordString + "\n" +
-                                                            "(a-z A-Z 0-9 .,-_)\n" +
+                                                            "(a-z A-Z 0-9 .,-_+*~#)\n" +
                                                             "4-20 " + lengthString;
             return;
         }
@@ -724,6 +795,8 @@ public class AccountHandler : MonoBehaviour
 
         ObscuredPrefs.SetString("Player_Username", username);
         ObscuredPrefs.SetInt("Player_AccountState", (int)accountState);
+
+        OptionHandler.Instance.UpdateUsernameString(true);
 
         scoreHandler.ForceHighscoreStart();
     }

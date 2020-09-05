@@ -143,6 +143,8 @@ public class MenuData : MonoBehaviour
 
     public IEnumerator DoMoveAway()
     {
+        buttonsMoving = true;
+
         menuCanvas.sortingOrder = 10;
 
         ffGoBtn.transform.DOMoveX(-1131, scaleTime, true).SetEase(Ease.InBack);
@@ -159,7 +161,7 @@ public class MenuData : MonoBehaviour
 
         ffOptions.transform.DOMoveX(369, scaleTime, true).SetEase(Ease.InBack);
 
-        StartCoroutine(ResetMovingState(scaleTime + 0.01f));
+        StartCoroutine(ResetMovingState(scaleTime + 0.01f, true));
     }
 
     /*public IEnumerator DoMoveDown()
@@ -169,6 +171,13 @@ public class MenuData : MonoBehaviour
 
     public IEnumerator DoMoveIn()
     {
+        buttonsMoving = true;
+
+        ffGoBtn.SetActive(true);
+        shopButton.SetActive(true);
+        highscoreButton.SetActive(true);
+        ffOptions.SetActive(true);
+
         menuCanvas.sortingOrder = 11;
 
         ffOptions.transform.DOMoveX(-381, scaleTime, true).SetEase(Ease.OutBack);
@@ -188,18 +197,33 @@ public class MenuData : MonoBehaviour
         StartCoroutine(ResetMovingState(scaleTime + 0.01f));
     }
 
-    private IEnumerator ResetMovingState(float waitTime)
+    private IEnumerator ResetMovingState(float waitTime, bool disable = false)
     {
         buttonsMoving = true;
 
         yield return new WaitForSeconds(waitTime);
+
+        if(disable)
+        {
+            ffGoBtn.SetActive(false);
+            shopButton.SetActive(false);
+            highscoreButton.SetActive(false);
+            ffOptions.SetActive(false);
+        }
 
         buttonsMoving = false;
     }
 
     public IEnumerator SetPosition()
     {
+        buttonsMoving = true;
+
         scalingButtons.Clear();
+
+        ffGoBtn.SetActive(true);
+        shopButton.SetActive(true);
+        highscoreButton.SetActive(true);
+        ffOptions.SetActive(true);
 
         ffGoBtn.transform.position = new Vector3(-381, 2000);
         ffGoBtn.transform.localScale = Vector3.one;
@@ -319,6 +343,12 @@ public class MenuData : MonoBehaviour
         {
             //OptionHandler.Instance.UpdateResolution(1);
             PlayDestruction();
+        } else
+        {
+            ffGoBtn.SetActive(false);
+            shopButton.SetActive(false);
+            highscoreButton.SetActive(false);
+            ffOptions.SetActive(false);
         }
 
         ffHandler.GetComponent<FlatterFogelHandler>().StartGame();

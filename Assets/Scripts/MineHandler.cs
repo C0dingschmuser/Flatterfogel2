@@ -1220,7 +1220,7 @@ public class MineHandler : MonoBehaviour
         if(!ShopHandler.Instance.GetMineItem(id))
         { //wenn item nicht mehr vorhanden return
             //(zieht auch schon automatisch resourcen ab)
-            //return;
+            return;
         }
 
         if(isMoving)

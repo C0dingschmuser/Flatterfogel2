@@ -33,6 +33,8 @@ public class ShopHandler : MonoBehaviour
     private PipeCustomizationHandler pipeCustomizationHandler = null;
     [SerializeField]
     private GraveCustomizationHandler graveCustomizationHandler = null;
+    [SerializeField]
+    private RemoteConfigHandler remoteConfigHandler = null;
 
     public Canvas windowCanvas;
     public GameObject shopObj, eventSystem;
@@ -200,11 +202,17 @@ public class ShopHandler : MonoBehaviour
         LoadPurchasedItems();
         TypeClicked(0, true);
 
+        remoteConfigHandler.SetGetDefaults();
+
         //pipeColor =
         //    colorSlotParent.transform.GetChild(pipeColorID).GetChild(0).GetComponent<Image>().color;
 
         fadeMat.color = Color.red;
         fadeMat.DOColor(Color.blue, 0.5f).SetEase(Ease.Linear);
+    }
+
+    public void CompleteLoad()
+    {
         InvokeRepeating(nameof(NextColorStep), 0.51f, 0.251f);
         InvokeRepeating(nameof(HandleWingAnimation), 0.25f, 0.25f);
 
@@ -315,7 +323,7 @@ public class ShopHandler : MonoBehaviour
 
         for(int i = 0; i < allItems.Count; i++)
         {
-            if(allItems[i].identifier.Contains(identifier))
+            if(allItems[i].identifier.Equals(identifier))
             {
                 return allItems[i];
             }
@@ -686,6 +694,8 @@ public class ShopHandler : MonoBehaviour
                 FlatterFogelHandler.Instance.AddRoundCoin();
                 break;
         }
+
+        ObscuredPrefs.SetULong("Blus", blus);
 
         blusText.GetComponent<TextMeshProUGUI>().text = blus.ToString();
         blusText.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = blus.ToString();
@@ -1374,13 +1384,13 @@ public class ShopHandler : MonoBehaviour
     {
         if(pause)
         {
-            SavePurchasedItems();
+            //SavePurchasedItems();
         }
     }
 
     private void OnApplicationQuit()
     {
-        SavePurchasedItems();
+        //SavePurchasedItems();
     }
 
     private void NextColorStep()
@@ -1507,6 +1517,11 @@ public class ShopHandler : MonoBehaviour
 
     public void CloseShop()
     {
+        if(closing)
+        {
+            return;
+        }
+
         if (pipeColorActive)
         {
             CloseColorSelection();
@@ -1828,7 +1843,15 @@ public class ShopHandler : MonoBehaviour
         {
             default:
             case CustomizationType.Skin:
-                allSkins[id].purchased = true;
+
+                if(type != CustomizationType.Skin)
+                {
+                    Debug.LogError("Default BuyType Called: " + id + " " + type);
+                } else
+                {
+                    allSkins[id].purchased = true;
+                }
+
                 break;
             case CustomizationType.Wing:
                 allWings[id].purchased = true;

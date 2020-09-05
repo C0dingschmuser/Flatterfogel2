@@ -1350,7 +1350,7 @@ public class FF_PlayerData : MonoBehaviour
         fuelParent.SetActive(false);
         mineItemParent.SetActive(false);
 
-        deadParent.transform.position = transform.position;
+        deadParent.transform.position = new Vector3(transform.position.x, transform.position.y, -36);
         deadParent.transform.rotation = transform.rotation;
 
         deadParent.SetActive(true);

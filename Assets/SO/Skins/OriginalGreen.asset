@@ -15,7 +15,7 @@ MonoBehaviour:
   identifier: original_green
   itemID: 2
   rarity: 0
-  purchased: 0
+  purchased: 1
   salePercent: 0
   cost:
   - mineralID: 14

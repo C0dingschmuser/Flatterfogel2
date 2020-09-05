@@ -8,11 +8,10 @@ using Firebase.Extensions;
 
 public class RemoteConfigHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        SetGetDefaults();
-    }
+    public static bool loadComplete = false;
+
+    [SerializeField]
+    private ShopHandler shopHandler;
 
     public void SetGetDefaults()
     {
@@ -346,5 +345,8 @@ public class RemoteConfigHandler : MonoBehaviour
                 }
             }
         }
+
+        loadComplete = true;
+        shopHandler.CompleteLoad();
     }
 }

@@ -3,7 +3,6 @@
     "com.google.external-dependency-manager": "1.2.157",
     "com.google.firebase.analytics": "6.15.2",
     "com.google.firebase.app": "6.15.2",
-    "com.google.firebase.crashlytics": "6.15.2",
     "com.google.firebase.messaging": "6.15.2",
     "com.google.firebase.remote-config": "6.15.2",
     "com.unity.2d.sprite": "1.0.0",

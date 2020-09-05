@@ -116,7 +116,11 @@ public class D2D_HouseHandler : MonoBehaviour
 
         deathY = lastHitPos.y;
 
-        if(stats.type == DestructionMode.Type.EnemyPlaneSmall1)
+        if (stats.type == DestructionMode.Type.Flak)
+        {
+            GetComponent<Flakhandler>().enabled = false;
+        }
+        else if(stats.type == DestructionMode.Type.EnemyPlaneSmall1)
         {
             GetComponent<EnemyPlaneHandler>().enabled = false;
         }
@@ -293,7 +297,7 @@ public class D2D_HouseHandler : MonoBehaviour
             d2dParent.GetChild(i).GetComponent<D2dDestroyer>().enabled = true;
         }
 
-        if(stats.type == DestructionMode.Type.Flak)
+        if (stats.type == DestructionMode.Type.Flak)
         {
             GetComponent<Flakhandler>().enabled = false;
         }

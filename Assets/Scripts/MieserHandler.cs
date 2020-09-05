@@ -90,7 +90,7 @@ public class MieserHandler : MonoBehaviour
 
         deathEffect.SetActive(true);
         mieser.GetComponent<SpriteRenderer>().DOColor(Color.red, timeTillDeath);
-        Invoke("EndDeath", timeTillDeath);
+        Invoke(nameof(EndDeath), timeTillDeath);
     }
 
     private IEnumerator<float> SpawnEndCoins(float time, int coins)
