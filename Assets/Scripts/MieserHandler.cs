@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MEC;
 using UnityEngine;
 using DG.Tweening;
+using Firebase.Analytics;
 
 public class MieserHandler : MonoBehaviour
 {
@@ -16,8 +17,8 @@ public class MieserHandler : MonoBehaviour
     private float currentAlpha = 1, aliveTime = 0;
     private bool fadeRunning = false, isDead = false;
 
-    private int health = 15;
-    private const int maxHealth = 15;
+    private int health = 15, diff = 0;
+    private int maxHealth = 15;
 
     public static MieserHandler Instance;
 
@@ -29,7 +30,7 @@ public class MieserHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartMieser();
+        StartMieser(0);
     }
 
     public bool IsDead()
@@ -37,10 +38,24 @@ public class MieserHandler : MonoBehaviour
         return isDead;
     }
 
-    public void StartMieser()
+    public void StartMieser(int diff)
     {
         fadeRunning = false;
         isDead = false;
+
+        if(diff == 0)
+        {
+            maxHealth = 10;
+        } else if(diff == 1)
+        {
+            maxHealth = 12;
+        } else if(diff == 2)
+        {
+            maxHealth = 16;
+        } else
+        {
+            maxHealth = 18;
+        }
 
         aliveTime = 0;
 
@@ -72,17 +87,40 @@ public class MieserHandler : MonoBehaviour
     {
         float timeTillDeath = 3f;
 
+        float mp = 1.2f;
+
         int coins = 3;
 
         if(aliveTime < 11)
         {
-            coins = 7;
+            mp = 1.1f;
         } else if(aliveTime < 16)
         {
-            coins = 5;
+            mp = 1;
         }
 
+        switch(diff)
+        {
+            case 0:
+                coins = 3;
+                break;
+            case 1:
+                coins = 4;
+                break;
+            case 2:
+                coins = 7;
+                break;
+            case 3:
+                coins = 12;
+                break;
+        }
+
+        coins = (int)((float)coins * mp);
+
         float stepTime = 1.5f / coins;
+
+        FirebaseAnalytics.LogEvent("Mieser_Finish");
+        FirebaseAnalytics.LogEvent("Boss_Finish");
 
         Timing.RunCoroutine(SpawnEndCoins(stepTime, coins));
 

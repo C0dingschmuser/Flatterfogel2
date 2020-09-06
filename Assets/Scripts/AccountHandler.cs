@@ -514,10 +514,8 @@ public class AccountHandler : MonoBehaviour
 
         string authHash = Md5Sum(username + Auth.accountAuthKey);
 
-        string url = "https://bruh.games/manager.php?login=1&name=" +
-            username + "&pw=" + passwort + "&hash=" + authHash;
-
         WWWForm form = new WWWForm();
+
         form.AddField("login", "1");
         form.AddField("name", username);
         form.AddField("pw", passwort);

@@ -13,6 +13,7 @@ using Random = UnityEngine.Random;
 using Object = System.Object;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Linq;
+using Firebase.Analytics;
 
 public enum Rarity
 {
@@ -1506,6 +1507,8 @@ public class ShopHandler : MonoBehaviour
             }
             closing = false;
 
+            FirebaseAnalytics.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
+
             windowCanvas.sortingOrder = 10;
             StartCoroutine(MenuData.Instance.DoMoveIn());
             //MenuData.Instance.DoScaleUp();
@@ -1763,6 +1766,11 @@ public class ShopHandler : MonoBehaviour
             {
                 if(costData[i].mineralID == MineralType.Coin)
                 { //coins
+                    for(int c = 0; c < costData[i].amount; c++)
+                    {
+                        FirebaseAnalytics.LogEvent("CoinSpent");
+                    }
+
                     UpdateBlus((ulong)costData[i].amount, -1);
                 } else
                 {

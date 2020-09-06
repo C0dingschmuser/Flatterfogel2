@@ -131,9 +131,11 @@ public class OptionHandler : MonoBehaviour
 
             if(pr0)
             {
+                jumpEffectButton.SetActive(true);
                 FirebaseAnalytics.SetUserProperty("ProVersion", "1");
             } else
             {
+                jumpEffectButton.SetActive(false);
                 FirebaseAnalytics.SetUserProperty("ProVersion", "0");
             }
 
@@ -1001,7 +1003,7 @@ public class OptionHandler : MonoBehaviour
 #region Intro
     public void PushClicked()
     {
-        if(noPush== 0)
+        if(noPush == 0)
         {
             noPush = 1;
 #if UNITY_ANDROID || UNITY_IOS
@@ -1184,9 +1186,9 @@ public class OptionHandler : MonoBehaviour
 
 #if UNITY_ANDROID
             QualitySettings.vSyncCount = 2;
-#elif UNITY_IOS
-            Application.targetFrameRate = 30;
 #endif
+            Application.targetFrameRate = 30;
+//#endif
         }
         else
         {
@@ -1194,9 +1196,9 @@ public class OptionHandler : MonoBehaviour
 
 #if UNITY_ANDROID
             QualitySettings.vSyncCount = 1;
-#elif UNITY_IOS
-            Application.targetFrameRate = 60;
 #endif
+            Application.targetFrameRate = 60;
+//#endif
         }
 
         SetButtonText(framerateButton.transform.GetChild(0).GetChild(0), (string)handle.Result);

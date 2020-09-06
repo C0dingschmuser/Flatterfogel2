@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Firebase.Analytics;
 
 public class ShopMenuHandler : MonoBehaviour
 {
@@ -37,7 +38,9 @@ public class ShopMenuHandler : MonoBehaviour
     {
         gameObject.SetActive(true);
 
-        if(start)
+        FirebaseAnalytics.SetCurrentScreen("ShopMenu", "UnityPlayerActivity");
+
+        if (start)
         {
             fontMat.SetFloat("_DissolveAmount", 1);
             imageMat.SetFloat("_DissolveAmount", 1);

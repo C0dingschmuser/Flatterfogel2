@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
 using DG.Tweening;
+using Firebase.Analytics;
 
 public class BlusData : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class BlusData : MonoBehaviour
         isCoin = false, blusActive = false, moveDir = false;
     public float timer = 5f, yDiff = 0, maxYDiff = 50, speed = 10;
 
-    private int anCounter = 0;
+    private int anCounter = 0, type = 0;
     private Vector3 startPos;
     private List<Vector3> oldDestroyedPos = new List<Vector3>();
     private Coroutine animationRoutine = null;
@@ -30,7 +31,7 @@ public class BlusData : MonoBehaviour
     [SerializeField] private GameObject destroyedBlusPartPrefab = null;
     [SerializeField] private Transform destroyedBlusParent = null, imageObj = null, blusLight = null;
 
-    public void SpawnCoin(Vector3 newPos, Sprite[] animationSprites)
+    public void SpawnCoin(Vector3 newPos, Sprite[] animationSprites, int type = 1)
     {
         ResetBlus();
 
@@ -38,6 +39,8 @@ public class BlusData : MonoBehaviour
 
         blusAnimation = animationSprites;
         isCoin = true;
+
+        this.type = type; //bosscoin
 
         transform.position = newPos;
 
@@ -64,6 +67,8 @@ public class BlusData : MonoBehaviour
         imageObj.gameObject.SetActive(false);
 
         isCoin = false;
+
+        type = 0;
 
         if(pipeTop != null)
         {
@@ -294,6 +299,14 @@ public class BlusData : MonoBehaviour
         transform.DOScale(0, waitTime * 0.2f);
 
         yield return new WaitForSeconds(waitTime * 0.2f);
+
+        if(type == 0)
+        { //durchgeflogen
+            FirebaseAnalytics.LogEvent("CoinEarned");
+        } else if(type == 1)
+        { //boss
+            FirebaseAnalytics.LogEvent("CoinEarned_Boss");
+        }
 
         ShopHandler.Instance.CoinAddEffect();
 

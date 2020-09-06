@@ -11,6 +11,7 @@ using UnityEngine.UI;
 using TMPro;
 using Random = UnityEngine.Random;
 using UnityEngine.SocialPlatforms.Impl;
+using Firebase.Analytics;
 
 public class AchievementHandler : MonoBehaviour
 {
@@ -273,7 +274,7 @@ public class AchievementHandler : MonoBehaviour
                 //DEBUG Belohnung
                 for(int c = 0; c < 5; c++)
                 {
-                    FlatterFogelHandler.Instance.SpawnCoin(new Vector3(-113.3f, 1200, 0));
+                    FlatterFogelHandler.Instance.SpawnCoin(new Vector3(-113.3f, 1200, 0), 2);
                 }
 
                 LevelUp();
@@ -735,6 +736,8 @@ public class AchievementHandler : MonoBehaviour
 
     public void OpenAchievements()
     {
+        FirebaseAnalytics.SetCurrentScreen("Achievements", "UnityPlayerActivity");
+
         ScoreHandler sH = ScoreHandler.Instance;
         for (int a = 0; a < sH.pipeParent.childCount; a++)
         { //alte smallpipes löschen

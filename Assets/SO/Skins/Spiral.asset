@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7ece0d8c080068499e03e32231b4348, type: 3}
+  m_Name: Spiral
+  m_EditorClassIdentifier: 
+  identifier: spiral
+  itemID: 0
+  rarity: 4
+  purchased: 0
+  salePercent: 0
+  cost:
+  - mineralID: 14
+    amount: 160
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  animated: 1
+  animationSpeed: 0.1
+  shopTime: 0
+  shopStep: 0
+  sprite: {fileID: 21300000, guid: cc36e0a8b38a8c9479a89270506255c9, type: 3}
+  overrideWing: {fileID: 0}
+  animatedSprites:
+  - {fileID: 21300000, guid: cc36e0a8b38a8c9479a89270506255c9, type: 3}
+  - {fileID: 21300000, guid: 02a6073b812b69c468f43e9cac90e39f, type: 3}
+  - {fileID: 21300000, guid: 899865d6beecba941bcd1eae717b5f67, type: 3}
+  - {fileID: 21300000, guid: 335134eeeb6e63f46bdfd70b9910008b, type: 3}
+  - {fileID: 21300000, guid: 71df73ade09bc104c9cfcfb844f11171, type: 3}
+  - {fileID: 21300000, guid: a4f8a95de08cc5044ab9cd0e096e7920, type: 3}
+  - {fileID: 21300000, guid: b23d961e9d50f2e44a81db6b29f091ff, type: 3}
+  - {fileID: 21300000, guid: f8bd7cb8134540b45bdb4edd57622352, type: 3}
+  - {fileID: 21300000, guid: e4e68aa70cf27564d97b7686f33ac4ac, type: 3}
+  - {fileID: 21300000, guid: 23b43abfe896e6e4abc3e40651a8092c, type: 3}
+  - {fileID: 21300000, guid: 1eff318af4fdcc244bc24deb06d431bc, type: 3}
+  - {fileID: 21300000, guid: fa038c84a6070fb47b35f77a4ae67357, type: 3}
+  - {fileID: 21300000, guid: be52f4cd8190b6a4985d31fedf3efe21, type: 3}
+  - {fileID: 21300000, guid: 3648f8601006e25448229a9a3c728cb9, type: 3}
+  - {fileID: 21300000, guid: 0c87da7a69f66014fb8e0bcafcf0c42c, type: 3}
+  - {fileID: 21300000, guid: e548b38f403a61343a952c7f44611a7f, type: 3}
+  boughtWings: 
+  boughtHats: 
+  hatStart: 18.662
+  wingStart: 0
+  wingSupport: 1
+  hatSupport: 1
+  boxCollider: 0
+  colliderSize: {x: 0, y: 0}
+  colliderOffset: {x: 0, y: 0}

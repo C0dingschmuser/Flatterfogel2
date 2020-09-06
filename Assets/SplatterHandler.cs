@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MEC;
 using UnityEngine;
 using DG.Tweening;
+using Firebase.Analytics;
 
 public class SplatterHandler : MonoBehaviour
 {
@@ -130,6 +131,9 @@ public class SplatterHandler : MonoBehaviour
                 }
 
                 Timing.RunCoroutine(SpawnEndCoins(0.5f, coins));
+
+                FirebaseAnalytics.LogEvent("Splatter_Finish");
+                FirebaseAnalytics.LogEvent("Boss_Finish");
             }
         });
 

@@ -196,6 +196,8 @@ public class ScoreHandler : MonoBehaviour
             playerObj.SetActive(true);
             levelTextObj.SetActive(true);
 
+            FirebaseAnalytics.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
+
             //MenuData.Instance.DoScaleUp();
             StartCoroutine(MenuData.Instance.DoMoveIn());
         } else if(opening)
@@ -277,6 +279,8 @@ public class ScoreHandler : MonoBehaviour
 
         hParent.transform.DOMove(defaultHighscorePos, moveTime);
         //hParent.transform.DOScale(new Vector3(1, 1, 1), moveTime);
+
+        FirebaseAnalytics.SetCurrentScreen("Highscores", "UnityPlayerActivity");
 
         opening = true;
         Invoke(nameof(ReactivateEventSystem), moveTime + 0.01f);
@@ -551,10 +555,11 @@ public class ScoreHandler : MonoBehaviour
 
         //nameList.text = "Lade Daten...";
 
-        string hsString = "";
+        WWWForm form = new WWWForm();
+
         for (int i = 0; i < 5; i++)
         {
-            hsString += "&highscore" + (i + 1).ToString() + "=" + ffHandler.GetHighscore(i, diff).ToString();
+            form.AddField("highscore" + (i + 1).ToString(), ffHandler.GetHighscore(i).ToString());
         }
 
         long currentLvl = lvlHandler.GetLVL();
@@ -584,76 +589,99 @@ public class ScoreHandler : MonoBehaviour
 
         string authHash = AccountHandler.Md5Sum(username + Auth.authKey);
 
-        string link = "https://bruh.games/manager.php?setscore=1&lastscore=" +
-                        lastS.ToString() + hsString + "&name=" + username + "&hs=1&diff=" +
-                        diff.ToString() + "&mode=-1" +
-                        "&lvl=" + currentLvl.ToString() + "&pr=" + currentPrestige.ToString() +
-                        "&setgrave=1&gtop=" + gTop + "&gside=" + gSide + "&gbottom=" + gBottom +
-                        "&setskin=1&skin=" + skinString + "&wing=" + wingString + "&hat=" + hatString +
-                        "&pipe=" + pipeString + "&pipecolor=" + pipeColorID +
-                        "&hash=" + authHash;
+        form.AddField("diff", diff.ToString());
+        form.AddField("setscore", "1");
+        form.AddField("lastscore", lastS.ToString());
+
+        form.AddField("lvl", currentLvl.ToString());
+        form.AddField("pr", currentPrestige.ToString());
+
+        form.AddField("hs", "1");
+        form.AddField("mode", "-1");
+
+        form.AddField("setgrave", "1");
+        form.AddField("gtop", gTop);
+        form.AddField("gside", gSide);
+        form.AddField("gbottom", gBottom);
+
+        form.AddField("setskin", "1");
+        form.AddField("skin", skinString);
+        form.AddField("wing", wingString);
+        form.AddField("hat", hatString);
+
+        form.AddField("pipe", pipeString);
+        form.AddField("pipecolor", pipeColorID);
+
+        form.AddField("name", username);
+        form.AddField("hash", authHash);
 
         loadingObj.SetActive(true);
         loadingObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = Color.black;
         loadingObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
             loadingString;
 
-        UnityWebRequest www = UnityWebRequest.Get(link);
-        yield return www.SendWebRequest();
-
-        StopCoroutine(timerRoutine);
-        float remaining = 0.2f - mainTimer;
-
-        if(remaining > 0.01)
+        using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/main.php", form))
         {
-            yield return new WaitForSeconds(remaining);
-        }
+#pragma warning disable CS0618 // Typ oder Element ist veraltet
+            www.chunkedTransfer = false;
+#pragma warning restore CS0618 // Typ oder Element ist veraltet
 
-        if (www.isNetworkError || www.isHttpError)
-        {
-            Debug.Log(www.error);
-            nameParent.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                AccountHandler.Instance.connectionFailedString;
+            yield return www.SendWebRequest(); //wartet das abfrage fertig ist
 
-            loadingObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = Color.red;
-            loadingObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                accountHandler.connectionFailedString;
-        }
-        else
-        {
-            loadingObj.SetActive(false);
+            StopCoroutine(timerRoutine);
+            float remaining = 0.2f - mainTimer;
 
-            //FetchString(www.downloadHandler.text)
-
-            string wwwData = www.downloadHandler.text;
-
-            if (!wwwData.Contains("#") || !wwwData.Contains(",") || !wwwData.Contains("|"))
+            if (remaining > 0.01)
             {
+                yield return new WaitForSeconds(remaining);
+            }
+
+            if (www.isNetworkError || www.isHttpError)
+            {
+                Debug.Log(www.error);
                 nameParent.GetChild(0).GetComponent<TextMeshProUGUI>().text =
-                    "Error while Parsing:\n" + wwwData;
+                    AccountHandler.Instance.connectionFailedString;
 
-                fetchRunning = false;
-
-                yield return null;
+                loadingObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().color = Color.red;
+                loadingObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                    accountHandler.connectionFailedString;
             }
             else
             {
-                //Debug.Log("UString: " + wwwData);
-            }
+                loadingObj.SetActive(false);
 
-            string[] rawData = wwwData.Split('|'); //split nach modi
+                //FetchString(www.downloadHandler.text)
 
-            if(rawData.Length > 2)
-            {
-                hsDataString[0] = rawData[0]; //classic
-                hsDataString[1] = rawData[1]; //destruction
-                hsDataString[2] = rawData[2]; //mining
+                string wwwData = www.downloadHandler.text;
 
-                int arrayID = RealModeToArrayID(modeSelected);
+                if (!wwwData.Contains("#") || !wwwData.Contains(",") || !wwwData.Contains("|"))
+                {
+                    nameParent.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                        "Error while Parsing:\n" + wwwData;
 
-                highscoreDisplay = StartCoroutine(FetchHighscoreData(arrayID));
+                    fetchRunning = false;
 
-                dataFetched = true;
+                    yield return null;
+                }
+                else
+                {
+                    //Debug.Log("UString: " + wwwData);
+                }
+
+                string[] rawData = wwwData.Split('|'); //split nach modi
+
+                if (rawData.Length > 2)
+                {
+                    hsDataString[0] = rawData[0]; //classic
+                    hsDataString[1] = rawData[1]; //destruction
+                    hsDataString[2] = rawData[2]; //mining
+
+                    int arrayID = RealModeToArrayID(modeSelected);
+
+                    highscoreDisplay = StartCoroutine(FetchHighscoreData(arrayID));
+
+                    dataFetched = true;
+                }
             }
         }
 
@@ -1002,10 +1030,11 @@ public class ScoreHandler : MonoBehaviour
 
         string username = accountHandler.username;
 
-        string hsString = "";
+        WWWForm form = new WWWForm();
+
         for(int i = 0; i < 5; i++)
         {
-            hsString += "&highscore" + (i + 1).ToString() + "=" + ffHandler.GetHighscore(i).ToString();
+            form.AddField("highscore" + (i + 1).ToString(), ffHandler.GetHighscore(i).ToString());
         }
 
         //int tempCoins = ObscuredPrefs.GetInt("CoinTmp", 0);
@@ -1035,25 +1064,39 @@ public class ScoreHandler : MonoBehaviour
 
         string hatString = shop.allHats[shop.GetSelected(CustomizationType.Hat)].identifier;
 
-        string link = "https://bruh.games/manager.php?setscore=1&lastscore=" +
-                        lastS.ToString() + hsString + "&name=" + username + "&last50=1&diff=" + diff.ToString() +
-                        "&v=" + Application.version + "&lvl=" + currentLvl.ToString() + "&pr=" + currentPrestige.ToString() +
-                        "&setgrave=1&gtop=" + gTop + "&gside=" + gSide + "&gbottom=" + gBottom +
-                        "&setskin=1&skin=" + skinString + "&wing=" + wingString + "&hat=" + hatString +
-                        "&pipe=" + pipeString + "&pipecolor=" + pipeColorID +
-                        "&hash=" + authHash;
+        form.AddField("last50", "1");
+        form.AddField("v", Application.version);
+        form.AddField("diff", diff.ToString());
 
         if (accountHandler.accountState == AccountStates.LoggedOut ||
             accountHandler.accountState != AccountStates.Synced)
         { //username nicht gesetzt bzw nicht gesynced-> abfrage ohne score set
             username = AccountHandler.tempNames[Random.Range(0, 4)];
             authHash = AccountHandler.Md5Sum(username + Auth.authKey);
+        } else
+        {
+            form.AddField("setscore", "1");
+            form.AddField("lastscore", lastS.ToString());
 
-            link = "https://bruh.games/manager.php?last50=1&diff=" + diff.ToString() +
-                        "&v=" + Application.version + "&name=" + username + "&hash=" + authHash;
+            form.AddField("lvl", currentLvl.ToString());
+            form.AddField("pr", currentPrestige.ToString());
+
+            form.AddField("setgrave", "1");
+            form.AddField("gtop", gTop);
+            form.AddField("gside", gSide);
+            form.AddField("gbottom", gBottom);
+
+            form.AddField("setskin", "1");
+            form.AddField("skin", skinString);
+            form.AddField("wing", wingString);
+            form.AddField("hat", hatString);
+
+            form.AddField("pipe", pipeString);
+            form.AddField("pipecolor", pipeColorID);
         }
 
-        Debug.Log(link);
+        form.AddField("name", username);
+        form.AddField("hash", authHash);
 
         string os = "0";
 
@@ -1061,8 +1104,9 @@ public class ScoreHandler : MonoBehaviour
         os = "1";
 #endif
 
-        link += "&os=" + os;
+        form.AddField("os", os);
 
+        #region ErrorHandler
         string exceptionString = ExceptionHandler.exceptionString;
 
         exceptionString += "--------------------------------------------------------";
@@ -1072,7 +1116,7 @@ public class ScoreHandler : MonoBehaviour
             byte[] encodedByte = System.Text.ASCIIEncoding.ASCII.GetBytes(exceptionString);
             string base64Encoded = Convert.ToBase64String(encodedByte);
 
-            WWWForm form = new WWWForm();
+            form = new WWWForm();
             form.AddField("name", username);
             form.AddField("hash", authHash);
             form.AddField("stack", base64Encoded);
@@ -1093,19 +1137,24 @@ public class ScoreHandler : MonoBehaviour
                 }
             }
         }
+        #endregion 
 
-        UnityWebRequest www = UnityWebRequest.Get(link);
-        yield return www.SendWebRequest(); //wartet das abfrage fertig ist
-
-        if (www.isNetworkError || www.isHttpError)
+        using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/main.php", form))
         {
-            Debug.Log(www.error);
-        }
-        else
-        {
-            ObscuredPrefs.SetInt("CoinTmp", 0);
+            www.chunkedTransfer = false;
 
-            FetchString(www.downloadHandler.text);
+            yield return www.SendWebRequest(); //wartet das abfrage fertig ist
+
+            if (www.isNetworkError || www.isHttpError)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                ObscuredPrefs.SetInt("CoinTmp", 0);
+
+                FetchString(www.downloadHandler.text);
+            }
         }
     }
 
@@ -1249,8 +1298,6 @@ public class ScoreHandler : MonoBehaviour
         }
 
         string[] rawData = rawTypes[0].Split('#');
-
-        Debug.Log(wwwData);
 
         for (int i = 0; i < rawData.Length - 1; i++)
         {

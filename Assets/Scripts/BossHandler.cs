@@ -15,7 +15,7 @@ public class BossHandler : MonoBehaviour
         fullReload = true, infoShowed = false, direction = false;
     private float reloadTime, maxReloadTime = 5f, idleSpeed = 50f;
 
-    private int shootCount = 0, laserAnCount = 0, attackMode = 0;
+    private int shootCount = 0, laserAnCount = 0, attackMode = 0, diff = 0, maxShots = 3;
 
     private const float defaultIdleSpeed = 50f;
     private ObjectPooler pooler;
@@ -37,15 +37,48 @@ public class BossHandler : MonoBehaviour
         return isActive;
     }
 
-    public void StartBoss()
+    public void StartBoss(ulong score)
     {
         isActive = true;
+
+        if (score < 50)
+        {
+            diff = 0;
+
+            idleSpeed = 50f;
+            maxReloadTime = 5f;
+            maxShots = 3;
+        }
+        else if (score < 100)
+        {
+            diff = 1;
+
+            idleSpeed = 60f;
+            maxReloadTime = 4f;
+            maxShots = 3;
+        }
+        else if (score < 150)
+        {
+            diff = 2;
+
+            idleSpeed = 65f;
+            maxReloadTime = 4f;
+            maxShots = 4;
+        }
+        else
+        {
+            diff = 3;
+
+            idleSpeed = 70f;
+            maxReloadTime = 3.5f;
+            maxShots = 4;
+        }
 
         currentBoss = mieserBoss;
 
         currentBoss.SetActive(true);
         mieserHandler = currentBoss.GetComponent<MieserHandler>();
-        mieserHandler.StartMieser();
+        mieserHandler.StartMieser(diff);
 
         float startX = 223;
         float startY = Random.Range(362, 602);
@@ -281,7 +314,7 @@ public class BossHandler : MonoBehaviour
                             SoundManager.Instance.PlaySound(SoundManager.Sound.MinusShoot);
 
                             shootCount++;
-                            if (shootCount == 3)
+                            if (shootCount == maxShots)
                             {
                                 fullReload = true;
                                 reloadTime = maxReloadTime;

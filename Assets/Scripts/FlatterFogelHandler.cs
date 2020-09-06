@@ -493,7 +493,7 @@ public class FlatterFogelHandler : MonoBehaviour
         {
 #if UNITY_EDITOR
             SetScore(0, 0);
-            //internalScoreCount = 40;
+            internalScoreCount = 40;
 #else
             SetScore(0, 0);
 #endif
@@ -761,11 +761,15 @@ public class FlatterFogelHandler : MonoBehaviour
             }
             else if (!hardcore && destructionMode && !miningMode && !battleRoyale && !zigZag)
             {
+                StatHandler.destructionCount++;
+
                 FirebaseAnalytics.SetCurrentScreen("Destruction", "UnityPlayerActivity");
                 FirebaseAnalytics.LogEvent("DestructionPlayed");
             }
             else if (!hardcore && !destructionMode && miningMode && !battleRoyale && !zigZag)
             {
+                StatHandler.miningCount++;
+
                 FirebaseAnalytics.SetCurrentScreen("Mining", "UnityPlayerActivity");
                 FirebaseAnalytics.LogEvent("MiningPlayed");
             }
@@ -2169,7 +2173,7 @@ public class FlatterFogelHandler : MonoBehaviour
         return modeChangeBlus;
     }
 
-    public void SpawnCoin(Vector3 pos)
+    public void SpawnCoin(Vector3 pos, int type = 1)
     {
         GameObject newBlus = null;
 
@@ -2191,7 +2195,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         BlusData bData = newBlus.GetComponent<BlusData>();
 
-        bData.SpawnCoin(pos, coinSprites);
+        bData.SpawnCoin(pos, coinSprites, type);
         //ShopHandler.Instance.UpdateBlus(1, 1, true);
 
         otherObjs.Add(newBlus);
@@ -2399,7 +2403,9 @@ public class FlatterFogelHandler : MonoBehaviour
         switch(gameState)
         {
             case 0:
-                int newMode = Random.Range(0, 3);
+                int newMode = 0;//Random.Range(0, 3);
+
+                FirebaseAnalytics.LogEvent("Boss_Enter");
 
                 switch(newMode)
                 {
@@ -2453,6 +2459,8 @@ public class FlatterFogelHandler : MonoBehaviour
 
     private void StartSplatter()
     {
+        FirebaseAnalytics.LogEvent("Splatter_Enter");
+
         for (int i = 0; i < pipes.Count; i++)
         {
             pipes[i].GetComponent<PipeData>().ResetAll();
@@ -2478,6 +2486,8 @@ public class FlatterFogelHandler : MonoBehaviour
 
     private void StartShootingPipes()
     {
+        FirebaseAnalytics.LogEvent("ShootingPipes_Enter");
+
         for (int i = 0; i < pipes.Count; i++)
         {
             pipes[i].GetComponent<PipeData>().ResetAll();
@@ -2503,6 +2513,8 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public void StartBossFull()
     {
+        FirebaseAnalytics.LogEvent("Mieser_Enter");
+
         pipeSpawnAllowed = false;
 
         destructionHandler.DisableEnable(false);
@@ -2532,7 +2544,7 @@ public class FlatterFogelHandler : MonoBehaviour
         player.transform.position = newPos;
         player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 
-        BossHandler.Instance.StartBoss();
+        BossHandler.Instance.StartBoss(score);
         SoundManager.Instance.PlayMusicFade(MusicID.Boss);
 
         waitingState = -1;

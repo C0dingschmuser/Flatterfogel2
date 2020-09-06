@@ -9,6 +9,7 @@ using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEditor;
 using TMPro;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using Firebase.Analytics;
 
 public enum DeathCause
 {
@@ -1360,6 +1361,22 @@ public class FF_PlayerData : MonoBehaviour
         oldVel.x = 100;
 
         string deathReason = "";
+
+        FirebaseAnalytics.LogEvent("Death", "ID", (int)type);
+
+        long score = (long)(ulong)ffHandler.GetScore();
+
+        if (!ffHandler.battleRoyale && !ffHandler.destructionMode && !ffHandler.miningMode
+            && !ffHandler.zigZag && !ffHandler.hardcore)
+        { //classic, ja ist behindert i know
+            FirebaseAnalytics.LogEvent("Result_Classic", "Score", score);
+        } else if(ffHandler.destructionMode)
+        {
+            FirebaseAnalytics.LogEvent("Result_Destruction", "Score", score);
+        } else if(ffHandler.miningMode)
+        {
+            FirebaseAnalytics.LogEvent("Result_Mining", "Score", score);
+        }
 
         switch(type)
         {
