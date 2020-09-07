@@ -493,7 +493,7 @@ public class FlatterFogelHandler : MonoBehaviour
         {
 #if UNITY_EDITOR
             SetScore(0, 0);
-            internalScoreCount = 40;
+            //internalScoreCount = 40;
 #else
             SetScore(0, 0);
 #endif
@@ -2403,7 +2403,7 @@ public class FlatterFogelHandler : MonoBehaviour
         switch(gameState)
         {
             case 0:
-                int newMode = 0;//Random.Range(0, 3);
+                int newMode = Random.Range(0, 3);
 
                 FirebaseAnalytics.LogEvent("Boss_Enter");
 

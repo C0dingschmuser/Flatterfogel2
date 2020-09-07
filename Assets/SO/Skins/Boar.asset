@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7ece0d8c080068499e03e32231b4348, type: 3}
+  m_Name: Boar
+  m_EditorClassIdentifier: 
+  identifier: boar
+  itemID: 0
+  rarity: 3
+  purchased: 0
+  salePercent: 0
+  cost:
+  - mineralID: 14
+    amount: 100
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  animated: 1
+  animationSpeed: 0.05
+  shopTime: 0
+  shopStep: 0
+  sprite: {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
+  animatedSprites:
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: ec4f8250e551db94e8ac25c994dcfdb9, type: 3}
+  - {fileID: 21300000, guid: 06f0a7b182060c648ac9964503b1f4f4, type: 3}
+  - {fileID: 21300000, guid: ffe25b4a0fa7c10499633e5a95815c04, type: 3}
+  - {fileID: 21300000, guid: c3adc6baff7ba914f8a899d954200d7c, type: 3}
+  - {fileID: 21300000, guid: ffe25b4a0fa7c10499633e5a95815c04, type: 3}
+  - {fileID: 21300000, guid: 06f0a7b182060c648ac9964503b1f4f4, type: 3}
+  boughtWings: 
+  boughtHats: 
+  hatStart: 18.662
+  wingStart: 0
+  wingSupport: 1
+  hatSupport: 1
+  boxCollider: 0
+  colliderSize: {x: 0, y: 0}
+  colliderOffset: {x: 0, y: 0}

@@ -173,7 +173,7 @@ PlayerSettings:
     Standalone: com.Company.ProductName
     iPhone: com.bruhgames.flatterfogel
   buildNumber:
-    iPhone: 13
+    iPhone: 15
   AndroidBundleVersionCode: 14
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 0

@@ -50,13 +50,21 @@ public class ShopHandler : MonoBehaviour
 
     public List<Skin> allSkins = new List<Skin>();
     public List<Skin> allFilterSkins = new List<Skin>();
+    public Skin errorSkin;
 
     public List<Wing> allWings = new List<Wing>();
+    public Wing errorWing;
+
     public List<Hat> allHats = new List<Hat>();
+    public Hat errorHat;
+
     public List<MinerTool> allMiners = new List<MinerTool>();
     public List<HeatShield> allHeatShields = new List<HeatShield>();
     public List<MineItem> allMineItems = new List<MineItem>();
+
     public List<Pipe> allPipes = new List<Pipe>();
+    public Pipe errorPipe;
+
     public List<Background> allBackgrounds = new List<Background>();
 
     public List<GraveTop> allGraveTops = new List<GraveTop>();
@@ -330,7 +338,20 @@ public class ShopHandler : MonoBehaviour
             }
         }
 
-        return allItems[0];
+        //Wenn wir hier ankommen wurde Obj nicht gefunden
+        //  --> errorObj
+
+        switch(type)
+        {
+            default: //skin
+                return (ShopItem)errorSkin;
+            case CustomizationType.Wing:
+                return (ShopItem)errorWing;
+            case CustomizationType.Hat:
+                return (ShopItem)errorHat;
+            case CustomizationType.Pipe:
+                return (ShopItem)errorPipe;
+        }
     }
 
     public int GetSelected(CustomizationType type)
@@ -1236,8 +1257,8 @@ public class ShopHandler : MonoBehaviour
             }
         }
 
-        Debug.LogError("Wrong GraveTop ident: " + identifier);
-        return null;
+        Debug.LogWarning("Wrong GraveTop ident: " + identifier);
+        return allGraveTops[0];
     }
 
     public GraveSide GetGraveSide(string identifier)
@@ -1250,8 +1271,8 @@ public class ShopHandler : MonoBehaviour
             }
         }
 
-        Debug.LogError("Wrong GraveSide ident: " + identifier);
-        return null;
+        Debug.LogWarning("Wrong GraveSide ident: " + identifier);
+        return allGraveSides[0];
     }
 
     public GraveBottom GetGraveBottom(string identifier)
@@ -1264,8 +1285,8 @@ public class ShopHandler : MonoBehaviour
             }
         }
 
-        Debug.LogError("Wrong GraveBottom ident: " + identifier);
-        return null;
+        Debug.LogWarning("Wrong GraveBottom ident: " + identifier);
+        return allGraveBottoms[0];
     }
 
     public void SavePurchasedItems()

@@ -1370,12 +1370,15 @@ public class FF_PlayerData : MonoBehaviour
             && !ffHandler.zigZag && !ffHandler.hardcore)
         { //classic, ja ist behindert i know
             FirebaseAnalytics.LogEvent("Result_Classic", "Score", score);
+            StatHandler.Instance.AddResult(0, score);
         } else if(ffHandler.destructionMode)
         {
             FirebaseAnalytics.LogEvent("Result_Destruction", "Score", score);
+            StatHandler.Instance.AddResult(2, score);
         } else if(ffHandler.miningMode)
         {
             FirebaseAnalytics.LogEvent("Result_Mining", "Score", score);
+            StatHandler.Instance.AddResult(1, score);
         }
 
         switch(type)

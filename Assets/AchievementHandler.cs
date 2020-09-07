@@ -67,6 +67,8 @@ public class AchievementHandler : MonoBehaviour
 
     public static AchievementHandler Instance;
 
+    public static bool loadComplete = false;
+
     private void Awake()
     {
         Instance = this;
@@ -376,6 +378,8 @@ public class AchievementHandler : MonoBehaviour
 
         UpdateUI(true);
         UpdateMenuUnclaimed();
+
+        loadComplete = true;
     }
 
     public void UpdateUI(bool create = false)

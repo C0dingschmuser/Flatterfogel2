@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d08a3bf518dbbb3478d7419de50253d3, type: 3}
+  m_Name: ErrorWing
+  m_EditorClassIdentifier: 
+  identifier: errorWing
+  itemID: 0
+  rarity: 0
+  purchased: 0
+  salePercent: 0
+  cost:
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  sprite:
+  - {fileID: 3214039434289915375, guid: 08e3e4ba86e1039468442aa389db9f5c, type: 3}
+  - {fileID: -9138954832116936992, guid: 08e3e4ba86e1039468442aa389db9f5c, type: 3}
+  - {fileID: -8607144688472678271, guid: 08e3e4ba86e1039468442aa389db9f5c, type: 3}
+  middleID: 1
+  xDist: 0
+  shopScale: 2.5

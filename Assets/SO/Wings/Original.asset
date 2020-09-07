@@ -12,21 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d08a3bf518dbbb3478d7419de50253d3, type: 3}
   m_Name: Original
   m_EditorClassIdentifier: 
+  identifier: original
+  itemID: 0
+  rarity: 0
+  purchased: 0
+  salePercent: 0
+  cost:
+  - mineralID: 14
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
   sprite:
   - {fileID: -6470460504253458178, guid: 4fafc09174d9ece49bbeed7e06a2e41b, type: 3}
   - {fileID: 6623151957235123224, guid: 4fafc09174d9ece49bbeed7e06a2e41b, type: 3}
   - {fileID: 2161284124966242572, guid: 4fafc09174d9ece49bbeed7e06a2e41b, type: 3}
-  purchased: 0
-  cost:
-  - mineralID: 0
-    amount: 0
-  - mineralID: 0
-    amount: 0
-  - mineralID: 0
-    amount: 0
-  - mineralID: 0
-    amount: 0
-  wingID: 3
-  salePercent: 0
+  middleID: 1
+  xDist: 0
   shopScale: 2.5
-  identifier: original

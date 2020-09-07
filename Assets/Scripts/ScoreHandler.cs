@@ -1078,6 +1078,14 @@ public class ScoreHandler : MonoBehaviour
             form.AddField("setscore", "1");
             form.AddField("lastscore", lastS.ToString());
 
+            form.AddField("classicAvg", Math.Round(StatHandler.classicAvg, 2).ToString());
+            form.AddField("miningAvg", Math.Round(StatHandler.miningAvg, 2).ToString());
+            form.AddField("destructionAvg", Math.Round(StatHandler.destructionAvg, 2).ToString());
+
+            form.AddField("classicMAX", StatHandler.classicCount.ToString());
+            form.AddField("miningMAX", StatHandler.miningCount.ToString());
+            form.AddField("destructionMAX", StatHandler.destructionCount.ToString());
+
             form.AddField("lvl", currentLvl.ToString());
             form.AddField("pr", currentPrestige.ToString());
 

@@ -193,9 +193,9 @@ public class OptionHandler : MonoBehaviour
 
         selectedLocaleIndex = -1;
 
-        string selectedLocaleName = PlayerPrefs.GetString("SelectedLocale", "en");
+        string selectedLocaleName = PlayerPrefs.GetString("SelectedLocale", "");
 
-        if(selectedLocaleName.Length == 0)
+        if (selectedLocaleName.Length == 0)
         { //system default
             switch(Application.systemLanguage)
             {

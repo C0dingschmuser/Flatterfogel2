@@ -15,10 +15,25 @@ public class RemoteConfigHandler : MonoBehaviour
 
     public void SetGetDefaults()
     {
+        StartCoroutine(WaitForLoad());
+    }
+
+    IEnumerator WaitForLoad()
+    {
+        while(!AchievementHandler.loadComplete)
+        {
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        ContinueLoad();
+    }
+
+    private void ContinueLoad()
+    {
         Dictionary<string, object> defaults = new Dictionary<string, object>();
 
         List<Skin> allSkins = ShopHandler.Instance.allSkins;
-        for(int i = 0; i < allSkins.Count; i++)
+        for (int i = 0; i < allSkins.Count; i++)
         {
             string price = GetPriceString(allSkins[i].cost);
 
@@ -58,7 +73,7 @@ public class RemoteConfigHandler : MonoBehaviour
         }
 
         List<GraveTop> allGraveTops = ShopHandler.Instance.allGraveTops;
-        for(int i = 0; i < allGraveTops.Count; i++)
+        for (int i = 0; i < allGraveTops.Count; i++)
         {
             string price = GetPriceString(allGraveTops[i].cost);
 
@@ -88,9 +103,9 @@ public class RemoteConfigHandler : MonoBehaviour
         }
 
         Achievement[] allAchievements = AchievementHandler.Instance.allAchievements;
-        for(int i = 0; i < allAchievements.Length; i++)
+        for (int i = 0; i < allAchievements.Length; i++)
         {
-            if(!allAchievements[i].upgradable)
+            if (!allAchievements[i].upgradable)
             { //nur nicht upgradable einlesen
                 string rewards = GetPriceString(allAchievements[i].rewards);
                 string final = rewards + "~" + allAchievements[i].maxStep.ToString();
@@ -121,7 +136,9 @@ public class RemoteConfigHandler : MonoBehaviour
 
     private IEnumerator FetchValues()
     {
-        yield return FirebaseRemoteConfig.FetchAsync(TimeSpan.Zero);
+        //yield return FirebaseRemoteConfig.FetchAsync(TimeSpan.Zero);
+
+        yield return null;
 
         FirebaseRemoteConfig.ActivateFetched();
 
