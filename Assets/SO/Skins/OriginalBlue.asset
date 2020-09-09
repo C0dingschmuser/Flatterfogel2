@@ -19,7 +19,7 @@ MonoBehaviour:
   salePercent: 0
   cost:
   - mineralID: 14
-    amount: 50
+    amount: 35
   - mineralID: 0
     amount: 0
   - mineralID: 0

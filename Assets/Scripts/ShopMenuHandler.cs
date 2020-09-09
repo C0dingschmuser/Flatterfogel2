@@ -38,7 +38,7 @@ public class ShopMenuHandler : MonoBehaviour
     {
         gameObject.SetActive(true);
 
-        FirebaseAnalytics.SetCurrentScreen("ShopMenu", "UnityPlayerActivity");
+        FirebaseHandler.SetCurrentScreen("ShopMenu", "UnityPlayerActivity");
 
         if (start)
         {

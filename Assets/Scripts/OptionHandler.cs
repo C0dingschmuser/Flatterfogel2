@@ -78,7 +78,7 @@ public class OptionHandler : MonoBehaviour
     public static int jumpEffectMode = 0;
 
     //Allgemein
-    public static string currentPost = "4103089";
+    public static string currentPost = "4117827";
     public static OptionHandler Instance;
     public static int kreuzPos = 0, kreuzSize = 0, mineMode = 2, noPush = 0;
     public static bool hardcoreActive = false, normalAspect = false,
@@ -98,6 +98,8 @@ public class OptionHandler : MonoBehaviour
     private int selectedLocaleIndex = -1;
 
     private string usernameString, emailSentString, emailNotSentString;
+
+    public GameObject languageItemPrefab, languageParent, languageOkButton, gdprObj;
 
     public LocalizedString mineHalten, mineGesten, mineKreuz;
     public LocalizedString mineItemLeft, mineItemRight;
@@ -125,18 +127,32 @@ public class OptionHandler : MonoBehaviour
 
         currentPost = PlayerPrefs.GetString("Post", currentPost);
 
-        if(firstLaunch == 1)
-        {
-            FirebaseAnalytics.SetUserProperty("WantsMessages", "1");
+        int noPush = PlayerPrefs.GetInt("Player_NoPush", 0);
 
+        if(noPush == 0)
+        { //will benachrichtigungen
+            FirebaseHandler.SetUserProperty("WantsMessages", "1");
+        } else
+        {
+            FirebaseHandler.SetUserProperty("WantsMessages", "0");
+        }
+
+        if(pr0)
+        {
+            FirebaseHandler.SetUserProperty("ProVersion", "1");
+        } else
+        {
+            FirebaseHandler.SetUserProperty("ProVersion", "0");
+        }
+
+        if (firstLaunch == 1)
+        {
             if(pr0)
             {
                 jumpEffectButton.SetActive(true);
-                FirebaseAnalytics.SetUserProperty("ProVersion", "1");
             } else
             {
                 jumpEffectButton.SetActive(false);
-                FirebaseAnalytics.SetUserProperty("ProVersion", "0");
             }
 
             ObscuredPrefs.SetInt("FirstLaunch", 0);
@@ -189,15 +205,42 @@ public class OptionHandler : MonoBehaviour
 
     IEnumerator LoadLocalization()
     {
+        string selectedLocaleName = PlayerPrefs.GetString("SelectedLocale", "");
+
+        if (selectedLocaleName.Equals(""))
+        { //system default
+            languageParent.transform.parent.parent.parent.parent.gameObject.SetActive(true);
+
+            languageOkButton.GetComponent<Button>().interactable = false;
+
+            for (int i = 0; i < gdprObj.transform.childCount; i++)
+            {
+                gdprObj.transform.GetChild(i).gameObject.SetActive(false);
+            }
+        }
+
         yield return LocalizationSettings.InitializationOperation;
 
         selectedLocaleIndex = -1;
 
-        string selectedLocaleName = PlayerPrefs.GetString("SelectedLocale", "");
-
-        if (selectedLocaleName.Length == 0)
+        if (selectedLocaleName.Equals(""))
         { //system default
-            switch(Application.systemLanguage)
+
+            selectedLocaleName = "en";
+
+            for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
+            {
+                Locale locale = LocalizationSettings.AvailableLocales.Locales[i];
+
+                GameObject obj = Instantiate(languageItemPrefab, languageParent.transform);
+
+                obj.GetComponent<LanguageItemHandler>().languageID = locale.name;
+
+                obj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
+                    locale.name;
+            }
+
+            /*switch(Application.systemLanguage)
             {
                 default:
                 case SystemLanguage.English:
@@ -212,7 +255,7 @@ public class OptionHandler : MonoBehaviour
                 case SystemLanguage.Spanish:
                     selectedLocaleName = "es";
                     break;
-            }
+            }*/
         }
 
         for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
@@ -227,6 +270,36 @@ public class OptionHandler : MonoBehaviour
         }
 
         StartCoroutine(SetLocalization(selectedLocaleIndex, true));
+    }
+
+    public void LanguageClicked(string language)
+    {
+        languageOkButton.GetComponent<Button>().interactable = true;
+
+        for (int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
+        {
+            Locale locale = LocalizationSettings.AvailableLocales.Locales[i];
+            allLocales.Add(locale);
+
+            if (locale.name.Contains(language))
+            {
+                selectedLocaleIndex = i;
+            }
+        }
+    }
+
+    public void LanguageOkayClicked()
+    {
+        languageOkButton.GetComponent<Button>().interactable = false;
+
+        languageParent.transform.parent.parent.parent.parent.gameObject.SetActive(false);
+
+        for (int i = 0; i < gdprObj.transform.childCount; i++)
+        {
+            gdprObj.transform.GetChild(i).gameObject.SetActive(true);
+        }
+
+        StartCoroutine(SetLocalization(selectedLocaleIndex));
     }
 
     private IEnumerator SetLocalization(int index, bool load = false)
@@ -1007,13 +1080,13 @@ public class OptionHandler : MonoBehaviour
         {
             noPush = 1;
 #if UNITY_ANDROID || UNITY_IOS
-            FirebaseAnalytics.SetUserProperty("WantsMessages", "0");
+            FirebaseHandler.SetUserProperty("WantsMessages", "0");
 #endif
         } else
         {
             noPush = 0;
 #if UNITY_ANDROID || UNITY_IOS
-            FirebaseAnalytics.SetUserProperty("WantsMessages", "1");
+            FirebaseHandler.SetUserProperty("WantsMessages", "1");
 #endif
         }
 

@@ -39,9 +39,10 @@ public class ScoreHandler : MonoBehaviour
 
     public Color[] prestigeColors;
     public Transform nameParent, scoreParent, postParent, levelParent, highscoreDataParent, updateParent,
-        positionParent, playersParent, pipeParent, arrowParent, windowParent, accountWindowParent;
+        positionParent, playersParent, pipeParent, arrowParent, windowParent, accountWindowParent,
+        otherChangelogParent;
 
-    public GameObject playerObjPrefab, loadingObj;
+    public GameObject playerObjPrefab, loadingObj, updateText, otherChangelogText, otherChangelogVersiontext;
     public GraphicRaycaster raycaster;
 
     public TMP_InputField nameInput, backupInput;
@@ -196,7 +197,7 @@ public class ScoreHandler : MonoBehaviour
             playerObj.SetActive(true);
             levelTextObj.SetActive(true);
 
-            FirebaseAnalytics.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
+            FirebaseHandler.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
 
             //MenuData.Instance.DoScaleUp();
             StartCoroutine(MenuData.Instance.DoMoveIn());
@@ -280,7 +281,7 @@ public class ScoreHandler : MonoBehaviour
         hParent.transform.DOMove(defaultHighscorePos, moveTime);
         //hParent.transform.DOScale(new Vector3(1, 1, 1), moveTime);
 
-        FirebaseAnalytics.SetCurrentScreen("Highscores", "UnityPlayerActivity");
+        FirebaseHandler.SetCurrentScreen("Highscores", "UnityPlayerActivity");
 
         opening = true;
         Invoke(nameof(ReactivateEventSystem), moveTime + 0.01f);
@@ -595,6 +596,14 @@ public class ScoreHandler : MonoBehaviour
 
         form.AddField("lvl", currentLvl.ToString());
         form.AddField("pr", currentPrestige.ToString());
+
+        form.AddField("classicAvg", Math.Round(StatHandler.classicAvg, 2).ToString());
+        form.AddField("miningAvg", Math.Round(StatHandler.miningAvg, 2).ToString());
+        form.AddField("destructionAvg", Math.Round(StatHandler.destructionAvg, 2).ToString());
+
+        form.AddField("classicMAX", StatHandler.classicCount.ToString());
+        form.AddField("miningMAX", StatHandler.miningCount.ToString());
+        form.AddField("destructionMAX", StatHandler.destructionCount.ToString());
 
         form.AddField("hs", "1");
         form.AddField("mode", "-1");
@@ -1114,8 +1123,36 @@ public class ScoreHandler : MonoBehaviour
 
         form.AddField("os", os);
 
+        bool otherChangelog = false;
+
+#if UNITY_IOS
+        if(!PlayerPrefs.GetString("LastChangelogVersion", Application.version).Equals(Application.version))
+        {
+            otherChangelog = true;
+        }
+#elif UNITY_ANDROID
+        if (PlayerPrefs.GetInt("OtherChangelog", 0) == 0)
+        {
+            otherChangelog = true;
+        }
+#endif
+
+        if(otherChangelog)
+        { //force changelog request
+            form.AddField("changelogforce", "1");
+        } else
+        {
+            form.AddField("changelogforce", "0");
+        }
+
         #region ErrorHandler
-        string exceptionString = ExceptionHandler.exceptionString;
+        string exceptionString;
+
+        exceptionString = "Username: " + username + "\n";
+
+        exceptionString += "Version: " + Application.version + "\n";
+
+        exceptionString += ExceptionHandler.exceptionString;
 
         exceptionString += "--------------------------------------------------------";
 
@@ -1201,6 +1238,16 @@ public class ScoreHandler : MonoBehaviour
         }
     }
 
+    public void CloseOtherChangelog()
+    {
+        otherChangelogParent.gameObject.SetActive(false);
+
+        if(!postParent.gameObject.activeSelf && !GDPRHandler.isActive)
+        {
+            raycaster.enabled = false;
+        }
+    }
+
     public void OpenPost(bool open)
     {
         postParent.gameObject.SetActive(false);
@@ -1257,6 +1304,36 @@ public class ScoreHandler : MonoBehaviour
         string bundleVersion = vData[2];
         bundleSize = Int32.Parse(vData[3]);
 
+        string encodedChangelog = vData[4];
+
+        bool otherChangelog = false;
+
+        if (encodedChangelog.Length > 0)
+        {
+            byte[] bytes = Convert.FromBase64String(encodedChangelog);
+
+            string changelog = System.Text.ASCIIEncoding.ASCII.GetString(bytes);
+
+            updateText.GetComponent<TextMeshProUGUI>().text = changelog;
+
+            otherChangelogVersiontext.GetComponent<TextMeshProUGUI>().text = "Version " + Application.version;
+            otherChangelogText.GetComponent<TextMeshProUGUI>().text = changelog;
+
+#if UNITY_IOS
+        if(!PlayerPrefs.GetString("LastChangelogVersion", Application.version).Equals(Application.version))
+        { //Changelog nach Updates aber nicht bei firstlaunch anzeigen
+            otherChangelog = true;
+            PlayerPrefs.SetString("LastChangelogVersion", Application.version);
+        }
+#elif UNITY_ANDROID
+            if (PlayerPrefs.GetInt("OtherChangelog", 0) == 0)
+            {
+                otherChangelog = true;
+                PlayerPrefs.SetInt("OtherChangelog", 1);
+            }
+#endif
+        }
+
         int currentBundleCode = PlayerPrefs.GetInt("DownloadedBundle", PlayerPrefs.GetInt("InstalledBundle"));
 
         int newBundleCode = Int32.Parse(bundleVersion);
@@ -1295,12 +1372,22 @@ public class ScoreHandler : MonoBehaviour
 
             if (newVersion > oldVersion)
             {
+#if UNITY_EDITOR
                 Debug.Log(newVersion + " " + oldVersion);
+#endif
 
                 if (!GDPRHandler.isActive && !postParent.gameObject.activeSelf)
                 {
                     updateParent.gameObject.SetActive(true);
                     raycaster.enabled = true;
+                }
+            } else
+            { //other changelog check
+                if(otherChangelog)
+                {
+                    raycaster.enabled = true;
+
+                    otherChangelogParent.gameObject.SetActive(true);
                 }
             }
         }

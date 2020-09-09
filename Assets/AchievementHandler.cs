@@ -740,7 +740,7 @@ public class AchievementHandler : MonoBehaviour
 
     public void OpenAchievements()
     {
-        FirebaseAnalytics.SetCurrentScreen("Achievements", "UnityPlayerActivity");
+        FirebaseHandler.SetCurrentScreen("Achievements", "UnityPlayerActivity");
 
         ScoreHandler sH = ScoreHandler.Instance;
         for (int a = 0; a < sH.pipeParent.childCount; a++)

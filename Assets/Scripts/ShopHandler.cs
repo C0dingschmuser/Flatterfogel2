@@ -1528,7 +1528,7 @@ public class ShopHandler : MonoBehaviour
             }
             closing = false;
 
-            FirebaseAnalytics.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
+            FirebaseHandler.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
 
             windowCanvas.sortingOrder = 10;
             StartCoroutine(MenuData.Instance.DoMoveIn());
@@ -1789,7 +1789,7 @@ public class ShopHandler : MonoBehaviour
                 { //coins
                     for(int c = 0; c < costData[i].amount; c++)
                     {
-                        FirebaseAnalytics.LogEvent("CoinSpent");
+                        FirebaseHandler.LogEvent("CoinSpent");
                     }
 
                     UpdateBlus((ulong)costData[i].amount, -1);

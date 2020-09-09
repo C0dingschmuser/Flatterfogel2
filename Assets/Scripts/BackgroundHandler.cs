@@ -657,9 +657,24 @@ public class BackgroundHandler : MonoBehaviour
         {
             currentLayer = spriteData[layer];
 
+            if(currentLayer == null)
+            {
+                Debug.LogWarning("CurrentLayer is NULL");
+            }
+
             for (int i = 0; i < 5; i++)
             {
                 layerPartObj = currentLayer.layerPartObjs[i];
+
+                if(layerPartObj == null)
+                {
+                    Debug.LogWarning("layerPartObj is NULL");
+                }
+
+                if(layerPartObj.GetComponent<SpriteID>() == null)
+                {
+                    Debug.LogWarning("SpriteID is NULL!");
+                }
 
                 currentID = layerPartObj.GetComponent<SpriteID>().currentID;
 

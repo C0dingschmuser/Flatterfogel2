@@ -10,21 +10,30 @@ public class ExceptionHandler : MonoBehaviour
 
     void OnEnable()
     {
+        Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.Full);
+        Application.SetStackTraceLogType(LogType.Assert, StackTraceLogType.Full);
+
         Application.logMessageReceived += LogCallback;
 
         exceptionString = ObscuredPrefs.GetString("ExceptionString", "");
     }
 
+    private void Start()
+    {
+        FirebaseAnalyticsInitialize.CheckIfReady();
+    }
+
     //Called when there is an exception
     void LogCallback(string condition, string stackTrace, LogType type)
     {
+        string data = "C: " + condition + " ST: " + stackTrace;
+
         if (type == LogType.Assert ||
             type == LogType.Exception ||
-            type == LogType.Error)
+            type == LogType.Error ||
+            (type == LogType.Warning && !data.Contains("VideoPlayer")))
         {
             string hasError = "";
-
-            string data = "C: " + condition + " ST: " + stackTrace;
 
             if (type == LogType.Assert ||
                 type == LogType.Exception ||

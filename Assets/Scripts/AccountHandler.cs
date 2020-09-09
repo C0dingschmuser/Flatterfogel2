@@ -9,9 +9,6 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SocialPlatforms;
 using Firebase.Analytics;
 #endif
-#if UNITY_ANDROID
-using GooglePlayGames;
-#endif
 using TMPro;
 
 public enum AccountStates
@@ -356,6 +353,9 @@ public class AccountHandler : MonoBehaviour
     public void StartRegister()
     {
         if (running) return;
+
+        regInfo.GetComponent<TextMeshProUGUI>().text = "";
+
         running = true;
 
         string username = regUsername.GetComponent<TMP_InputField>().text;
@@ -370,6 +370,8 @@ public class AccountHandler : MonoBehaviour
             regInfo.GetComponent<TextMeshProUGUI>().text = invalidNameString + "\n" +
                                                             "(a-z A-Z 0-9 .,-_)\n" +
                                                             "2-20 " + lengthString;
+
+            running = false;
             return;
         }
 
@@ -381,6 +383,8 @@ public class AccountHandler : MonoBehaviour
             regInfo.GetComponent<TextMeshProUGUI>().text = invalidPasswordString + "\n" +
                                                             "(a-z A-Z 0-9 .,-_+*~#)\n" +
                                                             "4-20 " + lengthString;
+
+            running = false;
             return;
         }
 
@@ -390,6 +394,8 @@ public class AccountHandler : MonoBehaviour
         {
             regInfo.GetComponent<TextMeshProUGUI>().color = Color.red;
             regInfo.GetComponent<TextMeshProUGUI>().text = invalidEmailString;
+
+            running = false;
             return;
         }
 

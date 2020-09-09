@@ -107,26 +107,30 @@ public class GravestoneHandler : MonoBehaviour
 
     IEnumerator<float> _UpdateAlpha()
     {
-        while(true)
+        while(gameObject.activeSelf)
         {
-            float xDist =
-                Mathf.Abs(transform.position.x - player.transform.position.x);
-            if (xDist < maxDistance)
+            if(player != null)
             {
-                opacity = 1 - (xDist / maxDistance);
-                stoneName[0].GetComponent<Text>().color =
-                    SetAlpha(stoneName[0].GetComponent<Text>().color, opacity);
-                stoneName[1].GetComponent<Text>().color =
-                    SetAlpha(stoneName[1].GetComponent<Text>().color, opacity);
-            } else if(opacity <= 0.1f && opacity > 0)
-            {
-                opacity = 0;
-                stoneName[0].GetComponent<Text>().color =
-                    SetAlpha(stoneName[0].GetComponent<Text>().color, opacity);
-                stoneName[1].GetComponent<Text>().color =
-                    SetAlpha(stoneName[1].GetComponent<Text>().color, opacity);
+                float xDist =
+                    Mathf.Abs(transform.position.x - player.transform.position.x);
+                if (xDist < maxDistance)
+                {
+                    opacity = 1 - (xDist / maxDistance);
+                    stoneName[0].GetComponent<Text>().color =
+                        SetAlpha(stoneName[0].GetComponent<Text>().color, opacity);
+                    stoneName[1].GetComponent<Text>().color =
+                        SetAlpha(stoneName[1].GetComponent<Text>().color, opacity);
+                }
+                else if (opacity <= 0.1f && opacity > 0)
+                {
+                    opacity = 0;
+                    stoneName[0].GetComponent<Text>().color =
+                        SetAlpha(stoneName[0].GetComponent<Text>().color, opacity);
+                    stoneName[1].GetComponent<Text>().color =
+                        SetAlpha(stoneName[1].GetComponent<Text>().color, opacity);
+                }
+                yield return Timing.WaitForSeconds(0.1f);
             }
-            yield return Timing.WaitForSeconds(0.1f);
         }
     }
 }

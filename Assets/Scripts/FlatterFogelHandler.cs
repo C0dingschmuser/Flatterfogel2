@@ -10,9 +10,6 @@ using UnityEngine.Rendering.PostProcessing;
 using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
 using Destructible2D;
-#if UNITY_ANDROID || UNITY_IOS
-using Firebase.Analytics;
-#endif
 using System.Linq;
 
 public class FlatterFogelHandler : MonoBehaviour
@@ -198,7 +195,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
 #if UNITY_ANDROID || UNITY_IOS
         cullingEnabled = true;
-        FirebaseAnalytics.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
+        FirebaseHandler.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
 
 #endif
 
@@ -751,37 +748,37 @@ public class FlatterFogelHandler : MonoBehaviour
             {
                 StatHandler.classicCount++;
 
-                FirebaseAnalytics.SetCurrentScreen("Classic", "UnityPlayerActivity");
-                FirebaseAnalytics.LogEvent("ClassicPlayed");
+                FirebaseHandler.SetCurrentScreen("Classic", "UnityPlayerActivity");
+                FirebaseHandler.LogEvent("ClassicPlayed");
             }
             else if (hardcore && !destructionMode && !miningMode && !battleRoyale && !zigZag)
             {
-                FirebaseAnalytics.SetCurrentScreen("Hardcore", "UnityPlayerActivity");
-                FirebaseAnalytics.LogEvent("HardcorePlayed");
+                FirebaseHandler.SetCurrentScreen("Hardcore", "UnityPlayerActivity");
+                FirebaseHandler.LogEvent("HardcorePlayed");
             }
             else if (!hardcore && destructionMode && !miningMode && !battleRoyale && !zigZag)
             {
                 StatHandler.destructionCount++;
 
-                FirebaseAnalytics.SetCurrentScreen("Destruction", "UnityPlayerActivity");
-                FirebaseAnalytics.LogEvent("DestructionPlayed");
+                FirebaseHandler.SetCurrentScreen("Destruction", "UnityPlayerActivity");
+                FirebaseHandler.LogEvent("DestructionPlayed");
             }
             else if (!hardcore && !destructionMode && miningMode && !battleRoyale && !zigZag)
             {
                 StatHandler.miningCount++;
 
-                FirebaseAnalytics.SetCurrentScreen("Mining", "UnityPlayerActivity");
-                FirebaseAnalytics.LogEvent("MiningPlayed");
+                FirebaseHandler.SetCurrentScreen("Mining", "UnityPlayerActivity");
+                FirebaseHandler.LogEvent("MiningPlayed");
             }
             else if (!hardcore && !destructionMode && !miningMode && battleRoyale && !zigZag)
             {
-                FirebaseAnalytics.SetCurrentScreen("Royale", "UnityPlayerActivity");
-                FirebaseAnalytics.LogEvent("RoyalePlayed");
+                FirebaseHandler.SetCurrentScreen("Royale", "UnityPlayerActivity");
+                FirebaseHandler.LogEvent("RoyalePlayed");
             }
             else if (!hardcore && !destructionMode && !miningMode && !battleRoyale && zigZag)
             {
-                FirebaseAnalytics.SetCurrentScreen("ZigZag", "UnityPlayerActivity");
-                FirebaseAnalytics.LogEvent("ZigZagPlayed");
+                FirebaseHandler.SetCurrentScreen("ZigZag", "UnityPlayerActivity");
+                FirebaseHandler.LogEvent("ZigZagPlayed");
             }
         }
 #endif
@@ -2365,7 +2362,7 @@ public class FlatterFogelHandler : MonoBehaviour
             perfectHits, roundCoins));
 
 #if UNITY_ANDROID || UNITY_IOS
-        FirebaseAnalytics.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
+        FirebaseHandler.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
 #endif
         menu.GetComponent<MenuData>().DeathFF(false);
     }
@@ -2405,7 +2402,7 @@ public class FlatterFogelHandler : MonoBehaviour
             case 0:
                 int newMode = Random.Range(0, 3);
 
-                FirebaseAnalytics.LogEvent("Boss_Enter");
+                FirebaseHandler.LogEvent("Boss_Enter");
 
                 switch(newMode)
                 {
@@ -2459,7 +2456,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
     private void StartSplatter()
     {
-        FirebaseAnalytics.LogEvent("Splatter_Enter");
+        FirebaseHandler.LogEvent("Splatter_Enter");
 
         for (int i = 0; i < pipes.Count; i++)
         {
@@ -2486,7 +2483,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
     private void StartShootingPipes()
     {
-        FirebaseAnalytics.LogEvent("ShootingPipes_Enter");
+        FirebaseHandler.LogEvent("ShootingPipes_Enter");
 
         for (int i = 0; i < pipes.Count; i++)
         {
@@ -2513,7 +2510,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public void StartBossFull()
     {
-        FirebaseAnalytics.LogEvent("Mieser_Enter");
+        FirebaseHandler.LogEvent("Mieser_Enter");
 
         pipeSpawnAllowed = false;
 

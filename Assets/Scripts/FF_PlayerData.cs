@@ -1362,22 +1362,22 @@ public class FF_PlayerData : MonoBehaviour
 
         string deathReason = "";
 
-        FirebaseAnalytics.LogEvent("Death", "ID", (int)type);
+        FirebaseHandler.LogEvent("Death", "ID", (int)type);
 
         long score = (long)(ulong)ffHandler.GetScore();
 
         if (!ffHandler.battleRoyale && !ffHandler.destructionMode && !ffHandler.miningMode
             && !ffHandler.zigZag && !ffHandler.hardcore)
         { //classic, ja ist behindert i know
-            FirebaseAnalytics.LogEvent("Result_Classic", "Score", score);
+            FirebaseHandler.LogEvent("Result_Classic", "Score", score);
             StatHandler.Instance.AddResult(0, score);
         } else if(ffHandler.destructionMode)
         {
-            FirebaseAnalytics.LogEvent("Result_Destruction", "Score", score);
+            FirebaseHandler.LogEvent("Result_Destruction", "Score", score);
             StatHandler.Instance.AddResult(2, score);
         } else if(ffHandler.miningMode)
         {
-            FirebaseAnalytics.LogEvent("Result_Mining", "Score", score);
+            FirebaseHandler.LogEvent("Result_Mining", "Score", score);
             StatHandler.Instance.AddResult(1, score);
         }
 

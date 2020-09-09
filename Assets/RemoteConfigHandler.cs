@@ -15,7 +15,10 @@ public class RemoteConfigHandler : MonoBehaviour
 
     public void SetGetDefaults()
     {
-        StartCoroutine(WaitForLoad());
+        if(FirebaseAnalyticsInitialize.firebaseReady)
+        {
+            StartCoroutine(WaitForLoad());
+        }
     }
 
     IEnumerator WaitForLoad()

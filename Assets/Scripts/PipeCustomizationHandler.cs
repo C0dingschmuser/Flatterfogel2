@@ -46,7 +46,7 @@ public class PipeCustomizationHandler : MonoBehaviour
     private CustomizationType type = CustomizationType.Pipe;
     private float time = 0.25f, bigScale = 1.43f, smallScale = 0.63f, dissolveAmount = 0;
     private int middleID = 1;
-    private bool switchRunning = false, changeApplied = false, interaction = false;
+    private bool switchRunning = false, changeApplied = false, interaction = false, pipeCustomizationActive = false;
     private ObscuredInt selectedID = 0;
 
     [SerializeField]
@@ -54,6 +54,8 @@ public class PipeCustomizationHandler : MonoBehaviour
 
     private Vector3 pricePos;
     private int buyCode = 0;
+
+    private CoroutineHandle typeAnimationHandle;
 
     private Coroutine noMoneyRoutine = null, saleRoutine = null;
 
@@ -68,14 +70,20 @@ public class PipeCustomizationHandler : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        Timing.RunCoroutine(_HandleTypeAnimation());
+        Timing.KillCoroutines(typeAnimationHandle);
+        typeAnimationHandle = Timing.RunCoroutine(_HandleTypeAnimation());
+    }
+
+    private void OnDisable()
+    {
+        Timing.KillCoroutines(typeAnimationHandle);
     }
 
     private IEnumerator<float> _HandleTypeAnimation()
     {
-        while(true)
+        while(gameObject.activeSelf)
         {
             pipeTypeImage.sprite = pipeTypeSprites[typeAnimationStep];
             pipeColorImage.sprite = pipeColorSprites[typeAnimationStep];
@@ -100,6 +108,8 @@ public class PipeCustomizationHandler : MonoBehaviour
         imageMat.SetFloat("_DissolveAmount", 0);
 
         dissolveAmount = 0;
+
+        pipeCustomizationActive = true;
 
         Tween anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, 1, ShopMenuHandler.anTime);
         anTween.OnUpdate(() =>
@@ -261,6 +271,8 @@ public class PipeCustomizationHandler : MonoBehaviour
         }
 
         interaction = false;
+
+        pipeCustomizationActive = false;
 
         if(disable)
         {
@@ -653,6 +665,8 @@ public class PipeCustomizationHandler : MonoBehaviour
 
     public void SwipeDetector_OnSwipe(SwipeData data)
     {
+        if (!pipeCustomizationActive) return;
+
         switch (data.Direction)
         {
             case SwipeDirection.Left:

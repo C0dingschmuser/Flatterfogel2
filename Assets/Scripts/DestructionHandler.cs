@@ -44,13 +44,19 @@ public class DestructionHandler : MonoBehaviour
     {
         for (int i = 0; i < destructionObjs.Count; i++)
         {
-            destructionObjs[i].GetComponent<D2D_HouseHandler>().DestroyAll();
+            if(destructionObjs[i] != null)
+            {
+                destructionObjs[i].GetComponent<D2D_HouseHandler>().DestroyAll();
+            }
         }
         destructionObjs.Clear();
 
         for (int i = 0; i < otherDestructionObjs.Count; i++)
         {
-            otherDestructionObjs[i].GetComponent<D2D_HouseHandler>().DestroyAll();
+            if(otherDestructionObjs[i] != null)
+            {
+                otherDestructionObjs[i].GetComponent<D2D_HouseHandler>().DestroyAll();
+            }
         }
         otherDestructionObjs.Clear();
 

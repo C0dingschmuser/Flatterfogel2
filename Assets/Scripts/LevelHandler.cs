@@ -193,8 +193,8 @@ public class LevelHandler : MonoBehaviour
 
     private void UpdateLevel()
     {
-        AchievementHandler.Instance.UpdateStep("destructionUnlock", 1, true);
-        AchievementHandler.Instance.UpdateStep("miningUnlock", 1, true);
+        //AchievementHandler.Instance.UpdateStep("destructionUnlock", 1, true);
+        //AchievementHandler.Instance.UpdateStep("miningUnlock", 1, true);
     }
 
     public void ResetEffects(GameObject parent)

@@ -52,7 +52,7 @@ public class CustomizationHandler : MonoBehaviour
     private CustomizationType type = CustomizationType.Skin;
     private float time = 0.25f, hatMiddleY = 810, dissolveAmount = 0; //time = 0.25 original
     private int middleID = 1;
-    private bool changeApplied = false, interaction = false;
+    private bool changeApplied = false, interaction = false, customizationOpen = false;
     private ObscuredInt selectedID = 0;
 
     public bool switchRunning = false;
@@ -100,6 +100,8 @@ public class CustomizationHandler : MonoBehaviour
             fontMat.SetFloat("_DissolveAmount", dissolveAmount);
             imageMat.SetFloat("_DissolveAmount", dissolveAmount);
         });
+
+        customizationOpen = true;
 
         StartCoroutine(EndStart());
     }
@@ -199,9 +201,12 @@ public class CustomizationHandler : MonoBehaviour
 
         interaction = false;
 
+        customizationOpen = false;
+
         if (disable)
         {
             this.gameObject.SetActive(false);
+            FF_PlayerData.Instance.inShop = false;
         }
     }
 
@@ -663,6 +668,11 @@ public class CustomizationHandler : MonoBehaviour
 
     public void SwipeDetector_OnSwipe(SwipeData data)
     {
+        if(!customizationOpen)
+        {
+            return;
+        }
+
         switch (data.Direction)
         {
             case SwipeDirection.Left:

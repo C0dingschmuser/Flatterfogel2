@@ -150,6 +150,15 @@ public class ModeManager : MonoBehaviour
 
     private void CheckUnlocked()
     {
+        for(int i = 0; i < mainModes.Length; i++)
+        {
+            if(LevelHandler.Instance.GetLVL() >= mainModes[i].unlockLevel)
+            {
+                mainModes[i].unlocked = true;
+            }
+        }
+        SaveModes();
+
         if (mainModes[currentIndex].unlocked)
         {
             goBtn.GetComponent<Image>().raycastTarget = true;

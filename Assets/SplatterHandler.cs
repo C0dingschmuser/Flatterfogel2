@@ -43,31 +43,36 @@ public class SplatterHandler : MonoBehaviour
 
         if(score < 50)
         {
-            minTempDissolve = 0.1f;
-            dissolveEndValue = 0.2f;
+            minTempDissolve = 0.28f;
+            dissolveEndValue = 0.35f;
 
             diff = 0;
         } else if(score < 100)
         {
-            minTempDissolve = 0.13f;
-            dissolveEndValue = 0.23f;
+            minTempDissolve = 0.36f;
+            dissolveEndValue = 0.43f;
 
             diff = 1;
         } else if(score < 150)
         {
-            minTempDissolve = 0.16f;
-            dissolveEndValue = 0.25f;
+            minTempDissolve = 0.4f;
+            dissolveEndValue = 0.45f;
 
             diff = 2;
         } else
         {
-            minTempDissolve = 0.25f;
-            dissolveEndValue = 0.35f;
+            minTempDissolve = 0.45f;
+            dissolveEndValue = 0.5f;
 
             diff = 3;
         }
 
-        tempDissolveEnd = Random.Range(minTempDissolve, dissolveEndValue);
+        //dissolveEndValue = 0.425f;
+        //minTempDissolve = 0.3f;
+
+        //tempDissolveEnd = Random.Range(minTempDissolve, dissolveEndValue/* + 0.025f*/);
+
+        dissolveEndValue = Random.Range(minTempDissolve, dissolveEndValue);
 
         anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, dissolveEndValue, 1f);
         anTween.OnUpdate(() =>
@@ -92,6 +97,8 @@ public class SplatterHandler : MonoBehaviour
         {
             anTween.Kill();
         }
+
+        Timing.KillCoroutines(mainHandle);
 
         dissolveAmount = splatterMat.GetFloat("_DissolveAmount"); //dissolveEndValue;
         //splatterMat.SetFloat("_DissolveAmount", dissolveAmount);
@@ -132,12 +139,10 @@ public class SplatterHandler : MonoBehaviour
 
                 Timing.RunCoroutine(SpawnEndCoins(0.5f, coins));
 
-                FirebaseAnalytics.LogEvent("Splatter_Finish");
-                FirebaseAnalytics.LogEvent("Boss_Finish");
+                FirebaseHandler.LogEvent("Splatter_Finish");
+                FirebaseHandler.LogEvent("Boss_Finish");
             }
         });
-
-        Timing.KillCoroutines(mainHandle);
     }
 
     private IEnumerator<float> SpawnEndCoins(float time, int coins)
@@ -174,7 +179,7 @@ public class SplatterHandler : MonoBehaviour
 
                     if(!transition)
                     {
-                        float speed = 0.05f;
+                        /*float speed = 0.05f;
 
                         if(!dir)
                         { //kleiner
@@ -183,20 +188,20 @@ public class SplatterHandler : MonoBehaviour
                             if(dissolveAmount < tempDissolveEnd)//0.25f)
                             {
                                 dir = true;
-                                tempDissolveEnd = Random.Range(dissolveAmount + 0.01f, dissolveEndValue);
+                                tempDissolveEnd = dissolveEndValue;//Random.Range(dissolveAmount + 0.01f, dissolveEndValue);
                             }
                         } else
-                        {
+                        { //größer
                             dissolveAmount += speed * Time.deltaTime;
 
                             if(dissolveAmount > tempDissolveEnd)//0.375f)
                             {
                                 dir = false;
-                                tempDissolveEnd = Random.Range(dissolveAmount - 0.01f, minTempDissolve);
+                                tempDissolveEnd = minTempDissolve;//Random.Range(dissolveAmount - 0.01f, minTempDissolve);
                             }
                         }
 
-                        splatterMat.SetFloat("_DissolveAmount", dissolveAmount);
+                        splatterMat.SetFloat("_DissolveAmount", dissolveAmount);*/
 
                         if (i == 0 && pos.x < -2200)
                         { //ende erreicht, begin dissolve

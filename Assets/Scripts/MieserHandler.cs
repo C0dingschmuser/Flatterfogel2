@@ -119,8 +119,8 @@ public class MieserHandler : MonoBehaviour
 
         float stepTime = 1.5f / coins;
 
-        FirebaseAnalytics.LogEvent("Mieser_Finish");
-        FirebaseAnalytics.LogEvent("Boss_Finish");
+        FirebaseHandler.LogEvent("Mieser_Finish");
+        FirebaseHandler.LogEvent("Boss_Finish");
 
         Timing.RunCoroutine(SpawnEndCoins(stepTime, coins));
 

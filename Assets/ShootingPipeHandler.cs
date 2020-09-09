@@ -134,8 +134,8 @@ public class ShootingPipeHandler : MonoBehaviour
 
             Timing.RunCoroutine(SpawnEndCoins(0.5f, coins));
 
-            FirebaseAnalytics.LogEvent("ShootingPipes_Finish");
-            FirebaseAnalytics.LogEvent("Boss_Finish");
+            FirebaseHandler.LogEvent("ShootingPipes_Finish");
+            FirebaseHandler.LogEvent("Boss_Finish");
         }
     }
 
