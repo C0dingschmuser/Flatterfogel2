@@ -56,9 +56,12 @@ public class GDPRHandler : MonoBehaviour
 
         isActive = enable;
 
-        for (int i = 0; i < transform.childCount; i++)
+        if(!enable)
         {
-            transform.GetChild(i).gameObject.SetActive(enable);
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).gameObject.SetActive(enable);
+            }
         }
 
         if(!enable)

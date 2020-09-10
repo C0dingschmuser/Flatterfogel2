@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PipeHolder : MonoBehaviour
 {
-    public bool isMoving = false, isEmpty = false, tunnel = false, lastInTunnel = false;
+    public bool isMoving = false, isEmpty = false, tunnel = false, lastInTunnel = false, spiral = false;
     private int mode = 0;
     private float maxY = 0, minY = 0, speed = 0, startY;
     private GameObject assignedBlus, topPipe, bottomPipe;
@@ -23,6 +23,7 @@ public class PipeHolder : MonoBehaviour
         isMoving = false;
         tunnel = false;
         lastInTunnel = false;
+        spiral = false;
     }
 
     public void SetEmpty(float startY, bool empty)

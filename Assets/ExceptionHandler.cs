@@ -13,7 +13,7 @@ public class ExceptionHandler : MonoBehaviour
         Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.Full);
         Application.SetStackTraceLogType(LogType.Assert, StackTraceLogType.Full);
 
-        Application.logMessageReceived += LogCallback;
+        //Application.logMessageReceived += LogCallback;
 
         exceptionString = ObscuredPrefs.GetString("ExceptionString", "");
     }
@@ -51,6 +51,6 @@ public class ExceptionHandler : MonoBehaviour
 
     void OnDisable()
     {
-        Application.logMessageReceived -= LogCallback;
+        //Application.logMessageReceived -= LogCallback;
     }
 }

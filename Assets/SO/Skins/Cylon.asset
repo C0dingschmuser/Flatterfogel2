@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   identifier: cylon
   itemID: 10
-  rarity: 2
-  purchased: 1
+  rarity: 3
+  purchased: 0
   salePercent: 0
   cost:
   - mineralID: 14
-    amount: 105
+    amount: 200
   - mineralID: 0
     amount: 0
   - mineralID: 0
@@ -28,8 +28,8 @@ MonoBehaviour:
     amount: 0
   animated: 1
   animationSpeed: 0.2
-  shopTime: 0.0454623
-  shopStep: 3
+  shopTime: 0.03333333
+  shopStep: 0
   sprite: {fileID: 21300000, guid: 0403dd39d1e48104f979733246f8e711, type: 3}
   overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
   animatedSprites:

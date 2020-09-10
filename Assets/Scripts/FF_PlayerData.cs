@@ -634,7 +634,7 @@ public class FF_PlayerData : MonoBehaviour
                 }
             }
             else
-            { //stamina alle
+            { //fuel alle
                 Die(DeathCause.FuelEmpty);
             }
         }

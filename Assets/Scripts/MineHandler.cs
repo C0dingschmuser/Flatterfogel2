@@ -44,7 +44,7 @@ public class MineHandler : MonoBehaviour
     public FlatterFogelHandler ffHandler;
     public BackgroundHandler bgHandler;
     ObjectPooler objPooler;
-    int nextMinePos = 0;
+    int nextMinePos = 0, arrayStartPos = 0;
 
     public static bool cameraOK = false;
 
@@ -127,6 +127,7 @@ public class MineHandler : MonoBehaviour
         backgroundSet = false;
 
         migrations = 0;
+        arrayStartPos = 0;
 
         boneData.Clear();
         for (int i = 0; i < ScoreHandler.Instance.scoreData.Count; i++)
@@ -620,8 +621,8 @@ public class MineHandler : MonoBehaviour
     private void CheckBounds()
     {
         Vector3 playerPos = player.transform.position;
-        float borderTop = playerPos.y + 900;
-        float borderBottom = playerPos.y - 1300;
+        float borderBottom = playerPos.y + 900;
+        float borderTop = playerPos.y - 1300;
 
         //int yPos = ((105 - (int)playerPos.y) / 90); //+ 2;
 
@@ -629,11 +630,11 @@ public class MineHandler : MonoBehaviour
 
         if (!minedSpriteCheck)
         {
-            for (int i = 0; i < mineObjsCounter; i++)
+            for (int i = arrayStartPos; i < mineObjsCounter; i++)
             {
                 y = mineObjs[i].transform.position.y;
 
-                if (y > borderTop || y < borderBottom)
+                if (y > borderBottom || y < borderTop)
                 {
                     if (mineObjs[i].activeSelf)
                     {
@@ -657,7 +658,7 @@ public class MineHandler : MonoBehaviour
         {
             minedSpriteCheck = false;
 
-            for(int i = 0; i < mineObjsCounter; i++)
+            for(int i = arrayStartPos; i < mineObjsCounter; i++)
             {
                 if(mineObjs[i].activeSelf)
                 {
@@ -1197,10 +1198,15 @@ public class MineHandler : MonoBehaviour
             StartBackgroundMine();
         }
 
+        int pDepth = player.GetComponent<FF_PlayerData>().GetPlayerDepth();
+
         //Debug.Log(player.GetComponent<FF_PlayerData>().GetPlayerDepth());
-        if (player.GetComponent<FF_PlayerData>().GetPlayerDepth() == 100)
+        if (pDepth == 100)
         {
             Invoke(nameof(Migrate), 0.01f);
+        } else if(pDepth == 50)
+        {
+            arrayStartPos = 319;
         }
 
        // mineObjs[nextMinePos].SetActive(false);
@@ -1433,7 +1439,10 @@ public class MineHandler : MonoBehaviour
 
         float oldX = mainCamera.transform.position.x;
 
+        arrayStartPos = 0;
+
         mainCamera.transform.position = new Vector3(oldX, playerPos.y + cameraDiff, -400);
+        mineBackground.transform.position = new Vector3(-381, -774, 50);
     }
 
     public void MinePlayerTo(Vector3 pos, Item m = null, float time = 1f, int dir = 0)
@@ -1540,9 +1549,9 @@ public class MineHandler : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        //time = 0.1f;
+        time = 0.1f;
         baseMP = 0;
-        //player.GetComponent<FF_PlayerData>().AddFuel(100);
+        player.GetComponent<FF_PlayerData>().AddFuel(100);
 #endif
 
         if (baseMP > 0)

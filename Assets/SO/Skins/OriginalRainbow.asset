@@ -19,7 +19,7 @@ MonoBehaviour:
   salePercent: 0
   cost:
   - mineralID: 14
-    amount: 160
+    amount: 275
   - mineralID: 0
     amount: 0
   - mineralID: 0
@@ -28,8 +28,8 @@ MonoBehaviour:
     amount: 0
   animated: 1
   animationSpeed: 0.05
-  shopTime: 0.034716897
-  shopStep: 3
+  shopTime: 0
+  shopStep: 2
   sprite: {fileID: 21300000, guid: c8f13a61476fa4845ac55839b2bcb217, type: 3}
   overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
   animatedSprites:

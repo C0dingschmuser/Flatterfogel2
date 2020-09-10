@@ -137,6 +137,7 @@ public class AchievementHandler : MonoBehaviour
 
         caller.GetComponent<AchHolder>().achievement.rewardCollected = true;
         UpdateMenuUnclaimed();
+        SaveAchievements();
 
         caller.GetComponent<AchHolder>().uncollected.SetActive(false);
         caller.GetComponent<AchHolder>().collected.SetActive(true);
@@ -501,19 +502,6 @@ public class AchievementHandler : MonoBehaviour
         ObscuredPrefs.SetLong("AchMaxCoins", achMaxCoins);
     }
 
-    private void OnApplicationPause(bool pause)
-    {
-        if (pause)
-        {
-            SaveAchievements();
-        }
-    }
-
-    private void OnApplicationQuit()
-    {
-        SaveAchievements();
-    }
-
     private void SetContentPos(int row)
     {
         float startY = 1201.980f;
@@ -557,6 +545,7 @@ public class AchievementHandler : MonoBehaviour
 
         UpdateMenuUnclaimed();
 
+        SaveAchievements();
         //AchUnlockHandler.Instance.StartAchievementUnlock(ach);
     }
 
@@ -587,6 +576,8 @@ public class AchievementHandler : MonoBehaviour
                 AchUnlockHandler.Instance.StartAchievementUnlock(ach);
             }
         }
+
+        SaveAchievements();
     }
 
     public void QueueStep(string identifier, int amount = 1)

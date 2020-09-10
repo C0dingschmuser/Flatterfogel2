@@ -188,12 +188,24 @@ public class ShopHandler : MonoBehaviour
 
         for (int i = 0; i < maxRarity; i++)
         {
-            for(int a = 0; a < shopItems.Count; a++)
+            List<ShopItem> rarityItems = new List<ShopItem>();
+
+            for (int a = 0; a < shopItems.Count; a++)
             {
                 if(!shopItems[a].purchased && shopItems[a].rarity == (Rarity)i)
                 {
-                    result.Add(shopItems[a]);
+                    rarityItems.Add(shopItems[a]);
+
+                    //result.Add(shopItems[a]);
                 }
+            }
+
+            //Nach Preis sortieren
+            List<ShopItem> final = rarityItems.OrderBy(o => o.cost[0].amount).ToList();
+
+            for (int a = 0; a < final.Count; a++)
+            {
+                result.Add(final[a]);
             }
         }
 
@@ -211,21 +223,22 @@ public class ShopHandler : MonoBehaviour
         LoadPurchasedItems();
         TypeClicked(0, true);
 
-        remoteConfigHandler.SetGetDefaults();
-
         //pipeColor =
         //    colorSlotParent.transform.GetChild(pipeColorID).GetChild(0).GetComponent<Image>().color;
 
         fadeMat.color = Color.red;
         fadeMat.DOColor(Color.blue, 0.5f).SetEase(Ease.Linear);
+
+        Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
+        Timing.RunCoroutine(_HandleWingAnimation(0.25f));
+
     }
 
     public void CompleteLoad()
     {
-        InvokeRepeating(nameof(NextColorStep), 0.51f, 0.251f);
-        InvokeRepeating(nameof(HandleWingAnimation), 0.25f, 0.25f);
+        //Debug.Log("start");
+        //InvokeRepeating(nameof(NextColorStep), 0.51f, 0.251f);
 
-        Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
     }
 
     public void StartLoadLocalization()
@@ -2062,43 +2075,57 @@ public class ShopHandler : MonoBehaviour
         }
     }
 
-    private void HandleWingAnimation()
+    private IEnumerator<float> _HandleWingAnimation(float waitTime)
     {
         //if (currentType != 1) return;
 
-        int maxLen = playerData.currentWing.sprite.Length - 1;
-
-        if(wingAnimationDir == 0)
-        {
-            wingAnimationCount++;
-            if (wingAnimationCount > maxLen)
-            {
-                wingAnimationCount = 1;
-                wingAnimationDir = 1;
-            }
-        } else
-        {
-            wingAnimationCount--;
-            if (wingAnimationCount < 0)
-            {
-                wingAnimationCount = 1;
-                wingAnimationDir = 0;
-            }
+        while(!RemoteConfigHandler.loadComplete)
+        { //warte dass remote config load abgeschlossen
+            yield return Timing.WaitForSeconds(0.25f);
         }
 
-        if(shopActive && currentType == 1)
+        yield return Timing.WaitForSeconds(waitTime);
+
+        while(true)
         {
-            for (int i = 0; i < allWings.Count; i++)
+            int maxLen = playerData.currentWing.sprite.Length - 1;
+
+            if (wingAnimationDir == 0)
             {
-                if (allWings[i].sprite.Length > 1)
+                wingAnimationCount++;
+                if (wingAnimationCount > maxLen)
                 {
-                    slotParent.transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite =
-                        allWings[i].sprite[wingAnimationCount];
+                    wingAnimationCount = 1;
+                    wingAnimationDir = 1;
                 }
             }
-        } else
-        {
-            playerData.SetWingAnimation(wingAnimationCount);
+            else
+            {
+                wingAnimationCount--;
+                if (wingAnimationCount < 0)
+                {
+                    wingAnimationCount = 1;
+                    wingAnimationDir = 0;
+                }
+            }
+
+            if (shopActive && currentType == 1)
+            {
+                for (int i = 0; i < allWings.Count; i++)
+                {
+                    if (allWings[i].sprite.Length > 1)
+                    {
+                        slotParent.transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite =
+                            allWings[i].sprite[wingAnimationCount];
+                    }
+                }
+            }
+            else
+            {
+                playerData.SetWingAnimation(wingAnimationCount);
+            }
+
+            yield return Timing.WaitForSeconds(0.25f);
         }
     }
 

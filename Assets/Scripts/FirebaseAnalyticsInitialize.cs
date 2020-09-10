@@ -18,6 +18,8 @@ public static class FirebaseAnalyticsInitialize
                 Firebase.FirebaseApp app = Firebase.FirebaseApp.DefaultInstance;
                 firebaseReady = true;
                 Debug.Log("Firebase is ready for use.");
+
+                RemoteConfigHandler.Instance.SetGetDefaults();
                 // Create and hold a reference to your FirebaseApp, i.e.
                 //   app = Firebase.FirebaseApp.DefaultInstance;
                 // where app is a Firebase.FirebaseApp property of your application class.

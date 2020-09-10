@@ -92,7 +92,7 @@ public class OptionHandler : MonoBehaviour
 
     private float defAspect = 0;
     private static int difficulty = 1;
-    private bool closing = false, optionsActive = false, ingame = false, dataRequestRunning = false;
+    private bool closing = false, optionsActive = false, ingame = false, dataRequestRunning = false, languageLoaded = false;
 
     private List<Locale> allLocales = new List<Locale>();
     private int selectedLocaleIndex = -1;
@@ -292,14 +292,26 @@ public class OptionHandler : MonoBehaviour
     {
         languageOkButton.GetComponent<Button>().interactable = false;
 
+        languageLoaded = false;
+
+        StartCoroutine(WaitForLangaugeLoad());
+    }
+
+    private IEnumerator WaitForLangaugeLoad()
+    {
+        StartCoroutine(SetLocalization(selectedLocaleIndex));
+
+        while (!languageLoaded)
+        {
+            yield return new WaitForSeconds(0.25f);
+        }
+
         languageParent.transform.parent.parent.parent.parent.gameObject.SetActive(false);
 
         for (int i = 0; i < gdprObj.transform.childCount; i++)
         {
             gdprObj.transform.GetChild(i).gameObject.SetActive(true);
         }
-
-        StartCoroutine(SetLocalization(selectedLocaleIndex));
     }
 
     private IEnumerator SetLocalization(int index, bool load = false)
@@ -313,6 +325,8 @@ public class OptionHandler : MonoBehaviour
         yield return LocalizationSettings.InitializationOperation;
 
         Debug.Log("LOADED LOCALE: " + localeName);
+
+        languageLoaded = true;
 
         if(load)
         {

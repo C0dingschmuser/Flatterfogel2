@@ -1156,6 +1156,10 @@ public class ScoreHandler : MonoBehaviour
 
         exceptionString += "--------------------------------------------------------";
 
+#if UNITY_EDITOR
+        exceptionString = "";
+#endif
+
         if (exceptionString.Contains("LogType.Error"))
         {
             byte[] encodedByte = System.Text.ASCIIEncoding.ASCII.GetBytes(exceptionString);
@@ -1312,7 +1316,7 @@ public class ScoreHandler : MonoBehaviour
         {
             byte[] bytes = Convert.FromBase64String(encodedChangelog);
 
-            string changelog = System.Text.ASCIIEncoding.ASCII.GetString(bytes);
+            string changelog = System.Text.ASCIIEncoding.UTF8.GetString(bytes);
 
             updateText.GetComponent<TextMeshProUGUI>().text = changelog;
 
@@ -1385,9 +1389,11 @@ public class ScoreHandler : MonoBehaviour
             { //other changelog check
                 if(otherChangelog)
                 {
-                    raycaster.enabled = true;
-
-                    otherChangelogParent.gameObject.SetActive(true);
+                    if(!GDPRHandler.isActive)
+                    {
+                        raycaster.enabled = true;
+                        otherChangelogParent.gameObject.SetActive(true);
+                    }
                 }
             }
         }

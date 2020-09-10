@@ -10,18 +10,33 @@ public class RemoteConfigHandler : MonoBehaviour
 {
     public static bool loadComplete = false;
 
+    public static RemoteConfigHandler Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     [SerializeField]
     private ShopHandler shopHandler;
 
     public void SetGetDefaults()
     {
+#if UNITY_EDITOR
+        Debug.LogWarning("RemoteConfig disabled in Editor");
+        loadComplete = true;
+        //shopHandler.CompleteLoad();
+#else
         if(FirebaseAnalyticsInitialize.firebaseReady)
         {
             StartCoroutine(WaitForLoad());
         }
+#endif
     }
 
+#pragma warning disable IDE0051 // Nicht verwendete private Member entfernen
     IEnumerator WaitForLoad()
+#pragma warning restore IDE0051 // Nicht verwendete private Member entfernen
     {
         while(!AchievementHandler.loadComplete)
         {
@@ -367,6 +382,6 @@ public class RemoteConfigHandler : MonoBehaviour
         }
 
         loadComplete = true;
-        shopHandler.CompleteLoad();
+        //shopHandler.CompleteLoad();
     }
 }

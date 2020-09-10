@@ -1681,6 +1681,11 @@ public class FlatterFogelHandler : MonoBehaviour
         if(pipes.Count > 0 && tutHandler.mainTut != 0)
         {
             lastX = pipes[pipes.Count - 1].transform.position.x + 500;
+
+            if(pipes[pipes.Count - 1].transform.parent.GetComponent<PipeHolder>().spiral)
+            { //extra abstand bei kreisel
+                lastX += 250;
+            }
         }
 
         if(spawnClose)
@@ -1745,33 +1750,55 @@ public class FlatterFogelHandler : MonoBehaviour
 
         float xPos = lastX;
 
-        int abstand; /*= 150;//Random.Range(130, 160);
+        int abstand = 200; /*= 150;//Random.Range(130, 160);*/
 
-        //Abstand variiert je nach Schwierigkeit
-        if(OptionHandler.GetDifficulty() == 0)
+        if (score < 30)
         {
-            abstand = 175;//Random.Range(145, 185);
-        } else if(OptionHandler.GetDifficulty() == 2)
+            abstand = Random.Range(250, 280);
+        }
+        else if (score < 50)
         {
-            abstand = 125;//Random.Range(115, 135);
-        }*/
-
-        int maxChance = 4;
-
-        if(Random.Range(0, maxChance) == 0 && score > 80)
+            abstand = Random.Range(225, 260);
+        }
+        else if (score < 80)
         {
-            abstand = 175;
-        } else
+            abstand = Random.Range(215, 235);
+        }
+        else if (score < 120)
         {
-            abstand = 200;
+            abstand = Random.Range(190, 220);
         }
 
-        if(score < 30)
+        int maxChance = 5;
+
+        bool kreisel = false;
+
+        if (score > 30)
         {
-            abstand = 275;
-        } else if(score < 50)
-        {
-            abstand = 225;
+            if (Random.Range(0, maxChance) == 0) //false
+            { //enge röhre
+                if (score < 50)
+                {
+                    abstand = 210;
+                }
+                else if (score < 80)
+                {
+                    abstand = 200;
+                }
+                else if (score < 120)
+                {
+                    abstand = 190;
+                }
+                else
+                {
+                    abstand = 175;
+                }
+            }
+            else if (false) //random.range / true
+            { //kreisel
+                abstand = 475;
+                kreisel = true;
+            }
         }
 
         if (overrideDistance) {
@@ -1790,11 +1817,22 @@ public class FlatterFogelHandler : MonoBehaviour
             abstand = 350;
         }
 
+        if(kreisel)
+        {
+            pipeHolder.GetComponent<PipeHolder>().spiral = true;
+        }
+
         GameObject middleObj = pipeHolder.transform.GetChild(3).gameObject;
-        middleObj.GetComponent<SpriteRenderer>().size = new Vector2(1,  2 + (abstand / 75f));
+        middleObj.GetComponent<SpriteRenderer>().size = new Vector2(1,  (2 + (abstand / 75f)) - 1f);
         middleObj.GetComponent<SpriteRenderer>().color = ShopHandler.Instance.pipeColor;
 
         middleObj.GetComponent<PipeMiddleHandler>().abstand = abstand;
+
+        if(kreisel)
+        {
+            middleObj.GetComponent<PipeMiddleHandler>().StartRotation();
+            middleObj.SetActive(true);
+        }
 
         pipeTop.GetComponent<PipeData>().middleObj = middleObj;
 
@@ -2350,6 +2388,11 @@ public class FlatterFogelHandler : MonoBehaviour
 
         int diff = OptionHandler.GetDifficulty();
 
+        if(miningMode)
+        {
+            mineHandler.DisableBackground();
+        }
+
         if(score > highscore[ModeManager.currentIndex].highscore[diff])
         {
             highscore[ModeManager.currentIndex].highscore[diff] = score;
@@ -2711,7 +2754,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
             tunnelDir = Random.Range(0, 2);
 
-            SpawnPipes(true, false);
+            SpawnPipes(true, false, 9999, false, true);
         }
 
         //Debug.Log("spawnT " + start + " rem: " + tunnelRemaining);
@@ -3153,7 +3196,7 @@ public class FlatterFogelHandler : MonoBehaviour
                                     if (Random.Range(0, 15) == 0
                                         && !shootingPipehandler.shootingPipesActive
                                         && shootingPipehandler.endComplete
-                                        && score > 50 && !inTunnel)
+                                        && score > 50 && !inTunnel) 
                                     {
                                         SpawnTunnel(10, true);
                                     }
