@@ -14658,7 +14658,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.0259149, y: 13}
+  m_Size: {x: 1, y: 30}
   m_EdgeRadius: 0
 --- !u!1 &7774240737178159713
 GameObject:
@@ -14759,6 +14759,7 @@ MonoBehaviour:
   yDiff: 0
   maxYDiff: 50
   speed: 10
+  lightObj: {fileID: 51873387}
   assignedPipes:
   - {fileID: 0}
   - {fileID: 0}
@@ -14767,7 +14768,6 @@ MonoBehaviour:
     rgba: 4281224686
   effect: {fileID: 1796915834017027660}
   deathEffect: {fileID: 1024526344}
-  lightObj: {fileID: 51873387}
   blusAnimation: []
   destroyedBlusPartPrefab: {fileID: 2616172195001475320, guid: 3ce506acbc1103a4bbb30f0594969724,
     type: 3}

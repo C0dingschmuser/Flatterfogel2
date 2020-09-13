@@ -21,7 +21,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public GameObject[] playerScoreEffect;
     public GameObject[] cameraColliders;
-    private int scoreEffectCounter = 0;
+    private int scoreEffectCounter = 0, spiralActive = 0;
 
     public Transform pipeParent, visualObstacleParent, miningItemParent;
 
@@ -86,7 +86,7 @@ public class FlatterFogelHandler : MonoBehaviour
     [SerializeField] private CameraShake cameraShake = null;
     [SerializeField] private Camera mainCamera = null;
 
-    private int startTimer = 3, d2dLayerCounter = 0, blusEffectCounter = 0;
+    private int startTimer = 3, d2dLayerCounter = 0, blusEffectCounter = 0, lastSpiralBlusPos = 0;
     private List<GameObject> delList = new List<GameObject>();
 
     public static Color32[] pr0Farben = 
@@ -296,7 +296,7 @@ public class FlatterFogelHandler : MonoBehaviour
         otherObjs.Clear();
     }
 
-    public void StartGame(bool fullReset = true)
+    public void StartGame(bool fullReset = true, bool fromMenu = false)
     {
         startTimer = 2;
 
@@ -348,6 +348,8 @@ public class FlatterFogelHandler : MonoBehaviour
         ovenButton.SetActive(false);
 
         clicked = false;
+
+        spiralActive = 0;
 
         nextCompleteDestruction = false;
 
@@ -426,7 +428,10 @@ public class FlatterFogelHandler : MonoBehaviour
 
         backgroundHandler.GetComponent<BackgroundHandler>().SetScrolling(true);
 
-        cameraObj.transform.position = OptionHandler.defaultCameraPos; //kamera zurücksetzen
+        if(!fromMenu)
+        {
+            cameraObj.transform.position = OptionHandler.defaultCameraPos; //kamera zurücksetzen
+        }
 
         int diff = OptionHandler.GetDifficulty();
 
@@ -453,11 +458,11 @@ public class FlatterFogelHandler : MonoBehaviour
                 break;
         }
 
-        cameraColliders[0].transform.position = new Vector3(mainCamera.transform.position.x - 372,
-            mainCamera.transform.position.y, 100);
+        cameraColliders[0].transform.position = new Vector3(OptionHandler.defaultCameraPos.x - 372,
+            OptionHandler.defaultCameraPos.y, 100);
 
-        cameraColliders[1].transform.position = new Vector3(mainCamera.transform.position.x + 372,
-            mainCamera.transform.position.y, 100);
+        cameraColliders[1].transform.position = new Vector3(OptionHandler.defaultCameraPos.x + 372,
+            OptionHandler.defaultCameraPos.y, 100);
 
         if (destructionMode)
         {
@@ -490,7 +495,7 @@ public class FlatterFogelHandler : MonoBehaviour
         {
 #if UNITY_EDITOR
             SetScore(0, 0);
-            //internalScoreCount = 40;
+            internalScoreCount = 40;
 #else
             SetScore(0, 0);
 #endif
@@ -1662,7 +1667,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public void SpawnPipes(bool empty = false, bool moveAllowed = true, 
         float overrideY = 9999, bool spawnClose = false, bool overrideDistance = false,
-        bool overrideCoin = false)
+        bool overrideCoin = false, bool kreisel = false)
     {
         if(!pipeSpawnAllowed)
         {
@@ -1684,7 +1689,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
             if(pipes[pipes.Count - 1].transform.parent.GetComponent<PipeHolder>().spiral)
             { //extra abstand bei kreisel
-                lastX += 250;
+                lastX += 300;
             }
         }
 
@@ -1739,15 +1744,6 @@ public class FlatterFogelHandler : MonoBehaviour
 
         float minY = minPipeY, maxY = maxPipeY;
 
-        float yPos = 565 + (25 * Random.Range(0, 20));
-
-        if(overrideY < 9998)
-        {
-            yPos = overrideY;
-        }
-
-        pipeHolder.GetComponent<PipeHolder>().SetEmpty(yPos, empty);
-
         float xPos = lastX;
 
         int abstand = 200; /*= 150;//Random.Range(130, 160);*/
@@ -1771,9 +1767,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         int maxChance = 5;
 
-        bool kreisel = false;
-
-        if (score > 30)
+        if (score > 30) //true
         {
             if (Random.Range(0, maxChance) == 0) //false
             { //enge röhre
@@ -1794,11 +1788,11 @@ public class FlatterFogelHandler : MonoBehaviour
                     abstand = 175;
                 }
             }
-            else if (false) //random.range / true
-            { //kreisel
-                abstand = 475;
-                kreisel = true;
-            }
+        }
+
+        if(kreisel)
+        {
+            abstand = 475;
         }
 
         if (overrideDistance) {
@@ -1817,9 +1811,11 @@ public class FlatterFogelHandler : MonoBehaviour
             abstand = 350;
         }
 
-        if(kreisel)
+        float yPos = 565 + (25 * Random.Range(0, 20));
+
+        if (overrideY < 9998)
         {
-            pipeHolder.GetComponent<PipeHolder>().spiral = true;
+            yPos = overrideY;
         }
 
         GameObject middleObj = pipeHolder.transform.GetChild(3).gameObject;
@@ -1828,11 +1824,19 @@ public class FlatterFogelHandler : MonoBehaviour
 
         middleObj.GetComponent<PipeMiddleHandler>().abstand = abstand;
 
-        if(kreisel)
+        if (kreisel)
         {
+            yPos = 725 + (25 * Random.Range(0, 9));
+
+            pipeHolder.GetComponent<PipeHolder>().spiral = true;
+
             middleObj.GetComponent<PipeMiddleHandler>().StartRotation();
             middleObj.SetActive(true);
         }
+
+        float blusY = yPos;
+
+        pipeHolder.GetComponent<PipeHolder>().SetEmpty(yPos, empty);
 
         pipeTop.GetComponent<PipeData>().middleObj = middleObj;
 
@@ -1987,7 +1991,24 @@ public class FlatterFogelHandler : MonoBehaviour
 
         if (!empty)
         {
-            SpawnBlus(new Vector3(xPos, yPos, -1.1f), pipeTop, pipeBottom, maxYDiff, ok, overrideCoin); //temp
+            bool blusMoving = ok;
+
+            if(kreisel)
+            {
+                blusMoving = true;
+
+                if(lastSpiralBlusPos == 0)
+                { //abwechselnd
+                    lastSpiralBlusPos = 1;
+                    blusY += 285;
+                } else
+                {
+                    lastSpiralBlusPos = 0;
+                    blusY -= 285;
+                }
+            }
+
+            SpawnBlus(new Vector3(xPos, blusY, -1.1f), pipeTop, pipeBottom, maxYDiff, blusMoving, overrideCoin); //temp
         } else
         {
             pipeBottom.GetComponent<PipeData>().emptyPipe = true;
@@ -2197,7 +2218,7 @@ public class FlatterFogelHandler : MonoBehaviour
         }
 
         if(!moving)
-        {
+        { //nur bewegen wenn pipe sich nicht bewegt
             bData.StartMove(25, maxY);
         }
 
@@ -2443,7 +2464,7 @@ public class FlatterFogelHandler : MonoBehaviour
         switch(gameState)
         {
             case 0:
-                int newMode = Random.Range(0, 3);
+                int newMode = Random.Range(0, 4); //0,4
 
                 FirebaseHandler.LogEvent("Boss_Enter");
 
@@ -2457,6 +2478,9 @@ public class FlatterFogelHandler : MonoBehaviour
                         break;
                     case 2:
                         StartShootingPipes();
+                        break;
+                    case 3:
+                        StartSpiral();
                         break;
                 }
 
@@ -2484,6 +2508,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         Invoke(nameof(ChangeModeOver), 0.251f);
     }
+
     private void ChangeModeOver()
     {
         if(BossHandler.Instance.GetActive())
@@ -2495,6 +2520,44 @@ public class FlatterFogelHandler : MonoBehaviour
         }
 
         modeChanging = false;
+    }
+
+    private void StartSpiral()
+    {
+        FirebaseHandler.LogEvent("Spiral_Enter");
+
+        if(score < 50)
+        {
+            spiralActive = 7;
+        } else if(score < 80)
+        {
+            spiralActive = 12;
+        } else
+        {
+            spiralActive = 15;
+        }
+
+        for (int i = 0; i < pipes.Count; i++)
+        {
+            pipes[i].GetComponent<PipeData>().ResetAll();
+            pipes[i].SetActive(false);
+        }
+        pipes.Clear();
+
+        for (int i = 0; i < otherObjs.Count; i++)
+        {
+            if (!otherObjs[i].GetComponent<BlusData>().modeChangeBlus)
+            {
+                otherObjs[i].SetActive(false);
+            }
+        }
+
+        scrollSpeed = defaultScrollSpeed;
+
+        CancelInvoke(nameof(FlashHighscoreObj));
+        highscoreLineObj.SetActive(false);
+
+        SpawnPipes(false, true, 9999, false, false, false, true);
     }
 
     private void StartSplatter()
@@ -3159,8 +3222,12 @@ public class FlatterFogelHandler : MonoBehaviour
                     if(pos.x < -795 && !pData.destructionStarted ||
                         pos.x < -1500 && pData.destructionStarted)
                     {
-                        del = true;
-                        delList.Add(pipes[i]);
+                        if(!pData.pHolder.spiral ||
+                            (pData.pHolder.spiral && pos.x < -1091))
+                        {
+                            del = true;
+                            delList.Add(pipes[i]);
+                        }
                     }
 
                     if(!del)
@@ -3196,7 +3263,7 @@ public class FlatterFogelHandler : MonoBehaviour
                                     if (Random.Range(0, 15) == 0
                                         && !shootingPipehandler.shootingPipesActive
                                         && shootingPipehandler.endComplete
-                                        && score > 50 && !inTunnel) 
+                                        && score > 50 && !inTunnel && spiralActive == 0) 
                                     {
                                         SpawnTunnel(10, true);
                                     }
@@ -3207,7 +3274,22 @@ public class FlatterFogelHandler : MonoBehaviour
                                             SpawnTunnel(10, false);
                                         } else
                                         {
-                                            SpawnPipes();
+                                            bool spiral = false;
+
+                                            if(spiralActive > 0)
+                                            {
+                                                spiral = true;
+
+                                                spiralActive--;
+                                                if(spiralActive <= 0)
+                                                {
+                                                    FirebaseHandler.LogEvent("Spiral_Finish");
+
+                                                    internalScoreCount = 0;
+                                                }
+                                            }
+
+                                            SpawnPipes(false, true, 9999, false, false, false, spiral);
                                         }
                                     }
                                 }

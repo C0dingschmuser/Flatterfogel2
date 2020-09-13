@@ -92,7 +92,8 @@ public class OptionHandler : MonoBehaviour
 
     private float defAspect = 0;
     private static int difficulty = 1;
-    private bool closing = false, optionsActive = false, ingame = false, dataRequestRunning = false, languageLoaded = false;
+    private bool closing = false, optionsActive = false, ingame = false, dataRequestRunning = false,
+        languageLoaded = false, loadingFinished = false;
 
     private List<Locale> allLocales = new List<Locale>();
     private int selectedLocaleIndex = -1;
@@ -176,7 +177,7 @@ public class OptionHandler : MonoBehaviour
         introParent.SetActive(false);
 
 #if UNITY_EDITOR
-        introHold.SetActive(false);
+        introHold.SetActive(true); //debug
 #else
         introHold.SetActive(true);
 #endif
@@ -331,12 +332,15 @@ public class OptionHandler : MonoBehaviour
         if(load)
         {
 #if UNITY_EDITOR
-            introParent.SetActive(false);
+            //introParent.SetActive(false);
 #else
-            introParent.SetActive(true);
+            //introParent.SetActive(true);
 #endif
 
-            introHold.SetActive(false);
+            Debug.Log("Finished Language");
+            Debug.Log("Fetching Server");
+
+            //introHold.SetActive(false);
         }
         //intro erst starten wenn laden fertig
 
@@ -355,7 +359,31 @@ public class OptionHandler : MonoBehaviour
             BackgroundHandler.Instance.SpawnCloud(true);
         }
 
+        loadingFinished = true;
+
         //AccountHandler.Instance.StartLoadLocalization();
+    }
+
+    public void SetIntro()
+    {
+        StartCoroutine(WaitLoad());
+    }
+
+    private IEnumerator WaitLoad()
+    {
+        while(!loadingFinished)
+        {
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        introHold.SetActive(false);
+
+        MenuZoomIn(false);
+#if UNITY_EDITOR
+        introParent.SetActive(false);
+#else
+        introParent.SetActive(true);
+#endif
     }
 
     public static int GetDifficulty()
@@ -447,7 +475,7 @@ public class OptionHandler : MonoBehaviour
 
         eventSystem.SetActive(false);
 
-        defaultPos = mainCamera.transform.position;
+        defaultPos = new Vector3(-381, 791, -400);//mainCamera.transform.position;
         defaultPos.y += 220;
         defaultPos.z = 0;
 
@@ -827,6 +855,52 @@ public class OptionHandler : MonoBehaviour
         //DestructionEnlarge();
     }
 
+    public void MenuZoomIn(bool tween = true)
+    {
+        Camera c = mainCamera.GetComponent<Camera>();
+
+        float newOrtho = defaultOrthoSize * 0.75f; //500 * Screen.height / Screen.width * 0.5f; //720 - 200 = 520
+
+        if(tween)
+        {
+            DOTween.To(() => c.orthographicSize, x => c.orthographicSize = x, newOrtho, 0.5f);
+        } else
+        {
+            c.orthographicSize = newOrtho;
+        }
+
+        float cameraHeight = newOrtho * 2;
+
+        Bounds cameraBounds = new Bounds(
+            c.transform.position,
+            new Vector3(cameraHeight * defAspect, cameraHeight, 0));
+
+        if(tween)
+        {
+            mainCamera.transform.DOMove(new Vector3(-470, 201 + cameraBounds.extents.y, -400), 0.5f);
+        } else
+        {
+            mainCamera.transform.position = new Vector3(-470, 201 + cameraBounds.extents.y, -400);
+        }
+    }
+
+    public void MenuZoomOut()
+    {
+        Camera c = mainCamera.GetComponent<Camera>();
+
+        float newOrtho = defaultOrthoSize;
+
+        DOTween.To(() => c.orthographicSize, x => c.orthographicSize = x, newOrtho, 0.5f);
+
+        float cameraHeight = newOrtho * 2;
+
+        Bounds cameraBounds = new Bounds(
+            c.transform.position,
+            new Vector3(cameraHeight * defAspect, cameraHeight, 0));
+
+        mainCamera.transform.DOMove(new Vector3(-381, defaultCameraPos.y, -400), 0.5f);
+    }
+
     public void MiningZoomIn()
     {
         MineHandler.cameraOK = false;
@@ -834,7 +908,7 @@ public class OptionHandler : MonoBehaviour
 
         Camera c = Camera.main;
 
-        float newOrtho = (720 - 180f) * Screen.height / Screen.width * 0.5f;
+        float newOrtho = 540 * Screen.height / Screen.width * 0.5f; //720 - 180 = 540
 
         DOTween.To(() => c.orthographicSize, x => c.orthographicSize = x, newOrtho, 0.5f);
 
@@ -880,7 +954,7 @@ public class OptionHandler : MonoBehaviour
 
         Vector3 pos = c.transform.position;
 
-        pos.x += 360.125f / 2;
+        pos.x = defaultCameraPos.x + 360.125f / 2;
         pos.y = 150 + cameraBounds.extents.y;
 
         c.transform.DOMove(pos, 1f);
@@ -1312,9 +1386,9 @@ public class OptionHandler : MonoBehaviour
         SoundManager.Instance.SetMusicVolume(val);
     }
 
-    #endregion
+#endregion
 
-    #region effectvolume
+#region effectvolume
 
     public void EffectVolumeSlider()
     {
@@ -1334,9 +1408,9 @@ public class OptionHandler : MonoBehaviour
         SoundManager.Instance.SetEffectVolume(val);
     }
 
-    #endregion
+#endregion
 
-    #region vsync
+#region vsync
     public void VSyncClicked()
     {
         if(vSyncEnabled == 0)

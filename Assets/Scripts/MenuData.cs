@@ -173,6 +173,8 @@ public class MenuData : MonoBehaviour
     {
         buttonsMoving = true;
 
+        OptionHandler.Instance.MenuZoomIn();
+
         ffGoBtn.SetActive(true);
         shopButton.SetActive(true);
         highscoreButton.SetActive(true);
@@ -180,19 +182,19 @@ public class MenuData : MonoBehaviour
 
         menuCanvas.sortingOrder = 11;
 
-        ffOptions.transform.DOMoveX(-381, scaleTime, true).SetEase(Ease.OutBack);
+        ffOptions.transform.DOMoveX(-321, scaleTime, true).SetEase(Ease.OutBack);
 
         yield return new WaitForSeconds(0.1f);
 
-        highscoreButton.transform.DOMoveX(-381, scaleTime, true).SetEase(Ease.OutBack);
+        highscoreButton.transform.DOMoveX(-321, scaleTime, true).SetEase(Ease.OutBack);
 
         yield return new WaitForSeconds(0.1f);
 
-        shopButton.transform.DOMoveX(-381, scaleTime, true).SetEase(Ease.OutBack);
+        shopButton.transform.DOMoveX(-321, scaleTime, true).SetEase(Ease.OutBack);
 
         yield return new WaitForSeconds(0.1f);
 
-        ffGoBtn.transform.DOMoveX(-381, scaleTime, true).SetEase(Ease.OutBack);
+        ffGoBtn.transform.DOMoveX(-321, scaleTime, true).SetEase(Ease.OutBack);
 
         StartCoroutine(ResetMovingState(scaleTime + 0.01f));
     }
@@ -225,16 +227,16 @@ public class MenuData : MonoBehaviour
         highscoreButton.SetActive(true);
         ffOptions.SetActive(true);
 
-        ffGoBtn.transform.position = new Vector3(-381, 2000);
+        ffGoBtn.transform.position = new Vector3(-321, 2000);
         ffGoBtn.transform.localScale = Vector3.one;
 
-        ffOptions.transform.position = new Vector3(-381, 2000);
+        ffOptions.transform.position = new Vector3(-321, 2000);
         ffOptions.transform.localScale = Vector3.one;
 
-        shopButton.transform.position = new Vector3(-381, 2000);
+        shopButton.transform.position = new Vector3(-321, 2000);
         shopButton.transform.localScale = Vector3.one;
 
-        highscoreButton.transform.position = new Vector3(-381, 2000);
+        highscoreButton.transform.position = new Vector3(-321, 2000);
         highscoreButton.transform.localScale = Vector3.one;
 
         bool snapping = true;
@@ -303,11 +305,13 @@ public class MenuData : MonoBehaviour
             scalingButtons.Remove(button);
 
             bool ok = true;
+            bool go = false;
 
             switch (button.tag)
             {
                 case "GoBtn":
 
+                    go = true;
                     if (ModeManager.Instance.GetModeDisplayActive())
                     {
                         ok = false;
@@ -329,6 +333,11 @@ public class MenuData : MonoBehaviour
             if(ok)
             {
                 button.transform.DOScale(1f, 0.05f);
+
+                if(!go)
+                {
+                    OptionHandler.Instance.MenuZoomOut();
+                }
             }
         }
     }
@@ -351,7 +360,14 @@ public class MenuData : MonoBehaviour
             ffOptions.SetActive(false);
         }
 
-        ffHandler.GetComponent<FlatterFogelHandler>().StartGame();
+        if(!again)
+        {
+            OptionHandler.Instance.MenuZoomOut();
+            ffHandler.GetComponent<FlatterFogelHandler>().StartGame(true, true);
+        } else
+        {
+            ffHandler.GetComponent<FlatterFogelHandler>().StartGame(true);
+        }
 
         StartCoroutine(DisableFF(scaleTime + 0.025f, false));
     }
@@ -450,6 +466,8 @@ public class MenuData : MonoBehaviour
         if(activate)
         {
             //OptionHandler.Instance.UpdateResolution(0);
+
+            OptionHandler.Instance.MenuZoomIn();
 
             shopButton.SetActive(true);
             ffGoBtn.SetActive(true);

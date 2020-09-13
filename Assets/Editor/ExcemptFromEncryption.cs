@@ -20,7 +20,16 @@ public class ExcemptFromEncryption : IPostprocessBuildWithReport // Will execute
             plist.ReadFromString(File.ReadAllText(plistPath));
 
             PlistElementDict rootDict = plist.root;
-            rootDict.SetBoolean("ITSAppUsesNonExemptEncryption", false); 
+            rootDict.SetBoolean("ITSAppUsesNonExemptEncryption", false);
+
+            /*PlistElementDict NSAppTransportSecurity = rootDict.CreateDict("NSAppTransportSecurity");
+            NSAppTransportSecurity.SetBoolean("NSAllowsArbitraryLoads", true);
+            PlistElementDict NSExceptionDomains = NSAppTransportSecurity.CreateDict("NSExceptionDomains");
+            PlistElementDict url1 = NSExceptionDomains.CreateDict("bruh.games");
+            url1.SetBoolean("NSIncludesSubdomains", true);
+            url1.SetBoolean("NSThirdPartyExceptionRequiresForwardSecrecy", false);
+            url1.SetBoolean("NSExceptionAllowsInsecureHTTPLoads", true);
+            url1.SetString("NSTemporaryExceptionMinimumTLSVersion", "TLSv1.0");*/
 
             File.WriteAllText(plistPath, plist.WriteToString()); // Override Info.plist
         }

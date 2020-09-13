@@ -230,8 +230,8 @@ public class MinerCustomizationHandler : MonoBehaviour
             objScaleTween = selected.GetComponent<RectTransform>().DOSizeDelta(newSize, 0.2f);
         }
 
-        smallPriceHighlight.SetActive(true);
-        BuyOptionClicked(1);
+        //smallPriceHighlight.SetActive(true);
+        //BuyOptionClicked(1);
 
         shop.MineItemClicked(type);
         SetMinePrice(shop.allMineItems[type].cost);

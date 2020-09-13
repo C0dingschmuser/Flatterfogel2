@@ -1200,11 +1200,14 @@ public class ScoreHandler : MonoBehaviour
             }
             else
             {
-                ObscuredPrefs.SetInt("CoinTmp", 0);
-
                 FetchString(www.downloadHandler.text);
             }
         }
+
+        //Server Sync abgeschlossen
+        //Start Intro
+
+        OptionHandler.Instance.SetIntro();
     }
 
     public void OpenAchievements()

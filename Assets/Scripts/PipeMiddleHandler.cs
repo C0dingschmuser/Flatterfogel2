@@ -23,6 +23,8 @@ public class PipeMiddleHandler : MonoBehaviour
             new Vector3(transform.position.x, transform.position.y - 295);
         transform.GetChild(1).GetComponent<SpriteRenderer>().color =
             c;
+
+        transform.rotation = Quaternion.Euler(0, 0, Random.Range(-200, -140));
     }
 
     public void ResetMiddleObj()

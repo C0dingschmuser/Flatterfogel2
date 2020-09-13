@@ -187,7 +187,7 @@ public class ModeManager : MonoBehaviour
         float moveTime = MenuData.Instance.GetScaleTime();
 
         transform.GetChild(0).gameObject.SetActive(true);
-        transform.GetChild(0).localScale = new Vector3(1, 1, 1);
+        transform.GetChild(0).localScale = new Vector3(0.75f, 0.75f, 0.75f);
         transform.GetChild(0).position = startPosition;
 
         transform.GetChild(0).DOMove(endPosition, moveTime).SetEase(Ease.OutQuad);

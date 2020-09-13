@@ -35,6 +35,8 @@ public class StartupHandler : MonoBehaviour
 
         logoDissolver.enabled = true;
 
+        //if(OptionHandler.firstLaunch != 1) //weil dann gdpr & language active
+
         Invoke("DisableStartup", 1.01f);
     }
 

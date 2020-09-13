@@ -549,13 +549,13 @@ public class FF_PlayerData : MonoBehaviour
                     Sprite.Create(fDT, new Rect(0 + (x * width), 0 + (y * height), width, height), 
                     new Vector2(0.5f, 0.5f), 100, 1, SpriteMeshType.FullRect);
 
-                if(ImageHelpers.IsTransparent(pipeSprite[y,x].sprite.texture)) {
+                /*if(ImageHelpers.IsTransparent(pipeSprite[y,x].sprite.texture)) {
                     pipeSprite[y, x].isEmpty = true;
                     Debug.Log(true + " " + y + " " + x);
                 } else
                 {
                     pipeSprite[y, x].isEmpty = false;
-                }
+                }*/
 
                 pipeEndSprite[y,x].sprite =
                     Sprite.Create(fDT_End, new Rect(0 + (x * widthEnd), 0 + (y * heightEnd), widthEnd, heightEnd),
