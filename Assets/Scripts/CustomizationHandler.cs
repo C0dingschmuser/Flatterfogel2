@@ -660,6 +660,18 @@ public class CustomizationHandler : MonoBehaviour
 
         FetchPurchased(type, selectedID);
 
+        if (type == CustomizationType.Skin)
+        { //wing zurücksetzen & hat laden bei skinänderung
+            shop.ResetSelected(selectedID);
+        }
+        else if (type == CustomizationType.Hat)
+        {
+            if (shop.HasPurchased(type, selectedID) == 2)
+            { //wenn gekauft hut zuweisen
+                shop.ApplyCustom(type, selectedID);
+            }
+        }
+
         UpdateSale(type);
 
         CheckWingSupport();
@@ -849,8 +861,14 @@ public class CustomizationHandler : MonoBehaviour
         }
 
         if(type == CustomizationType.Skin)
-        { //wing und hat zurücksetzen bei skinänderung
-            shop.ResetSelected();
+        { //wing zurücksetzen & hat laden bei skinänderung
+            shop.ResetSelected(selectedID);
+        } else if(type == CustomizationType.Hat)
+        {
+            if(shop.HasPurchased(type, selectedID) == 2)
+            { //wenn gekauft hut zuweisen
+                shop.ApplyCustom(type, selectedID);
+            }
         }
 
         CheckWingSupport();

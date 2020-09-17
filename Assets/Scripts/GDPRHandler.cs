@@ -72,6 +72,9 @@ public class GDPRHandler : MonoBehaviour
 
             DiscordHandler.Instance.CheckStart();
 
+            FlatterFogelHandler.Instance.player.GetComponent<IdleHandler>().StartIdle();
+            FlatterFogelHandler.Instance.SpawnMainGravestone();
+
             if(inAppUpdate.activeSelf)
             {
                 raycaster.enabled = true;

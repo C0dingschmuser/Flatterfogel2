@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using MEC;
 
 public class GravestoneHandler : MonoBehaviour
 {
     public GameObject player, topSprite, sideLeftSprite, sideRightSprite, bottomSprite;
     public Text[] stoneName;
+
+    public TextMeshProUGUI deathCount;
 
     public CoroutineHandle handle;
 
@@ -32,7 +35,7 @@ public class GravestoneHandler : MonoBehaviour
     }
 
     public void StartGravstone(GameObject player, GraveTop top, GraveSide side, GraveBottom bottom,
-        float scrollSpeed, string name)
+        float scrollSpeed, string name, int deathCount = -1)
     {
         this.player = player;
 
@@ -60,7 +63,15 @@ public class GravestoneHandler : MonoBehaviour
             SetAlpha(stoneName[1].GetComponent<Text>().color, 0);
         stoneName[1].GetComponent<Text>().text = name;
 
-        handle = Timing.RunCoroutine(_UpdateAlpha());
+        if(deathCount != -1)
+        {
+            this.deathCount.gameObject.SetActive(true);
+
+            this.deathCount.text = deathCount.ToString();
+        } else
+        {
+            handle = Timing.RunCoroutine(_UpdateAlpha());
+        }
     }
 
     private Color SetAlpha(Color c, float alpha)

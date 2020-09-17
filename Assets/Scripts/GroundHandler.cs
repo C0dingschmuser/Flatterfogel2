@@ -406,12 +406,12 @@ public class GroundHandler : MonoBehaviour
         //GenerateStartGroundObjs();
     }
 
-    public void DissolveGround(int gameState)
+    public void DissolveGround(int gameState, float time = 0.6f)
     {
         if(gameState == 1 ||
             gameState == 2)
         {
-            GetComponent<Dissolver>().StartDissolve(Color.white, 0.6f);
+            GetComponent<Dissolver>().StartDissolve(Color.white, time);
         }
     }
 

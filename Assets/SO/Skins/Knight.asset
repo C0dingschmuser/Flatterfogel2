@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7ece0d8c080068499e03e32231b4348, type: 3}
+  m_Name: Knight
+  m_EditorClassIdentifier: 
+  identifier: knight
+  itemID: 20
+  rarity: 2
+  purchased: 0
+  salePercent: 0
+  cost:
+  - mineralID: 14
+    amount: 195
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  animated: 1
+  animationSpeed: 0.075
+  shopTime: 0.08403123
+  shopStep: 12
+  sprite: {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
+  animatedSprites:
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  - {fileID: 21300000, guid: 39e19cb591c036d43bc912d6dcd73a53, type: 3}
+  - {fileID: 21300000, guid: 45afa85422715314ca6d9ace663f03d6, type: 3}
+  - {fileID: 21300000, guid: 3637b7fd97a54354f80093f37e0ff30b, type: 3}
+  - {fileID: 21300000, guid: 650e2317512017e4593ef0a97a3a6df5, type: 3}
+  - {fileID: 21300000, guid: 7f7808bced96cea4b9b921b932a4b3e8, type: 3}
+  - {fileID: 21300000, guid: 5685d8a43a0b5b1408040f311ba2710b, type: 3}
+  - {fileID: 21300000, guid: 657042b26f96b71428c580d0a1049345, type: 3}
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  - {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
+  boughtWings: 00000000
+  boughtHats: 00000000
+  lastHat: 0
+  hatStart: 18.662
+  wingStart: 0
+  wingSupport: 1
+  hatSupport: 1
+  boxCollider: 0
+  colliderSize: {x: 0, y: 0}
+  colliderOffset: {x: 0, y: 0}

@@ -13,6 +13,7 @@ public class Skin : ShopItem
     [Header("Preis")]
     public int[] boughtWings;
     public int[] boughtHats;
+    public int lastHat = 0;
 
     [Header("Allgemein")]
     public float hatStart = 18.662f, wingStart = 0;

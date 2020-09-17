@@ -300,7 +300,7 @@ public class OptionHandler : MonoBehaviour
 
     private IEnumerator WaitForLangaugeLoad()
     {
-        StartCoroutine(SetLocalization(selectedLocaleIndex));
+        StartCoroutine(SetLocalization(selectedLocaleIndex, false, false));
 
         while (!languageLoaded)
         {
@@ -315,7 +315,7 @@ public class OptionHandler : MonoBehaviour
         }
     }
 
-    private IEnumerator SetLocalization(int index, bool load = false)
+    private IEnumerator SetLocalization(int index, bool load = false, bool resolution = true)
     {
         selectedLocaleIndex = index;
         string localeName = allLocales[index].name;
@@ -344,7 +344,7 @@ public class OptionHandler : MonoBehaviour
         }
         //intro erst starten wenn laden fertig
 
-        UpdateAll();
+        UpdateAll(false, resolution);
         ModeManager.Instance.StartLoadLocalization();
         LevelHandler.Instance.StartLoadLocalization();
         ScoreHandler.Instance.StartLoadLocalization();
@@ -406,7 +406,7 @@ public class OptionHandler : MonoBehaviour
 
         jumpEffectMode = PlayerPrefs.GetInt("Player_JumpEffectMode", 0);
 
-        difficulty = PlayerPrefs.GetInt("Player_Difficulty", 1);
+        difficulty = 1;//PlayerPrefs.GetInt("Player_Difficulty", 1);
         noPush = PlayerPrefs.GetInt("Player_NoPush", 0);
         kreuzPos = PlayerPrefs.GetInt("Player_KreuzPos", 0);
         kreuzSize = PlayerPrefs.GetInt("Player_KreuzSize", 0);
@@ -418,12 +418,16 @@ public class OptionHandler : MonoBehaviour
         normalMaps = PlayerPrefs.GetInt("Player_NormalMap", 1);
     }
 
-    public void UpdateAll(bool excludeEnergy = false)
+    public void UpdateAll(bool excludeEnergy = false, bool resolution = true)
     {
         LoadOptions();
         StartCoroutine(UpdateLanguageText());
         StartCoroutine(UpdateLight());
-        UpdateResolution();
+
+        if(resolution)
+        {
+            UpdateResolution();
+        }
 
         if (energySaveMode == 0)
         {

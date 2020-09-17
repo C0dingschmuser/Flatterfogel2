@@ -23,9 +23,17 @@ public class PlayerHolder : MonoBehaviour
 
     public void LoadPlayer(Skin skin, Wing wing, Hat hat, Pipe pipe, Color pipeColor, string username, ulong score, bool top = false)
     {
-        if(skin.overrideWing != null)
+        if(skin.wingSupport)
         {
-            wing = skin.overrideWing;
+            wingImage.gameObject.SetActive(true);
+
+            if (skin.overrideWing != null)
+            {
+                wing = skin.overrideWing;
+            }
+        } else
+        {
+            wingImage.gameObject.SetActive(false);
         }
 
         skinImage.sprite = skin.sprite;

@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: ScoreInfo Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 5
   m_TableCollectionName: ScoreInfo
   m_TableCollectionNameGuidString: 81488bf76dd81e84cb83d6659517694a
   m_Entries:
@@ -32,7 +31,26 @@ MonoBehaviour:
     m_Key: Level
     m_Metadata:
       m_Items: []
+  - m_Id: 11349679874048
+    m_Key: Day
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11908633796608
+    m_Key: Week
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12127408693248
+    m_Key: Global
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
+  m_KeyGenerator:
+    id: 0
   references:
     version: 1
+    00000000:
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
+        asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1600296174117

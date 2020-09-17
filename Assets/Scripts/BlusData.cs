@@ -303,9 +303,11 @@ public class BlusData : MonoBehaviour
         if(type == 0)
         { //durchgeflogen
             FirebaseHandler.LogEvent("CoinEarned");
+            StatHandler.coinEarnedCount++;
         } else if(type == 1)
         { //boss
             FirebaseHandler.LogEvent("CoinEarned_Boss");
+            StatHandler.coinBossEarnedCount++;
         }
 
         ShopHandler.Instance.CoinAddEffect();

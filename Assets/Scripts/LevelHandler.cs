@@ -231,7 +231,7 @@ public class LevelHandler : MonoBehaviour
         parent.transform.GetChild(0).GetComponent<Slider>().value = currentXP / (float)currentLVLDiff;
         parent.transform.GetChild(0).GetChild(2).GetComponent<TextMeshProUGUI>().text =
             currentXP.ToString() + "/" + currentLVLDiff.ToString();
-        parent.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = levelString + " " + currentLVL.ToString();
+        parent.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "LVL " + currentLVL.ToString();
 
         MenuData.Instance.UpdatePlayerLevelText();
     }

@@ -1013,6 +1013,7 @@ public class ShopHandler : MonoBehaviour
                         //0 = skin identifier
                         //1 = gekaufte wings
                         //2 = gekaufte hats
+                        //3 = letzter Hut
 
                         if (type.Length > 0)
                         {
@@ -1052,6 +1053,22 @@ public class ShopHandler : MonoBehaviour
                                 }
                             }
 
+                            int lastHatID = 0;
+
+                            if(type.Length > 3)
+                            { //letzter ausgewählter hut gesetzt
+                                string lastHatIdentifier = type[3].ToString();
+
+                                for(int a = 0; a < allHats.Count; a++)
+                                {
+                                    if(allHats[a].identifier.Equals(lastHatIdentifier))
+                                    {
+                                        lastHatID = a;
+                                        break;
+                                    }
+                                }
+                            }
+
                             for (int a = 0; a < allSkins.Count; a++)
                             {
                                 if (allSkins[a].identifier.Equals(identifier))
@@ -1059,6 +1076,7 @@ public class ShopHandler : MonoBehaviour
                                     allSkins[a].purchased = true;
                                     allSkins[a].boughtWings = purchasedWings;
                                     allSkins[a].boughtHats = purchasedHats;
+                                    allSkins[a].lastHat = lastHatID;
                                     break;
                                 }
                             }
@@ -1346,7 +1364,7 @@ public class ShopHandler : MonoBehaviour
                 int[] purchasedWings = allSkins[i].boughtWings;
                 int[] purchasedHats = allSkins[i].boughtHats;
 
-                string wingString = "", hatString = "";
+                string wingString = "", hatString = "", lastHatIdentifier = "default";
 
                 for(int a = 0; a < purchasedWings.Length; a++)
                 {
@@ -1358,7 +1376,9 @@ public class ShopHandler : MonoBehaviour
                     hatString += allHats[purchasedHats[a]].identifier + "~";
                 }
 
-                data += allSkins[i].identifier + "#" + wingString + "#" + hatString + ",";
+                lastHatIdentifier = allHats[allSkins[i].lastHat].identifier;
+
+                data += allSkins[i].identifier + "#" + wingString + "#" + hatString + "#" + lastHatIdentifier + ",";
             }
         }
 
@@ -1803,6 +1823,7 @@ public class ShopHandler : MonoBehaviour
                     for(int c = 0; c < costData[i].amount; c++)
                     {
                         FirebaseHandler.LogEvent("CoinSpent");
+                        StatHandler.coinSpentCount++;
                     }
 
                     UpdateBlus((ulong)costData[i].amount, -1);
@@ -1947,10 +1968,18 @@ public class ShopHandler : MonoBehaviour
         SavePurchasedItems();
     }
 
-    public void ResetSelected()
+    public void ResetSelected(int newSkin)
     {
         selectedWing = 0;
-        selectedHat = 0;
+
+        if(!allSkins[newSkin].purchased)
+        {
+            selectedHat = 0;
+        } else
+        {
+            selectedHat = allSkins[newSkin].lastHat;
+        }
+        //
     }
 
     public void ApplyCustom(CustomizationType type, int id, bool reload = true)
@@ -2006,6 +2035,7 @@ public class ShopHandler : MonoBehaviour
                     break;
                 case CustomizationType.Hat:
                     selectedHat = id;
+                    this.allSkins[selectedSkin].lastHat = id;
                     break;
                 case CustomizationType.PipeColor:
                     pipeColorID = id;

@@ -31,7 +31,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 4
-    m_Localized: Level
+    m_Localized: LVL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11349679874048
+    m_Localized: AUJOURD'HUI
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11908633796608
+    m_Localized: SEMAINE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12127408693248
+    m_Localized: GLOBAL
     m_Metadata:
       m_Items: []
   references:

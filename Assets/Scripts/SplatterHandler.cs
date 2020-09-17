@@ -43,26 +43,26 @@ public class SplatterHandler : MonoBehaviour
 
         if(score < 50)
         {
-            minTempDissolve = 0.28f;
-            dissolveEndValue = 0.35f;
+            minTempDissolve = 0.20f;
+            dissolveEndValue = 0.28f;
 
             diff = 0;
         } else if(score < 100)
         {
-            minTempDissolve = 0.36f;
-            dissolveEndValue = 0.43f;
+            minTempDissolve = 0.30f;
+            dissolveEndValue = 0.36f;
 
             diff = 1;
         } else if(score < 150)
         {
-            minTempDissolve = 0.4f;
-            dissolveEndValue = 0.45f;
+            minTempDissolve = 0.36f;
+            dissolveEndValue = 0.42f;
 
             diff = 2;
         } else
         {
-            minTempDissolve = 0.45f;
-            dissolveEndValue = 0.5f;
+            minTempDissolve = 0.42f;
+            dissolveEndValue = 0.48f;
 
             diff = 3;
         }
@@ -122,18 +122,18 @@ public class SplatterHandler : MonoBehaviour
 
             if(!force)
             {
-                int coins = 1;
+                int coins = 3;
 
                 switch(diff)
                 {
                     case 1:
-                        coins = 2;
+                        coins = 4;
                         break;
                     case 2:
-                        coins = 5;
+                        coins = 7;
                         break;
                     case 3:
-                        coins = 10;
+                        coins = 14;
                         break;
                 }
 

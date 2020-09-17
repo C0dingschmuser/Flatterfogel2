@@ -208,7 +208,7 @@ public class MinerCustomizationHandler : MonoBehaviour
         selectedItem = type;
 
         Vector3 newPos = objPositions[type + 4];
-        Vector2 newSize = new Vector2(125, 125);
+        Vector2 newSize = new Vector2(128, 128);
 
         if (selected.transform.position != newPos)
         {
@@ -386,11 +386,11 @@ public class MinerCustomizationHandler : MonoBehaviour
 
         bool canAfford = true;
 
-        int start = 0, end = 4;
+        int start = 0, end = prices.Length;
 
-        if (itemSelected)
+        /*if (itemSelected)
         {
-            if (buyOption == 0)
+            /*if (buyOption == 0)
             { //coins / benis
                 start = 0;
                 end = 1;
@@ -400,7 +400,9 @@ public class MinerCustomizationHandler : MonoBehaviour
                 start = 1;
                 end = 4;
             }
-        }
+            start = 0;
+            end = 4;
+        }*/
 
         for (int i = start; i < end; i++)
         {

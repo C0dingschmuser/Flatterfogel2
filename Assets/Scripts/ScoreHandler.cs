@@ -34,7 +34,7 @@ public class ScoreHandler : MonoBehaviour
 
     public ObjectPooler objPooler;
     public GameObject inAppUpdate, inAppDialogue, inAppProgress, inAppProgressButton, inAppError;
-    public TextMeshProUGUI progressText, dialogueSize;
+    public TextMeshProUGUI progressText, dialogueSize, timeButtonText;
     public Slider progressSlider;
 
     public Color[] prestigeColors;
@@ -57,8 +57,9 @@ public class ScoreHandler : MonoBehaviour
     public Vector3 highscoreStartPos, defaultHighscorePos;
     public Transform modeButtonParent, diffButtonParent;
 
-    public LocalizedString perfectHit, loading;
+    public LocalizedString perfectHit, loading, day, week, global;
     public string perfectHitString, loadingString;
+    public string[] timeString = new string[3];
 
     public static float moveTime = 0.25f;
     public static ObscuredInt personalCoins = 0;
@@ -69,17 +70,25 @@ public class ScoreHandler : MonoBehaviour
 
     private Tween moveTween = null;
     private Coroutine highscoreDisplay = null;
-    private int diffClicked = -1, modeSelected = 1, newBundleCode = 0, bundleSize = 18000000, highscorePageIndex = 0, highscoreMaxPage = 1;
+    private int diffClicked = -1, modeSelected = 1, timeSelected = 0, newBundleCode = 0, bundleSize = 18000000, highscorePageIndex = 0, highscoreMaxPage = 1;
     private bool registerRunning = false, fetchRunning = false, closing = false, highscoreActive = false,
         opening = false, dataFetched = false, highscoreDisplayRunning = false, moveRunning = false;
     private Vector3 originalPipeParentPos, originalPlayerParentPos;
-    private string[] hsDataString;
+    private HsStringData[] hsData;
 
     ulong ceiling = 1000, bottom = 0;
     int scoreDiff = 1000;
     float lastP = 1;
 
     int temp = 0;
+
+    public class HsStringData
+    {
+        //0 = Global
+        //1 = Weekly
+        //2 = Daily
+        public string[] dataString = new string[3];
+    }
 
     public class ScoreHolder
     {
@@ -93,7 +102,13 @@ public class ScoreHandler : MonoBehaviour
 
     private void Awake()
     {
-        hsDataString = new string[3];
+        hsData = new HsStringData[3];
+
+        for(int i = 0; i < 3; i++)
+        {
+            hsData[i] = new HsStringData();
+        }
+
         accountHandler.Initialize();
 
         SwipeDetector.OnSwipe += SwipeDetector_OnSwipe;
@@ -128,6 +143,15 @@ public class ScoreHandler : MonoBehaviour
 
         yield return handle = loading.GetLocalizedString();
         loadingString = (string)handle.Result;
+
+        yield return handle = day.GetLocalizedString();
+        timeString[1] = (string)handle.Result;
+
+        yield return handle = week.GetLocalizedString();
+        timeString[2] = (string)handle.Result;
+
+        yield return handle = global.GetLocalizedString();
+        timeString[0] = (string)handle.Result;
 
         yield return handle = accountHandler.connecting.GetLocalizedString();
         accountHandler.connectionString = (string)handle.Result;
@@ -169,6 +193,32 @@ public class ScoreHandler : MonoBehaviour
         accountHandler.resetPasswordString = (string)handle.Result;
     }
 
+    public void ChangeTimeClicked()
+    {
+        if (fetchRunning || !dataFetched || highscoreDisplayRunning || moveRunning)
+        {
+            return;
+        }
+
+        timeSelected++;
+        if(timeSelected > 2)
+        {
+            timeSelected = 0;
+        }
+
+        timeButtonText.text = timeString[timeSelected];
+
+        playersParent.position = originalPlayerParentPos;
+        pipeParent.position = originalPipeParentPos;
+
+        highscorePageIndex = 0;
+
+        //StartCoroutine(FetchHighscores());
+
+        highscoreDisplay = 
+            StartCoroutine(FetchHighscoreData(RealModeToArrayID(modeSelected), timeSelected));
+    }
+
     private void ReactivateEventSystem()
     {
         ReactivateEventSystemFull();
@@ -196,6 +246,8 @@ public class ScoreHandler : MonoBehaviour
 
             playerObj.SetActive(true);
             levelTextObj.SetActive(true);
+
+            FlatterFogelHandler.Instance.SpawnMainGravestone();
 
             FirebaseHandler.SetCurrentScreen("MainMenu", "UnityPlayerActivity");
 
@@ -241,7 +293,7 @@ public class ScoreHandler : MonoBehaviour
             //}
         }
 
-        FlatterFogelHandler.Instance.EnableDisableGravestones(true);
+        //FlatterFogelHandler.Instance.EnableDisableGravestones(true);
 
         for(int a = 0; a < smallPipes.Count; a++)
         {
@@ -257,6 +309,8 @@ public class ScoreHandler : MonoBehaviour
     public void ShowHighscores()
     {
         if (hParent.activeSelf || opening || closing) return;
+
+        FlatterFogelHandler.Instance.DespawnGravestone();
 
         //windowCanvas.sortingOrder = 11;
         StartCoroutine(MenuData.Instance.DoMoveAway());
@@ -344,6 +398,8 @@ public class ScoreHandler : MonoBehaviour
 
         HandleColor(0, modeSelected);
         HandleColor(1, OptionHandler.GetDifficulty());
+
+        timeButtonText.text = timeString[timeSelected];
 
         //if(!dataFetched)
         //{
@@ -503,7 +559,7 @@ public class ScoreHandler : MonoBehaviour
 
         //StartCoroutine(FetchHighscores());
 
-        highscoreDisplay = StartCoroutine(FetchHighscoreData(RealModeToArrayID(mode)));
+        highscoreDisplay = StartCoroutine(FetchHighscoreData(RealModeToArrayID(mode), timeSelected));
     }
 
     IEnumerator StartTimer()
@@ -560,7 +616,24 @@ public class ScoreHandler : MonoBehaviour
 
         for (int i = 0; i < 5; i++)
         {
-            form.AddField("highscore" + (i + 1).ToString(), ffHandler.GetHighscore(i).ToString());
+            //Global
+            form.AddField("highscore" + (i + 1).ToString(), ffHandler.GetHighscore(i).score.ToString());
+
+            //Daily
+            form.AddField("highscore" + (i + 1).ToString() + "_daily",
+                ffHandler.GetHighscore(i, HighscoreType.Daily).score.ToString());
+
+            //Daily-Time
+            form.AddField("highscore" + (i + 1).ToString() + "_daily_t",
+                ffHandler.GetHighscore(i, HighscoreType.Daily).recordTime.ToString("yyyy-MM-dd HH:mm:ss"));
+
+            //Weekly
+            form.AddField("highscore" + (i + 1).ToString() + "_weekly",
+                ffHandler.GetHighscore(i, HighscoreType.Weekly).score.ToString());
+
+            //Weekly-Time
+            form.AddField("highscore" + (i + 1).ToString() + "_weekly_t",
+                ffHandler.GetHighscore(i, HighscoreType.Weekly).recordTime.ToString("yyyy-MM-dd HH:mm:ss"));
         }
 
         long currentLvl = lvlHandler.GetLVL();
@@ -629,11 +702,13 @@ public class ScoreHandler : MonoBehaviour
         loadingObj.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text =
             loadingString;
 
-        using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/main.php", form))
+        using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/manager.php", form))
         {
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
             www.chunkedTransfer = false;
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
+
+            www.timeout = 10;
 
             yield return www.SendWebRequest(); //wartet das abfrage fertig ist
 
@@ -674,20 +749,33 @@ public class ScoreHandler : MonoBehaviour
                 }
                 else
                 {
-                    //Debug.Log("UString: " + wwwData);
+                    Debug.Log("UString: " + wwwData);
                 }
 
                 string[] rawData = wwwData.Split('|'); //split nach modi
 
                 if (rawData.Length > 2)
                 {
-                    hsDataString[0] = rawData[0]; //classic
-                    hsDataString[1] = rawData[1]; //destruction
-                    hsDataString[2] = rawData[2]; //mining
+                    for(int a = 0; a < 3; a++)
+                    { //loop durch modi
+
+                        string[] time = rawData[a].Split('~');
+
+                        for (int i = 0; i < 3; i++)
+                        { //loop durch time
+
+                            if(a == 0)
+                            {
+                                Debug.Log(i + " " + time[i]);
+                            }
+
+                            hsData[a].dataString[i] = time[i];
+                        }
+                    }
 
                     int arrayID = RealModeToArrayID(modeSelected);
 
-                    highscoreDisplay = StartCoroutine(FetchHighscoreData(arrayID));
+                    highscoreDisplay = StartCoroutine(FetchHighscoreData(arrayID, timeSelected));
 
                     dataFetched = true;
                 }
@@ -717,7 +805,7 @@ public class ScoreHandler : MonoBehaviour
         return arrayID;
     }
 
-    private IEnumerator FetchHighscoreData(int arrayID, bool wait = false)
+    private IEnumerator FetchHighscoreData(int arrayID, int timeID, bool wait = false)
     { //fetcht die bereits erhaltenen daten und zeigt sie an
 
         if(wait)
@@ -741,7 +829,7 @@ public class ScoreHandler : MonoBehaviour
         levelParent.GetChild(0).gameObject.SetActive(true);
         positionParent.GetChild(0).gameObject.SetActive(true);
 
-        string[] rawData = hsDataString[arrayID].Split('#');
+        string[] rawData = hsData[arrayID].dataString[timeID].Split('#');
 
         for (int i = 0; i < nameParent.childCount; i++)
         {
@@ -790,7 +878,7 @@ public class ScoreHandler : MonoBehaviour
 
         bool userInHS = false;
 
-        if(hsDataString[arrayID].Contains(username))
+        if(hsData[arrayID].dataString[timeID].Contains(username))
         { //user in hs
             userInHS = true;
         }
@@ -801,28 +889,33 @@ public class ScoreHandler : MonoBehaviour
 
         int playerCount = rawData.Length - 1;
 
-        string[] scoreData = rawData[playerCount - 1].Split(',');
+        int p = 0;
 
-        bottom = ulong.Parse(scoreData[0]);
-
-        int p;
-
-        for (p = 0; p < playerCount; p++)
+        if (playerCount > 0)
         {
-            scoreData = rawData[p].Split(',');
+            string[] scoreData = rawData[playerCount - 1].Split(',');
 
-            CreatePlayerObj(p, ulong.Parse(scoreData[0]), scoreData[1],
-                scoreData[4], scoreData[5], scoreData[6], scoreData[7],
-                Int32.Parse(scoreData[8]));
+            bottom = ulong.Parse(scoreData[0]);
 
-            if(p < 8)
+            for (p = 0; p < playerCount; p++)
             {
-                yield return new WaitForSeconds(0.075f);
-            } else
-            {
-                yield return null;
+                scoreData = rawData[p].Split(',');
+
+                CreatePlayerObj(p, ulong.Parse(scoreData[0]), scoreData[1],
+                    scoreData[4], scoreData[5], scoreData[6], scoreData[7],
+                    Int32.Parse(scoreData[8]));
+
+                if (p < 8)
+                {
+                    yield return new WaitForSeconds(0.075f);
+                }
+                else
+                {
+                    yield return null;
+                }
             }
         }
+
 
         if(!userInHS)
         { //user am ende einfügen wenn nicht in highscore
@@ -843,7 +936,20 @@ public class ScoreHandler : MonoBehaviour
                 wingString = shop.allWings[shop.GetSelected(CustomizationType.Wing)].identifier;
             }
 
-            CreatePlayerObj(p, ffHandler.GetHighscore(modeSelected - 1, 1), username,
+            /*HighscoreType hsType = HighscoreType.Global;
+
+            if (timeSelected == 0)
+            {//global 
+                hsType = HighscoreType.Global;
+            } else if(timeSelected == 1)
+            { //daily
+                hsType = HighscoreType.Daily;
+            } else if(timeSelected == 2)
+            { //weekly
+                hsType = HighscoreType.Weekly;
+            }*/
+
+            CreatePlayerObj(p, ffHandler.GetHighscore(modeSelected - 1, (HighscoreType)timeSelected).score, username,
                 currentSkin.identifier, wingString, hatString, pipeString, shop.GetPipeColorID());
         }
 
@@ -891,8 +997,15 @@ public class ScoreHandler : MonoBehaviour
 
         int tempDiff = (int)(ceiling - score);
 
+        float scoreDiff_float = (float)scoreDiff;
+
+        if(scoreDiff_float < 0.0001f)
+        {
+            scoreDiff_float = 0.0001f;
+        }
+
         //Höhe in Prozent
-        float p = Mathf.Clamp(((float)scoreDiff - tempDiff) / (float)scoreDiff, 0, 1);
+        float p = Mathf.Clamp(((float)scoreDiff - tempDiff) / scoreDiff_float, 0, 1);
 
         /*if(i > 0)
         {
@@ -1032,7 +1145,7 @@ public class ScoreHandler : MonoBehaviour
     [Obsolete]
     IEnumerator GetStatus()
     {
-        ulong hs = ffHandler.GetHighscore();
+        //ulong hs = ffHandler.GetHighscore().score;
         ulong lastS = ffHandler.GetLastScore();
 
         int diff = OptionHandler.GetDifficulty();
@@ -1043,7 +1156,24 @@ public class ScoreHandler : MonoBehaviour
 
         for(int i = 0; i < 5; i++)
         {
-            form.AddField("highscore" + (i + 1).ToString(), ffHandler.GetHighscore(i).ToString());
+            //Global
+            form.AddField("highscore" + (i + 1).ToString(), ffHandler.GetHighscore(i).score.ToString());
+
+            //Daily
+            form.AddField("highscore" + (i + 1).ToString() + "_daily",
+                ffHandler.GetHighscore(i, HighscoreType.Daily).score.ToString());
+
+            //Daily-Time
+            form.AddField("highscore" + (i + 1).ToString() + "_daily_t",
+                ffHandler.GetHighscore(i, HighscoreType.Daily).recordTime.ToString("yyyy-MM-dd HH:mm:ss"));
+
+            //Weekly
+            form.AddField("highscore" + (i + 1).ToString() + "_weekly",
+                ffHandler.GetHighscore(i, HighscoreType.Weekly).score.ToString());
+
+            //Weekly-Time
+            form.AddField("highscore" + (i + 1).ToString() + "_weekly_t",
+                ffHandler.GetHighscore(i, HighscoreType.Weekly).recordTime.ToString("yyyy-MM-dd HH:mm:ss"));
         }
 
         //int tempCoins = ObscuredPrefs.GetInt("CoinTmp", 0);
@@ -1188,9 +1318,10 @@ public class ScoreHandler : MonoBehaviour
         }
         #endregion 
 
-        using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/main.php", form))
+        using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/manager.php", form))
         {
             www.chunkedTransfer = false;
+            www.timeout = 10;
 
             yield return www.SendWebRequest(); //wartet das abfrage fertig ist
 
@@ -1770,7 +1901,20 @@ public class ScoreHandler : MonoBehaviour
         continueEffects.SetActive(false);
         ScaleDown();
 
+        //Reset player obj pos
+        FF_PlayerData.Instance.StartGoDead();
+
+        FlatterFogelHandler.Instance.ResetAllObjs(0.49f, true);
+        FlatterFogelHandler.Instance.SpawnMainGravestone();
+
         Invoke(nameof(CallMenuDeath), moveTime + 0.01f);
+        Invoke(nameof(Restore), 0.54f);
+    }
+
+    private void Restore()
+    {
+        FlatterFogelHandler.Instance.pipeParent.GetComponent<Dissolver>().ResetDissolve();
+        FlatterFogelHandler.Instance.groundHandler.ResetDissolve(FlatterFogelHandler.gameState);
     }
 
     private void CallMenuDeath()
@@ -1787,7 +1931,7 @@ public class ScoreHandler : MonoBehaviour
     {
         ScaleDown();
 
-        Invoke("CallMenuGo", moveTime + 0.01f);
+        Invoke(nameof(CallMenuGo), moveTime + 0.01f);
     }
 
     private void ScaleDown()

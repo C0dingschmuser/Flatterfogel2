@@ -7,7 +7,8 @@ using System;
 
 public class StatHandler : MonoBehaviour
 {
-    public static int classicCount = 0, miningCount = 0, destructionCount = 0;
+    public static int classicCount = 0, miningCount = 0, destructionCount = 0,
+        deathCount = 0, coinEarnedCount = 0, coinBossEarnedCount = 0, coinSpentCount = 0;
     public static double classicAvg = 0, miningAvg = 0, destructionAvg = 0;
 
     public static StatHandler Instance;
@@ -34,6 +35,11 @@ public class StatHandler : MonoBehaviour
 
         destructionCount = ObscuredPrefs.GetInt("DestructionCount", 0);
         destructionAvg = ObscuredPrefs.GetDouble("DestructionAvg", 0);
+
+        deathCount = ObscuredPrefs.GetInt("DeathCount", 0);
+        coinEarnedCount = ObscuredPrefs.GetInt("CoinCount", 0);
+        coinBossEarnedCount = ObscuredPrefs.GetInt("CoinBossCount", 0);
+        coinSpentCount = ObscuredPrefs.GetInt("CoinSpentCount", 0);
 
         string lastClassic = ObscuredPrefs.GetString("ClassicLast", "");
         string lastMining = ObscuredPrefs.GetString("MiningLast", "");
@@ -152,7 +158,12 @@ public class StatHandler : MonoBehaviour
         ObscuredPrefs.SetInt("DestructionCount", destructionCount);
         ObscuredPrefs.SetDouble("DestructionAvg", destructionAvg);
 
-        for(int i = 0; i < 3; i++)
+        ObscuredPrefs.SetInt("DeathCount", deathCount);
+        ObscuredPrefs.SetInt("CoinCount", coinEarnedCount);
+        ObscuredPrefs.SetInt("CoinBossCount", coinBossEarnedCount);
+        ObscuredPrefs.SetInt("CoinSpentCount", coinSpentCount);
+
+        for (int i = 0; i < 3; i++)
         {
             string data = "";
 

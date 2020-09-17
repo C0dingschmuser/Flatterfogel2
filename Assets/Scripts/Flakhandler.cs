@@ -179,20 +179,20 @@ public class Flakhandler : MonoBehaviour
                     switch (diff)
                     {
                         default:
-                            pos.x += Random.Range(65, 100);
-                            pos.y += Random.Range(65, 100);
+                            pos.x += Random.Range(60, 80);
+                            pos.y += Random.Range(60, 80);
                             break;
                         case 1:
-                            pos.x += Random.Range(40, 80);
-                            pos.y += Random.Range(40, 80);
+                            pos.x += Random.Range(30, 60);
+                            pos.y += Random.Range(30, 60);
                             break;
                         case 2:
-                            pos.x += Random.Range(20, 40);
-                            pos.y += Random.Range(20, 40);
+                            pos.x += Random.Range(15, 30);
+                            pos.y += Random.Range(15, 30);
                             break;
                         case 3:
-                            pos.x += Random.Range(2, 15);
-                            pos.y += Random.Range(2, 15);
+                            pos.x += Random.Range(0, 7);
+                            pos.y += Random.Range(0, 7);
                             break;
                     }
                 }

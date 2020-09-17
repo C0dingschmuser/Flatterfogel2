@@ -80,7 +80,7 @@ public class MenuData : MonoBehaviour
     public void UpdatePlayerLevelText()
     {
         playerLvlText.GetComponent<TextMeshProUGUI>().text =
-            "Level " + LevelHandler.Instance.GetLVL().ToString();
+            "LVL " + LevelHandler.Instance.GetLVL().ToString();
     }
 
     public void PushNotificationsClicked()

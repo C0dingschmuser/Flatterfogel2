@@ -334,7 +334,7 @@ public class AccountHandler : MonoBehaviour
 
                     for(int a = 0; a < scoreData.Length - 1; a++)
                     {
-                        FlatterFogelHandler.Instance.SetHighscore(a, i, ulong.Parse(scoreData[a]));
+                        //FlatterFogelHandler.Instance.SetHighscore(a, i, ulong.Parse(scoreData[a]));
                     }
                 }
 

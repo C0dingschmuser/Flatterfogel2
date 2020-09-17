@@ -38,6 +38,7 @@ public class FF_PlayerData : MonoBehaviour
     public UnityEngine.Experimental.Rendering.Universal.Light2D playerLightObj, playerHardcoreLightObj;
 
     public TutorialHandler tutHandler;
+    public IdleHandler idleHandler;
 
     public GameObject deadParent, playerLight, playerCollider2, deadPlayerPart,
                 wing, minerTool, staminaText, itemHolder, fuelParent, mineItemParent,
@@ -335,12 +336,7 @@ public class FF_PlayerData : MonoBehaviour
         {
             hatObj.SetActive(true);
 
-            float yDiff = currentHat.yDist;
-
-            Vector3 pos = transform.position;
-            pos.y += currentSkin.hatStart + yDiff;
-
-            hatObj.transform.position = pos;
+            ResetHat();
         }
 
         hatObj.GetComponent<SpriteRenderer>().sprite = newHat.sprite;
@@ -400,7 +396,12 @@ public class FF_PlayerData : MonoBehaviour
     {
         Vector3 deathPos = transform.position;
 
-        transform.position = ffHandler.playerStartPos;
+        //transform.position = ffHandler.playerStartPos;
+
+        Transform oldParent = deadParent.transform.parent;
+        int childPos = deadParent.transform.GetSiblingIndex();
+
+        deadParent.transform.SetParent(oldParent.parent);
         deadParent.transform.position = ffHandler.playerStartPos;
 
         //Debug.Log(deadChilds.Count + " " + deadChildTransform.Length);
@@ -464,7 +465,7 @@ public class FF_PlayerData : MonoBehaviour
             resolution = 8; //8*8 = 64 Parts
         }
 
-        Vector3 startPos = transform.position;
+        Vector3 startPos = ffHandler.playerStartPos;//transform.position;
         startPos.x -= 37.5f; //37.5 weil hälfte von 75 (breite + höhe) = nullpunkt links unten
         startPos.y -= 37.5f;
 
@@ -506,7 +507,7 @@ public class FF_PlayerData : MonoBehaviour
             }
         }
 
-        if(dead)
+        /*if(dead)
         { //wenn tot physik aktivieren & position setzen
             transform.position = deathPos;
             deadParent.transform.position = deathPos;
@@ -514,7 +515,10 @@ public class FF_PlayerData : MonoBehaviour
             {
                 deadChilds[i].GetComponent<Rigidbody2D>().simulated = true;
             }
-        }
+        }*/
+
+        deadParent.transform.SetParent(oldParent);
+        deadParent.transform.SetSiblingIndex(childPos);
 
         if(currentSkin.animated)
         {
@@ -578,6 +582,9 @@ public class FF_PlayerData : MonoBehaviour
         GetComponent<Rigidbody2D>().rotation = 0;
         transform.rotation = Quaternion.identity;
         transform.GetChild(0).rotation = Quaternion.identity;
+
+        ResetHat();
+
         EnableDisableWings(true);
     }
 
@@ -754,8 +761,24 @@ public class FF_PlayerData : MonoBehaviour
         return groundHeight;
     }
 
-    private void GoDead()
+    public void StartGoDead()
     {
+        ResetDeadObjPos(0.51f);
+        StartCoroutine(GoDead(0.52f, false));
+        StartCoroutine(ReactivateIdle(0.53f));
+    }
+
+    private IEnumerator ReactivateIdle(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+
+        idleHandler.StartIdle();
+    }
+
+    private IEnumerator GoDead(float waitTime = 0.75f, bool start = true)
+    {
+        yield return new WaitForSeconds(waitTime);
+
         goLocked = false;
 
         for (int i = 0; i < deadChilds.Count; i++)
@@ -775,7 +798,13 @@ public class FF_PlayerData : MonoBehaviour
 
         deadParent.SetActive(false);
 
-        deadParent.transform.position = ffHandler.playerStartPos;
+        if(start)
+        {
+            deadParent.transform.position = ffHandler.playerStartPos;
+        } else
+        {
+            deadParent.transform.position = transform.position;
+        }
         deadParent.transform.rotation = Quaternion.identity;
 
         for(int i = 0; i < deadChilds.Count; i++)
@@ -784,7 +813,29 @@ public class FF_PlayerData : MonoBehaviour
         }
 
         dead = false;
-        PlayerGo();
+
+        if(start)
+        {
+            PlayerGo();
+        } else
+        {
+            GetComponent<Rigidbody2D>().rotation = 0;
+
+            transform.rotation = Quaternion.identity;
+            ResetHat();
+        }
+    }
+
+    private void ResetHat()
+    {
+        hatObj.transform.rotation = Quaternion.identity;
+
+        float yDiff = currentHat.yDist;
+
+        Vector3 hPos = transform.position;
+        hPos.y += currentSkin.hatStart + yDiff; //18.662 = hat start
+
+        hatObj.transform.position = hPos;
     }
 
     public void PlayerGo(bool full = false)
@@ -798,26 +849,20 @@ public class FF_PlayerData : MonoBehaviour
         { //um herauszufinden ob bereits runde gespielt -> pos reset
             goLocked = true;
 
-            ResetPos();
-            Invoke(nameof(GoDead), 0.75f);
+            ResetDeadObjPos();
+
+            StartCoroutine(GoDead(0.69f));
             return;
         }
 
         dead = false;
 
-        Vector3 pos = transform.position;
-        pos.y += 31.005f;
-
-        hatObj.transform.position = pos;
+        //hatObj.transform.position = pos;
         hatObj.GetComponent<Rigidbody2D>().simulated = false;
-        hatObj.transform.rotation = Quaternion.identity;
+
+        ResetHat();
 
         float yDiff = currentHat.yDist;
-
-        Vector3 hPos = transform.position;
-        hPos.y += currentSkin.hatStart + yDiff; //18.662 = hat start
-
-        hatObj.transform.position = hPos;
 
         yDiff = currentWing.xDist;
 
@@ -881,6 +926,8 @@ public class FF_PlayerData : MonoBehaviour
     private void ResetImage()
     {
         transform.position = ffHandler.playerStartPos;
+        GetComponent<Rigidbody2D>().rotation = 0;
+        transform.rotation = Quaternion.identity;
 
         GetComponent<SpriteRenderer>().enabled = true;
         if(currentSkin.wingSupport)
@@ -888,10 +935,10 @@ public class FF_PlayerData : MonoBehaviour
             transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
         }
 
-        transform.Rotate(new Vector3(0, 0, 45));
+        ResetHat();
     }
 
-    private void ResetPos()
+    private void ResetDeadObjPos(float time = 0.68f)
     {
         for(int i = 0; i < deadChilds.Count; i++)
         {
@@ -906,8 +953,8 @@ public class FF_PlayerData : MonoBehaviour
             coll.enabled = false;
 
             deadChilds[i].transform.DOMove(
-                deadChilds[i].GetComponent<DeadData>().originalPos, 0.7f);
-            deadChilds[i].transform.DORotate(new Vector3(0, 0, 0), 0.7f);
+                deadChilds[i].GetComponent<DeadData>().originalPos, time);
+            deadChilds[i].transform.DORotate(new Vector3(0, 0, 0), time);
         }
 
         hatObj.GetComponent<Rigidbody2D>().simulated = false;
@@ -917,10 +964,10 @@ public class FF_PlayerData : MonoBehaviour
         Vector3 hPos = ffHandler.playerStartPos;
         hPos.y += currentSkin.hatStart + yDiff;
 
-        hatObj.transform.DOMove(hPos, 0.7f);
-        hatObj.transform.DORotate(new Vector3(0, 0, 0), 0.7f);
+        hatObj.transform.DOMove(hPos, time);
+        hatObj.transform.DORotate(new Vector3(0, 0, 0), time);
 
-        Invoke(nameof(ResetImage), 0.7f);
+        Invoke(nameof(ResetImage), time);
     }
 
     public void PlayerFly(Vector3 mPos, bool zigZag, bool release = false)
@@ -1363,6 +1410,7 @@ public class FF_PlayerData : MonoBehaviour
         string deathReason = "";
 
         FirebaseHandler.LogEvent("Death", "ID", (int)type);
+        StatHandler.deathCount++;
 
         long score = (long)(ulong)ffHandler.GetScore();
 

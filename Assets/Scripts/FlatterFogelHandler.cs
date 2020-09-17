@@ -11,13 +11,23 @@ using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
 using Destructible2D;
 using System.Linq;
+using System;
+using Random = UnityEngine.Random;
+
+public enum HighscoreType
+{
+    Undefined = -1,
+    Global = 0,
+    Daily = 1,
+    Weekly = 2,
+}
 
 public class FlatterFogelHandler : MonoBehaviour
 {
     public GameObject player, pipePrefab, flash, scoreText, goBtn, backbtn, menu,
         cameraObj, particleParent, pipeDestructionPrefab, deathText, backgroundHandler, blusPrefab,
         pipeDestructionParent, modeChangeInfo, startTimerObj, ovenButton, highscoreLineObj,
-        topCollider, bossWarning;
+        topCollider, bossWarning, mainGravestone;
 
     public GameObject[] playerScoreEffect;
     public GameObject[] cameraColliders;
@@ -43,6 +53,7 @@ public class FlatterFogelHandler : MonoBehaviour
     private List<GameObject> coins = new List<GameObject>();
 
     public List<GameObject> bottomObjs = new List<GameObject>();
+    public ShopHandler shop;
     public AchievementHandler achHandler;
     public GroundHandler groundHandler;
     public MineHandler mineHandler;
@@ -60,7 +71,16 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public class HighscoreHolder
     {
-        public ObscuredULong[] highscore = new ObscuredULong[3];
+        public ScoreDataHolder[] highscore = new ScoreDataHolder[3];
+        //0 = Daily
+        //1 = Global
+        //2 = Weekly
+    }
+
+    public class ScoreDataHolder
+    {
+        public ObscuredULong score; //Score als ULong
+        public DateTime recordTime; //Zeitpunkt des erspielens
     }
 
     private HighscoreHolder[] highscore = new HighscoreHolder[6];
@@ -179,17 +199,37 @@ public class FlatterFogelHandler : MonoBehaviour
         for(int i = 0; i < highscore.Length; i++)
         { //loop durch modes
             for(int a = 0; a < 3; a++)
-            { //loop durch diffs
+            { //loop durch hsTypes
+                highscore[i].highscore[a] = new ScoreDataHolder();
+
                 ulong score = ObscuredPrefs.GetULong("Player_Highscore_" + i.ToString() + "_" + a.ToString(), 0);
 
+                string timeString = ObscuredPrefs.GetString("Player_Highscore_" + i.ToString() + "_" + a.ToString() + "_Time", "");
+
+                DateTime currentTime = DateTime.Now;
+
+                DateTime recordTime = currentTime.AddDays(-14);
+
+                if(timeString.Length > 1)
+                {
+                    recordTime =
+                        DateTime.ParseExact(timeString, "dd-MM-yyyy-HH-mm-ss", System.Globalization.CultureInfo.InvariantCulture);
+                }
+
 #if UNITY_EDITOR
-                if(score == 0)
+                if (score == 0)
                 {
                     score = 1;
                 }
+
+                /*if (i == 0)
+                {
+                    Debug.Log(i + " SCORE: " + score + " TIME: " + recordTime.ToString("dd-MM-yyyy-HH-mm-ss"));
+                }*/
 #endif
 
-                highscore[i].highscore[a] = score;
+                highscore[i].highscore[a].score = score;
+                highscore[i].highscore[a].recordTime = recordTime;
             }
         }
 
@@ -228,11 +268,11 @@ public class FlatterFogelHandler : MonoBehaviour
         return score;
     }
 
-    public ObscuredULong GetHighscore(int mode = -1, int diff = -1)
+    public ScoreDataHolder GetHighscore(int mode = -1, HighscoreType hsType = HighscoreType.Global)
     {
-        if(diff == -1)
+        if(hsType == HighscoreType.Undefined)
         {
-            diff = OptionHandler.GetDifficulty();
+            hsType = HighscoreType.Global;
         }
 
         if(mode == -1)
@@ -240,14 +280,80 @@ public class FlatterFogelHandler : MonoBehaviour
             mode = ModeManager.currentIndex;
         }
 
-        return highscore[mode].highscore[diff];
+        return highscore[mode].highscore[(int)hsType];
     }
 
-    public void SetHighscore(int mode, int diff, ulong score)
-    {
-        highscore[mode].highscore[diff] = score;
+    public void SetHighscore(int mode, ulong score, DateTime recordDate)
+    { //wird nach jeder Runde aufgerufen
 
-        ObscuredPrefs.SetULong("Player_Highscore_" + mode.ToString() + "_" + diff.ToString(), score);
+        for(int i = 0; i < 3; i++)
+        {
+            HighscoreType hsType = (HighscoreType)i;
+
+            ScoreDataHolder scoreData = highscore[mode].highscore[(int)hsType];
+
+            /*
+             * Wenn größer current Score & nicht expired ||
+             * alte Score Expired
+             */
+
+            if ((score > scoreData.score &&
+                !IsExpired(hsType, scoreData.recordTime)) ||
+                IsExpired(hsType, scoreData.recordTime))
+            {
+                //Zuweisen
+
+                scoreData.score = score;
+                scoreData.recordTime = recordDate;
+
+                highscore[mode].highscore[(int)hsType] = scoreData;
+
+                //Abspeichern
+
+                int hsTypeInt = (int)hsType;
+
+                ObscuredPrefs.
+                    SetULong("Player_Highscore_" + mode.ToString() + "_" + hsTypeInt.ToString(), score);
+                ObscuredPrefs.
+                    SetString("Player_Highscore_" + mode.ToString() + "_" + hsTypeInt.ToString() + "_Time",
+                        recordDate.ToString("dd-MM-yyyy-HH-mm-ss"));
+            }
+        }
+    }
+
+    public bool IsExpired(HighscoreType type, DateTime checkTime)
+    {
+        bool ok = false;
+
+        DateTime currentTime = DateTime.Now;
+
+        DateTime dayStart = currentTime.Date;
+        DateTime weekStart = currentTime.StartOfWeek(DayOfWeek.Monday);
+        //DateTime dayEnd = currentTime.Date.AddDays(1).AddTicks(-1);
+
+        switch(type)
+        {
+            //Global expired nie
+            case HighscoreType.Global:
+                ok = false;
+                break;
+            //Wenn älter als tagesbeginn
+            case HighscoreType.Daily:
+                if(checkTime < dayStart)
+                {
+                    ok = true;
+                }
+                break;
+            //Wenn älter als Wochenstart
+            case HighscoreType.Weekly:
+                if(checkTime < weekStart)
+                {
+                    ok = true;
+                }
+                break;
+        }
+
+        return ok;
     }
 
     public ObscuredULong GetLastScore()
@@ -302,39 +408,16 @@ public class FlatterFogelHandler : MonoBehaviour
 
         isStarting = true;
 
+        player.GetComponent<IdleHandler>().StopIdle();
+
         FF_PlayerData pD = player.GetComponent<FF_PlayerData>();
         if (pD.dead)
         {
             pD.PlayerGo(false);
 
             //battleRoyale = false;
-            for(int i = 0; i < aiObjs.Count; i++)
-            {
-                aiObjs[i].SetActive(false);
-            }
-            aiObjs.Clear();
+            ResetAllObjs();
 
-            DissolvePipes(0.6f);
-
-            destructionHandler.ClearAll();
-
-            groundHandler.DissolveGround(gameState);
-
-            DisableOtherObjs();
-
-            for(int i = 0; i < coins.Count; i++)
-            {
-                coins[i].SetActive(false);
-            }
-            coins.Clear();
-
-            for (int i = 0; i < gravestoneObjs.Count; i++)
-            {
-                gravestoneObjs[i].GetComponent<GravestoneHandler>().FadeOutGravestone(0.5f);
-            }
-
-            Invoke(nameof(BeginPipeDestruction), 0.7f);
-            Invoke(nameof(BeginGroundDestruction), 0.7f);
             Invoke(nameof(DeadRestart), 0.75f);
             return;
         } else
@@ -352,6 +435,8 @@ public class FlatterFogelHandler : MonoBehaviour
         spiralActive = 0;
 
         nextCompleteDestruction = false;
+
+        inTunnel = false;
 
         state = (int)FF_States.Playing;
         gameState = 0;
@@ -431,6 +516,9 @@ public class FlatterFogelHandler : MonoBehaviour
         if(!fromMenu)
         {
             cameraObj.transform.position = OptionHandler.defaultCameraPos; //kamera zurücksetzen
+        } else
+        {
+            DespawnGravestone();
         }
 
         int diff = OptionHandler.GetDifficulty();
@@ -488,14 +576,14 @@ public class FlatterFogelHandler : MonoBehaviour
             }
         }
 
-        player.transform.position = playerStartPos;
+        //player.transform.position = playerStartPos;
         player.transform.DOMove(playerPlayPos, 1f);
 
         if(fullReset)
         {
 #if UNITY_EDITOR
             SetScore(0, 0);
-            internalScoreCount = 40;
+            //internalScoreCount = 40;
 #else
             SetScore(0, 0);
 #endif
@@ -810,6 +898,51 @@ public class FlatterFogelHandler : MonoBehaviour
         this.hardcore = hardcore;
         this.miningMode = miningMode;
         this.zigZag = zigzag;
+    }
+
+    public void ResetAllObjs(float time = 0.7f, bool menu = false)
+    {
+        for (int i = 0; i < aiObjs.Count; i++)
+        {
+            aiObjs[i].SetActive(false);
+        }
+        aiObjs.Clear();
+
+        DissolvePipes(time * 0.85f);
+
+        destructionHandler.ClearAll();
+
+        groundHandler.DissolveGround(gameState);
+
+        DisableOtherObjs();
+
+        for (int i = 0; i < coins.Count; i++)
+        {
+            coins[i].SetActive(false);
+        }
+        coins.Clear();
+
+        for (int i = 0; i < gravestoneObjs.Count; i++)
+        {
+            gravestoneObjs[i].GetComponent<GravestoneHandler>().FadeOutGravestone(time * 0.71f);
+        }
+
+        Invoke(nameof(BeginPipeDestruction), time);
+        Invoke(nameof(BeginGroundDestruction), time);
+
+        if(menu)
+        {
+            Invoke(nameof(EndDisable), time + 0.01f);
+        }
+    }
+
+    private void EndDisable()
+    {
+        for (int i = 0; i < pipeParent.childCount; i++)
+        {
+            pipeParent.GetChild(i).gameObject.SetActive(false);
+        }
+        pipes.Clear();
     }
 
     public Vector3 LatestPipePos(GameObject caller, float xPos = -381)
@@ -1665,6 +1798,30 @@ public class FlatterFogelHandler : MonoBehaviour
         SpawnPipes(empty, moveAllowed);
     }
 
+    public static int GetDiff(ulong score)
+    {
+        int diff;
+
+        if (score < 50)
+        {
+            diff = 0;
+        }
+        else if (score < 100)
+        {
+            diff = 1;
+        }
+        else if (score < 150)
+        {
+            diff = 2;
+        }
+        else
+        {
+            diff = 3;
+        }
+
+        return diff;
+    }
+
     public void SpawnPipes(bool empty = false, bool moveAllowed = true, 
         float overrideY = 9999, bool spawnClose = false, bool overrideDistance = false,
         bool overrideCoin = false, bool kreisel = false)
@@ -1830,7 +1987,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
             pipeHolder.GetComponent<PipeHolder>().spiral = true;
 
-            middleObj.GetComponent<PipeMiddleHandler>().StartRotation();
+            middleObj.GetComponent<PipeMiddleHandler>().StartRotation(GetDiff(score));
             middleObj.SetActive(true);
         }
 
@@ -2096,8 +2253,8 @@ public class FlatterFogelHandler : MonoBehaviour
             }
 
             ulong newScore = score + bCount + 1;
-            if (newScore > highscore[ModeManager.currentIndex].highscore[OptionHandler.GetDifficulty()] &&
-                highscore[ModeManager.currentIndex].highscore[OptionHandler.GetDifficulty()] != 0 && !highscoreLineShowed)
+            if (newScore > highscore[ModeManager.currentIndex].highscore[(int)HighscoreType.Global].score &&
+                highscore[ModeManager.currentIndex].highscore[(int)HighscoreType.Global].score != 0 && !highscoreLineShowed)
             { //highscorelinie aktivieren
                 pipeTop.GetComponent<PipeData>().highscorePipe = true;
                 highscoreLineShowed = true;
@@ -2206,7 +2363,7 @@ public class FlatterFogelHandler : MonoBehaviour
             tut = true;
         }
 
-        if((Random.Range(0, 20) == 0 && !modeChangeBlus && !tut) ||
+        if((Random.Range(0, 25) == 0 && !modeChangeBlus && !tut) ||
             overrideCoin)
         { //coin spawnen
             bData.isCoin = true;
@@ -2255,6 +2412,32 @@ public class FlatterFogelHandler : MonoBehaviour
         //ShopHandler.Instance.UpdateBlus(1, 1, true);
 
         otherObjs.Add(newBlus);
+    }
+
+    public void SpawnMainGravestone()
+    {
+        mainGravestone.SetActive(true);
+        mainGravestone.transform.position = new Vector3(-518.9f, 50, 280);
+
+        mainGravestone.GetComponent<GravestoneHandler>().StartGravstone(player,
+                shop.allGraveTops[shop.GetSelected(CustomizationType.GraveTop)],
+                shop.allGraveSides[shop.GetSelected(CustomizationType.GraveSide)],
+                shop.allGraveBottoms[shop.GetSelected(CustomizationType.GraveBottom)],
+                0, "", StatHandler.deathCount);
+
+        mainGravestone.transform.DOMoveY(278.1f, 0.4f);
+    }
+
+    public void DespawnGravestone()
+    {
+        mainGravestone.transform.DOMoveY(50, 0.4f);
+
+        Invoke(nameof(DeactivateMainGravestone), 0.41f);
+    }
+
+    private void DeactivateMainGravestone()
+    {
+        mainGravestone.SetActive(false);
     }
 
     public void PlayerDeath()
@@ -2407,22 +2590,22 @@ public class FlatterFogelHandler : MonoBehaviour
         lastScore = score;
         ObscuredPrefs.SetULong("Player_LastScore", lastScore);
 
-        int diff = OptionHandler.GetDifficulty();
+        HighscoreType type = HighscoreType.Global;
 
         if(miningMode)
         {
             mineHandler.DisableBackground();
         }
 
-        if(score > highscore[ModeManager.currentIndex].highscore[diff])
-        {
-            highscore[ModeManager.currentIndex].highscore[diff] = score;
+        DateTime currentTime = DateTime.Now;
 
-            ObscuredPrefs.SetULong("Player_Highscore_" + ModeManager.currentIndex.ToString() + "_" + diff.ToString(), score);
-        }
+        //Checkt & weist Highscore zu
+        SetHighscore(ModeManager.currentIndex, score, currentTime);
+
+        ulong hs = highscore[ModeManager.currentIndex].highscore[(int)type].score;
 
         StartCoroutine(scoreHandler.OpenScoreboard(
-            OptionHandler.moveTime, score, highscore[ModeManager.currentIndex].highscore[diff], taps,
+            OptionHandler.moveTime, score, hs, taps,
             perfectHits, roundCoins));
 
 #if UNITY_ANDROID || UNITY_IOS

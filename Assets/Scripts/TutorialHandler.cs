@@ -71,7 +71,7 @@ public class TutorialHandler : MonoBehaviour
         mainTutObj.transform.position = new Vector3(-381, 2500, -300);
         mainTutObj.transform.GetChild(0).gameObject.SetActive(true);
 
-        mainTutObj.transform.DOMoveY(987, MenuData.scaleTime, true).SetEase(Ease.OutBack);
+        mainTutObj.transform.DOMoveY(1364, MenuData.scaleTime, true).SetEase(Ease.OutBack);
     }
 
     public void MainTutModes()
