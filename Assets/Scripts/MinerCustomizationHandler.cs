@@ -85,6 +85,8 @@ public class MinerCustomizationHandler : MonoBehaviour
 
     public void CloseButtonClicked()
     {
+        SoundManager.Instance.PlaySound(Sound.MenuSelectEnd);
+
         fontMat.SetFloat("_DissolveAmount", 1);
         imageMat.SetFloat("_DissolveAmount", 1);
 
@@ -255,14 +257,14 @@ public class MinerCustomizationHandler : MonoBehaviour
             objTween = selected.transform.DOMove(objPositions[type], 0.2f);
         }
 
-        if(selected.GetComponent<RectTransform>().sizeDelta != new Vector2(590, 238))
+        if(selected.GetComponent<RectTransform>().sizeDelta != new Vector2(718, 238))
         {
             if (objScaleTween != null)
             {
                 objScaleTween.Kill();
             }
 
-            objScaleTween = selected.GetComponent<RectTransform>().DOSizeDelta(new Vector2(590, 238), 0.2f);
+            objScaleTween = selected.GetComponent<RectTransform>().DOSizeDelta(new Vector2(718, 238), 0.2f);
         }
 
         CostData[] cost;

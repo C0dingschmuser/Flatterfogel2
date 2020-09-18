@@ -294,6 +294,8 @@ public class MenuData : MonoBehaviour
             {
                 scalingButtons.Add(button);
                 button.transform.DOScale(0.8f, 0.05f);
+
+                SoundManager.Instance.PlaySound(Sound.MenuSelect);
             }
         }
     }
@@ -304,7 +306,7 @@ public class MenuData : MonoBehaviour
         {
             scalingButtons.Remove(button);
 
-            bool ok = true;
+            bool ok = false;
             bool go = false;
 
             switch (button.tag)
@@ -312,12 +314,12 @@ public class MenuData : MonoBehaviour
                 case "GoBtn":
 
                     go = true;
-                    if (ModeManager.Instance.GetModeDisplayActive())
+                    /*if (ModeManager.Instance.GetModeDisplayActive())
                     {
-                        ok = false;
-                    }
+                        //ok = false;
+                    }*/
 
-                    ModeManager.Instance.ModeGoClicked();
+                    ok = ModeManager.Instance.ModeGoClicked();
                     break;
                 case "OptionBtn":
                     OptionHandler.Instance.ShowOptions();
@@ -330,15 +332,24 @@ public class MenuData : MonoBehaviour
                     break;
             }
 
-            if(ok)
-            {
-                button.transform.DOScale(1f, 0.05f);
+            button.transform.DOScale(1f, 0.05f);
 
-                if(!go)
+            if (go)
+            { //go clicked
+                if(!ok)
                 {
-                    OptionHandler.Instance.MenuZoomOut();
+                    //OptionHandler.Instance.MenuZoomOut();
+                    SoundManager.Instance.PlaySound(Sound.DModeExplosion);
+                } else
+                {
+                    SoundManager.Instance.PlaySound(Sound.MenuSelectEnd);
                 }
+            } else
+            {
+                OptionHandler.Instance.MenuZoomOut();
+                SoundManager.Instance.PlaySound(Sound.MenuSelectEnd);
             }
+
         }
     }
 

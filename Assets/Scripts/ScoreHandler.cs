@@ -417,6 +417,8 @@ public class ScoreHandler : MonoBehaviour
             return;
         }
 
+        SoundManager.Instance.PlaySound(Sound.MenuError);
+
         closing = true;
 
         eventSystem.SetActive(false);
@@ -452,6 +454,10 @@ public class ScoreHandler : MonoBehaviour
 
     public void CloseAchievements()
     {
+        if (closing) return;
+
+        SoundManager.Instance.PlaySound(Sound.MenuError);
+
         closing = true;
 
         eventSystem.SetActive(false);
@@ -749,7 +755,7 @@ public class ScoreHandler : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("UString: " + wwwData);
+                    //Debug.Log("UString: " + wwwData);
                 }
 
                 string[] rawData = wwwData.Split('|'); //split nach modi
@@ -766,7 +772,7 @@ public class ScoreHandler : MonoBehaviour
 
                             if(a == 0)
                             {
-                                Debug.Log(i + " " + time[i]);
+                                //Debug.Log(i + " " + time[i]);
                             }
 
                             hsData[a].dataString[i] = time[i];
@@ -1003,6 +1009,8 @@ public class ScoreHandler : MonoBehaviour
         {
             scoreDiff_float = 0.0001f;
         }
+
+        //Debug.Log(ceiling + " " + bottom + " " + score + " " + scoreDiff + " " + tempDiff);
 
         //Höhe in Prozent
         float p = Mathf.Clamp(((float)scoreDiff - tempDiff) / scoreDiff_float, 0, 1);

@@ -175,7 +175,7 @@ public class D2D_HouseHandler : MonoBehaviour
             fireEffects[i] = null;
         }
 
-        SoundManager.Instance.PlaySound(SoundManager.Sound.DModeExplosion);
+        SoundManager.Instance.PlaySound(Sound.DModeExplosion);
 
         if(defChildCount > 1)
         {

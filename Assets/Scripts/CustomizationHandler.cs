@@ -158,6 +158,8 @@ public class CustomizationHandler : MonoBehaviour
 
         dissolveAmount = 1;
 
+        SoundManager.Instance.PlaySound(Sound.MenuSelectEnd);
+
         Tween anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, 0, ShopMenuHandler.anTime);
         anTween.OnUpdate(() =>
         {
@@ -1063,7 +1065,7 @@ public class CustomizationHandler : MonoBehaviour
     }
 
     public void BuyClicked()
-    { //kann nur aufgerufen werden wenn noch nicht gekauft & genug geld
+    { 
         if(buyCode == 0)
         {
             if(noMoneyRoutine != null)
@@ -1071,6 +1073,8 @@ public class CustomizationHandler : MonoBehaviour
                 StopCoroutine(noMoneyRoutine);
                 priceParent.position = pricePos;
             }
+
+            SoundManager.Instance.PlaySound(Sound.MenuError);
 
             noMoneyRoutine = StartCoroutine(NotEnoughMoney());
             return;

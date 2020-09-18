@@ -173,7 +173,7 @@ public class PipeData : MonoBehaviour
 
         if (pipeExpId == 1)
         { //wenn letzte pipe die zu blus assigned
-            SoundManager.Instance.PlaySound(SoundManager.Sound.BlusExplosion);
+            SoundManager.Instance.PlaySound(Sound.BlusExplosion);
             FlatterFogelHandler.Instance.StartCameraShake();
         }
 

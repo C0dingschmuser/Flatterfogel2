@@ -796,6 +796,8 @@ public class ShopHandler : MonoBehaviour
         yield return Timing.WaitForOneFrame;
 
         originalBlusTextPos = blusText.transform.parent.position;
+
+        //Debug.Log(originalBlusTextPos);
     }
 
     public void BuyInfoOkayClicked()
@@ -1583,6 +1585,8 @@ public class ShopHandler : MonoBehaviour
         {
             CloseColorSelection();
         }
+
+        SoundManager.Instance.PlaySound(Sound.MenuError);
 
         eventSystem.SetActive(false);
 

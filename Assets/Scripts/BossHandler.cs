@@ -138,7 +138,7 @@ public class BossHandler : MonoBehaviour
         {
             laserAnCount = 0;
             laserObj.SetActive(true);
-            SoundManager.Instance.PlaySound(SoundManager.Sound.Laser);
+            SoundManager.Instance.PlaySound(Sound.Laser);
         }
 
         laserObj.GetComponent<SpriteRenderer>().sprite = laserSprites[laserAnCount];
@@ -311,7 +311,7 @@ public class BossHandler : MonoBehaviour
                             GameObject newMinus = pooler.SpawnFromPool("Minus", bossPos, Quaternion.identity);
                             newMinus.GetComponent<MinusHandler>().StartMinus(currentDir, 500, player);
 
-                            SoundManager.Instance.PlaySound(SoundManager.Sound.MinusShoot);
+                            SoundManager.Instance.PlaySound(Sound.MinusShoot);
 
                             shootCount++;
                             if (shootCount == maxShots)
@@ -330,7 +330,7 @@ public class BossHandler : MonoBehaviour
                         { //laser
                             idleSpeed = 125;
 
-                            SoundManager.Instance.PlaySound(SoundManager.Sound.Laser);
+                            SoundManager.Instance.PlaySound(Sound.Laser);
 
                             laserActive = true;
                             laserObj.gameObject.SetActive(true);

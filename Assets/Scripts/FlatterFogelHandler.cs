@@ -1115,6 +1115,10 @@ public class FlatterFogelHandler : MonoBehaviour
             destructionHandler.DisableEnable(true);
         }
 
+        if(!destructionMode && !miningMode)
+        {
+            shop.UIScaleFinished();
+        }
 
         //StartGround();
     }
@@ -1485,7 +1489,7 @@ public class FlatterFogelHandler : MonoBehaviour
                 GameObject[] tempPipes = blus.transform.parent.GetComponent<BlusData>().assignedPipes;
 
                 blus.transform.parent.GetComponent<BlusData>().DestroyBlus(effect);
-                SoundManager.Instance.PlaySound(SoundManager.Sound.Blus);
+                SoundManager.Instance.PlaySound(Sound.Blus);
 
                 for (int i = 0; i < 2; i++)
                 {
@@ -2924,7 +2928,7 @@ public class FlatterFogelHandler : MonoBehaviour
             hHandler.AddFireEffect(newFire); //damit hHandler den effekt deaktivieren kann bei fracture
         }
 
-        SoundManager.Instance.PlaySound(SoundManager.Sound.PipeHit);
+        SoundManager.Instance.PlaySound(Sound.PipeHit);
 
         StartCameraShake(0.1f);
     }

@@ -500,6 +500,8 @@ public class OptionHandler : MonoBehaviour
     {
         if (dataRequestRunning) return;
 
+        SoundManager.Instance.PlaySound(Sound.MenuError);
+
         closing = true;
 
         eventSystem.SetActive(false);

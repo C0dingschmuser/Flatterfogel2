@@ -226,6 +226,8 @@ public class PipeCustomizationHandler : MonoBehaviour
     {
         switchRunning = true;
 
+        SoundManager.Instance.PlaySound(Sound.MenuSelectEnd);
+
         fontMat.SetFloat("_DissolveAmount", 1);
         imageMat.SetFloat("_DissolveAmount", 1);
 
@@ -1088,7 +1090,7 @@ public class PipeCustomizationHandler : MonoBehaviour
     }
 
     public void BuyClicked()
-    { //kann nur aufgerufen werden wenn noch nicht gekauft & genug geld
+    {
         if (buyCode == 0)
         {
             if (noMoneyRoutine != null)
@@ -1096,6 +1098,8 @@ public class PipeCustomizationHandler : MonoBehaviour
                 StopCoroutine(noMoneyRoutine);
                 priceParent.position = pricePos;
             }
+
+            SoundManager.Instance.PlaySound(Sound.MenuError);
 
             noMoneyRoutine = StartCoroutine(NotEnoughMoney());
             return;

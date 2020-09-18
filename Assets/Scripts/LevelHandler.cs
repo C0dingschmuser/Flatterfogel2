@@ -225,7 +225,7 @@ public class LevelHandler : MonoBehaviour
                 effectID = 0;
             }
 
-            SoundManager.Instance.PlaySound(SoundManager.Sound.LevelUp);
+            SoundManager.Instance.PlaySound(Sound.LevelUp);
         }
 
         parent.transform.GetChild(0).GetComponent<Slider>().value = currentXP / (float)currentLVLDiff;

@@ -438,7 +438,7 @@ public class ModeManager : MonoBehaviour
         changeRunning = false;
     }
 
-    public void ModeGoClicked()
+    public bool ModeGoClicked()
     {
         //MenuData.Instance.DoScaleDown();
         if(!modeDisplayActive)
@@ -459,6 +459,7 @@ public class ModeManager : MonoBehaviour
             GoClicked();
         }
 
+        return modeDisplayActive;
     }
 
     public void GoClicked()

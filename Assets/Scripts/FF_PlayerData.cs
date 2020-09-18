@@ -1013,7 +1013,7 @@ public class FF_PlayerData : MonoBehaviour
 
         if(!zigZag && !release)
         {
-            SoundManager.Instance.PlaySound(SoundManager.Sound.Jump);
+            SoundManager.Instance.PlaySound(Sound.Jump);
 
             Vector2 velocity = new Vector3(0, 800f);
             GetComponent<Rigidbody2D>().velocity = velocity;
@@ -1384,7 +1384,7 @@ public class FF_PlayerData : MonoBehaviour
             MineHandler.Instance.EndMine();
         }
 
-        SoundManager.Instance.PlaySound(SoundManager.Sound.Die);
+        SoundManager.Instance.PlaySound(Sound.Die);
 
         //GetComponent<Animator>().SetTrigger("Stop");
         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;

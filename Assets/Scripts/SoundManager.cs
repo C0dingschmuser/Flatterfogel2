@@ -14,6 +14,23 @@ public enum MusicID
     Boss,
 }
 
+public enum Sound
+{
+    Blus,
+    BlusExplosion,
+    Jump,
+    Die,
+    MinusShoot,
+    Laser,
+    PipeExplosion,
+    PipeHit,
+    DModeExplosion,
+    LevelUp,
+    MenuSelect,
+    MenuSelectEnd,
+    MenuError,
+}
+
 public class SoundManager : MonoBehaviour
 {
     public AudioClip[] blus_simple;
@@ -25,6 +42,9 @@ public class SoundManager : MonoBehaviour
     public AudioClip dPipe_explosion_hit;
     public AudioClip laserSoundClip;
     public AudioClip levelUp;
+    public AudioClip menuSelect;
+    public AudioClip menuSelectEnd;
+    public AudioClip menuError;
     public AudioClip[] dMode_Explosion;
     public AudioClip[] music;
 
@@ -58,20 +78,6 @@ public class SoundManager : MonoBehaviour
     {
         //clipSampleData = new float[sampleDataLength];
         PlayMusic(MusicID.Menu);
-    }
-
-    public enum Sound
-    {
-        Blus,
-        BlusExplosion,
-        Jump,
-        Die,
-        MinusShoot,
-        Laser,
-        PipeExplosion,
-        PipeHit,
-        DModeExplosion,
-        LevelUp,
     }
 
     public void PlayMusicFade(MusicID id, float fadeTime = 0.5f)
@@ -219,6 +225,18 @@ public class SoundManager : MonoBehaviour
                 //pitch = Random.Range(0.85f, 1.15f);
                 clip = levelUp;
 
+                break;
+
+            case Sound.MenuSelect:
+                clip = menuSelect;
+                break;
+
+            case Sound.MenuSelectEnd:
+                clip = menuSelectEnd;
+                break;
+
+            case Sound.MenuError:
+                clip = menuError;
                 break;
 
             default:

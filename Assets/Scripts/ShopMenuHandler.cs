@@ -130,6 +130,8 @@ public class ShopMenuHandler : MonoBehaviour
             return;
         }
 
+        SoundManager.Instance.PlaySound(Sound.MenuSelect);
+
         Tween anTween = DOTween.To(() => dissolveAmount, x => dissolveAmount = x, 0, anTime);
         anTween.OnUpdate(() =>
         {
