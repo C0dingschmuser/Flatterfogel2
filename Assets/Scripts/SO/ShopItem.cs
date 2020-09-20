@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
 
 public class ShopItem : ScriptableObject
 {
@@ -10,9 +11,11 @@ public class ShopItem : ScriptableObject
     public Rarity rarity = Rarity.Casual;
 
     [Header("Price")]
-    public bool purchased = false;
+    public bool purchased = false, special = false;
     public int salePercent = 0;
     public CostData[] cost;
+    public LocalizedString unlockLocale = null;
+    public string unlockString;
 
     [Header("Animation")]
     public bool animated = false;

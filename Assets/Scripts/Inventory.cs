@@ -93,6 +93,11 @@ public class Inventory : MonoBehaviour
             }
         }
 
+        if((MineralType)id == MineralType.Special)
+        { //special item wird woanders unlocked
+            amount = 0;
+        }
+
         return amount;
     }
 

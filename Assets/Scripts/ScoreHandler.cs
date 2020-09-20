@@ -29,7 +29,7 @@ public class ScoreHandler : MonoBehaviour
     public Material medalMat;
     public GameObject[] medalObjs;
     public GameObject scoreObj, perfectHitObj, highscoreObj, coinObj, tapObj, highscoreList, okButton, personalCoinsObj,
-        continueEffects, xpParent, goAgainButton, menuButton;
+        continueEffects, xpParent, goAgainButton, menuButton, crownMenuAvail;
     public GameObject inputParent, hParent, eventSystem, achParent, fullParent, smallPipePrefab, playerObj, levelTextObj;
 
     public ObjectPooler objPooler;
@@ -61,6 +61,7 @@ public class ScoreHandler : MonoBehaviour
     public string perfectHitString, loadingString;
     public string[] timeString = new string[3];
 
+    public static ObscuredBool bronzeOK = false, silverOK = false, goldOK = false;
     public static float moveTime = 0.25f;
     public static ObscuredInt personalCoins = 0;
     public static ScoreHandler Instance;
@@ -520,15 +521,26 @@ public class ScoreHandler : MonoBehaviour
             {
                 Color c = Color.white;
 
-                if (pos - 1 == i)
-                {
-                    c = FlatterFogelHandler.pr0Farben[0];
-                }
-
                 modeButtonParent.GetChild(i).GetComponent<Image>().color =
                     c;
             }
-        } else
+
+            switch(pos)
+            {
+                case 0: //Classic
+                    modeButtonParent.GetChild(0).GetComponent<Image>().color =
+                        FlatterFogelHandler.pr0Farben[0];
+                    break;
+                case 5: //Destruction
+                    modeButtonParent.GetChild(1).GetComponent<Image>().color =
+                        FlatterFogelHandler.pr0Farben[0];
+                    break;
+                case 4: //Mining
+                    modeButtonParent.GetChild(2).GetComponent<Image>().color =
+                        FlatterFogelHandler.pr0Farben[0];
+                    break;
+            }
+        } /*else
         { //diff
 
             for (int i = 0; i < diffButtonParent.childCount; i++)
@@ -543,7 +555,7 @@ public class ScoreHandler : MonoBehaviour
                 diffButtonParent.GetChild(i).GetComponent<Image>().color =
                     c;
             }
-        }
+        }*/
     }
 
     public void ModeClicked(int mode)
@@ -671,6 +683,7 @@ public class ScoreHandler : MonoBehaviour
 
         form.AddField("diff", diff.ToString());
         form.AddField("setscore", "1");
+        form.AddField("checkLeader", "1");
         form.AddField("lastscore", lastS.ToString());
 
         form.AddField("lvl", currentLvl.ToString());
@@ -762,7 +775,15 @@ public class ScoreHandler : MonoBehaviour
 
                 if (rawData.Length > 2)
                 {
-                    for(int a = 0; a < 3; a++)
+                    string classicResult = rawData[3];
+                    string destructionResult = rawData[4];
+                    string miningResult = rawData[5];
+
+                    CheckHSLeader(classicResult.Split('~'),
+                        destructionResult.Split('~'),
+                        miningResult.Split('~'));
+
+                    for (int a = 0; a < 3; a++)
                     { //loop durch modi
 
                         string[] time = rawData[a].Split('~');
@@ -1223,6 +1244,7 @@ public class ScoreHandler : MonoBehaviour
         } else
         {
             form.AddField("setscore", "1");
+            form.AddField("checkLeader", "1");
             form.AddField("lastscore", lastS.ToString());
 
             form.AddField("classicAvg", Math.Round(StatHandler.classicAvg, 2).ToString());
@@ -1265,11 +1287,6 @@ public class ScoreHandler : MonoBehaviour
 
 #if UNITY_IOS
         if(!PlayerPrefs.GetString("LastChangelogVersion", Application.version).Equals(Application.version))
-        {
-            otherChangelog = true;
-        }
-#elif UNITY_ANDROID
-        if (PlayerPrefs.GetInt("OtherChangelog", 0) == 0)
         {
             otherChangelog = true;
         }
@@ -1427,6 +1444,45 @@ public class ScoreHandler : MonoBehaviour
         }
     }
 
+    private void CheckHSLeader(string[] classicResult, string[] destructionResult, string[] miningResult)
+    {
+        Sprite sp = ((Hat)shop.GetItemByString(CustomizationType.Hat, "bronze")).sprite;
+
+        if(classicResult[1] == "1" ||
+            destructionResult[1] == "1" ||
+            miningResult[1] == "1")
+        {
+            bronzeOK = true;
+        }
+
+        if (classicResult[2] == "1" ||
+            destructionResult[2] == "1" ||
+            miningResult[2] == "1")
+        {
+            silverOK = true;
+
+            sp = ((Hat)shop.GetItemByString(CustomizationType.Hat, "silver")).sprite;
+        }
+
+        if (classicResult[0] == "1" ||
+            destructionResult[0] == "1" ||
+            miningResult[0] == "1")
+        {
+            goldOK = true;
+
+            sp = ((Hat)shop.GetItemByString(CustomizationType.Hat, "gold")).sprite;
+        }
+
+        if(bronzeOK || silverOK || goldOK)
+        {
+            crownMenuAvail.SetActive(true);
+            crownMenuAvail.transform.GetChild(0).GetComponent<Image>().sprite = sp;
+        } else
+        {
+            crownMenuAvail.SetActive(false);
+        }
+    }
+
     private bool FetchString(string s)
     {
         string wwwData = s;
@@ -1453,6 +1509,17 @@ public class ScoreHandler : MonoBehaviour
         string encodedChangelog = vData[4];
 
         bool otherChangelog = false;
+
+        if (vData.Length > 7)
+        {
+            string classicResult = vData[5];
+            string destructionResult = vData[6];
+            string miningResult = vData[7];
+
+            CheckHSLeader(classicResult.Split('~'),
+                destructionResult.Split('~'),
+                miningResult.Split('~'));
+        }
 
         if (encodedChangelog.Length > 0)
         {

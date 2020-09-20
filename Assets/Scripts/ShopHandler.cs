@@ -261,6 +261,16 @@ public class ShopHandler : MonoBehaviour
 
         yield return handle = sale.GetLocalizedString();
         saleString = (string)handle.Result;
+
+        for(int i = 0; i < allHats.Count; i++)
+        {
+            if(allHats[i].special)
+            {
+                yield return handle = allHats[i].unlockLocale.GetLocalizedString();
+
+                allHats[i].unlockString = (string)handle.Result;
+            }
+        }
     }
 
     public Color32 GetRarity(CustomizationType type, int id, byte alpha = 255)
@@ -324,6 +334,26 @@ public class ShopHandler : MonoBehaviour
         }
 
         return allPipes[pipeID].sprite[0];
+    }
+
+    public ShopItem GetItem(CustomizationType type, int id)
+    {
+        List<ShopItem> allItems = allSkins.Cast<ShopItem>().ToList();
+
+        switch (type)
+        {
+            case CustomizationType.Wing:
+                allItems = allWings.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.Hat:
+                allItems = allHats.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.Pipe:
+                allItems = allPipes.Cast<ShopItem>().ToList();
+                break;
+        }
+
+        return allItems[id];
     }
 
     public ShopItem GetItemByString(CustomizationType type, string identifier)
@@ -490,9 +520,9 @@ public class ShopHandler : MonoBehaviour
         return max;
     }
 
-    public bool IsAffordable(CostData[] cost)
+    public int IsAffordable(CostData[] cost)
     {
-        bool ok = true;
+        int ok = 1;
 
         for(int i = 0; i < cost.Length; i++)
         {
@@ -504,11 +534,15 @@ public class ShopHandler : MonoBehaviour
                 if (cost[i].mineralID == MineralType.Coin)
                 {
                     collectedAmount = GetBlus();
+                } else if(cost[i].mineralID == MineralType.Special)
+                {
+                    ok = -1;
+                    break;
                 }
 
-                if (collectedAmount < (ulong)cost[i].amount)
+                if (collectedAmount < (ulong)cost[i].amount && ok != -1)
                 {
-                    ok = false;
+                    ok = 0;
                     break;
                 }
             }
@@ -586,6 +620,7 @@ public class ShopHandler : MonoBehaviour
     public int HasPurchased(CustomizationType type, int id)
     {
         /*  RETURN TYPES
+         * -1 - Special Item - Nicht kaufbar
          *  0 - Nicht gekauft & nicht genug Geld
          *  1 - Nicht gekauft & genug Geld
          *  2 - Gekauft
@@ -630,10 +665,7 @@ public class ShopHandler : MonoBehaviour
             code = 2;
         } else
         {
-            if (IsAffordable(shopItems[id].cost))
-            {
-                code = 1;
-            }
+            code = IsAffordable(shopItems[id].cost);
         }
 
         return code;
@@ -1065,7 +1097,11 @@ public class ShopHandler : MonoBehaviour
                                 {
                                     if(allHats[a].identifier.Equals(lastHatIdentifier))
                                     {
-                                        lastHatID = a;
+                                        if(purchasedHats.Contains(a))
+                                        { //nur zuweisen wenn auch gekauft
+                                            lastHatID = a;
+                                        }
+
                                         break;
                                     }
                                 }
@@ -1986,6 +2022,33 @@ public class ShopHandler : MonoBehaviour
         //
     }
 
+    private void CheckCrown()
+    {
+        if(ScoreHandler.bronzeOK)
+        {
+            GetItemByString(CustomizationType.Hat, "bronze").purchased = true;
+        } else
+        {
+            GetItemByString(CustomizationType.Hat, "bronze").purchased = false;
+        }
+
+        if(ScoreHandler.silverOK)
+        {
+            GetItemByString(CustomizationType.Hat, "silver").purchased = true;
+        } else
+        {
+            GetItemByString(CustomizationType.Hat, "silver").purchased = false;
+        }
+
+        if (ScoreHandler.goldOK)
+        {
+            GetItemByString(CustomizationType.Hat, "gold").purchased = true;
+        } else
+        {
+            GetItemByString(CustomizationType.Hat, "gold").purchased = false;
+        }
+    }
+
     public void ApplyCustom(CustomizationType type, int id, bool reload = true)
     {
         Debug.Log("Try Apply: " + type + " " + id + " " + reload);
@@ -2020,6 +2083,8 @@ public class ShopHandler : MonoBehaviour
                     {
                         this.allHats[allHats[i]].purchased = true;
                     }
+
+                    CheckCrown();
 
                     if(!this.allWings[selectedWing].purchased)
                     {

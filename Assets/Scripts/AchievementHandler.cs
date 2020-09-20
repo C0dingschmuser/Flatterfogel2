@@ -600,7 +600,7 @@ public class AchievementHandler : MonoBehaviour
             {
                 ach.displayed = true;
                 AchUnlockHandler.Instance.StartAchievementUnlock(ach);
-                Debug.Log(ach.identifier);
+                //Debug.Log(ach.identifier);
             }
         }
     }

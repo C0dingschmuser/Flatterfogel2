@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Frog
   m_EditorClassIdentifier: 
   identifier: frog
-  itemID: 0
+  itemID: 21
   rarity: 3
   purchased: 0
   salePercent: 0
@@ -29,17 +29,16 @@ MonoBehaviour:
   animated: 1
   animationSpeed: 0.1
   shopTime: 0
-  shopStep: 0
+  shopStep: 3
   sprite: {fileID: 21300000, guid: 99b7900d98884ae49b6b2a791b40ef97, type: 3}
   overrideWing: {fileID: 0}
   animatedSprites:
   - {fileID: 21300000, guid: 99b7900d98884ae49b6b2a791b40ef97, type: 3}
+  - {fileID: 21300000, guid: 99b7900d98884ae49b6b2a791b40ef97, type: 3}
   - {fileID: 21300000, guid: 5e05cbd8eaf69e241886c7206625fc3b, type: 3}
   - {fileID: 21300000, guid: a71aeea26d8facf4daa809985efcedc8, type: 3}
   - {fileID: 21300000, guid: 9d1d7c5e7156241429d26274ab8c6647, type: 3}
   - {fileID: 21300000, guid: c0be67c21075ce54095ed25d9c453497, type: 3}
-  - {fileID: 21300000, guid: 288d9af228849b6479fbf22da9ed322b, type: 3}
-  - {fileID: 21300000, guid: c0be67c21075ce54095ed25d9c453497, type: 3}
   - {fileID: 21300000, guid: 9d1d7c5e7156241429d26274ab8c6647, type: 3}
   - {fileID: 21300000, guid: a71aeea26d8facf4daa809985efcedc8, type: 3}
   - {fileID: 21300000, guid: 5e05cbd8eaf69e241886c7206625fc3b, type: 3}
@@ -58,8 +57,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 99b7900d98884ae49b6b2a791b40ef97, type: 3}
   - {fileID: 21300000, guid: 99b7900d98884ae49b6b2a791b40ef97, type: 3}
   - {fileID: 21300000, guid: 99b7900d98884ae49b6b2a791b40ef97, type: 3}
-  boughtWings: 
-  boughtHats: 
+  - {fileID: 21300000, guid: 99b7900d98884ae49b6b2a791b40ef97, type: 3}
+  boughtWings: 00000000
+  boughtHats: 00000000
   lastHat: 0
   hatStart: 18.662
   wingStart: 0

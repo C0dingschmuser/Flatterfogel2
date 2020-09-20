@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 623ec2e6fbc1ddf4d8c9629db178bfba, type: 3}
+  m_Name: Silver
+  m_EditorClassIdentifier: 
+  identifier: silver
+  itemID: 11
+  rarity: 3
+  purchased: 0
+  special: 1
+  salePercent: 0
+  cost:
+  - mineralID: 17
+    amount: 2
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  unlockLocale:
+    m_TableReference:
+      m_TableCollectionName: GUID:81488bf76dd81e84cb83d6659517694a
+    m_TableEntryReference:
+      m_KeyId: 771811526778880
+      m_Key: 
+  unlockString: 
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  sprite: {fileID: 21300000, guid: e79f4d9a361710a42a81ab6152a083f2, type: 3}
+  animatedSprites: []
+  yDist: 0
+  shopYDist: 0

@@ -43,7 +43,7 @@ public class AchUnlockHandler : MonoBehaviour
 
         if (achRoutine == null)
         {
-            Debug.Log("start");
+            //Debug.Log("start");
             StartCoroutine(AchievementUnlock());
         }
         else Debug.Log("running!");

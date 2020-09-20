@@ -63,6 +63,9 @@ public class CustomizationHandler : MonoBehaviour
     [SerializeField]
     private Transform priceParent = null;
 
+    [SerializeField]
+    private Sprite lockedSprite = null;
+
     private Vector3 pricePos;
     private int buyCode = 0;
 
@@ -308,6 +311,8 @@ public class CustomizationHandler : MonoBehaviour
         id = shop.GetSelected(type);
         cost = shop.GetCost(type, id);
 
+        ShopItem item = shop.GetItem(type, id);
+
         if(shop.HasPurchased(type, id) == 2)
         {
             purchased = true;
@@ -361,7 +366,7 @@ public class CustomizationHandler : MonoBehaviour
 
             int realID = previewImages[middleID].GetComponent<IDHolder>().realID;
 
-            Debug.Log(realID);
+            //Debug.Log(realID);
 
             pos.y = hatMiddleY +
                 shop.allHats[realID].shopYDist;
@@ -387,7 +392,7 @@ public class CustomizationHandler : MonoBehaviour
             priceImage.SetActive(true);
             priceText.SetActive(true);
 
-            SetPrice(cost);
+            SetPrice(cost, true, item);
         }
     }
 
@@ -710,6 +715,10 @@ public class CustomizationHandler : MonoBehaviour
 
         switch (code)
         {
+            case -1: //nicht kaufbar - special item
+                buyButton.GetComponent<Image>().color = Color.white;
+                buyButton.GetComponent<Button>().interactable = false;
+                break;
             case 0: //nicht gekauft & kein geld
                 buyButton.GetComponent<Image>().color = Color.red;
                 buyButton.GetComponent<Button>().interactable = true;
@@ -731,7 +740,7 @@ public class CustomizationHandler : MonoBehaviour
             priceImage.SetActive(true);
             priceText.SetActive(true);
 
-            SetPrice(shop.GetCost(type, id));
+            SetPrice(shop.GetCost(type, id), true, shop.GetItem(type, id));
         } else
         {
             priceImage.SetActive(false);
@@ -957,7 +966,7 @@ public class CustomizationHandler : MonoBehaviour
         previewImages[3].gameObject.SetActive(false);
     }
 
-    private void SetPrice(CostData[] prices, bool showBuy = true)
+    private void SetPrice(CostData[] prices, bool showBuy = true, ShopItem item = null)
     {
         //currentPrices = prices;
 
@@ -997,8 +1006,17 @@ public class CustomizationHandler : MonoBehaviour
                     DOFade(1, fadeInTime);
 
                 priceText.transform.GetChild(i).gameObject.SetActive(true);
-                priceText.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text =
-                    collectedAmount + "/" + prices[i].amount.ToString();
+
+                if(!item.special)
+                {
+                    priceText.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text =
+                        collectedAmount + "/" + prices[i].amount.ToString();
+                } else
+                {
+                    priceText.transform.GetChild(i).GetComponent<TextMeshProUGUI>().text =
+                        item.unlockString;
+                }
+
 
                 if (priceImageTween[i] != null)
                 {
@@ -1016,16 +1034,24 @@ public class CustomizationHandler : MonoBehaviour
 
                 priceImage.transform.GetChild(i).gameObject.SetActive(true);
 
-                if (Inventory.Instance.allMinerals[(int)prices[i].mineralID].shopSprite == null)
+                if(!item.special)
+                {
+                    if (Inventory.Instance.allMinerals[(int)prices[i].mineralID].shopSprite == null)
+                    {
+                        priceImage.transform.GetChild(i).GetComponent<Image>().sprite =
+                            Inventory.Instance.allMinerals[(int)prices[i].mineralID].sprite;
+                    }
+                    else
+                    {
+                        priceImage.transform.GetChild(i).GetComponent<Image>().sprite =
+                            Inventory.Instance.allMinerals[(int)prices[i].mineralID].shopSprite;
+                    }
+                } else
                 {
                     priceImage.transform.GetChild(i).GetComponent<Image>().sprite =
-                        Inventory.Instance.allMinerals[(int)prices[i].mineralID].sprite;
+                        lockedSprite;
                 }
-                else
-                {
-                    priceImage.transform.GetChild(i).GetComponent<Image>().sprite =
-                        Inventory.Instance.allMinerals[(int)prices[i].mineralID].shopSprite;
-                }
+
             }
             else
             {

@@ -37,6 +37,8 @@ public class OptionHandler : MonoBehaviour
     public GameObject graphicsObj;
     public GameObject soundObj;
     public GameObject accountObj;
+    public GameObject dataPrivacy;
+    public GameObject credits;
     [Header("Allgemein")]
     public GameObject languageButton;
     public GameObject difficultyButton;
@@ -155,8 +157,6 @@ public class OptionHandler : MonoBehaviour
             {
                 jumpEffectButton.SetActive(false);
             }
-
-            ObscuredPrefs.SetInt("FirstLaunch", 0);
         }
 
         DOTween.SetTweensCapacity(500, 50);
@@ -320,7 +320,10 @@ public class OptionHandler : MonoBehaviour
         selectedLocaleIndex = index;
         string localeName = allLocales[index].name;
 
-        PlayerPrefs.SetString("SelectedLocale", localeName);
+        if(!load)
+        {
+            PlayerPrefs.SetString("SelectedLocale", localeName);
+        }
 
         LocalizationSettings.SelectedLocale = allLocales[index];
         yield return LocalizationSettings.InitializationOperation;
@@ -634,7 +637,29 @@ public class OptionHandler : MonoBehaviour
         Application.OpenURL((string)handle.Result);
     }
 
-#region EnergySaveMode
+    public void OpenPrivacySettings()
+    {
+        allgObj.SetActive(false);
+        graphicsObj.SetActive(false);
+        soundObj.SetActive(false);
+        accountObj.SetActive(false);
+        credits.SetActive(false);
+
+        dataPrivacy.SetActive(true);
+    }
+
+    public void OpenCredits()
+    {
+        allgObj.SetActive(false);
+        graphicsObj.SetActive(false);
+        soundObj.SetActive(false);
+        accountObj.SetActive(false);
+        dataPrivacy.SetActive(false);
+
+        credits.SetActive(true);
+    }
+
+    #region EnergySaveMode
     public void EnergySaveModeClicked()
     {
         if(energySaveMode == 0)
@@ -1498,6 +1523,9 @@ public class OptionHandler : MonoBehaviour
     public void UpdateCategory(int id)
     {
         if (dataRequestRunning) return;
+
+        dataPrivacy.SetActive(false);
+        credits.SetActive(false);
 
         if(id == 0)
         { //Allgemein

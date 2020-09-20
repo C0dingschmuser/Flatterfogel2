@@ -210,5 +210,13 @@ MonoBehaviour:
     m_Localized: Falsche E-Mail oder Passwort!
     m_Metadata:
       m_Items: []
+  - m_Id: 6189495399686144
+    m_Localized: Datenschutzeinstellungen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6190384499859456
+    m_Localized: Credits
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

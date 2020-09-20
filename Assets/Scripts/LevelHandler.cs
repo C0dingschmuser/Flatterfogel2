@@ -91,19 +91,6 @@ public class LevelHandler : MonoBehaviour
         StartCoroutine(XPRoutine(parent, deactivateObjs));
     }
 
-    private void OnApplicationPause(bool pause)
-    {
-        if(pause)
-        {
-            SaveXP();
-        }
-    }
-
-    private void OnApplicationQuit()
-    {
-        SaveXP();
-    }
-
     IEnumerator XPRoutine(GameObject parent, GameObject[] deactivateObjs = null)
     {
         if(newXP <= 0)

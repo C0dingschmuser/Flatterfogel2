@@ -211,5 +211,13 @@ MonoBehaviour:
     m_Localized: Mauvais e-mail ou mot de passe !
     m_Metadata:
       m_Items: []
+  - m_Id: 6189495399686144
+    m_Localized: "Param\xE8tres de confidentialit\xE9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6190384499859456
+    m_Localized: "Cr\xE9dits"
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

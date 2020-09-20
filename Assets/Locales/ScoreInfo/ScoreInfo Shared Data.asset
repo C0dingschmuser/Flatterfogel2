@@ -43,6 +43,18 @@ MonoBehaviour:
     m_Key: Global
     m_Metadata:
       m_Items: []
+  - m_Id: 771062939983872
+    m_Key: DayUnlock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 771811526778880
+    m_Key: WeekUnlock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 772216289697792
+    m_Key: GlobalUnlock
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

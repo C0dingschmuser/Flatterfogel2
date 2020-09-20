@@ -211,5 +211,13 @@ MonoBehaviour:
     m_Localized: "\xA1E-mail o contrase\xF1a equivocada!"
     m_Metadata:
       m_Items: []
+  - m_Id: 6189495399686144
+    m_Localized: "Configuraci\xF3n de la privacidad"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6190384499859456
+    m_Localized: "Cr\xE9ditos"
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

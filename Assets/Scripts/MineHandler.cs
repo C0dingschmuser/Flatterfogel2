@@ -25,6 +25,7 @@ public enum MineralType
     Coin = 14,
     Lava = 15,
     AchCoin = 16,
+    Special = 17,
 }
 
 public class MineHandler : MonoBehaviour

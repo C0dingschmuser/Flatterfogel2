@@ -97,6 +97,7 @@ public class GDPRHandler : MonoBehaviour
     public void AcceptClicked(int type)
     {
         ObscuredPrefs.SetInt("GDPR_ACCEPTED", type);
+        ObscuredPrefs.SetInt("FirstLaunch", 0);
 
         if (type == 1)
         { //akzeptiert

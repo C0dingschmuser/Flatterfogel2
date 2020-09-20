@@ -46,5 +46,17 @@ MonoBehaviour:
     m_Localized: GLOBAL
     m_Metadata:
       m_Items: []
+  - m_Id: 771062939983872
+    m_Localized: "Freigeschaltet bei h\xF6chster 24h-Highscore"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 771811526778880
+    m_Localized: "Freigeschaltet bei h\xF6chster Wochen-Highscore"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 772216289697792
+    m_Localized: "Freigeschaltet bei h\xF6chster Globaler Highscore"
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
