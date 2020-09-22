@@ -307,7 +307,7 @@ public class AccountHandler : MonoBehaviour
     }
 
     IEnumerator SignInRegister(string username)
-    {
+    { //quasi obsolete
         string authHash = Md5Sum(username + Auth.authKey);
 
         string url = "https://bruh.games/manager.php?signedin=1&name=" + username + 
@@ -440,6 +440,8 @@ public class AccountHandler : MonoBehaviour
 
         using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/account.php", form))
         {
+            www.timeout = 10;
+
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
             www.chunkedTransfer = false;
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
@@ -529,6 +531,7 @@ public class AccountHandler : MonoBehaviour
 
         using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/account.php", form))
         {
+            www.timeout = 10;
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
             www.chunkedTransfer = false;
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
@@ -629,6 +632,7 @@ public class AccountHandler : MonoBehaviour
 
             using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/account.php", form))
             {
+                www.timeout = 10;
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
                 www.chunkedTransfer = false;
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
@@ -666,6 +670,7 @@ public class AccountHandler : MonoBehaviour
 
             using (UnityWebRequest www = UnityWebRequest.Post("https://bruh.games/account.php", form))
             {
+                www.timeout = 10;
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
                 www.chunkedTransfer = false;
 #pragma warning restore CS0618 // Typ oder Element ist veraltet

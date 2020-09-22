@@ -45,7 +45,7 @@ public class FF_PlayerData : MonoBehaviour
                 hatObj;
     public Camera mainCamera;
     public bool dead = false, isJumping = false, isGrounded = false, heatPaused = false, inShop = false,
-        animationRunning = false, hatAnimationRunning = false, inHighscores = false;
+        animationRunning = false, hatAnimationRunning = false, pipeAnimationRunning = false, inHighscores = false;
     private bool goLocked = false, landing = false;
     public List<GameObject> deadChilds = new List<GameObject>();
 
@@ -72,6 +72,7 @@ public class FF_PlayerData : MonoBehaviour
     private Skin currentSkin = null;
     public Wing currentWing = null;
     private Hat currentHat = null;
+    private Pipe currentPipe = null;
 
     //private int lastKey = -1;
     private int groundHeight = 0; //höhe der aktuellen groundmodus-plattform
@@ -382,6 +383,30 @@ public class FF_PlayerData : MonoBehaviour
         }
     }
 
+    private void HandlePipeAnimation()
+    {
+        if (inShop || inHighscores) return;
+
+        currentPipe.shopTime += Time.deltaTime;
+
+        if(currentPipe.shopTime >= currentPipe.animationSpeed)
+        {
+            currentPipe.shopTime = 0;
+
+            currentPipe.shopStep++;
+            if(currentPipe.shopStep >= currentPipe.animatedSprites.Length)
+            {
+                currentPipe.shopStep = 0;
+            }
+
+            currentPipe.sprite = currentPipe.animatedSprites[currentPipe.shopStep];
+            currentPipe.endSprite = currentPipe.animatedEndSprites[currentPipe.shopStep];
+
+            //Invoke Global update of all pipe sprites from pipes in scene
+            ffHandler.PipeSpriteUpdate(currentPipe.sprite, currentPipe.endSprite);
+        }
+    }
+
     public void OverrideSprite(Sprite newSprite)
     {
         sRenderer.sprite = newSprite;
@@ -528,7 +553,7 @@ public class FF_PlayerData : MonoBehaviour
 
     public void LoadPipe()
     {
-        Pipe currentPipe = ShopHandler.Instance.GetCurrentPipe();
+        currentPipe = ShopHandler.Instance.GetCurrentPipe();
 
         Sprite fullDefault = 
             currentPipe.sprite[Random.Range(0, currentPipe.sprite.Length)];
@@ -1573,6 +1598,11 @@ public class FF_PlayerData : MonoBehaviour
         if(hatAnimationRunning)
         {
             HandleHatAnimation();
+        }
+
+        if(currentPipe.animated)
+        {
+            HandlePipeAnimation();
         }
 
         if (FlatterFogelHandler.gameState != 2)

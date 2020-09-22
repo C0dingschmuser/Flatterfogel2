@@ -14,22 +14,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   identifier: frog
   itemID: 21
-  rarity: 3
+  rarity: 4
   purchased: 0
+  special: 0
   salePercent: 0
   cost:
   - mineralID: 14
-    amount: 270
+    amount: 425
   - mineralID: 0
     amount: 0
   - mineralID: 0
     amount: 0
   - mineralID: 0
     amount: 0
+  unlockLocale:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+  unlockString: 
   animated: 1
   animationSpeed: 0.1
   shopTime: 0
-  shopStep: 3
+  shopStep: 14
   sprite: {fileID: 21300000, guid: 99b7900d98884ae49b6b2a791b40ef97, type: 3}
   overrideWing: {fileID: 0}
   animatedSprites:

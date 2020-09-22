@@ -15,21 +15,29 @@ MonoBehaviour:
   identifier: schmuser
   itemID: 19
   rarity: 4
-  purchased: 1
+  purchased: 0
+  special: 0
   salePercent: 0
   cost:
   - mineralID: 14
-    amount: 100
+    amount: 375
   - mineralID: 0
     amount: 0
   - mineralID: 0
     amount: 0
   - mineralID: 0
     amount: 0
+  unlockLocale:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+  unlockString: 
   animated: 1
   animationSpeed: 0.3
-  shopTime: 0.2071848
-  shopStep: 1
+  shopTime: 0.15113659
+  shopStep: 0
   sprite: {fileID: 21300000, guid: 794b49de8e8ec9740b7b5194a3fac476, type: 3}
   overrideWing: {fileID: 0}
   animatedSprites:

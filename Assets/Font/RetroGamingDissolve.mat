@@ -48,3 +48,4 @@ Material:
     - _DissolveColor: {r: 2, g: 0.4313726, b: 0, a: 1}
     - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []

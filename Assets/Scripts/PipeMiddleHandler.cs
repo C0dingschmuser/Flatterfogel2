@@ -41,7 +41,7 @@ public class PipeMiddleHandler : MonoBehaviour
                 break;
         }
 
-        transform.rotation = Quaternion.Euler(0, 0, Random.Range(-200, -140));
+        transform.rotation = Quaternion.Euler(0, 0, Random.Range(-190, -140));
     }
 
     public void ResetMiddleObj()

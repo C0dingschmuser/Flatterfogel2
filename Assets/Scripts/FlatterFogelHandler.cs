@@ -6,7 +6,8 @@ using UnityEditor;
 using DG.Tweening;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
 using Destructible2D;
@@ -95,7 +96,12 @@ public class FlatterFogelHandler : MonoBehaviour
     public Vector3 playerStartPos, playerPlayPos;
     public ScoreHandler scoreHandler;
 
-    [SerializeField] private PostProcessVolume defaultVolume = null;
+    [SerializeField] private Volume pp_defaultVolume = null;
+    private Bloom pp_bloom;
+    private ChromaticAberration pp_chromatic;
+    private ColorAdjustments pp_colorGr;
+    private LensDistortion pp_lensDisto;
+
     [SerializeField] private Sprite[] flyCloudSprites = null;
     [SerializeField] private Sprite[] pauseSprites = null;
     [SerializeField] public Image pauseImage = null;
@@ -194,6 +200,12 @@ public class FlatterFogelHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Post Processing Setup
+        pp_defaultVolume.profile.TryGet(out pp_bloom);
+        pp_defaultVolume.profile.TryGet(out pp_chromatic);
+        pp_defaultVolume.profile.TryGet(out pp_colorGr);
+        pp_defaultVolume.profile.TryGet(out pp_lensDisto);
+
         lastScore = ObscuredPrefs.GetULong("Player_LastScore", 0);
 
         for(int i = 0; i < highscore.Length; i++)
@@ -545,12 +557,6 @@ public class FlatterFogelHandler : MonoBehaviour
                 playerPlayPos = new Vector3(-381, 790, -0.5f);
                 break;
         }
-
-        cameraColliders[0].transform.position = new Vector3(OptionHandler.defaultCameraPos.x - 372,
-            OptionHandler.defaultCameraPos.y, 100);
-
-        cameraColliders[1].transform.position = new Vector3(OptionHandler.defaultCameraPos.x + 372,
-            OptionHandler.defaultCameraPos.y, 100);
 
         if (destructionMode)
         {
@@ -1075,7 +1081,13 @@ public class FlatterFogelHandler : MonoBehaviour
 
     private void EndStart()
     {
-        if(!zigZag)
+        cameraColliders[0].transform.position = new Vector3(OptionHandler.defaultCameraPos.x - 372,
+            OptionHandler.defaultCameraPos.y, 100);
+
+        cameraColliders[1].transform.position = new Vector3(OptionHandler.defaultCameraPos.x + 372,
+            OptionHandler.defaultCameraPos.y, 100);
+
+        if (!zigZag)
         {
             player.GetComponent<Rigidbody2D>().simulated = true;
         } else
@@ -1469,20 +1481,36 @@ public class FlatterFogelHandler : MonoBehaviour
                 scoreEffectCounter = 0;
             }
 
-            defaultVolume.profile.TryGetSettings(out Bloom bloomLayer); 
-            defaultVolume.profile.TryGetSettings(out ChromaticAberration chromeLayer);
-            defaultVolume.profile.TryGetSettings(out ColorGrading colorGr);
+            pp_chromatic.active = true;
+            pp_colorGr.active = true;
+            pp_bloom.active = true;
 
+            pp_bloom.intensity.value = 15f;
+            pp_bloom.tint.value = orig;
             //bloomLayer.intensity.value = 15f;
             //bloomLayer.color.value = orig;
 
-            chromeLayer.intensity.value = 0.65f;
-            colorGr.hueShift.value = -100f;
+            pp_chromatic.intensity.value = 0.65f;
+            pp_colorGr.hueShift.value = -100f;
 
-            DOTween.To(() => chromeLayer.intensity.value, x => chromeLayer.intensity.value = x, 0, 0.4f);
-            //DOTween.To(() => bloomLayer.intensity.value, x => bloomLayer.intensity.value = x, 2f, 0.4f);
-            //DOTween.To(() => bloomLayer.color.value, x => bloomLayer.color.value = x, Color.white, 0.4f);
-            DOTween.To(() => colorGr.hueShift.value, x => colorGr.hueShift.value = x, 0, 0.3f);
+            DOTween.To(() =>
+                pp_chromatic.intensity.value, x => pp_chromatic.intensity.value = x, 0, 0.4f).OnComplete(() =>
+                {
+                    pp_chromatic.active = false;
+                });
+
+            DOTween.To(() => pp_bloom.intensity.value, x => pp_bloom.intensity.value = x, 0f, 0.35f);
+            DOTween.To(() =>
+                pp_bloom.tint.value, x => pp_bloom.tint.value = x, Color.white, 0.351f).OnComplete(() =>
+                {
+                    pp_bloom.active = false;
+                });
+
+            DOTween.To(() =>
+                pp_colorGr.hueShift.value, x => pp_colorGr.hueShift.value = x, 0, 0.3f).OnComplete(() =>
+                {
+                    pp_colorGr.active = false;
+                });
 
             if (blus != null)
             { //pipe zerstörung initalisieren
@@ -1981,7 +2009,10 @@ public class FlatterFogelHandler : MonoBehaviour
 
         GameObject middleObj = pipeHolder.transform.GetChild(3).gameObject;
         middleObj.GetComponent<SpriteRenderer>().size = new Vector2(1,  (2 + (abstand / 75f)) - 1f);
+
         middleObj.GetComponent<SpriteRenderer>().color = ShopHandler.Instance.pipeColor;
+        middleObj.transform.GetChild(0).GetComponent<SpriteRenderer>().color = ShopHandler.Instance.pipeColor;
+        middleObj.transform.GetChild(1).GetComponent<SpriteRenderer>().color = ShopHandler.Instance.pipeColor;
 
         middleObj.GetComponent<PipeMiddleHandler>().abstand = abstand;
 
@@ -1991,8 +2022,21 @@ public class FlatterFogelHandler : MonoBehaviour
 
             pipeHolder.GetComponent<PipeHolder>().spiral = true;
 
-            middleObj.GetComponent<PipeMiddleHandler>().StartRotation(GetDiff(score));
             middleObj.SetActive(true);
+
+            middleObj.GetComponent<SpriteRenderer>().enabled = true;
+
+            middleObj.GetComponent<SpriteRenderer>().sprite = 
+                selectedPipe.sprite;
+
+            middleObj.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite =
+                selectedPipe.endSprite;
+
+            middleObj.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite =
+                selectedPipe.endSprite;
+        } else
+        {
+            middleObj.SetActive(false);
         }
 
         float blusY = yPos;
@@ -2004,6 +2048,18 @@ public class FlatterFogelHandler : MonoBehaviour
         pipeHolder.transform.position = new Vector3(xPos, yPos);
         pipeTop.transform.position = new Vector3(xPos, yPos + abstand);
         pipeBottom.transform.position = new Vector3(xPos, yPos - abstand);
+
+        middleObj.transform.rotation = Quaternion.identity;
+        middleObj.transform.position = new Vector3(xPos, yPos);
+        middleObj.transform.GetChild(0).transform.position =
+            new Vector3(xPos, yPos - 295);
+        middleObj.transform.GetChild(1).transform.position =
+            new Vector3(xPos, yPos + 295);
+
+        if (kreisel)
+        {
+            middleObj.GetComponent<PipeMiddleHandler>().StartRotation(GetDiff(score));
+        }
 
         const float pipeSize = 1200;
 
@@ -2017,10 +2073,9 @@ public class FlatterFogelHandler : MonoBehaviour
         pipeTop.GetComponent<SpriteRenderer>().size = new Vector2(1, pipeSize / 75);
 
         pipeTop.GetComponent<SpriteRenderer>().color = ShopHandler.Instance.pipeColor;
-        pipeTop.GetComponent<SpriteRenderer>().sprite = 
-            selectedPipe.sprite[Random.Range(0, selectedPipe.sprite.Length)];
+        pipeTop.GetComponent<SpriteRenderer>().sprite = selectedPipe.sprite;
         pipeTop.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite =
-            selectedPipe.endSprite[Random.Range(0, selectedPipe.endSprite.Length)];
+            selectedPipe.endSprite;
         pipeTop.transform.GetChild(0).GetComponent<SpriteRenderer>().color =
             ShopHandler.Instance.pipeColor;
 
@@ -2033,10 +2088,9 @@ public class FlatterFogelHandler : MonoBehaviour
         pipeBottom.GetComponent<SpriteRenderer>().size = new Vector2(1, pipeSize / 75);
 
         pipeBottom.GetComponent<SpriteRenderer>().color = ShopHandler.Instance.pipeColor;
-        pipeBottom.GetComponent<SpriteRenderer>().sprite = 
-            selectedPipe.sprite[Random.Range(0, selectedPipe.sprite.Length)];
+        pipeBottom.GetComponent<SpriteRenderer>().sprite = selectedPipe.sprite;
         pipeBottom.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite =
-            selectedPipe.endSprite[Random.Range(0, selectedPipe.endSprite.Length)];
+            selectedPipe.endSprite;
         pipeBottom.transform.GetChild(0).GetComponent<SpriteRenderer>().color =
             ShopHandler.Instance.pipeColor;
 
@@ -2638,10 +2692,10 @@ public class FlatterFogelHandler : MonoBehaviour
 
         //flash.GetComponent<Image>().DOFade(1, 0.25f);
 
-        defaultVolume.profile.TryGetSettings(out LensDistortion lensDisto);
+        pp_lensDisto.active = true;
 
-        DOTween.To(() => lensDisto.intensity.value, x => lensDisto.intensity.value = x, -100, 0.25f);
-        DOTween.To(() => lensDisto.scale.value, x => lensDisto.scale.value = x, 0.05f, 0.25f);
+        DOTween.To(() => pp_lensDisto.intensity.value, x => pp_lensDisto.intensity.value = x, -100, 0.25f);
+        DOTween.To(() => pp_lensDisto.scale.value, x => pp_lensDisto.scale.value = x, 0.05f, 0.25f);
 
         Invoke(nameof(ChangeModeFull), 0.251f);
     }
@@ -2688,10 +2742,14 @@ public class FlatterFogelHandler : MonoBehaviour
 
         //flash.GetComponent<Image>().DOFade(0, 0.25f);
 
-        defaultVolume.profile.TryGetSettings(out LensDistortion lensDisto);
+        //active setzen nicht nötig da bereits active
 
-        DOTween.To(() => lensDisto.intensity.value, x => lensDisto.intensity.value = x, 0, 0.25f);
-        DOTween.To(() => lensDisto.scale.value, x => lensDisto.scale.value = x, 1, 0.25f);
+        DOTween.To(() => pp_lensDisto.intensity.value, x => pp_lensDisto.intensity.value = x, 0, 0.25f);
+        DOTween.To(() =>
+            pp_lensDisto.scale.value, x => pp_lensDisto.scale.value = x, 1, 0.251f).OnComplete(() =>
+            {
+                pp_lensDisto.active = false;
+            });
 
         Invoke(nameof(ChangeModeOver), 0.251f);
     }
@@ -3062,6 +3120,28 @@ public class FlatterFogelHandler : MonoBehaviour
 
         pipes[pipes.Count - 1].transform.parent.
             GetComponent<PipeHolder>().lastInTunnel = true;
+    }
+
+    public void PipeSpriteUpdate(Sprite sprite, Sprite endSprite)
+    {
+        int len = pipes.Count;
+
+        for(int i = 0; i < len; i++)
+        {
+            PipeData pData = pipes[i].GetComponent<PipeData>();
+
+            if(pData.renderDeactivated >= 1 &&
+                !pData.destructionStarted)
+            {
+                if(pData.isTop)
+                { //top & mitte assignen
+
+                } else
+                { //bottom assignen
+
+                }
+            }
+        }
     }
 
     // Update is called once per frame

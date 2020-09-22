@@ -33,6 +33,8 @@ public class PipeData : MonoBehaviour
 
     private int count = 0, max = 0, realMax = 0, pipeExpId = 0, frameWait = 1;
     private List<GameObject> destroyedParts = new List<GameObject>();
+    private List<GameObject> delList = new List<GameObject>();
+
     private ObjectPooler objectPooler;
 
     private Vector3 globalScale = new Vector3(1, 1, 1);
@@ -169,7 +171,7 @@ public class PipeData : MonoBehaviour
 
         /*Algo auf 32Px Sprites ausgelegt
             -> divConst korrigiert Größe bei anderer Auflösung*/
-        divConst = 1;//32f / thisPipe.sprite[0].pixelsPerUnit;
+        //divConst = 1;//32f / thisPipe.sprite[0].pixelsPerUnit;
 
         if (pipeExpId == 1)
         { //wenn letzte pipe die zu blus assigned
@@ -275,7 +277,7 @@ public class PipeData : MonoBehaviour
 
                 tmpRenderer.drawMode = SpriteDrawMode.Sliced;
 
-                tmpRenderer.size = new Vector2(4.1f * divConst, 5.12f * divConst);
+                tmpRenderer.size = new Vector2(4.1f, 5.12f);
 
                 tmpRenderer.color = pipeColor;
                     
@@ -577,14 +579,14 @@ public class PipeData : MonoBehaviour
     {
         if (destroyedParts.Count > 0 /*&& isChecked*/)
         {
-            float scrollSpeed = FlatterFogelHandler.scrollSpeed;
+            float scrollSpeed = 
+                FlatterFogelHandler.scrollSpeed * Time.deltaTime;
             Vector3 pos;
 
-            List<GameObject> delList = new List<GameObject>();
             for (int i = 0; i < destroyedParts.Count; i++)
             {
                 pos = destroyedParts[i].transform.position;
-                pos.x -= scrollSpeed * Time.deltaTime;
+                pos.x -= scrollSpeed;
 
                 destroyedParts[i].transform.position = pos;
 
@@ -594,10 +596,15 @@ public class PipeData : MonoBehaviour
                 }
             }
 
-            for(int i = 0; i < delList.Count; i++)
+            if(delList.Count > 0)
             {
-                destroyedParts.Remove(delList[i]);
-                ResetDestroyedPart(delList[i]);
+                for (int i = 0; i < delList.Count; i++)
+                {
+                    destroyedParts.Remove(delList[i]);
+                    ResetDestroyedPart(delList[i]);
+                }
+
+                delList.Clear();
             }
         }
     }

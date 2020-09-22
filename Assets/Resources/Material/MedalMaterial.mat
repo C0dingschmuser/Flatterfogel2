@@ -38,7 +38,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _ColorMask: 0
-    - _DissolveAmount: 0
+    - _DissolveAmount: 0.14449674
     - _EnableExternalAlpha: 0
     - _NoiseScale: 100
     - _OutlineSize: 0.1
@@ -53,3 +53,4 @@ Material:
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []

@@ -16,20 +16,28 @@ MonoBehaviour:
   itemID: 7
   rarity: 4
   purchased: 0
+  special: 0
   salePercent: 0
   cost:
   - mineralID: 14
-    amount: 275
+    amount: 500
   - mineralID: 0
     amount: 0
   - mineralID: 0
     amount: 0
   - mineralID: 0
     amount: 0
+  unlockLocale:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+  unlockString: 
   animated: 1
   animationSpeed: 0.05
-  shopTime: 0
-  shopStep: 2
+  shopTime: 0.0333765
+  shopStep: 3
   sprite: {fileID: 21300000, guid: c8f13a61476fa4845ac55839b2bcb217, type: 3}
   overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
   animatedSprites:
@@ -42,6 +50,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 24f65e2795816e5419ef405c45cf1bd4, type: 3}
   boughtWings: 00000000
   boughtHats: 00000000
+  lastHat: 0
   hatStart: 18.662
   wingStart: 0
   wingSupport: 1

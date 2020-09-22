@@ -80,7 +80,7 @@ public class OptionHandler : MonoBehaviour
     public static int jumpEffectMode = 0;
 
     //Allgemein
-    public static string currentPost = "4117827";
+    public static string currentPost = "4141210";
     public static OptionHandler Instance;
     public static int kreuzPos = 0, kreuzSize = 0, mineMode = 2, noPush = 0;
     public static bool hardcoreActive = false, normalAspect = false,
