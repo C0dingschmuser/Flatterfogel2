@@ -83,6 +83,8 @@ public class FF_PlayerData : MonoBehaviour
     private Coroutine heatRoutine = null;
     private bool physicsRes = false, staminaFlashing = false;
 
+    public static ObscuredBool isInvincible = false;
+
     public static FF_PlayerData Instance;
     public const int defaultGravityScale = 175;
 
@@ -246,6 +248,8 @@ public class FF_PlayerData : MonoBehaviour
 
     public void SetPlayerDepth(int newDepth, bool add = false)
     {
+        bool die = false;
+
         if(!add)
         {
             playerDepth = newDepth;
@@ -257,12 +261,13 @@ public class FF_PlayerData : MonoBehaviour
             {
                 if (currentHeat >= maxHeat)
                 {
+                    die = true;
                     Die(DeathCause.Heatshield);
                 }
             }
         }
 
-        if(playerDepth >= 11)
+        if(playerDepth >= 11 && !die)
         {
             BackgroundHandler.Instance.EnableBackground(false);
         }
@@ -556,9 +561,9 @@ public class FF_PlayerData : MonoBehaviour
         currentPipe = ShopHandler.Instance.GetCurrentPipe();
 
         Sprite fullDefault = 
-            currentPipe.sprite[Random.Range(0, currentPipe.sprite.Length)];
+            currentPipe.sprite;
         Sprite endSprite = 
-            currentPipe.endSprite[Random.Range(0, currentPipe.endSprite.Length)];
+            currentPipe.endSprite;
 
         Texture2D fDT = fullDefault.texture;
         Texture2D fDT_End = endSprite.texture;
@@ -995,14 +1000,15 @@ public class FF_PlayerData : MonoBehaviour
         Invoke(nameof(ResetImage), time);
     }
 
-    public void PlayerFly(Vector3 mPos, bool zigZag, bool release = false)
+    public void PlayerFly(Vector3 mPos, bool zigZag, bool release = false, bool mining = false)
     {
         Transform pITransform = FlatterFogelHandler.Instance.pauseImage.transform;
 
         if(dead || !GetComponent<Rigidbody2D>().simulated || landing ||
            (mPos.x > (pITransform.position.x - 37.5f) &&
             mPos.y > (pITransform.position.y - 37.5f)) ||
-            transform.position.y > 1730)
+            //Max Höhe erreicht
+            ((transform.position.y > 1730 && !mining) || (transform.position.y > 1100 && mining)))
         {
             return;
         }
@@ -1393,6 +1399,12 @@ public class FF_PlayerData : MonoBehaviour
         if (dead)
         {
             Debug.LogWarning("Second Death invoked: " + type);
+            return;
+        }
+
+        if(isInvincible)
+        {
+            Debug.LogWarning("Player is Invincible!");
             return;
         }
 

@@ -207,7 +207,14 @@ public class IngameMenuHandler : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(MenuData.Instance.GetScaleTime());
 
-        ffHandler.PauseGame(false, quit);
+        if(quit)
+        {
+            ffHandler.PauseGame(false, quit);
+        } else
+        {
+            ffHandler.StartResumeTimer();
+        }
+
         gameObject.SetActive(false);
     }
 

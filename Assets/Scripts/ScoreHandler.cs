@@ -527,7 +527,7 @@ public class ScoreHandler : MonoBehaviour
 
             switch(pos)
             {
-                case 0: //Classic
+                case 1: //Classic
                     modeButtonParent.GetChild(0).GetComponent<Image>().color =
                         FlatterFogelHandler.pr0Farben[0];
                     break;
@@ -1003,6 +1003,48 @@ public class ScoreHandler : MonoBehaviour
         swDetector.enabled = true;
     }
 
+    private bool CheckIfValidCrown(string username, string crownIdentifier)
+    {
+        //0 = Global
+        //1 = Daily
+        //2 = Weekly
+
+        int crownID = -1;
+
+        if(crownIdentifier.Equals("bronze"))
+        {
+            crownID = 1;
+        } else if(crownIdentifier.Equals("silver"))
+        {
+            crownID = 2;
+        } else if(crownIdentifier.Equals("gold"))
+        {
+            crownID = 0;
+        } else
+        { //keine krone -> zulässig
+            return true;
+        }
+
+        bool valid = false;
+
+        for(int i = 0; i < 3; i++)
+        {
+            string[] split = hsData[i].dataString[crownID].Split('#');
+            //holt einzelne spieler
+
+            if(split.Length > 0)
+            {
+                if(split[0].Contains(username))
+                { //Username in erstem Ergebnis -> Krone zulässig
+                    valid = true;
+                    break;
+                }
+            }
+        }
+
+        return valid;
+    }
+
     private void CreatePlayerObj(int i, ulong score, string username,
         string skin, string wing, string hat, string pipe, int pipeColor, bool player = false)
     {
@@ -1066,6 +1108,19 @@ public class ScoreHandler : MonoBehaviour
 
         Skin playerSkin = (Skin)shop.GetItemByString(CustomizationType.Skin, skin);
         Wing playerWing = (Wing)shop.GetItemByString(CustomizationType.Wing, wing);
+
+        bool valid = true;
+        
+        if(!player)
+        {
+            valid = CheckIfValidCrown(username, hat);
+        }
+
+        if(!valid)
+        { //default hat zuweisen wenn ungültig
+            hat = "default";
+        }
+
         Hat playerHat = (Hat)shop.GetItemByString(CustomizationType.Hat, hat);
         Pipe playerPipe = (Pipe)shop.GetItemByString(CustomizationType.Pipe, pipe);
         Color playerPipeColor = pipeCustomizationHandler.GetPipeColor(pipeColor);
@@ -1075,10 +1130,10 @@ public class ScoreHandler : MonoBehaviour
             playerPipeColor = Color.white;
         }
 
-        smallPipe.GetComponent<SpriteRenderer>().sprite = playerPipe.sprite[0];
+        smallPipe.GetComponent<SpriteRenderer>().sprite = playerPipe.sprite;
         smallPipe.GetComponent<SpriteRenderer>().color = playerPipeColor;
 
-        smallPipe.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = playerPipe.endSprite[0];
+        smallPipe.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = playerPipe.endSprite;
         smallPipe.transform.GetChild(0).GetComponent<SpriteRenderer>().color = playerPipeColor;
 
         bool isTop = true;
@@ -1990,6 +2045,7 @@ public class ScoreHandler : MonoBehaviour
     {
         FlatterFogelHandler.Instance.pipeParent.GetComponent<Dissolver>().ResetDissolve();
         FlatterFogelHandler.Instance.groundHandler.ResetDissolve(FlatterFogelHandler.gameState);
+        FlatterFogelHandler.gameState = 0;
     }
 
     private void CallMenuDeath()

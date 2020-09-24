@@ -12,16 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d48881e5ac2c1d744bea0b64a035233b, type: 3}
   m_Name: 1
   m_EditorClassIdentifier: 
-  sprite:
-  - {fileID: 21300000, guid: 08867a56ff618ec4b8c9fe919897bcd1, type: 3}
-  - {fileID: 21300000, guid: f7f81c6155b0ba84f90c035f1b80b391, type: 3}
-  - {fileID: 21300000, guid: a8910009a97e9be4ea1298bdddf6b0cb, type: 3}
-  endSprite:
-  - {fileID: 21300000, guid: 54a4f5d961196db4db93b78ab3394920, type: 3}
-  - {fileID: 21300000, guid: 8b7b15314e4a3634780fd8abb55bd756, type: 3}
-  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  identifier: pillar
+  itemID: 1
+  rarity: 0
   purchased: 0
-  colorChangeSupported: 1
+  special: 0
+  salePercent: 0
   cost:
   - mineralID: 14
     amount: 45
@@ -31,6 +27,20 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
-  pipeID: 1
-  salePercent: 0
-  identifier: pillar
+  unlockLocale:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+  unlockString: 
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  sprite: {fileID: 21300000, guid: 08867a56ff618ec4b8c9fe919897bcd1, type: 3}
+  endSprite: {fileID: 21300000, guid: 54a4f5d961196db4db93b78ab3394920, type: 3}
+  animatedSprites: []
+  animatedEndSprites: []
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  colorChangeSupported: 1

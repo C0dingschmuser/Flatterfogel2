@@ -330,10 +330,10 @@ public class ShopHandler : MonoBehaviour
 
         if(end)
         {
-            return allPipes[pipeID].endSprite[0];
+            return allPipes[pipeID].endSprite;
         }
 
-        return allPipes[pipeID].sprite[0];
+        return allPipes[pipeID].sprite;
     }
 
     public ShopItem GetItem(CustomizationType type, int id)
@@ -569,7 +569,7 @@ public class ShopHandler : MonoBehaviour
                 s = allHats[id].sprite;
                 break;
             case CustomizationType.Pipe:
-                s = allPipes[id].endSprite[0];
+                s = allPipes[id].endSprite;
                 break;
             case CustomizationType.GraveTop:
                 s = allGraveTops[id].sprite;
@@ -1881,19 +1881,21 @@ public class ShopHandler : MonoBehaviour
         allMiners[id].purchased = true;
 
         PurchaseMinerItem(allMiners[id].cost);
-        SavePurchasedItems();
 
         selectedMiner = id;
         PlayerMiner.currentMiner = allMiners[id];
+
+        SavePurchasedItems();
     }
 
     public void ManualHeatShieldPurchase(int id)
     {
         allHeatShields[id].purchased = true;
         PurchaseMinerItem(allHeatShields[id].cost);
-        SavePurchasedItems();
 
         selectedHeatShield = id;
+
+        SavePurchasedItems();
     }
 
     public void ManualMineItemPurchase(int id)

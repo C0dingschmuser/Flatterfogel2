@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 44fd5f9b674237a488032dde29d973b8
+guid: d79f34945981f0845a769339992fb480
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -23,6 +23,7 @@ TextureImporter:
   isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
+  vTOnly: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -50,13 +51,14 @@ TextureImporter:
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
-  spriteTessellationDetail: 0
+  spriteTessellationDetail: -1
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
+  ignorePngGamma: 0
   applyGammaDecoding: 0
   platformSettings:
   - serializedVersion: 3
@@ -87,7 +89,7 @@ TextureImporter:
     buildTarget: iPhone
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: 47
+    textureFormat: 17
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
@@ -99,12 +101,12 @@ TextureImporter:
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 17
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 0
+    overridden: 1
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -122,23 +124,7 @@ TextureImporter:
   spriteSheet:
     serializedVersion: 2
     sprites: []
-    outline:
-    - - {x: 20, y: -5}
-      - {x: 20, y: 16}
-      - {x: -20, y: 16}
-      - {x: -20, y: -5}
-      - {x: -16, y: -5}
-      - {x: -16, y: -16}
-      - {x: -13, y: -16}
-      - {x: -13, y: -5}
-      - {x: 13, y: -5}
-      - {x: 13, y: -16}
-      - {x: 16, y: -16}
-      - {x: 16, y: -5}
-    - - {x: -17, y: 13}
-      - {x: 17, y: 13}
-      - {x: 17, y: -2}
-      - {x: -17, y: -2}
+    outline: []
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000

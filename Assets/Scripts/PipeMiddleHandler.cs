@@ -54,10 +54,13 @@ public class PipeMiddleHandler : MonoBehaviour
     {
         if(rotateActive)
         {
-            transform.Translate(-FlatterFogelHandler.scrollSpeed * Time.deltaTime, 0, 0, Space.World);
+            if(FlatterFogelHandler.gameState != 2 && FlatterFogelHandler.Instance.gameActive)
+            {
+                transform.Translate(-FlatterFogelHandler.scrollSpeed * Time.deltaTime, 0, 0, Space.World);
 
-            //transform.RotateAround(transform.position, Vector3.forward, 10 * Time.deltaTime);
-            transform.Rotate(new Vector3(0, 0, speed * Time.deltaTime));
+                //transform.RotateAround(transform.position, Vector3.forward, 10 * Time.deltaTime);
+                transform.Rotate(new Vector3(0, 0, speed * Time.deltaTime));
+            }
         }
     }
 }

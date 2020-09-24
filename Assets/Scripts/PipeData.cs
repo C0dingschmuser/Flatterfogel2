@@ -19,6 +19,8 @@ public class PipeData : MonoBehaviour
     public GameObject middleObj = null;
     public PipeHolder pHolder = null;
     public Pipe thisPipe = null;
+    public SpriteRenderer pipeRenderer = null, pipeEndRenderer = null, middleRenderer = null,
+        middleTopRenderer = null, middleBottomRenderer = null;
 
     [SerializeField]
     private UnityEngine.Experimental.Rendering.Universal.Light2D lightObj = null;

@@ -16,6 +16,7 @@ MonoBehaviour:
   itemID: 0
   rarity: 0
   purchased: 1
+  special: 0
   salePercent: 0
   cost:
   - mineralID: 0
@@ -26,13 +27,20 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
+  unlockLocale:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+  unlockString: 
   animated: 0
   animationSpeed: 0.25
   shopTime: 0
   shopStep: 0
-  sprite:
-  - {fileID: 21300000, guid: 6888ee038b9f112468db909657c9e84a, type: 3}
-  endSprite:
-  - {fileID: 21300000, guid: 5465b4fea567973448bfd19a4904baef, type: 3}
+  sprite: {fileID: 21300000, guid: 6888ee038b9f112468db909657c9e84a, type: 3}
+  endSprite: {fileID: 21300000, guid: 5465b4fea567973448bfd19a4904baef, type: 3}
+  animatedSprites: []
+  animatedEndSprites: []
   defaultColor: {r: 0.93333334, g: 0.3019608, b: 0.18039216, a: 1}
   colorChangeSupported: 1
