@@ -93,7 +93,7 @@ public class BossHandler : MonoBehaviour
         attackMode = 0;//Random.Range(0, 2);
         fullReload = false;
 
-        FlatterFogelHandler.Instance.StartZoomOnBoss(new Vector3(-192, startY), 0.5f, 2f);
+        //FlatterFogelHandler.Instance.StartZoomOnBoss(new Vector3(-192, startY), 0.5f, 2f);
 
         //InvokeRepeating("PlayerShoot", 1f, 0.5f);
         InvokeRepeating(nameof(LaserState), 0f, 0.5f);

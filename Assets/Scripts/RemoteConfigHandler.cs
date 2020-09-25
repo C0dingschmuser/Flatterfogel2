@@ -4,6 +4,7 @@ using UnityEngine;
 using Firebase.RemoteConfig;
 using System.Threading.Tasks;
 using System;
+using MEC;
 using Firebase.Extensions;
 
 public class RemoteConfigHandler : MonoBehaviour
@@ -26,21 +27,23 @@ public class RemoteConfigHandler : MonoBehaviour
         Debug.LogWarning("RemoteConfig disabled in Editor");
         loadComplete = true;
         //shopHandler.CompleteLoad();
-#else
+        return;
+#endif
+
         if(FirebaseAnalyticsInitialize.firebaseReady)
         {
-            StartCoroutine(WaitForLoad());
+            Timing.RunCoroutine(_WaitForLoad());
+        } else {
+            loadComplete = true;
         }
-#endif
     }
 
-#pragma warning disable IDE0051 // Nicht verwendete private Member entfernen
-    IEnumerator WaitForLoad()
-#pragma warning restore IDE0051 // Nicht verwendete private Member entfernen
+    IEnumerator<float> _WaitForLoad()
     {
-        while(!AchievementHandler.loadComplete)
+        while (!AchievementHandler.loadComplete)
         {
-            yield return new WaitForSeconds(0.05f);
+            //Debug.Log(AchievementHandler.loadComplete);
+            yield return Timing.WaitForSeconds(0.05f);
         }
 
         ContinueLoad();
@@ -154,9 +157,9 @@ public class RemoteConfigHandler : MonoBehaviour
 
     private IEnumerator FetchValues()
     {
-        //yield return FirebaseRemoteConfig.FetchAsync(TimeSpan.Zero);
+        yield return FirebaseRemoteConfig.FetchAsync(TimeSpan.Zero);
 
-        yield return null;
+        //yield return null;
 
         FirebaseRemoteConfig.ActivateFetched();
 

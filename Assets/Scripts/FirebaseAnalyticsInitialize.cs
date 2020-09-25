@@ -1,13 +1,37 @@
-﻿using System.Collections;
+﻿using MEC;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class FirebaseAnalyticsInitialize
+public class FirebaseAnalyticsInitialize : MonoBehaviour
 {
 
-    public static bool firebaseReady = false;
+    public static bool firebaseReady = false, loaded = false;
 
-    public static void CheckIfReady()
+    public static FirebaseAnalyticsInitialize Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        CheckIfReady();
+        Timing.RunCoroutine(_WaitForFinish());
+    }
+
+    IEnumerator<float> _WaitForFinish()
+    {
+        while(!loaded)
+        {
+            yield return Timing.WaitForSeconds(0.05f);
+        }
+
+        RemoteConfigHandler.Instance.SetGetDefaults();
+    }
+
+    public void CheckIfReady()
     {
 
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
@@ -17,9 +41,9 @@ public static class FirebaseAnalyticsInitialize
 
                 Firebase.FirebaseApp app = Firebase.FirebaseApp.DefaultInstance;
                 firebaseReady = true;
+                loaded = true;
                 Debug.Log("Firebase is ready for use.");
 
-                RemoteConfigHandler.Instance.SetGetDefaults();
                 // Create and hold a reference to your FirebaseApp, i.e.
                 //   app = Firebase.FirebaseApp.DefaultInstance;
                 // where app is a Firebase.FirebaseApp property of your application class.
@@ -30,6 +54,7 @@ public static class FirebaseAnalyticsInitialize
             else
             {
                 firebaseReady = false;
+                loaded = false;
                 UnityEngine.Debug.LogError(System.String.Format(
                   "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
                 // Firebase Unity SDK is not safe to use here.

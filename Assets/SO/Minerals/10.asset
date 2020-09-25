@@ -20,4 +20,4 @@ MonoBehaviour:
   shopSprite: {fileID: 0}
   weight: 0
   sellPrice: 0
-  fuelAmount: 20
+  fuelAmount: 25

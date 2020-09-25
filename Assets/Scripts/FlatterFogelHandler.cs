@@ -102,6 +102,7 @@ public class FlatterFogelHandler : MonoBehaviour
     private ColorAdjustments pp_colorGr;
     private LensDistortion pp_lensDisto;
 
+    [SerializeField] private Material pipeDestMat = null;
     [SerializeField] private Sprite[] flyCloudSprites = null;
     [SerializeField] private Sprite[] pauseSprites = null;
     [SerializeField] public Image pauseImage = null;
@@ -810,7 +811,7 @@ public class FlatterFogelHandler : MonoBehaviour
             QualitySettings.vSyncCount = 2;
         }
 #endif
-        fixedStep = 0.02f;
+        fixedStep = 0.025f;
 
         if(miningMode)
         { //setzt licht runter und ground cover
@@ -1331,9 +1332,11 @@ public class FlatterFogelHandler : MonoBehaviour
                         Color c = objs[i].GetComponent<SpriteRenderer>().color;
                         objs[i].GetComponent<SpriteRenderer>().color = Color.black;
 
+                        objs[i].GetComponent<SpriteRenderer>().material = pipeDestMat;
+
                         Vector3 oScale = objs[i].transform.localScale;
 
-                        objs[i].transform.localScale *= 3;
+                        objs[i].transform.localScale *= 2.5f;
 
                         float H, S, V;
 
@@ -2724,6 +2727,10 @@ public class FlatterFogelHandler : MonoBehaviour
             case 0:
                 int newMode = Random.Range(0, 4); //0,4
 
+#if UNITY_EDITOR
+                newMode = 0;
+#endif
+
                 FirebaseHandler.LogEvent("Boss_Enter");
 
                 switch(newMode)
@@ -2773,19 +2780,19 @@ public class FlatterFogelHandler : MonoBehaviour
 
     private void ChangeModeOver()
     {
-        if(BossHandler.Instance.GetActive())
+        /*if(BossHandler.Instance.GetActive())
         { //bei boss bleibt deaktiviert da zoomIn
             player.GetComponent<Rigidbody2D>().simulated = false;
         } else
-        {
+        {*/
             player.GetComponent<Rigidbody2D>().simulated = true;
-        }
+        //}
 
         modeChanging = false;
 
         FF_PlayerData.isInvincible = false;
 
-        if(pauseInvoked)
+        if (pauseInvoked)
         { //Pause während wechsel aufgerufen -> jetzt ausführen
             pauseInvoked = false;
             PauseGame(true);
@@ -2827,7 +2834,7 @@ public class FlatterFogelHandler : MonoBehaviour
         CancelInvoke(nameof(FlashHighscoreObj));
         highscoreLineObj.SetActive(false);
 
-        SpawnPipes(false, true, 9999, false, false, false, true);
+        SpawnPipes(false, false, 9999, false, false, false, true);
     }
 
     private void StartSplatter()
@@ -3616,11 +3623,12 @@ public class FlatterFogelHandler : MonoBehaviour
                                             SpawnTunnel(10, false);
                                         } else
                                         {
-                                            bool spiral = false;
+                                            bool spiral = false, move = true;
 
                                             if(spiralActive > 0)
                                             {
                                                 spiral = true;
+                                                move = false;
 
                                                 spiralActive--;
                                                 if(spiralActive <= 0)
@@ -3631,7 +3639,7 @@ public class FlatterFogelHandler : MonoBehaviour
                                                 }
                                             }
 
-                                            SpawnPipes(false, true, 9999, false, false, false, spiral);
+                                            SpawnPipes(false, move, 9999, false, false, false, spiral);
                                         }
                                     }
                                 }

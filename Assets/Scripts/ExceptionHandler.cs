@@ -20,7 +20,7 @@ public class ExceptionHandler : MonoBehaviour
 
     private void Start()
     {
-        FirebaseAnalyticsInitialize.CheckIfReady();
+        //FirebaseAnalyticsInitialize.CheckIfReady();
     }
 
     //Called when there is an exception

@@ -1550,9 +1550,9 @@ public class MineHandler : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        time = 0.1f;
+        //time = 0.1f;
         //baseMP = 0;
-        player.GetComponent<FF_PlayerData>().AddFuel(100);
+        //player.GetComponent<FF_PlayerData>().AddFuel(100);
 #endif
 
         if (baseMP > 0)

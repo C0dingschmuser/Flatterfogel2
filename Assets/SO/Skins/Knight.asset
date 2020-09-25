@@ -15,7 +15,8 @@ MonoBehaviour:
   identifier: knight
   itemID: 20
   rarity: 2
-  purchased: 0
+  purchased: 1
+  special: 0
   salePercent: 0
   cost:
   - mineralID: 14
@@ -26,10 +27,17 @@ MonoBehaviour:
     amount: 0
   - mineralID: 0
     amount: 0
+  unlockLocale:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+  unlockString: 
   animated: 1
   animationSpeed: 0.075
-  shopTime: 0.08403123
-  shopStep: 12
+  shopTime: 0.05000113
+  shopStep: 10
   sprite: {fileID: 21300000, guid: d6ce1a0c478d5304db6505b74e30cdd4, type: 3}
   overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
   animatedSprites:
@@ -57,7 +65,7 @@ MonoBehaviour:
   boughtHats: 00000000
   lastHat: 0
   hatStart: 18.662
-  wingStart: 0
+  wingStart: -4.68
   wingSupport: 1
   hatSupport: 1
   boxCollider: 0

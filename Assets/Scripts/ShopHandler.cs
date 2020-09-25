@@ -2180,10 +2180,14 @@ public class ShopHandler : MonoBehaviour
     {
         //if (currentType != 1) return;
 
+        Debug.LogWarning("HandleWing Started");
+
         while(!RemoteConfigHandler.loadComplete)
         { //warte dass remote config load abgeschlossen
             yield return Timing.WaitForSeconds(0.25f);
         }
+
+        Debug.LogWarning("HandleWing Completed");
 
         yield return Timing.WaitForSeconds(waitTime);
 

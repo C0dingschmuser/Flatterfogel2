@@ -56,6 +56,9 @@ public class ShootingPipeHandler : MonoBehaviour
             diff = 3;
         }
 
+        firstZoomDone = true;
+        ZoomComplete();
+
         endRoutine = StartCoroutine(EndShootingPipes(30f));
         mainHandle = Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
     }
