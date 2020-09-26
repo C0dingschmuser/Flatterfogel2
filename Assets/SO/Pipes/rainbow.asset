@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d48881e5ac2c1d744bea0b64a035233b, type: 3}
-  m_Name: 2
+  m_Name: rainbow
   m_EditorClassIdentifier: 
   identifier: rainbow
   itemID: 2
   rarity: 0
-  purchased: 1
+  purchased: 0
   special: 0
   salePercent: 0
   cost:

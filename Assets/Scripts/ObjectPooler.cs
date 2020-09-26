@@ -2,12 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PoolType
+{
+    DefaultGround,
+    RightCorner,
+    DefaultSpike,
+    LeftCorner,
+    Blus,
+    Pipe,
+    InfoText,
+    DestroyedPipePart,
+    FlyCloud,
+    SoundEffects,
+    Minus,
+    Projectile,
+    Gravestone,
+    RoyaleAI,
+    D2D_HitEffect,
+    D2D_FireEffect,
+    Bomb,
+    Coin,
+    FlakEffect,
+    MineBombEffect,
+    MineDissolveEffect,
+    TapEffect,
+    AchObj,
+    SmallPipe
+}
+
 public class ObjectPooler : MonoBehaviour
 {
     [System.Serializable]
     public class Pool
     {
-        public string tag;
+        public PoolType tag;
         public GameObject prefab;
         public int size;
     }
@@ -15,7 +43,7 @@ public class ObjectPooler : MonoBehaviour
     public static ObjectPooler Instance;
 
     public List<Pool> pools;
-    public Dictionary<string, Queue<GameObject>> poolDictionary;
+    public Dictionary<PoolType, Queue<GameObject>> poolDictionary;
 
     private Queue<GameObject> destroyedPipeQueue = null;
 
@@ -27,7 +55,7 @@ public class ObjectPooler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        poolDictionary = new Dictionary<string, Queue<GameObject>>();
+        poolDictionary = new Dictionary<PoolType, Queue<GameObject>>();
 
         foreach (Pool pool in pools)
         {
@@ -40,7 +68,7 @@ public class ObjectPooler : MonoBehaviour
                 objectPool.Enqueue(obj);
             }
 
-            if(pool.tag.Equals("DestroyedPipePart"))
+            if(pool.tag == PoolType.DestroyedPipePart)
             {
                 destroyedPipeQueue = objectPool;
             }
@@ -49,7 +77,7 @@ public class ObjectPooler : MonoBehaviour
         }
     }
 
-    public void RecreatePool(string tag)
+    public void RecreatePool(PoolType tag)
     {
         Debug.Log("Redo");
 
@@ -79,7 +107,7 @@ public class ObjectPooler : MonoBehaviour
         }
     }
 
-    public GameObject SpawnFromPoolCheck(string tag)
+    public GameObject SpawnFromPoolCheck(PoolType tag)
     {
         GameObject objToSpawn = poolDictionary[tag].Dequeue();
 
@@ -93,7 +121,7 @@ public class ObjectPooler : MonoBehaviour
         return objToSpawn;
     }
 
-    public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation, bool resetRotation = true, bool resetScale = false)
+    public GameObject SpawnFromPool(PoolType tag, Vector3 position, Quaternion rotation, bool resetRotation = true, bool resetScale = false)
     {
         GameObject objToSpawn = SpawnFromPoolCheck(tag);
 

@@ -149,7 +149,7 @@ public class SoundManager : MonoBehaviour
         }
 
         GameObject newSound =
-            pooler.SpawnFromPool("SoundEffects", new Vector3(2000, 0), Quaternion.identity);
+            pooler.SpawnFromPool(PoolType.SoundEffects, new Vector3(2000, 0), Quaternion.identity);
 
         newSound.transform.SetParent(transform);
 

@@ -1096,7 +1096,7 @@ public class ScoreHandler : MonoBehaviour
         newPlayer.transform.position = new Vector3(pos.x, -200, pos.z);
         newPlayer.transform.DOMoveY(pos.y, 0.2f);
 
-        GameObject smallPipe = objPooler.SpawnFromPool("SmallPipe", new Vector3(pos.x, -200, pos.z), Quaternion.identity);
+        GameObject smallPipe = objPooler.SpawnFromPool(PoolType.SmallPipe, new Vector3(pos.x, -200, pos.z), Quaternion.identity);
         smallPipe.transform.SetParent(pipeParent);
         //Instantiate(smallPipePrefab, pipeParent);
         smallPipe.SetActive(true);

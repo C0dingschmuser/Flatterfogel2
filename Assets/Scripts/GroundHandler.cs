@@ -45,7 +45,7 @@ public class GroundHandler : MonoBehaviour
         {
             Vector3 newPos = new Vector3(-696 + (i * 90), 195f);
             GameObject nG =
-                objectPooler.SpawnFromPool("DefaultGround", newPos, Quaternion.identity);
+                objectPooler.SpawnFromPool(PoolType.DefaultGround, newPos, Quaternion.identity);
 
             nG.transform.SetParent(transform);
             nG.GetComponent<SpriteRenderer>().sprite = groundSprites[Random.Range(0, 2)];
@@ -85,7 +85,7 @@ public class GroundHandler : MonoBehaviour
                    new Vector3(lastPos.x + (90f * i), lastPos.y);
 
             GameObject nG2 =
-                objectPooler.SpawnFromPool("DefaultGround", newPos, Quaternion.identity);
+                objectPooler.SpawnFromPool(PoolType.DefaultGround, newPos, Quaternion.identity);
             nG2.GetComponent<SpriteRenderer>().sprite = groundSprites[Random.Range(0, 2)];
 
             nG2.GetComponent<BoxCollider2D>().enabled = false;
@@ -106,7 +106,7 @@ public class GroundHandler : MonoBehaviour
         Vector3 oldPos = nG.transform.position;
         Transform oldParent = nG.transform.parent;
 
-        nG = objectPooler.SpawnFromPool("RightCorner", oldPos, Quaternion.identity);
+        nG = objectPooler.SpawnFromPool(PoolType.RightCorner, oldPos, Quaternion.identity);
         nG.transform.SetParent(oldParent);
 
         nG.GetComponent<SpriteRenderer>().sprite = groundSprites[Random.Range(3, 5)];
@@ -501,7 +501,7 @@ public class GroundHandler : MonoBehaviour
                     new Vector3(lastPos.x + 90f, 195f);
 
                 GameObject nG = 
-                    objectPooler.SpawnFromPool("DefaultGround", newPos, Quaternion.identity);
+                    objectPooler.SpawnFromPool(PoolType.DefaultGround, newPos, Quaternion.identity);
                 nG.GetComponent<SpriteRenderer>().sprite = groundSprites[Random.Range(0, 2)];
 
                 nG.GetComponent<BoxCollider2D>().enabled = false;
@@ -608,10 +608,10 @@ public class GroundHandler : MonoBehaviour
                     {
                         if (i == length - 1)
                         {
-                            nG = objectPooler.SpawnFromPool("RightCorner", newPos, Quaternion.identity);
+                            nG = objectPooler.SpawnFromPool(PoolType.RightCorner, newPos, Quaternion.identity);
                         } else
                         {
-                            nG = objectPooler.SpawnFromPool("LeftCorner", newPos, Quaternion.identity, false);
+                            nG = objectPooler.SpawnFromPool(PoolType.LeftCorner, newPos, Quaternion.identity, false);
                         }
                     }
                     else
@@ -623,7 +623,7 @@ public class GroundHandler : MonoBehaviour
                             { //spike-abstand zu anfang, ende und letzer spike damit man noch drauf landen kann
                                 if(Random.Range(0, 4) == 0)
                                 { //25%
-                                    nG = objectPooler.SpawnFromPool("DefaultSpike", newPos, Quaternion.identity);
+                                    nG = objectPooler.SpawnFromPool(PoolType.DefaultSpike, newPos, Quaternion.identity);
                                     spike = true;
                                     lastSpikeX = newPos.x;
                                     nG.GetComponent<PlatformData>().type = 3;
@@ -633,7 +633,7 @@ public class GroundHandler : MonoBehaviour
 
                         if(!spike)
                         {
-                            nG = objectPooler.SpawnFromPool("DefaultGround", newPos, Quaternion.identity);
+                            nG = objectPooler.SpawnFromPool(PoolType.DefaultGround, newPos, Quaternion.identity);
                         }
                     }
 

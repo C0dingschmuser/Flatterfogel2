@@ -15,12 +15,12 @@ MonoBehaviour:
   identifier: original_rainbow
   itemID: 7
   rarity: 4
-  purchased: 0
+  purchased: 1
   special: 0
   salePercent: 0
   cost:
   - mineralID: 14
-    amount: 500
+    amount: 100
   - mineralID: 0
     amount: 0
   - mineralID: 0
@@ -36,8 +36,8 @@ MonoBehaviour:
   unlockString: 
   animated: 1
   animationSpeed: 0.05
-  shopTime: 0.0333765
-  shopStep: 3
+  shopTime: 0.0429508
+  shopStep: 6
   sprite: {fileID: 21300000, guid: c8f13a61476fa4845ac55839b2bcb217, type: 3}
   overrideWing: {fileID: 11400000, guid: 4d6f44e07351fd448adb3440ab493d14, type: 2}
   animatedSprites:

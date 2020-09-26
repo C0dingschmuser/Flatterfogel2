@@ -1083,7 +1083,7 @@ public class MineHandler : MonoBehaviour
             if (mD.deathName.Length > 0)
             {
                 GameObject infoText =
-                    objPooler.SpawnFromPool("InfoText", mineObjs[nextMinePos].transform.position, Quaternion.identity);
+                    objPooler.SpawnFromPool(PoolType.InfoText, mineObjs[nextMinePos].transform.position, Quaternion.identity);
 
                 infoText.GetComponent<InfoText>().StartFlashing("RIP " + mD.deathName);
             }
@@ -1093,7 +1093,7 @@ public class MineHandler : MonoBehaviour
                 string name = mineral.itemName;
 
                 GameObject infoText =
-                    objPooler.SpawnFromPool("InfoText", mineObjs[nextMinePos].transform.position, Quaternion.identity);
+                    objPooler.SpawnFromPool(PoolType.InfoText, mineObjs[nextMinePos].transform.position, Quaternion.identity);
 
                 /*bool ok = player.GetComponent<Inventory>().TryAddCargo(mineral);
 
@@ -1240,7 +1240,7 @@ public class MineHandler : MonoBehaviour
             case 0: //Bombe
                 Timing.RunCoroutine(ExplodeRadius(100, 0.15f));
 
-                GameObject effect = objPooler.SpawnFromPool("MineBombEffect", player.transform.position, Quaternion.identity);
+                GameObject effect = objPooler.SpawnFromPool(PoolType.MineBombEffect, player.transform.position, Quaternion.identity);
                 Timing.RunCoroutine(DeactivateDelayed(effect, 4));
                 break;
             case 1: //Kanister (35% fuel wiederherstellen)
@@ -1295,7 +1295,7 @@ public class MineHandler : MonoBehaviour
         {
             if(!allBlocks[i].GetComponent<MineData>().mined)
             {
-                objPooler.SpawnFromPool("MineDissolveEffect", allBlocks[i].transform.position, Quaternion.identity);
+                objPooler.SpawnFromPool(PoolType.MineDissolveEffect, allBlocks[i].transform.position, Quaternion.identity);
                 MineObj(allBlocks[i].GetComponent<MineData>().arrayPos, false, false, true);
 
                 if(allBlocks[i].transform.position.y < deepest.transform.position.y)

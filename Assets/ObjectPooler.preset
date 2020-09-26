@@ -1,0 +1,344 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ObjectPooler
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: b56ef4f3d865d3341a80da38b12ab2e0,
+      type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.size
+    value: 24
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[0].tag
+    value: DefaultGround
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[0].prefab
+    value: 
+    objectReference: {fileID: 1272765837909403208, guid: 5f1db1b017e474e41a8af2bf4b6fe5c7,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[0].size
+    value: 24
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[1].tag
+    value: RightCorner
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[1].prefab
+    value: 
+    objectReference: {fileID: 8386689530467976863, guid: 56a69b53165e7e04baaaa105a0ad993a,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[1].size
+    value: 12
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[2].tag
+    value: DefaultSpike
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[2].prefab
+    value: 
+    objectReference: {fileID: 7031783807092468846, guid: 7416daa617ae0b048a8006f8e7a261eb,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[2].size
+    value: 12
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[3].tag
+    value: LeftCorner
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[3].prefab
+    value: 
+    objectReference: {fileID: 7208761781655027374, guid: 938a06d3b0d7e234ba38356140080ef8,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[3].size
+    value: 12
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[4].tag
+    value: Blus
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[4].prefab
+    value: 
+    objectReference: {fileID: 7774240737663338484, guid: df7e46ad45572ec4589bf111c48eef4f,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[4].size
+    value: 25
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[5].tag
+    value: Pipe
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[5].prefab
+    value: 
+    objectReference: {fileID: 1063184333993499013, guid: cb3765f260b76e24d9a5b970bf0cfd63,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[5].size
+    value: 100
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[6].tag
+    value: InfoText
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[6].prefab
+    value: 
+    objectReference: {fileID: 2840394302990642370, guid: f09d2ad69cae9714cb4909a4660cd906,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[6].size
+    value: 12
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[7].tag
+    value: DestroyedPipePart
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[7].prefab
+    value: 
+    objectReference: {fileID: 1151873689989347523, guid: 55607ffff93cda44c86d9d375bffc699,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[7].size
+    value: 512
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[8].tag
+    value: FlyCloud
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[8].prefab
+    value: 
+    objectReference: {fileID: 722121519584539447, guid: 9940de76b7e38674b9c5cdf4101bf744,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[8].size
+    value: 16
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[9].tag
+    value: SoundEffects
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[9].prefab
+    value: 
+    objectReference: {fileID: 2218901995570069865, guid: 23cef1d5ee6481840a324d99010ed057,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[9].size
+    value: 16
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[10].tag
+    value: Minus
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[10].prefab
+    value: 
+    objectReference: {fileID: 3629707087148175317, guid: 64e5d247325fb1043ae3cf232634dd07,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[10].size
+    value: 50
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[11].tag
+    value: Projectile
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[11].prefab
+    value: 
+    objectReference: {fileID: 1325490757886783507, guid: 557493e2f8cf3324d81b4dc587e099cb,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[11].size
+    value: 56
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[12].tag
+    value: Gravestone
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[12].prefab
+    value: 
+    objectReference: {fileID: 4415965793125482825, guid: 04ef1c6523bba4344be1d2d56eaa1ceb,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[12].size
+    value: 32
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[13].tag
+    value: RoyaleAI
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[13].prefab
+    value: 
+    objectReference: {fileID: 445117187630865472, guid: df50fe0cd673327458a3143435ea6061,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[13].size
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[14].tag
+    value: D2D_HitEffect
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[14].prefab
+    value: 
+    objectReference: {fileID: 3289062680726291792, guid: 59b6f1506d6289345afc12b2d66db232,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[14].size
+    value: 50
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[15].tag
+    value: D2D_FireEffect
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[15].prefab
+    value: 
+    objectReference: {fileID: 4796234138652687539, guid: c6ca41e3abb79764cb3c0b9c95612e02,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[15].size
+    value: 50
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[16].tag
+    value: Bomb
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[16].prefab
+    value: 
+    objectReference: {fileID: 65223522114408329, guid: 7578996f051339542aa2c6cb69bb3c96,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[16].size
+    value: 50
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[17].tag
+    value: Coin
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[17].prefab
+    value: 
+    objectReference: {fileID: 5427630347853910432, guid: da03452684090aa4f965850d9a566734,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[17].size
+    value: 10
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[18].tag
+    value: FlakEffect
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[18].prefab
+    value: 
+    objectReference: {fileID: 7610297965655789096, guid: c3a951d9131a64743b817b3af7be0a15,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[18].size
+    value: 25
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[19].tag
+    value: MineBombEffect
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[19].prefab
+    value: 
+    objectReference: {fileID: 4346346332268875205, guid: f73f808029992c64986448faac58fdfe,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[19].size
+    value: 25
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[20].tag
+    value: MineDissolveEffect
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[20].prefab
+    value: 
+    objectReference: {fileID: 7849087988746272170, guid: 276f5b16fb772f54f84f901de15aeaf7,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[20].size
+    value: 75
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[21].tag
+    value: TapEffect
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[21].prefab
+    value: 
+    objectReference: {fileID: 3815263035590534581, guid: c365a0576341a8e468ec97d292c0007e,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[21].size
+    value: 15
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[22].tag
+    value: AchObj
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[22].prefab
+    value: 
+    objectReference: {fileID: 8227099436376139197, guid: 5fcbf7b369a9dca4f9c50cb042a472ba,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[22].size
+    value: 50
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[23].tag
+    value: SmallPipe
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[23].prefab
+    value: 
+    objectReference: {fileID: 785684648848662310, guid: dabdff964f9887d4194460e6baed48eb,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: pools.Array.data[23].size
+    value: 25
+    objectReference: {fileID: 0}
+  m_ExcludedProperties: []

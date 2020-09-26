@@ -70,6 +70,11 @@ public class PipeCustomizationHandler : MonoBehaviour
         Instance = this;
     }
 
+    private void Start()
+    {
+        Timing.RunCoroutine(Util._EmulateUpdate(_MainUpdate, this));
+    }
+
     private void OnEnable()
     {
         Timing.KillCoroutines(typeAnimationHandle);
@@ -83,13 +88,13 @@ public class PipeCustomizationHandler : MonoBehaviour
 
     private IEnumerator<float> _HandleTypeAnimation()
     {
-        while(gameObject.activeSelf)
+        while (gameObject.activeSelf)
         {
             pipeTypeImage.sprite = pipeTypeSprites[typeAnimationStep];
             pipeColorImage.sprite = pipeColorSprites[typeAnimationStep];
 
             typeAnimationStep++;
-            if(typeAnimationStep > 2)
+            if (typeAnimationStep > 2)
             {
                 typeAnimationStep = 0;
             }
@@ -276,7 +281,7 @@ public class PipeCustomizationHandler : MonoBehaviour
 
         pipeCustomizationActive = false;
 
-        if(disable)
+        if (disable)
         {
             this.gameObject.SetActive(false);
         }
@@ -300,7 +305,7 @@ public class PipeCustomizationHandler : MonoBehaviour
 
     private int CheckCustomSelected(CustomizationType type, int id)
     {
-        switch(type)
+        switch (type)
         {
             case CustomizationType.PipeColor:
                 if (id < 0) id = allColors.Length + id;
@@ -327,6 +332,8 @@ public class PipeCustomizationHandler : MonoBehaviour
         CostData[] cost = null;
         bool purchased = false;
 
+        int newMiddleID = -1, newLeftID = -1, newRightID = -1;
+
         switch (type)
         {
             case CustomizationType.Pipe:
@@ -337,25 +344,28 @@ public class PipeCustomizationHandler : MonoBehaviour
 
                 newLeft = shop.GetPipeSprite(selectedID - 1);
                 leftEnd = shop.GetPipeSprite(selectedID - 1, true);
+                newLeftID = shop.CheckSelected(type, selectedID - 1);
 
                 newMiddle = shop.GetPipeSprite(selectedID);
                 middleEnd = shop.GetPipeSprite(selectedID, true);
+                newMiddleID = shop.CheckSelected(type, selectedID);
 
                 newRight = shop.GetPipeSprite(selectedID + 1);
                 rightEnd = shop.GetPipeSprite(selectedID + 1, true);
+                newRightID = shop.CheckSelected(type, selectedID + 1);
 
                 //Alle haben dieselbe Farbe da Skinauswahl
-                if(shop.HasColorSupport(selectedID - 1))
+                if (shop.HasColorSupport(selectedID - 1))
                 {
                     leftColor = allColors[shop.GetPipeColorID()];
                 }
 
-                if(shop.HasColorSupport(selectedID))
+                if (shop.HasColorSupport(selectedID))
                 {
                     middleColor = allColors[shop.GetPipeColorID()];
                 }
 
-                if(shop.HasColorSupport(selectedID + 1))
+                if (shop.HasColorSupport(selectedID + 1))
                 {
                     rightColor = allColors[shop.GetPipeColorID()];
                 }
@@ -393,6 +403,7 @@ public class PipeCustomizationHandler : MonoBehaviour
         {
             previewImages[GetNewID(middleID - 1)].GetComponent<Image>().sprite = leftEnd;
             previewImages[GetNewID(middleID - 1)].GetComponent<Image>().color = leftColor;
+            previewImages[GetNewID(middleID - 1)].GetComponent<IDHolder>().realID = newLeftID;
 
             previewImages[GetNewID(middleID - 1)].GetChild(i).GetComponent<Image>().sprite =
                 newLeft;
@@ -401,6 +412,7 @@ public class PipeCustomizationHandler : MonoBehaviour
 
             previewImages[middleID].GetComponent<Image>().sprite = middleEnd;
             previewImages[middleID].GetComponent<Image>().color = middleColor;
+            previewImages[middleID].GetComponent<IDHolder>().realID = newMiddleID;
 
             previewImages[middleID].GetChild(i).GetComponent<Image>().sprite =
                 newMiddle;
@@ -408,8 +420,8 @@ public class PipeCustomizationHandler : MonoBehaviour
                 middleColor;
 
             previewImages[GetNewID(middleID + 1)].GetComponent<Image>().sprite = rightEnd;
-            previewImages[GetNewID(middleID + 1)].GetComponent<Image>().color =
-                rightColor;
+            previewImages[GetNewID(middleID + 1)].GetComponent<Image>().color = rightColor;
+            previewImages[GetNewID(middleID + 1)].GetComponent<IDHolder>().realID = newRightID;
 
             previewImages[GetNewID(middleID + 1)].GetChild(i).GetComponent<Image>().sprite =
                 newRight;
@@ -417,7 +429,7 @@ public class PipeCustomizationHandler : MonoBehaviour
                 rightColor;
         }
 
-        for(int i = 0; i < smallPreviewParent.childCount; i++)
+        for (int i = 0; i < smallPreviewParent.childCount; i++)
         {
             smallPreviewParent.GetChild(i).GetChild(1).GetComponent<Button>().interactable =
                 interactable;
@@ -446,7 +458,7 @@ public class PipeCustomizationHandler : MonoBehaviour
     {
         CustomizationType newType = (CustomizationType)itype;
 
-        if(interaction)
+        if (interaction)
         {
             shop.ApplyCustom(type, selectedID);
             changeApplied = true;
@@ -456,11 +468,12 @@ public class PipeCustomizationHandler : MonoBehaviour
 
         if (newType == CustomizationType.PipeColor)
         {
-            if(!shop.allPipes[shop.GetSelectedPipe()].colorChangeSupported)
+            if (!shop.allPipes[shop.GetSelectedPipe()].colorChangeSupported)
             {
                 return;
             }
-        } else
+        }
+        else
         {
             CheckPipeColorSupport();
         }
@@ -470,10 +483,11 @@ public class PipeCustomizationHandler : MonoBehaviour
             typeParent.GetChild(i).GetComponent<Image>().color = Color.white;
         }
 
-        if(newType == CustomizationType.Pipe)
+        if (newType == CustomizationType.Pipe)
         {
             typeParent.GetChild(1).GetComponent<Image>().color = Color.black;
-        } else
+        }
+        else
         {
             typeParent.GetChild(0).GetComponent<Image>().color = Color.black;
         }
@@ -541,7 +555,7 @@ public class PipeCustomizationHandler : MonoBehaviour
                 //Farbe von Obj Sprite
                 Color32 c = Color.white; //smallPreviewParent.GetChild(i).GetChild(1).GetComponent<Image>().color;
 
-                if(shop.allPipes[newID].colorChangeSupported)
+                if (shop.allPipes[newID].colorChangeSupported)
                 {
                     c = GetPipeColor(shop.GetPipeColorID());
                 }
@@ -577,7 +591,7 @@ public class PipeCustomizationHandler : MonoBehaviour
 
     public void SmallPreviewClicked(int newID)
     {
-        if (switchRunning || 
+        if (switchRunning ||
             type == CustomizationType.PipeColor) return;
 
         interaction = true;
@@ -608,7 +622,7 @@ public class PipeCustomizationHandler : MonoBehaviour
                 newLeft = shop.GetPipeSprite(selectedID - 1);
                 leftEnd = shop.GetPipeSprite(selectedID - 1, true);
 
-                if(shop.HasColorSupport(selectedID - 1))
+                if (shop.HasColorSupport(selectedID - 1))
                 {
                     leftColor = allColors[shop.GetPipeColorID()];
                 }
@@ -632,7 +646,7 @@ public class PipeCustomizationHandler : MonoBehaviour
                 break;
         }
 
-        for(int i = 0; i < 2; i++)
+        for (int i = 0; i < 2; i++)
         {
             previewImages[GetNewID(middleID - 1)].GetComponent<Image>().sprite = leftEnd;
             previewImages[GetNewID(middleID - 1)].GetComponent<Image>().color = leftColor;
@@ -797,10 +811,11 @@ public class PipeCustomizationHandler : MonoBehaviour
                     break;
             }
 
-            if(type != CustomizationType.PipeColor)
+            if (type != CustomizationType.PipeColor)
             {
                 selectedID = shop.CheckSelected(type, selectedID - 1);
-            } else
+            }
+            else
             {
                 selectedID = CheckCustomSelected(type, selectedID - 1);
             }
@@ -1022,7 +1037,7 @@ public class PipeCustomizationHandler : MonoBehaviour
     { //0 = links
         yield return new WaitForSeconds(time + 0.01f);
 
-        if(type != CustomizationType.PipeColor)
+        if (type != CustomizationType.PipeColor)
         {
             bool found = false;
             for (int i = 0; i < smallPreviewParent.childCount; i++)
@@ -1117,9 +1132,62 @@ public class PipeCustomizationHandler : MonoBehaviour
 
         buyInfo.SetActive(true);
 
-        if(shop.allPipes[shop.GetSelectedPipe()].colorChangeSupported)
+        if (shop.allPipes[shop.GetSelectedPipe()].colorChangeSupported)
         {
             buyInfo.GetComponent<BuyInfoHandler>().SetColor(shop.pipeColor);
+        }
+    }
+
+    private void _MainUpdate()
+    {
+        Pipe p;
+
+        for(int i = 0; i < shop.allPipes.Count; i++)
+        {
+            p = shop.allPipes[i];
+
+            if(p.animated)
+            {
+                p.shopTime += Time.deltaTime;
+
+                if(p.shopTime >= p.animationSpeed)
+                {
+                    p.shopTime = 0;
+
+                    p.shopStep++;
+                    if (p.shopStep >= p.animatedSprites.Length)
+                    {
+                        p.shopStep = 0;
+                    }
+                }
+
+                if(type == CustomizationType.Pipe)
+                {
+                    for (int a = 0; a < smallPreviewParent.childCount; a++)
+                    {
+                        if (i == smallPreviewParent.GetChild(a).GetComponent<IDHolder>().realID)
+                        {
+                            smallPreviewParent.GetChild(a).GetChild(1).GetComponent<Image>().sprite =
+                                p.animatedEndSprites[p.shopStep];
+                        }
+                    }
+
+                    for (int a = 0; a < 3; a++)
+                    {
+                        if (i == previewImages[a].GetComponent<IDHolder>().realID)
+                        {
+                            previewImages[a].GetComponent<Image>().sprite =
+                                p.animatedEndSprites[p.shopStep];
+
+                            for(int b = 0; b < 2; b++)
+                            {
+                                previewImages[a].transform.GetChild(b).GetComponent<Image>().sprite =
+                                    p.animatedSprites[p.shopStep];
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

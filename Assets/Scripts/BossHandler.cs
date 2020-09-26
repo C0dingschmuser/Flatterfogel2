@@ -171,7 +171,7 @@ public class BossHandler : MonoBehaviour
         Vector3 playerPos = player.transform.position;
         playerPos.x += 53;
 
-        GameObject newP = pooler.SpawnFromPool("Projectile", playerPos, Quaternion.identity);
+        GameObject newP = pooler.SpawnFromPool(PoolType.Projectile, playerPos, Quaternion.identity);
         newP.GetComponent<CircleCollider2D>().isTrigger = true;
         newP.GetComponent<Rigidbody2D>().velocity = new Vector2(750, 0);
     }
@@ -271,7 +271,7 @@ public class BossHandler : MonoBehaviour
                             infoPos.y += 38.25f;
 
                             GameObject infoText =
-                                pooler.SpawnFromPool("InfoText", infoPos, Quaternion.identity);
+                                pooler.SpawnFromPool(PoolType.InfoText, infoPos, Quaternion.identity);
                             infoText.GetComponent<InfoText>().StartFlashing("*FAUCH*");
                         }
                     }
@@ -308,7 +308,7 @@ public class BossHandler : MonoBehaviour
                             //option check nicht nötig da in funktion eingebaut
                             FlatterFogelHandler.Instance.StartCameraShake(0.15f);
 
-                            GameObject newMinus = pooler.SpawnFromPool("Minus", bossPos, Quaternion.identity);
+                            GameObject newMinus = pooler.SpawnFromPool(PoolType.Minus, bossPos, Quaternion.identity);
                             newMinus.GetComponent<MinusHandler>().StartMinus(currentDir, 500, player);
 
                             SoundManager.Instance.PlaySound(Sound.MinusShoot);

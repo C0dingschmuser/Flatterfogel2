@@ -192,7 +192,7 @@ public class AchievementHandler : MonoBehaviour
 
         for (long i = 0; i < amount; i++)
         {
-            GameObject newAchObj = objPooler.SpawnFromPool("AchObj", startPos, Quaternion.identity);
+            GameObject newAchObj = objPooler.SpawnFromPool(PoolType.AchObj, startPos, Quaternion.identity);
 
             newAchObj.transform.localScale = Vector3.zero;
             newAchObj.transform.SetParent(achMoveParent);

@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d48881e5ac2c1d744bea0b64a035233b, type: 3}
+  m_Name: RainbowAni
+  m_EditorClassIdentifier: 
+  identifier: rainbow_animated
+  itemID: 6
+  rarity: 4
+  purchased: 1
+  special: 0
+  salePercent: 0
+  cost:
+  - mineralID: 14
+    amount: 200
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  - mineralID: 0
+    amount: 0
+  unlockLocale:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+  unlockString: 
+  animated: 1
+  animationSpeed: 0.05
+  shopTime: 0.025
+  shopStep: 7
+  sprite: {fileID: 21300000, guid: 23d70276de9a9be478f7ec28e3e43214, type: 3}
+  endSprite: {fileID: 21300000, guid: d48938ca9cb831f4da81e0310d3e625f, type: 3}
+  animatedSprites:
+  - {fileID: 21300000, guid: 418b98a12efd4a343ac780c141b5be15, type: 3}
+  - {fileID: 21300000, guid: 50a5f8854a63b7541b56e31d29985fe1, type: 3}
+  - {fileID: 21300000, guid: 237832743c166ec4980c57b0cce45922, type: 3}
+  - {fileID: 21300000, guid: b20765b7df4ca0e4290370ed66c52200, type: 3}
+  - {fileID: 21300000, guid: f6b4bdc76e6c3e64f9d200b94fec5e36, type: 3}
+  - {fileID: 21300000, guid: e27e9ed8b20269c409ec1a16ed8a3e09, type: 3}
+  - {fileID: 21300000, guid: b266f61add641d34d9e0a2cec39f4231, type: 3}
+  - {fileID: 21300000, guid: 23d70276de9a9be478f7ec28e3e43214, type: 3}
+  - {fileID: 21300000, guid: 4b9b43cf8e3af9a4693b0a577935f197, type: 3}
+  - {fileID: 21300000, guid: 85028ccd7cae7b84492c252abcbdaec0, type: 3}
+  - {fileID: 21300000, guid: 13f7404ab8a98b840b301119baeaead9, type: 3}
+  - {fileID: 21300000, guid: 0f51876f4e45f86439bff18b6c8a39e1, type: 3}
+  - {fileID: 21300000, guid: a5b1e978554a56e4faa01c061c597893, type: 3}
+  - {fileID: 21300000, guid: c2f230b612c29f147b0302277d2bbb58, type: 3}
+  - {fileID: 21300000, guid: 0419e8e906bc3e749b967d69006f17ca, type: 3}
+  - {fileID: 21300000, guid: df5ebd48b5186ff48a910c0ce4e22ec2, type: 3}
+  animatedEndSprites:
+  - {fileID: 21300000, guid: 6b3ecdf07169a8e47ba3f274369df77b, type: 3}
+  - {fileID: 21300000, guid: a7d4a9c8ceccdd84b823bd42c4296737, type: 3}
+  - {fileID: 21300000, guid: 745904d451ebb1c4085c7d798cd63cde, type: 3}
+  - {fileID: 21300000, guid: 34f4b48f8b6a86e40bd4061ec878c60f, type: 3}
+  - {fileID: 21300000, guid: ec61b1a4ee6ca264894caed8dd5aaa25, type: 3}
+  - {fileID: 21300000, guid: cc79d5f9c2478004baa4518cecb30a5e, type: 3}
+  - {fileID: 21300000, guid: 1b26ab83dbde369419b3c01d220e7829, type: 3}
+  - {fileID: 21300000, guid: d48938ca9cb831f4da81e0310d3e625f, type: 3}
+  - {fileID: 21300000, guid: ca420cf88c2e9ea4bab9e17c2fbec5da, type: 3}
+  - {fileID: 21300000, guid: 5747e0107f3d17341b9b31268e8d1447, type: 3}
+  - {fileID: 21300000, guid: 2dc50cc763bbe5745a7d055399bb539f, type: 3}
+  - {fileID: 21300000, guid: 82fe52b5bcad70e498e5c38054c65f18, type: 3}
+  - {fileID: 21300000, guid: 5c2656c1070b4b54ab84ed17709acc53, type: 3}
+  - {fileID: 21300000, guid: 25c4d6bdc2580894d9fabd5df0d6b77a, type: 3}
+  - {fileID: 21300000, guid: 91e06a2c93fc69e458f1052ca3979d5b, type: 3}
+  - {fileID: 21300000, guid: 88d3adbd50c2d3e4a81a51c42dcdb6e1, type: 3}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  colorChangeSupported: 0

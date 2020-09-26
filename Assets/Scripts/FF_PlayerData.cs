@@ -565,6 +565,12 @@ public class FF_PlayerData : MonoBehaviour
         Sprite endSprite = 
             currentPipe.endSprite;
 
+        if(currentPipe.animated)
+        {
+            fullDefault = currentPipe.animatedSprites[0];
+            endSprite = currentPipe.animatedEndSprites[0];
+        }
+
         Texture2D fDT = fullDefault.texture;
         Texture2D fDT_End = endSprite.texture;
 
@@ -1054,7 +1060,7 @@ public class FF_PlayerData : MonoBehaviour
             ffHandler.PlayerShoot();
 
             GameObject tap =
-                ObjectPooler.Instance.SpawnFromPool("TapEffect", new Vector3(mPos.x, mPos.y, 501), Quaternion.identity);
+                ObjectPooler.Instance.SpawnFromPool(PoolType.TapEffect, new Vector3(mPos.x, mPos.y, 501), Quaternion.identity);
             //ParticleSystem.CollisionModule cM = tap.GetComponent<ParticleSystem>().collision;
             //cM.SetPlane(0, bottomPlane);
 
@@ -1182,7 +1188,7 @@ public class FF_PlayerData : MonoBehaviour
                     ffHandler.SetScore(2, 1, 3, blus);
 
                     GameObject infoText =
-                        ObjectPooler.Instance.SpawnFromPool("InfoText", transform.position, Quaternion.identity);
+                        ObjectPooler.Instance.SpawnFromPool(PoolType.InfoText, transform.position, Quaternion.identity);
 
                     infoText.GetComponent<InfoText>().StartFlashing(ScoreHandler.Instance.perfectHitString);
                 }

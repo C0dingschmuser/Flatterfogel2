@@ -126,7 +126,7 @@ public class D2D_HouseHandler : MonoBehaviour
         }
 
         GameObject infoText =
-                ObjectPooler.Instance.SpawnFromPool("InfoText", lastHitPos, Quaternion.identity);
+                ObjectPooler.Instance.SpawnFromPool(PoolType.InfoText, lastHitPos, Quaternion.identity);
 
         string sym = "+";
 

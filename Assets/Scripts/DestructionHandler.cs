@@ -75,7 +75,7 @@ public class DestructionHandler : MonoBehaviour
         Vector3 playerPos = player.transform.position;
         playerPos.x += 53;
 
-        GameObject newP = objectPooler.SpawnFromPool("Projectile", playerPos, Quaternion.identity);
+        GameObject newP = objectPooler.SpawnFromPool(PoolType.Projectile, playerPos, Quaternion.identity);
         newP.GetComponent<Rigidbody2D>().velocity = new Vector2(750, 0);
 
         newP.GetComponent<ProjectileHandler>().ResetProjectile(true);
@@ -86,7 +86,7 @@ public class DestructionHandler : MonoBehaviour
         Vector3 playerPos = player.transform.position;
         //playerPos.y -= 53;
 
-        GameObject newBomb = objectPooler.SpawnFromPool("Bomb", playerPos, Quaternion.Euler(0, 0, 90));
+        GameObject newBomb = objectPooler.SpawnFromPool(PoolType.Bomb, playerPos, Quaternion.Euler(0, 0, 90));
         newBomb.GetComponent<BombHandler>().ResetBomb(250);
     }
 

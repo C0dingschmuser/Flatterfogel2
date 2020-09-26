@@ -579,7 +579,7 @@ public class FlatterFogelHandler : MonoBehaviour
         {
 #if UNITY_EDITOR
             SetScore(0, 0);
-            internalScoreCount = 40;
+            //internalScoreCount = 40;
 #else
             SetScore(0, 0);
 #endif
@@ -791,7 +791,7 @@ public class FlatterFogelHandler : MonoBehaviour
                 #endregion
 
                 GameObject newAi = 
-                    objectPooler.SpawnFromPool("RoyaleAI", new Vector3(Random.Range(-699, -242), 1476), Quaternion.identity);
+                    objectPooler.SpawnFromPool(PoolType.RoyaleAI, new Vector3(Random.Range(-699, -242), 1476), Quaternion.identity);
                 newAi.GetComponent<AIHandler>().StartAI(Random.Range(497, 1235), Random.Range(0, 2.5f), endPoint);
 
                 aiObjs.Add(newAi);
@@ -989,7 +989,7 @@ public class FlatterFogelHandler : MonoBehaviour
         Vector3 playerPos = player.transform.position;
         playerPos.x += 53;
 
-        GameObject newP = objectPooler.SpawnFromPool("Projectile", playerPos, Quaternion.identity);
+        GameObject newP = objectPooler.SpawnFromPool(PoolType.Projectile, playerPos, Quaternion.identity);
         newP.GetComponent<Rigidbody2D>().velocity = new Vector2(750, 0);
 
         newP.GetComponent<ProjectileHandler>().ResetProjectile();
@@ -1531,11 +1531,26 @@ public class FlatterFogelHandler : MonoBehaviour
                 blus.transform.parent.GetComponent<BlusData>().DestroyBlus(effect);
                 SoundManager.Instance.PlaySound(Sound.Blus);
 
+                Pipe cPipe = shop.GetCurrentPipe();
+
                 for (int i = 0; i < 2; i++)
                 {
                     if(tempPipes[i] != null)
                     {
                         PipeData pData = tempPipes[i].GetComponent<PipeData>();
+
+                        if (cPipe.animated && effect == 3)
+                        { //Sprite nur auf 0 setzen wenn perfekter Treffer
+                            pData.pipeRenderer.sprite = cPipe.animatedSprites[0];
+                            pData.pipeEndRenderer.sprite = cPipe.animatedEndSprites[0];
+
+                            if(pData.isTop)
+                            {
+                                pData.middleRenderer.sprite = cPipe.animatedSprites[0];
+                                pData.middleTopRenderer.sprite = cPipe.animatedEndSprites[0];
+                                pData.middleBottomRenderer.sprite = cPipe.animatedEndSprites[0];
+                            }
+                        }
 
                         if (i == 0)
                         {
@@ -1899,7 +1914,7 @@ public class FlatterFogelHandler : MonoBehaviour
             lastX = pipes[pipes.Count - 1].transform.position.x + 93.3f;
         }
 
-        GameObject pipeHolder = objectPooler.SpawnFromPool("Pipe",
+        GameObject pipeHolder = objectPooler.SpawnFromPool(PoolType.Pipe,
             new Vector3(1000, 0), Quaternion.identity);
 
         pipeHolder.GetComponent<PipeHolder>().ResetPH();
@@ -2369,7 +2384,7 @@ public class FlatterFogelHandler : MonoBehaviour
     {
         float yPos = 278.1f;
 
-        GameObject nG = objectPooler.SpawnFromPool("Gravestone", new Vector3(xPos, yPos, 100), Quaternion.identity);
+        GameObject nG = objectPooler.SpawnFromPool(PoolType.Gravestone, new Vector3(xPos, yPos, 100), Quaternion.identity);
         nG.GetComponent<GravestoneHandler>().StartGravstone(player, top, side, bottom, scrollSpeed, name);
 
         return nG;
@@ -2387,7 +2402,7 @@ public class FlatterFogelHandler : MonoBehaviour
         {
             duplicate = false;
 
-            newBlus = objectPooler.SpawnFromPoolCheck("Blus");
+            newBlus = objectPooler.SpawnFromPoolCheck(PoolType.Blus);
             if(otherObjs.Contains(newBlus))
             {
                 duplicate = true;
@@ -2469,7 +2484,7 @@ public class FlatterFogelHandler : MonoBehaviour
         {
             duplicate = false;
 
-            newBlus = objectPooler.SpawnFromPoolCheck("Blus");
+            newBlus = objectPooler.SpawnFromPoolCheck(PoolType.Blus);
             if (otherObjs.Contains(newBlus))
             {
                 duplicate = true;
@@ -2942,7 +2957,7 @@ public class FlatterFogelHandler : MonoBehaviour
         int blusPoolSize = 12;
         for(int i = 0; i < blusPoolSize; i++)
         {
-            newBlus = objectPooler.SpawnFromPool("Blus", new Vector3(1000, 0), Quaternion.identity);
+            newBlus = objectPooler.SpawnFromPool(PoolType.Blus, new Vector3(1000, 0), Quaternion.identity);
             blusList.Add(newBlus);
         }
 
@@ -3001,7 +3016,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public void D2D_Hit(Vector3 pos, GameObject hitObj)
     {
-        GameObject newHit = objectPooler.SpawnFromPool("D2D_HitEffect", pos, Quaternion.identity);
+        GameObject newHit = objectPooler.SpawnFromPool(PoolType.D2D_HitEffect, pos, Quaternion.identity);
         effects.Add(newHit);
 
         pos.x += 30;
@@ -3012,7 +3027,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
         if (hHandler.NotFractured() && hHandler.FireSpawnOk())
         {
-            GameObject newFire = objectPooler.SpawnFromPool("D2D_FireEffect", pos, Quaternion.identity);
+            GameObject newFire = objectPooler.SpawnFromPool(PoolType.D2D_FireEffect, pos, Quaternion.identity);
             effects.Add(newFire);
 
             hHandler.AddFireEffect(newFire); //damit hHandler den effekt deaktivieren kann bei fracture
@@ -3030,7 +3045,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public void AddFlakEffect(Vector3 pos)
     {
-        GameObject effect = objectPooler.SpawnFromPool("FlakEffect", pos, Quaternion.identity);
+        GameObject effect = objectPooler.SpawnFromPool(PoolType.FlakEffect, pos, Quaternion.identity);
 
         effects.Add(effect);
     }
@@ -3210,8 +3225,19 @@ public class FlatterFogelHandler : MonoBehaviour
         {
             PipeData pData = pipes[i].GetComponent<PipeData>();
 
+            bool checkedOk = true;
+
+            if(pData.isChecked)
+            {
+                if(!pData.emptyPipe)
+                {
+                    checkedOk = false;
+                }
+            }
+
             if(pData.renderDeactivated >= 1 &&
-                !pData.destructionStarted)
+                !pData.destructionStarted &&
+                checkedOk)
             {
                 pData.pipeRenderer.sprite = sprite;
                 pData.pipeEndRenderer.sprite = endSprite;
@@ -3483,7 +3509,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
                         float abstandX = 0, abstandY = 20f;
 
-                        GameObject flyCloud = objectPooler.SpawnFromPool("FlyCloud",
+                        GameObject flyCloud = objectPooler.SpawnFromPool(PoolType.FlyCloud,
                                             new Vector3(player.transform.position.x - abstandX, 
                                             player.transform.position.y - abstandY),
                                             Quaternion.identity);

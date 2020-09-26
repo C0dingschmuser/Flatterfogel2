@@ -163,7 +163,7 @@ public class Flakhandler : MonoBehaviour
             {
                 reload = maxReload;
 
-                GameObject newMinus = objectPooler.SpawnFromPool("Minus",
+                GameObject newMinus = objectPooler.SpawnFromPool(PoolType.Minus,
                     barrelObjs[currentBarrel].position, Quaternion.identity);
 
                 //pos.x += Random.Range(-100, 200);
