@@ -247,6 +247,128 @@ public class MineHandler : MonoBehaviour
         }
     }
 
+    private bool CheckBigstoneOk(int pos, int xPos)
+    {
+        bool ok = true;
+
+        if (pos > 0)
+        {
+            if (mineObjs[pos - 1] != null)
+            { //block links
+                MineData tempMd = mineObjs[pos - 1].GetComponent<MineData>();
+
+                if ((tempMd.bigstone || tempMd.lava) && xPos > 0)
+                {
+                    ok = false;
+                }
+            }
+        }
+
+        if (pos >= 8)
+        {
+            if (mineObjs[pos - 8] != null)
+            { //block darüber
+                MineData tempMd = mineObjs[pos - 8].GetComponent<MineData>();
+
+                if (tempMd.bigstone || tempMd.lava)
+                {
+                    ok = false;
+                }
+            }
+        }
+
+        if (pos >= 9)
+        {
+            if (mineObjs[pos - 9] != null)
+            { //block darüber - 1
+                MineData tempMd = mineObjs[pos - 9].GetComponent<MineData>();
+
+                if ((tempMd.bigstone || tempMd.lava) && xPos > 0)
+                {
+                    ok = false;
+                }
+            }
+        }
+
+        return ok;
+    }
+
+    private int GetDiff()
+    {
+        ulong currentScore = ffHandler.GetScore();
+        int diff = 0;
+
+        if (currentScore < 75)
+        {
+            if (Random.Range(0, 4) > 0)
+            {
+                diff = 0;
+            }
+            else
+            {
+                diff = 1;
+            }
+
+        }
+        else if (currentScore < 150)
+        {
+            if (Random.Range(0, 4) > 0)
+            {
+                diff = 1;
+            }
+            else
+            {
+                diff = 2;
+            }
+        }
+        else if (currentScore < 300)
+        {
+            if (Random.Range(0, 4) > 0)
+            {
+                diff = 2;
+            }
+            else
+            {
+                diff = 3;
+            }
+        }
+        else if (currentScore < 450)
+        {
+            if (Random.Range(0, 4) > 0)
+            {
+                diff = 3;
+            }
+            else
+            {
+                diff = 4;
+            }
+        }
+        else if (currentScore < 666)
+        {
+            if (Random.Range(0, 4) > 0)
+            {
+                diff = 4;
+            }
+            else
+            {
+                diff = 5;
+            }
+        }
+        else if (currentScore > 666)
+        {
+            if (Random.Range(0, 4) > 0)
+            {
+                diff = 5;
+            }
+            else
+            {
+                diff = 4;
+            }
+        }
+
+        return diff;
+    }
+
     private void CreateNewMineObj(Vector3 newPos, int pos, int xPos, int blockDepth)
     {
         GameObject newMineObj = 
@@ -368,19 +490,63 @@ public class MineHandler : MonoBehaviour
 
         bool bigstone = false;
 
-        if(id != -2)
+        int diff = GetDiff();
+
+        if (id != -2)
         {
             bool bC = false;
 
-            if (Random.Range(0, 25) == 0)
+            int max = 20;
+
+            switch(diff)
+            {
+                case 1:
+                    max = 25;
+                    break;
+                case 2:
+                    max = 30;
+                    break;
+                case 3:
+                    max = 35;
+                    break;
+                case 4:
+                    max = 45;
+                    break;
+                case 5:
+                    max = 55;
+                    break;
+            }
+
+            if (Random.Range(0, max) == 0)
             { //1er blussizin
                 id = 13;
                 bC = true;
             }
-            
+
             if(!bC)
             { //3er blussizin
-                if (Random.Range(0, 40) == 0)
+                max = 28;
+
+                switch (diff)
+                {
+                    case 1:
+                        max = 35;
+                        break;
+                    case 2:
+                        max = 40;
+                        break;
+                    case 3:
+                        max = 50;
+                        break;
+                    case 4:
+                        max = 60;
+                        break;
+                    case 5:
+                        max = 70;
+                        break;
+                }
+
+                if (Random.Range(0, max) == 0)
                 {
                     id = 12;
                     bC = true;
@@ -389,25 +555,145 @@ public class MineHandler : MonoBehaviour
             
             if(!bC)
             { //5er blussizin
-                if (Random.Range(0, 65) == 0)
+                max = 50;
+
+                switch (diff)
+                {
+                    case 1:
+                        max = 55;
+                        break;
+                    case 2:
+                        max = 65;
+                        break;
+                    case 3:
+                        max = 70;
+                        break;
+                    case 4:
+                        max = 80;
+                        break;
+                    case 5:
+                        max = 90;
+                        break;
+                }
+
+                if (Random.Range(0, max) == 0)
                 {
                     id = 11;
                     bC = true;
                 }
             }
 
-            /*if(!bC)
+            if(!bC && diff >= 2)
             { //fliesizin
-                if (Random.Range(0, 35) == 0)
+
+                max = 65;
+
+                switch(diff)
+                {
+                    case 3:
+                        max = 45;
+                        break;
+                    case 4:
+                        max = 35;
+                        break;
+                    case 5:
+                        max = 28;
+                        break;
+                }
+
+                if (Random.Range(0, max) == 0)
                 {
                     id = 14;
                     bC = true;
                 }
-            }*/
+            }
 
-            if(!bC)
+            if (!bC)
             {
-                if (Random.Range(0, 14) == 0)
+                bool ok = true;
+
+                max = 14;
+
+                switch(diff)
+                {
+                    case 1:
+                        max = 11;
+                        break;
+                    case 2:
+                        max = 8;
+                        break;
+                    case 3:
+                        max = 6;
+                        break;
+                    case 4:
+                        max = 3;
+                        break;
+                    case 5:
+                        max = 2;
+                        break;
+                }
+
+                ok = CheckBigstoneOk(pos, xPos);
+
+                if (!ok)
+                { //check ob bei anderem stein weg frei ist -> min 1 weg
+                    bool tempOk = false;
+
+                    if (xPos > 0)
+                    {
+                        for (int i = xPos, a = 0; i > 0 && !tempOk; i--, a++)
+                        {
+                            if (mineObjs[pos - a] != null)
+                            {
+                                MineData tempMd = mineObjs[pos - a].GetComponent<MineData>();
+                                if (tempMd.bigstone || tempMd.lava)
+                                {
+                                    tempOk = CheckBigstoneOk(pos - a, xPos);
+                                }
+                            }
+                        }
+                    }
+
+                    if (tempOk)
+                    {
+                        ok = true;
+                    }
+                    else
+                    { //check 1 reihe drüber
+                        if (pos >= 8)
+                        {
+                            int aboveStart = pos - xPos - 8;
+
+                            for (int i = 0; i < 8 && !tempOk; i++)
+                            {
+                                MineData tempMD = mineObjs[aboveStart + i].GetComponent<MineData>();
+
+                                if (!tempMD.bigstone && !tempMD.lava)
+                                {
+                                    if (aboveStart + i + 8 < 4096)
+                                    {
+                                        if (mineObjs[aboveStart + i + 8] != null)
+                                        {
+                                            MineData tempMD2 = mineObjs[aboveStart + i + 8].GetComponent<MineData>();
+
+                                            if (!tempMD2.lava && !tempMD2.bigstone)
+                                            {
+                                                tempOk = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (tempOk)
+                    {
+                        ok = true;
+                    }
+                }
+
+                if (Random.Range(0, max) == 0 && ok)
                 {
                     bigstone = true;
                     bC = true;
@@ -491,7 +777,7 @@ public class MineHandler : MonoBehaviour
                     }
                 }*/
 
-                if(ok)
+                if(ok && blockDepth > 0)
                 {
                     if (Random.Range(0, 35) == 0)
                     { //mineral zuweisung
@@ -511,20 +797,20 @@ public class MineHandler : MonoBehaviour
 
         id -= 1;
 
-        if(id >= 0 && blockDepth > 0)
+        if(id >= 0)
         { //mineral zuweisen bei tiefe größer 0
             s = rawMinerals[id].sprite;
             newMineObj.GetComponent<MineData>().mineral = rawMinerals[id];
         }
 
-        if(id == 10 || id == 11 || id == 12 || id == 13)
+        if(id >= 10 && id <= 14)
         {
             newMineObj.GetComponent<MineData>().StartBlussizinLight(id - 10);
         }
 
         if(bigstone && blockDepth > 0)
         {
-            if(Random.Range(0, 3) > 0)
+            if(Random.Range(0, 3) > 0 || diff < 2)
             {
                 s = mineSprites[1]; //otherMineSprites[0];
 
@@ -533,7 +819,7 @@ public class MineHandler : MonoBehaviour
 
                 newMineObj.transform.GetChild(1).gameObject.SetActive(true);
             } else
-            {
+            { //lava
                 newMineObj.GetComponent<MineData>().StartLava();
                 newMineObj.GetComponent<MineData>().mineral = rawMinerals[(int)MineralType.Lava];
                 s = rawMinerals[(int)MineralType.Lava].sprite;
@@ -1550,8 +1836,8 @@ public class MineHandler : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        //time = 0.1f;
-        //baseMP = 0;
+        time = 0.2f;
+        baseMP = 0;
         //player.GetComponent<FF_PlayerData>().AddFuel(100);
 #endif
 
@@ -1593,12 +1879,25 @@ public class MineHandler : MonoBehaviour
     {
         if(miningActive)
         {
-            if(player.transform.position.y > 214 && lineObj.activeSelf)
+            /*if(player.transform.position.y > 214 && lineObj.activeSelf)
             { //über linie -> minen beenden
                 EndMine();
 
                 ffHandler.ChangeMode();
+            }*/
+
+#if UNITY_EDITOR
+            if(Input.GetKey(KeyCode.A))
+            {
+                FF_PlayerData.Instance.PlayerMineDir(3);
+            } else if(Input.GetKey(KeyCode.S))
+            {
+                FF_PlayerData.Instance.PlayerMineDir(2);
+            } else if(Input.GetKey(KeyCode.D))
+            {
+                FF_PlayerData.Instance.PlayerMineDir(1);
             }
+#endif
         }
     }
 
@@ -1640,6 +1939,12 @@ public class MineHandler : MonoBehaviour
             }
 
             Vector3 desiredPosition = player.transform.position;
+
+            if(!cameraOK)
+            { //Mitte des Bildes da Cam zu groß
+                desiredPosition.x = -381;
+            }
+
             Vector3 smoothedPosition =
                 Vector3.Lerp(newPos, desiredPosition, 5f * Time.deltaTime);
 

@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
   m_Name: Shop Shared Data
   m_EditorClassIdentifier: 
-  m_NextAvailableId: 23
   m_TableCollectionName: Shop
   m_TableCollectionNameGuidString: f5ac6f4f39103ca4ba3eda2dfe409d2b
   m_Entries:
@@ -104,7 +103,26 @@ MonoBehaviour:
     m_Key: GRAVE
     m_Metadata:
       m_Items: []
+  - m_Id: 366353784832
+    m_Key: Fan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 584692473856
+    m_Key: Tank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 223390814380032
+    m_Key: Trail
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
+  m_KeyGenerator:
+    id: 0
   references:
     version: 1
+    00000000:
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
+        asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1601602672338

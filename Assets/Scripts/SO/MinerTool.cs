@@ -16,13 +16,10 @@ public class CostData
 }
 
 [CreateAssetMenu(menuName = "MinerTool")]
-public class MinerTool : ScriptableObject
+public class MinerTool : ShopItem
 {
     public int id;
-    public CostData[] cost;
     public int mineTime = 1500;
-    public float shopScale = 1;
-    public bool purchased = false;
     public Sprite main, effect, full;
     public Color laserColor;
 }

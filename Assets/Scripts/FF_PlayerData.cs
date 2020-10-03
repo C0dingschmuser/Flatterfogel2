@@ -183,6 +183,11 @@ public class FF_PlayerData : MonoBehaviour
         suicideString = (string)handle.Result;
     }
 
+    public void SetMaxFuel(int fuel)
+    {
+        maxFuel = fuel;
+    }
+
     public int GetMaxFuel()
     {
         return maxFuel;

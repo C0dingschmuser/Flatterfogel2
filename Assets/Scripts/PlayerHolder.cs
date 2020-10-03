@@ -71,6 +71,11 @@ public class PlayerHolder : MonoBehaviour
         Timing.RunCoroutine(_EnableInfo(0.2f, top).CancelWith(this.gameObject));
     }
 
+    public void PlayerClicked()
+    {
+
+    }
+
     public void SetPlayer()
     {
         nameText.color = Color.red;

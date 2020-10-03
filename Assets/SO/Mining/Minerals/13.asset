@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36a3e23a0a8255748b35062920d5a172, type: 3}
   m_Name: 13
   m_EditorClassIdentifier: 
-  itemName: Fliesizin!
+  itemName: Fliesizin
   meltable: 0
   meltingResult: {fileID: 0}
   id: 13

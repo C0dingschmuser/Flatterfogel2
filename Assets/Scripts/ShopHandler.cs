@@ -55,11 +55,14 @@ public class ShopHandler : MonoBehaviour
     public List<Wing> allWings = new List<Wing>();
     public Wing errorWing;
 
+    public List<Tail> allTails = new List<Tail>();
+
     public List<Hat> allHats = new List<Hat>();
     public Hat errorHat;
 
     public List<MinerTool> allMiners = new List<MinerTool>();
     public List<HeatShield> allHeatShields = new List<HeatShield>();
+    public List<FuelTank> allFuelTanks = new List<FuelTank>();
     public List<MineItem> allMineItems = new List<MineItem>();
 
     public List<Pipe> allPipes = new List<Pipe>();
@@ -100,9 +103,9 @@ public class ShopHandler : MonoBehaviour
     private CoroutineHandle uiScaleHandle;
 
     private int currentPage = 0, currentType = 0, wingAnimationCount = 0, wingAnimationDir = 0;
-    private int colorFadeID = 0, lastSlotID = -1, minerType = 0, selectedSkin = 0, selectedWing = 0, selectedMiner = 0,
-        selectedPipe = 0, selectedBackground = 0, selectedHeatShield = 0, selectedHat = 0, selectedGraveTop = 0,
-        selectedGraveSide = 0, selectedGraveBottom = 0;
+    private int colorFadeID = 0, lastSlotID = -1, minerType = 0, selectedSkin = 0, selectedWing = 0, selectedTail = 0,
+        selectedMiner = 0, selectedPipe = 0, selectedBackground = 0, selectedHeatShield = 0, selectedFuelTank = 0, selectedHat = 0,
+        selectedGraveTop = 0, selectedGraveSide = 0, selectedGraveBottom = 0;
     private bool shopActive = false;
 
     private void Awake()
@@ -392,6 +395,8 @@ public class ShopHandler : MonoBehaviour
                 return (ShopItem)errorWing;
             case CustomizationType.Hat:
                 return (ShopItem)errorHat;
+            case CustomizationType.Tail:
+                return (ShopItem)allTails[0];
             case CustomizationType.Pipe:
                 return (ShopItem)errorPipe;
         }
@@ -412,6 +417,9 @@ public class ShopHandler : MonoBehaviour
                 break;
             case CustomizationType.Hat:
                 id = selectedHat;
+                break;
+            case CustomizationType.Tail:
+                id = selectedTail;
                 break;
             case CustomizationType.Pipe:
                 id = selectedPipe;
@@ -493,6 +501,10 @@ public class ShopHandler : MonoBehaviour
                 if (id < 0) id = allHats.Count + id;
                 if (id >= allHats.Count) id = id - allHats.Count;
                 break;
+            case CustomizationType.Tail:
+                if (id < 0) id = allTails.Count + id;
+                if (id >= allTails.Count) id = id - allTails.Count;
+                break;
         }
 
         return id;
@@ -514,6 +526,9 @@ public class ShopHandler : MonoBehaviour
                 break;
             case CustomizationType.Hat:
                 max = allHats.Count;
+                break;
+            case CustomizationType.Tail:
+                max = allTails.Count;
                 break;
         }
 
@@ -568,6 +583,9 @@ public class ShopHandler : MonoBehaviour
             case CustomizationType.Hat:
                 s = allHats[id].sprite;
                 break;
+            case CustomizationType.Tail:
+                s = allTails[id].sprite;
+                break;
             case CustomizationType.Pipe:
                 s = allPipes[id].endSprite;
                 break;
@@ -591,6 +609,7 @@ public class ShopHandler : MonoBehaviour
 
         switch (type)
         {
+            default:
             case CustomizationType.Skin:
                 cost = allSkins[id].cost;
                 return cost;
@@ -603,6 +622,9 @@ public class ShopHandler : MonoBehaviour
             case CustomizationType.Hat:
                 cost = allHats[id].cost;
                 break;
+            case CustomizationType.Tail:
+                cost = allTails[id].cost;
+                break;
             case CustomizationType.GraveTop:
                 cost = allGraveTops[id].cost;
                 break;
@@ -611,6 +633,18 @@ public class ShopHandler : MonoBehaviour
                 break;
             case CustomizationType.GraveBottom:
                 cost = allGraveBottoms[id].cost;
+                break;
+            case CustomizationType.MinerTool:
+                cost = allMiners[id].cost;
+                break;
+            case CustomizationType.MinerHeatShield:
+                cost = allHeatShields[id].cost;
+                break;
+            case CustomizationType.MinerFuelTank:
+                cost = allFuelTanks[id].cost;
+                break;
+            case CustomizationType.MinerItem:
+                cost = allMineItems[id].cost;
                 break;
         }
 
@@ -649,6 +683,9 @@ public class ShopHandler : MonoBehaviour
             case CustomizationType.Hat:
                 shopItems = allHats.Cast<ShopItem>().ToList();
                 break;
+            case CustomizationType.Tail:
+                shopItems = allTails.Cast<ShopItem>().ToList();
+                break;
             case CustomizationType.GraveTop:
                 shopItems = allGraveTops.Cast<ShopItem>().ToList();
                 break;
@@ -658,6 +695,19 @@ public class ShopHandler : MonoBehaviour
             case CustomizationType.GraveBottom:
                 shopItems = allGraveBottoms.Cast<ShopItem>().ToList();
                 break;
+            case CustomizationType.MinerTool:
+                shopItems = allMiners.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.MinerHeatShield:
+                shopItems = allHeatShields.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.MinerFuelTank:
+                shopItems = allFuelTanks.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.MinerItem:
+                shopItems = allMineItems.Cast<ShopItem>().ToList();
+                break;
+
         }
 
         if(shopItems[id].purchased)
@@ -669,6 +719,27 @@ public class ShopHandler : MonoBehaviour
         }
 
         return code;
+    }
+
+    public float GetScale(CustomizationType type, int id)
+    {
+        float scale;
+
+        switch(type)
+        {
+            default:
+            case CustomizationType.MinerTool:
+                scale = allMiners[id].shopScale;
+                break;
+            case CustomizationType.MinerHeatShield:
+                scale = allHeatShields[id].shopScale;
+                break;
+            case CustomizationType.MinerFuelTank:
+                scale = allFuelTanks[id].shopScale;
+                break;
+        }
+
+        return scale;
     }
 
     public void SetSelected(CustomizationType type, int id)
@@ -689,6 +760,9 @@ public class ShopHandler : MonoBehaviour
                 break;
             case CustomizationType.Hat:
                 selectedHat = id;
+                break;
+            case CustomizationType.Tail:
+                selectedTail = id;
                 break;
         }
     }
@@ -887,6 +961,13 @@ public class ShopHandler : MonoBehaviour
             allWings[i].purchased = false;
         }
 
+        for(int i = 1; i < allTails.Count; i++)
+        {
+            allTails[i].salePercent = 0;
+
+            allTails[i].purchased = false;
+        }
+
         for (int i = 1; i < allPipes.Count; i++)
         {
             allPipes[i].salePercent = 0;
@@ -907,6 +988,11 @@ public class ShopHandler : MonoBehaviour
         for (int i = 1; i < allHeatShields.Count; i++)
         {
             allHeatShields[i].purchased = false;
+        }
+
+        for(int i = 1; i < allFuelTanks.Count; i++)
+        {
+            allFuelTanks[i].purchased = false;
         }
 
         for(int i = 0; i < allMineItems.Count; i++)
@@ -946,6 +1032,7 @@ public class ShopHandler : MonoBehaviour
         string selectedWingString = ObscuredPrefs.GetString("SelectedWingString", "default");
         string selectedHatString = ObscuredPrefs.GetString("SelectedHatString", "default");
         string selectedPipeString = ObscuredPrefs.GetString("SelectedPipeString", "default");
+        string selectedTailString = ObscuredPrefs.GetString("SelectedTailString", "default");
 
         string selectedGraveTopString = ObscuredPrefs.GetString("SelectedGraveTopString", "default");
         string selectedGraveSideString = ObscuredPrefs.GetString("SelectedGraveSideString", "default");
@@ -1048,6 +1135,8 @@ public class ShopHandler : MonoBehaviour
                         //1 = gekaufte wings
                         //2 = gekaufte hats
                         //3 = letzter Hut
+                        //4 = gekaufte tails
+                        //5 = letzter tail
 
                         if (type.Length > 0)
                         {
@@ -1107,6 +1196,47 @@ public class ShopHandler : MonoBehaviour
                                 }
                             }
 
+                            int[] purchasedTails = new int[1];
+                            int lastTailID = 0;
+
+                            if (type.Length > 4)
+                            { //hat gekaufte tails
+                                string[] pTails = type[4].Split('~');
+                                purchasedTails = new int[pTails.Length - 1];
+
+                                for (int a = 0; a < pTails.Length - 1; a++) //-1 weil letzte stelle leer
+                                {
+                                    string tailIdentifier = pTails[a];
+
+                                    for (int b = 0; b < allTails.Count; b++)
+                                    {
+                                        if (allTails[b].identifier.Equals(tailIdentifier))
+                                        {
+                                            purchasedTails[a] = b;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (type.Length > 5)
+                                { //hat tail ausgewählt
+                                    string lastTailIdentifier = type[5].ToString();
+
+                                    for (int a = 0; a < allTails.Count; a++)
+                                    {
+                                        if (allTails[a].identifier.Equals(lastTailIdentifier))
+                                        {
+                                            if (purchasedTails.Contains(a))
+                                            { //nur zuweisen wenn auch gekauft
+                                                lastTailID = a;
+                                            }
+
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
                             for (int a = 0; a < allSkins.Count; a++)
                             {
                                 if (allSkins[a].identifier.Equals(identifier))
@@ -1115,6 +1245,8 @@ public class ShopHandler : MonoBehaviour
                                     allSkins[a].boughtWings = purchasedWings;
                                     allSkins[a].boughtHats = purchasedHats;
                                     allSkins[a].lastHat = lastHatID;
+                                    allSkins[a].boughtTails = purchasedTails;
+                                    allSkins[a].lastTail = lastTailID;
                                     break;
                                 }
                             }
@@ -1144,48 +1276,66 @@ public class ShopHandler : MonoBehaviour
             }
         }
 
-        data = ObscuredPrefs.GetString("ShopPurchasedMineData", "");
+        data = ObscuredPrefs.GetString("ShopPurchasedMinerTools", "");
 
-        if (data.Length > 0 && data.Contains("|"))
+        if(data.Length > 0)
         {
-            string[] types = data.Split('|');
+            string[] minerToolData = data.Split(',');
 
-            if (types[0].Contains(','))
-            { //Miner
-                string[] minerData = types[0].Split(',');
-                for (int i = 0; i < minerData.Length; i++)
+            for(int i = 0; i < minerToolData.Length; i++)
+            {
+                if(minerToolData[i].Length > 0)
                 {
-                    if (minerData[i].Length > 0)
-                    {
-                        int id = Int32.Parse(minerData[i]);
-                        allMiners[id].purchased = true;
-                    }
+                    int id = Int32.Parse(minerToolData[i]);
+                    allMiners[id].purchased = true;
                 }
             }
+        }
 
-            if (types[1].Contains(","))
-            { //Heatshields
-                string[] heatShieldData = types[1].Split(',');
-                for (int i = 0; i < heatShieldData.Length; i++)
+        data = ObscuredPrefs.GetString("ShopPurchasedMinerShields", "");
+
+        if(data.Length > 0)
+        {
+            string[] minerShieldData = data.Split(',');
+
+            for(int i = 0; i < minerShieldData.Length; i++)
+            {
+                if(minerShieldData[i].Length > 0)
                 {
-                    if (heatShieldData[i].Length > 0)
-                    {
-                        int id = Int32.Parse(heatShieldData[i]);
-                        allHeatShields[id].purchased = true;
-                    }
+                    int id = Int32.Parse(minerShieldData[i]);
+                    allHeatShields[id].purchased = true;
                 }
             }
+        }
 
-            if (types[2].Contains(","))
-            { //mine items
-                string[] mineItemData = types[2].Split(',');
-                for (int i = 0; i < mineItemData.Length; i++)
+        data = ObscuredPrefs.GetString("ShopPurchasedMinerTanks", "");
+
+        if(data.Length > 0)
+        {
+            string[] minerTankData = data.Split(',');
+
+            for(int i = 0; i < minerTankData.Length; i++)
+            {
+                if (minerTankData[i].Length > 0)
                 {
-                    if (mineItemData[i].Length > 0)
-                    {
-                        int amount = Int32.Parse(mineItemData[i]);
-                        allMineItems[i].amount = amount;
-                    }
+                    int id = Int32.Parse(minerTankData[i]);
+                    allFuelTanks[id].purchased = true;
+                }
+            }
+        }
+
+        data = ObscuredPrefs.GetString("ShopPurchasedMineItems", "");
+
+        if(data.Length > 0)
+        {
+            string[] mineItemData = data.Split(',');
+
+            for(int i = 0; i < mineItemData.Length; i++)
+            {
+                if(mineItemData[i].Length > 0)
+                {
+                    int amount = Int32.Parse(mineItemData[i]);
+                    allMineItems[i].amount = amount;
                 }
             }
         }
@@ -1287,6 +1437,17 @@ public class ShopHandler : MonoBehaviour
             }
         }
 
+        selectedTail = 0;
+
+        for (int i = 0; i < allTails.Count; i++)
+        {
+            if (allTails[i].identifier.Equals(selectedTailString))
+            {
+                selectedTail = i;
+                break;
+            }
+        }
+
         selectedPipe = 0;
 
         for(int i = 0; i < allPipes.Count; i++)
@@ -1307,10 +1468,12 @@ public class ShopHandler : MonoBehaviour
 
         selectedBackground = 0; //ObscuredPrefs.GetInt("SelectedBackground", 0); OVERRIDE
         selectedHeatShield = ObscuredPrefs.GetInt("SelectedHeatShield", 0);
+        selectedFuelTank = ObscuredPrefs.GetInt("SelectedFuelTank", 0);
 
         MineHandler.Instance.currentHeatShield = allHeatShields[selectedHeatShield];
 
         PlayerMiner.currentMiner = allMiners[selectedMiner];
+        FF_PlayerData.Instance.SetMaxFuel(allFuelTanks[selectedFuelTank].capacity);
 
         playerData.LoadPlayerSkin(allSkins[selectedSkin], allWings[selectedWing]);
         playerData.LoadHat(allHats[selectedHat]);
@@ -1401,8 +1564,10 @@ public class ShopHandler : MonoBehaviour
             {
                 int[] purchasedWings = allSkins[i].boughtWings;
                 int[] purchasedHats = allSkins[i].boughtHats;
+                int[] purchasedTails = allSkins[i].boughtTails;
 
-                string wingString = "", hatString = "", lastHatIdentifier = "default";
+                string wingString = "", hatString = "", tailString = "",
+                    lastHatIdentifier = "default", lastTailIdentifier = "default";
 
                 for(int a = 0; a < purchasedWings.Length; a++)
                 {
@@ -1416,7 +1581,15 @@ public class ShopHandler : MonoBehaviour
 
                 lastHatIdentifier = allHats[allSkins[i].lastHat].identifier;
 
-                data += allSkins[i].identifier + "#" + wingString + "#" + hatString + "#" + lastHatIdentifier + ",";
+                for(int a = 0; a < purchasedTails.Length; a++)
+                {
+                    tailString += allTails[purchasedTails[a]].identifier + "~";
+                }
+
+                lastTailIdentifier = allTails[allSkins[i].lastTail].identifier;
+
+                data += allSkins[i].identifier + "#" + wingString + "#" + hatString + "#" + lastHatIdentifier +
+                    "#" + tailString + "#" + lastTailIdentifier + ",";
             }
         }
 
@@ -1441,7 +1614,9 @@ public class ShopHandler : MonoBehaviour
                 data += i.ToString() + ",";
             }
         }
-        data += "|";
+
+        ObscuredPrefs.SetString("ShopPurchasedMinerTools", data);
+        data = "";
 
         for(int i = 0; i < allHeatShields.Count; i++)
         {
@@ -1450,14 +1625,29 @@ public class ShopHandler : MonoBehaviour
                 data += i.ToString() + ",";
             }
         }
-        data += "|";
 
-        for(int i = 0; i < allMineItems.Count; i++)
+        ObscuredPrefs.SetString("ShopPurchasedMinerShields", data);
+        data = "";
+
+        for (int i = 0; i < allFuelTanks.Count; i++)
+        {
+            if (allFuelTanks[i].purchased)
+            {
+                data += i.ToString() + ",";
+            }
+        }
+
+        ObscuredPrefs.SetString("ShopPurchasedMinerTanks", data);
+        data = "";
+
+        for (int i = 0; i < allMineItems.Count; i++)
         {
             data += allMineItems[i].amount + ",";
         }
 
-        ObscuredPrefs.SetString("ShopPurchasedMineData", data);
+        ObscuredPrefs.SetString("ShopPurchasedMineItems", data);
+        data = "";
+
         ObscuredPrefs.SetULong("Blus", blus);
         ObscuredPrefs.SetString("SelectedSkinString", allSkins[selectedSkin].identifier);
         ObscuredPrefs.SetString("SelectedWingString", allWings[selectedWing].identifier);
@@ -1523,26 +1713,28 @@ public class ShopHandler : MonoBehaviour
         return allHats[id].purchased;
     }
 
-    public int GetLatestMiner()
+    public int GetLatestMineObj(CustomizationType type)
     {
-        int id = 0;
-        for(int i = 0; i < allMiners.Count; i++)
+        List<ShopItem> list;
+
+        switch(type)
         {
-            if(allMiners[i].purchased)
-            {
-                id = i;
-            }
+            default:
+            case CustomizationType.MinerTool:
+                list = allMiners.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.MinerHeatShield:
+                list = allHeatShields.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.MinerFuelTank:
+                list = allFuelTanks.Cast<ShopItem>().ToList();
+                break;
         }
 
-        return id;
-    }
-
-    public int GetLatestHeatShield()
-    {
         int id = 0;
-        for (int i = 0; i < allHeatShields.Count; i++)
+        for (int i = 0; i < list.Count; i++)
         {
-            if (allHeatShields[i].purchased)
+            if (list[i].purchased)
             {
                 id = i;
             }
@@ -1786,22 +1978,26 @@ public class ShopHandler : MonoBehaviour
         buyButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Kaufen";
     }
 
-    public int GetNextMiner()
+    public int GetNextMineObj(CustomizationType type)
     {
-        int latestMiner = GetLatestMiner();
+        int latest = GetLatestMineObj(type);
+        int max;
 
-        latestMiner = Mathf.Clamp(latestMiner + 1, 0, allMiners.Count - 1);
+        switch(type)
+        {
+            default:
+            case CustomizationType.MinerTool:
+                max = allMiners.Count - 1;
+                break;
+            case CustomizationType.MinerHeatShield:
+                max = allHeatShields.Count - 1;
+                break;
+            case CustomizationType.MinerFuelTank:
+                max = allFuelTanks.Count - 1;
+                break;
+        }
 
-        return latestMiner;
-    }
-
-    public int GetNextHeatShield()
-    {
-        int latestShield = GetLatestHeatShield();
-
-        latestShield = Mathf.Clamp(latestShield + 1, 0, allHeatShields.Count - 1);
-
-        return latestShield;
+        return Mathf.Clamp(latest + 1, 0, max);
     }
 
     public bool CanAfford(CostData[] prices)
@@ -1876,35 +2072,42 @@ public class ShopHandler : MonoBehaviour
         }
     }
 
-    public void ManualMinerPurchase(int id)
+    public void MiningPurchase(CustomizationType type, int id)
     {
-        allMiners[id].purchased = true;
+        List<ShopItem> list;
 
-        PurchaseMinerItem(allMiners[id].cost);
+        switch(type)
+        {
+            default:
+            case CustomizationType.MinerTool:
+                allMiners[id].purchased = true;
+                list = allMiners.Cast<ShopItem>().ToList();
 
-        selectedMiner = id;
-        PlayerMiner.currentMiner = allMiners[id];
+                selectedMiner = id;
+                PlayerMiner.currentMiner = allMiners[id];
+                break;
+            case CustomizationType.MinerHeatShield:
+                allHeatShields[id].purchased = true;
+                list = allHeatShields.Cast<ShopItem>().ToList();
 
-        SavePurchasedItems();
-    }
+                selectedHeatShield = id;
+                break;
+            case CustomizationType.MinerFuelTank:
+                allFuelTanks[id].purchased = true;
+                list = allFuelTanks.Cast<ShopItem>().ToList();
 
-    public void ManualHeatShieldPurchase(int id)
-    {
-        allHeatShields[id].purchased = true;
-        PurchaseMinerItem(allHeatShields[id].cost);
+                selectedFuelTank = id;
 
-        selectedHeatShield = id;
+                FF_PlayerData.Instance.SetMaxFuel(allFuelTanks[selectedFuelTank].capacity);
+                break;
+            case CustomizationType.MinerItem:
+                allMineItems[id].amount++;
+                list = allMineItems.Cast<ShopItem>().ToList();
+                break;
+        }
 
-        SavePurchasedItems();
-    }
+        PurchaseMinerItem(list[id].cost);
 
-    public void ManualMineItemPurchase(int id)
-    {
-        allMineItems[id].amount++;
-
-        CostData[] costData = allMineItems[id].cost;
-
-        PurchaseMinerItem(costData);
         SavePurchasedItems();
     }
 
@@ -1929,6 +2132,9 @@ public class ShopHandler : MonoBehaviour
                 break;
             case CustomizationType.Hat:
                 shopItems = allHats.Cast<ShopItem>().ToList();
+                break;
+            case CustomizationType.Tail:
+                shopItems = allTails.Cast<ShopItem>().ToList();
                 break;
             case CustomizationType.GraveTop:
                 shopItems = allGraveTops.Cast<ShopItem>().ToList();
@@ -1990,6 +2196,21 @@ public class ShopHandler : MonoBehaviour
                 newBoughtHats[newBoughtHats.Length - 1] = id;
 
                 allSkins[selectedSkin].boughtHats = newBoughtHats;
+                break;
+            case CustomizationType.Tail:
+                allTails[id].purchased = true;
+
+                int[] boughtTails = allSkins[selectedSkin].boughtTails;
+                int[] newBoughtTails = new int[boughtTails.Length + 1];
+
+                for (int i = 0; i < boughtTails.Length; i++)
+                {
+                    newBoughtTails[i] = boughtTails[i];
+                }
+
+                newBoughtTails[newBoughtTails.Length - 1] = id;
+
+                allSkins[selectedSkin].boughtTails = newBoughtTails;
                 break;
             case CustomizationType.GraveTop:
                 allGraveTops[id].purchased = true;

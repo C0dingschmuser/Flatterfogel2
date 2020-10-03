@@ -12,10 +12,10 @@ public class MinerCustomizationHandler : MonoBehaviour
     [SerializeField]
     ShopMenuHandler shopMenu = null;
 
-    public GameObject selected, minerUpgrade, minerUpgradeButton,
-        shieldUpgrade, shieldUpgradeButton, priceHighlight, mineModePriceText,
-        mineModePriceImage, buyButton, itemParent, minerImage, heatShieldImage,
-        minerBlend, heatShieldBlend, smallPriceHighlight;
+    public GameObject moduleUpgrade, moduleUpgradeButton,
+        priceHighlight, mineModePriceText,
+        mineModePriceImage, buyButton, itemParent, moduleImage,
+        moduleBlend, smallPriceHighlight, typeParent;
 
     public Transform smallPriceTop, smallPriceBottom;
 
@@ -44,12 +44,6 @@ public class MinerCustomizationHandler : MonoBehaviour
         Instance = this;
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
     public void StartMineCustomizationHandler()
     {
         gameObject.SetActive(true);
@@ -60,8 +54,7 @@ public class MinerCustomizationHandler : MonoBehaviour
             priceImageTween[i] = null;
         }
 
-        UpdateUI();
-        ObjClicked(0);
+        ObjClicked(CustomizationType.MinerTool);
 
         fontMat.SetFloat("_DissolveAmount", 0);
         imageMat.SetFloat("_DissolveAmount", 0);
@@ -113,55 +106,47 @@ public class MinerCustomizationHandler : MonoBehaviour
 
     public void UpdateUI()
     {
-        for (int i = 0; i < minerUpgrade.transform.childCount; i++)
+        CustomizationType type = (CustomizationType)selectedUpgrade;
+
+        for (int i = 0; i < moduleUpgrade.transform.childCount; i++)
         {
-            if (shop.MinerPurchased(4 - i))
+            if (shop.HasPurchased(type, 4 - i) == 2)
             {
-                minerUpgrade.transform.GetChild(i).GetComponent<Image>().color =
+                moduleUpgrade.transform.GetChild(i).GetComponent<Image>().color =
                     unlockedColor;
             }
             else
             {
-                minerUpgrade.transform.GetChild(i).GetComponent<Image>().color =
+                moduleUpgrade.transform.GetChild(i).GetComponent<Image>().color =
                     lockedColor;
             }
         }
 
-        int latestMiner = shop.GetLatestMiner();
-        float newScale = shop.allMiners[latestMiner].shopScale;
+        int latest = shop.GetLatestMineObj(type);
+        float newScale = shop.GetScale(type, latest);
 
-        minerImage.GetComponent<Image>().sprite = shop.allMiners[latestMiner].full;
-        minerImage.transform.localScale = new Vector3(newScale, newScale, newScale);
+        Sprite sp;
 
-        if(shop.MinerPurchased(4))
+        switch(type)
+        {
+            default:
+            case CustomizationType.MinerTool:
+                sp = shop.allMiners[latest].full;
+                break;
+            case CustomizationType.MinerHeatShield:
+                sp = shop.allHeatShields[latest].shieldSprite;
+                break;
+            case CustomizationType.MinerFuelTank:
+                sp = shop.allFuelTanks[latest].sprite;
+                break;
+        }
+
+        moduleImage.GetComponent<Image>().sprite = sp;
+        moduleImage.transform.localScale = new Vector3(newScale, newScale, newScale);
+
+        if(shop.HasPurchased(type, 4) == 2)
         { //kein upgrade mehr möglich
-            minerUpgradeButton.GetComponent<Button>().interactable = false;
-        }
-
-        for (int i = 0; i < shieldUpgrade.transform.childCount; i++)
-        {
-            if (shop.HeatShieldPurchased(4 - i))
-            {
-                shieldUpgrade.transform.GetChild(i).GetComponent<Image>().color =
-                    unlockedColor;
-            }
-            else
-            {
-                shieldUpgrade.transform.GetChild(i).GetComponent<Image>().color =
-                    lockedColor;
-            }
-        }
-
-        int latestHeatShield = shop.GetLatestHeatShield();
-        newScale = shop.allHeatShields[latestHeatShield].shopScale;
-
-        heatShieldImage.GetComponent<Image>().sprite = 
-            shop.allHeatShields[latestHeatShield].shieldSprite;
-        heatShieldImage.transform.localScale = new Vector3(newScale, newScale, newScale);
-
-        if (shop.HeatShieldPurchased(4))
-        {
-            shieldUpgradeButton.GetComponent<Button>().interactable = false;
+            moduleUpgradeButton.GetComponent<Button>().interactable = false;
         }
 
         for(int i = 0; i < shop.allMineItems.Count; i++)
@@ -212,26 +197,6 @@ public class MinerCustomizationHandler : MonoBehaviour
         Vector3 newPos = objPositions[type + 4];
         Vector2 newSize = new Vector2(128, 128);
 
-        if (selected.transform.position != newPos)
-        {
-            if (objTween != null)
-            {
-                objTween.Kill();
-            }
-
-            objTween = selected.transform.DOMove(newPos, 0.2f);
-        }
-
-        if (selected.GetComponent<RectTransform>().sizeDelta != newSize)
-        {
-            if (objScaleTween != null)
-            {
-                objScaleTween.Kill();
-            }
-
-            objScaleTween = selected.GetComponent<RectTransform>().DOSizeDelta(newSize, 0.2f);
-        }
-
         //smallPriceHighlight.SetActive(true);
         //BuyOptionClicked(1);
 
@@ -241,48 +206,44 @@ public class MinerCustomizationHandler : MonoBehaviour
 
     public void ObjClicked(int type)
     {
+        ObjClicked((CustomizationType)type);
+    }
+
+    private void ObjClicked(CustomizationType type)
+    {
         smallPriceHighlight.SetActive(false);
-        selected.SetActive(true);
         itemSelected = false;
 
-        selectedUpgrade = type;
+        selectedUpgrade = (int)type;
 
-        if(selected.transform.position != objPositions[type])
+        for(int i = 0; i < typeParent.transform.childCount; i++)
         {
-            if(objTween != null)
-            {
-                objTween.Kill();
-            }
-
-            objTween = selected.transform.DOMove(objPositions[type], 0.2f);
+            typeParent.transform.GetChild(i).GetComponent<Image>().color = Color.white;
         }
-
-        if(selected.GetComponent<RectTransform>().sizeDelta != new Vector2(718, 238))
-        {
-            if (objScaleTween != null)
-            {
-                objScaleTween.Kill();
-            }
-
-            objScaleTween = selected.GetComponent<RectTransform>().DOSizeDelta(new Vector2(718, 238), 0.2f);
-        }
-
-        CostData[] cost;
-        bool purchased;
 
         switch(type)
         {
-            default: //miner
-                cost = shop.allMiners[shop.GetNextMiner()].cost;
-                purchased = shop.allMiners[shop.GetNextMiner()].purchased;
+            default:
+            case CustomizationType.MinerTool:
+                typeParent.transform.GetChild(0).GetComponent<Image>().color = new Color32(238, 77, 46, 255);
                 break;
-            case 1: //heatshield
-                cost = shop.allHeatShields[shop.GetNextHeatShield()].cost;
-                purchased = shop.allHeatShields[shop.GetNextHeatShield()].purchased;
+            case CustomizationType.MinerHeatShield:
+                typeParent.transform.GetChild(2).GetComponent<Image>().color = new Color32(238, 77, 46, 255);
+                break;
+            case CustomizationType.MinerFuelTank:
+                typeParent.transform.GetChild(1).GetComponent<Image>().color = new Color32(238, 77, 46, 255);
                 break;
         }
 
-        if(!purchased)
+        CostData[] cost;
+        int purchased = 0;
+
+        int nextObj = shop.GetNextMineObj(type);
+
+        cost = shop.GetCost(type, nextObj);
+        purchased = shop.HasPurchased(type, nextObj);
+
+        if(purchased == 0 || purchased == 1)
         {
             mineModePriceImage.SetActive(true);
             mineModePriceText.SetActive(true);
@@ -296,62 +257,39 @@ public class MinerCustomizationHandler : MonoBehaviour
             mineModePriceImage.SetActive(false);
             mineModePriceText.SetActive(false);
         }
+
+        UpdateUI();
     }
 
-    public void UpgradeClicked(int type)
+    public void UpgradeClicked()
     {
-        if(selectedUpgrade != type)
+        /*if(selectedUpgrade != (int)type)
         {
             ObjClicked(type);
             return;
-        }
+        }*/
+
+        CustomizationType type = (CustomizationType)selectedUpgrade;
 
         CostData[] cost;
         bool upgraded = false;
 
-        switch(type)
+        int nextObj = shop.GetNextMineObj(type);
+        cost = shop.GetCost(type, nextObj);
+
+        if(shop.IsAffordable(cost) == 1) //durch haspurchased ersetzen
         {
-            default: //miner
-                int nextMiner = shop.GetNextMiner();
-                cost = shop.allMiners[nextMiner].cost;
-
-                if(shop.CanAfford(cost))
-                {
-                    upgraded = true;
-                    shop.ManualMinerPurchase(nextMiner);
-                }
-
-                break;
-            case 1: //heatshield
-                int nextHeatShield = shop.GetNextHeatShield();
-                cost = shop.allHeatShields[nextHeatShield].cost;
-
-                if(shop.CanAfford(cost))
-                {
-                    upgraded = true;
-                    shop.ManualHeatShieldPurchase(nextHeatShield);
-                }
-
-                break;
+            upgraded = true;
+            shop.MiningPurchase(type, nextObj);
         }
 
         if(upgraded)
         {
             UpdateUI();
 
-            switch(type)
-            {
-                default:
-                    minerBlend.SetActive(false);
-                    minerBlend.SetActive(true);
-                    minerBlend.GetComponent<Dissolver>().StartDissolve(new Color32(0, 143, 255, 255));
-                    break;
-                case 1:
-                    heatShieldBlend.SetActive(false);
-                    heatShieldBlend.SetActive(true);
-                    heatShieldBlend.GetComponent<Dissolver>().StartDissolve(new Color32(0, 143, 255, 255));
-                    break;
-            }
+            moduleBlend.SetActive(false);
+            moduleBlend.SetActive(true);
+            moduleBlend.GetComponent<Dissolver>().StartDissolve(new Color32(0, 143, 255, 255));
 
             ObjClicked(type);
         } else
@@ -376,7 +314,7 @@ public class MinerCustomizationHandler : MonoBehaviour
 
     public void BuyClicked()
     {
-        shop.ManualMineItemPurchase(selectedItem);
+        shop.MiningPurchase(CustomizationType.MinerItem, selectedItem);
 
         IsAffordable(true);
         UpdateUI();

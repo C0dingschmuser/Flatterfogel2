@@ -13,7 +13,8 @@ public class Skin : ShopItem
     [Header("Preis")]
     public int[] boughtWings;
     public int[] boughtHats;
-    public int lastHat = 0;
+    public int[] boughtTails;
+    public int lastHat = 0, lastTail = 0;
 
     [Header("Allgemein")]
     public float hatStart = 18.662f, wingStart = 0;
@@ -28,6 +29,7 @@ public class Skin : ShopItem
 
     public bool wingSupport = true;
     public bool hatSupport = true;
+    public bool tailSupport = true;
     public bool boxCollider = false;
     public Vector2 colliderSize;
     public Vector2 colliderOffset;

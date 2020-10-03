@@ -404,7 +404,7 @@ public class OptionHandler : MonoBehaviour
         physicsResolution = PlayerPrefs.GetInt("Player_PhysicsResolution", 0);
         screenResolution = PlayerPrefs.GetInt("Player_Resolution", 2);
         lightEnabled = PlayerPrefs.GetInt("Player_Light", 1);
-        parallaxMode = PlayerPrefs.GetInt("Player_ParallaxMode", 1);
+        parallaxMode = 1;//PlayerPrefs.GetInt("Player_ParallaxMode", 1);
         enhancedPipeDestruction = PlayerPrefs.GetInt("Player_EnhancedDestruction", 1);
 
         jumpEffectMode = PlayerPrefs.GetInt("Player_JumpEffectMode", 0);
@@ -416,9 +416,9 @@ public class OptionHandler : MonoBehaviour
         mineMode = PlayerPrefs.GetInt("Player_MineMode", 2);
 
         enhancedFramerate = PlayerPrefs.GetInt("Player_EnhancedFramerate", 1);
-        vSyncEnabled = PlayerPrefs.GetInt("Player_VSync", 1);
+        vSyncEnabled = 1;//PlayerPrefs.GetInt("Player_VSync", 1);
         energySaveMode = PlayerPrefs.GetInt("Player_EnergySave", 0);
-        normalMaps = PlayerPrefs.GetInt("Player_NormalMap", 1);
+        normalMaps = 1;// PlayerPrefs.GetInt("Player_NormalMap", 1);
     }
 
     public void UpdateAll(bool excludeEnergy = false, bool resolution = true)
@@ -682,9 +682,9 @@ public class OptionHandler : MonoBehaviour
 
         if(energySaveMode == 1)
         {
-            screenResolution = 3; //540p
+            screenResolution = 1; //540p
             enhancedPipeDestruction = 0; //pipe zerstörung deaktivieren
-            enhancedFramerate = 1; //60fps sind ok da alles andere runtergeschaltet wird
+            enhancedFramerate = 0; //30fps
             physicsResolution = 0; //niedrigste physik-resolution
             parallaxMode = 0; //bewegende hintergründe deaktiveren
 
@@ -838,7 +838,7 @@ public class OptionHandler : MonoBehaviour
 
         uiCanvasScaler.scaleFactor = width / 720f;
 
-        Camera c = Camera.main;
+        Camera c = mainCamera.GetComponent<Camera>();
 
         c.orthographicSize = 720 * Screen.height / Screen.width * 0.5f;
 
@@ -937,11 +937,12 @@ public class OptionHandler : MonoBehaviour
         MineHandler.cameraOK = false;
         FlatterFogelHandler.Instance.DisableCameraShake();
 
-        Camera c = Camera.main;
+        Camera c = mainCamera.GetComponent<Camera>();
 
         float newOrtho = 540 * Screen.height / Screen.width * 0.5f; //720 - 180 = 540
 
         DOTween.To(() => c.orthographicSize, x => c.orthographicSize = x, newOrtho, 0.5f);
+        c.transform.position = OptionHandler.defaultCameraPos;
 
         float cameraHeight = newOrtho * 2;
 
@@ -956,6 +957,7 @@ public class OptionHandler : MonoBehaviour
 
         //c.transform.DOMove(pos, 0.5f);
 
+        Invoke(nameof(ReEnableMineCam), 0.2f);
         Invoke(nameof(ReEnableColl), 0.51f);
     }
 
@@ -971,7 +973,7 @@ public class OptionHandler : MonoBehaviour
 
         destructionTransition = true;
 
-        Camera c = Camera.main;
+        Camera c = mainCamera.GetComponent<Camera>();
 
         float newOrtho = (720 + 360.125f) * Screen.height / Screen.width * 0.5f;
 
@@ -1002,10 +1004,14 @@ public class OptionHandler : MonoBehaviour
         backgroundHandler.ReduceTopExtent();
     }
 
+    private void ReEnableMineCam()
+    {
+        MineHandler.cameraOK = true;
+    }
+
     private void ReEnableColl()
     {
         destructionTransition = false;
-        MineHandler.cameraOK = true;
     }
 #endregion
 

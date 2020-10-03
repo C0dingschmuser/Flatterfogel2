@@ -106,5 +106,17 @@ MonoBehaviour:
     m_Localized: GRAVE
     m_Metadata:
       m_Items: []
+  - m_Id: 366353784832
+    m_Localized: Fan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 584692473856
+    m_Localized: Tank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 223390814380032
+    m_Localized: TAIL
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

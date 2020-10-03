@@ -18,6 +18,13 @@ public enum CustomizationType
     GraveTop = 5,
     GraveSide = 6,
     GraveBottom = 7,
+    MinerTool = 8,
+    MinerHeatShield = 9,
+    MinerFuelTank = 10,
+    MinerPlaceholder = 11,
+    MinerPlaceholder2 = 12,
+    MinerItem = 13,
+    Tail = 14,
 }
 
 public class CustomizationHandler : MonoBehaviour

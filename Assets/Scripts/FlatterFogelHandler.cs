@@ -113,7 +113,8 @@ public class FlatterFogelHandler : MonoBehaviour
     [SerializeField] private CameraShake cameraShake = null;
     [SerializeField] private Camera mainCamera = null;
 
-    private int startTimer = 3, d2dLayerCounter = 0, blusEffectCounter = 0, lastSpiralBlusPos = 0;
+    private int startTimer = 3, d2dLayerCounter = 0, blusEffectCounter = 0, lastSpiralBlusPos = 0,
+        spiralSpeedReset = 0;
     private List<GameObject> delList = new List<GameObject>();
 
     public static Color32[] pr0Farben = 
@@ -124,7 +125,7 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public static Color32 currentColor = new Color32(0, 0, 0, 255);
 
-    private float lastTimeScale = 1f;
+    private float lastTimeScale = 1f, lastScrollSpeed;
     private Tween scoreScaleTween = null, scoreColorTween = null;
 
     public static int state = 0, gameState = 0, waitingState = -1;
@@ -448,6 +449,7 @@ public class FlatterFogelHandler : MonoBehaviour
         clicked = false;
 
         spiralActive = 0;
+        spiralSpeedReset = 0;
 
         nextCompleteDestruction = false;
 
@@ -457,6 +459,7 @@ public class FlatterFogelHandler : MonoBehaviour
         gameState = 0;
         waitingState = -1;
         scrollSpeed = defaultScrollSpeed;
+        lastScrollSpeed = scrollSpeed;
 
         if(zigZag)
         {
@@ -579,7 +582,7 @@ public class FlatterFogelHandler : MonoBehaviour
         {
 #if UNITY_EDITOR
             SetScore(0, 0);
-            //internalScoreCount = 40;
+            internalScoreCount = 40;
 #else
             SetScore(0, 0);
 #endif
@@ -1412,6 +1415,16 @@ public class FlatterFogelHandler : MonoBehaviour
             if (!destructionMode && !miningMode && 
                 (!shootingPipehandler.shootingPipesActive && shootingPipehandler.endComplete))
             {
+                if(spiralSpeedReset == 1)
+                {
+                    am = 15;
+
+                    if(scrollSpeed + am >= lastScrollSpeed)
+                    {
+                        spiralSpeedReset = 0;
+                    }
+                }
+
                 scrollSpeed = Mathf.Clamp(scrollSpeed + am, defaultScrollSpeed, 400);
             }
 
@@ -2591,6 +2604,9 @@ public class FlatterFogelHandler : MonoBehaviour
         if(pos.x < -572)
         {
             pos.x = -572;
+        } else if(pos.x > -188 & miningMode)
+        {
+            pos.x = -188;
         }
 
         if(pos.y > 1128)
@@ -2717,6 +2733,8 @@ public class FlatterFogelHandler : MonoBehaviour
 
     public void ChangeMode()
     {
+        spiralSpeedReset = 0;
+
         player.GetComponent<Rigidbody2D>().simulated = false;
 
         FF_PlayerData.isInvincible = true;
@@ -2743,7 +2761,7 @@ public class FlatterFogelHandler : MonoBehaviour
                 int newMode = Random.Range(0, 4); //0,4
 
 #if UNITY_EDITOR
-                newMode = 0;
+                newMode = 3;
 #endif
 
                 FirebaseHandler.LogEvent("Boss_Enter");
@@ -2844,6 +2862,7 @@ public class FlatterFogelHandler : MonoBehaviour
             }
         }
 
+        lastScrollSpeed = scrollSpeed;
         scrollSpeed = defaultScrollSpeed;
 
         CancelInvoke(nameof(FlashHighscoreObj));
@@ -3662,6 +3681,9 @@ public class FlatterFogelHandler : MonoBehaviour
                                                     FirebaseHandler.LogEvent("Spiral_Finish");
 
                                                     internalScoreCount = 0;
+
+                                                    DOTween.To(() => FlatterFogelHandler.scrollSpeed,
+                                                        x => FlatterFogelHandler.scrollSpeed = x, lastScrollSpeed, 1f);
                                                 }
                                             }
 

@@ -115,7 +115,7 @@ public class MineData : MonoBehaviour
                 if(obj.transform.position.y < caller.transform.position.y)
                 {
                     deathActive = false;
-                    Invoke("StartStoneFade", 2f);
+                    Invoke(nameof(StartStoneFade), 2f);
                 }
             }
         }
@@ -124,7 +124,7 @@ public class MineData : MonoBehaviour
     private void StartStoneFade()
     {
         transform.GetChild(1).GetComponent<SpriteRenderer>().DOFade(0, 0.25f);
-        Invoke("EndStoneFade", 0.26f);
+        Invoke(nameof(EndStoneFade), 0.26f);
     }
 
     private void EndStoneFade()

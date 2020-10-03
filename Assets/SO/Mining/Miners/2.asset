@@ -12,19 +12,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16566e6842e101f448948503740fb70b, type: 3}
   m_Name: 2
   m_EditorClassIdentifier: 
-  id: 2
+  identifier: 
+  itemID: 0
+  rarity: 0
+  purchased: 0
+  special: 0
+  salePercent: 0
   cost:
   - mineralID: 0
     amount: 0
   - mineralID: 0
-    amount: 17
+    amount: 50
   - mineralID: 1
-    amount: 15
+    amount: 30
   - mineralID: 5
-    amount: 8
-  mineTime: 550
+    amount: 15
+  unlockLocale:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+  unlockString: 
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
   shopScale: 2.0498
-  purchased: 1
+  id: 2
+  mineTime: 550
   main: {fileID: 21300000, guid: 785f1ed84d83dc145b9805a93de5db13, type: 3}
   effect: {fileID: 21300000, guid: 8bf81919b3397ef45a3947178674677a, type: 3}
   full: {fileID: 21300000, guid: a7dd241fb7020cb4bb6e30b6255d2eba, type: 3}

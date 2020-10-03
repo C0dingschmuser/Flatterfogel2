@@ -254,8 +254,9 @@ public class PipeData : MonoBehaviour
                     continue;
                 }
 
+                //-1 als z damit end + normalparts richtig gebatched werden
                 dPart = objectPooler.SpawnPipePart(
-                    new Vector3(startPos.x + (x * xAdd), startPos.y + (y * yAdd)),
+                    new Vector3(startPos.x + (x * xAdd), startPos.y + (y * yAdd), -1),
                     Quaternion.identity, true);
 
                 ResetDestroyedPart(dPart, true, true);
@@ -447,7 +448,7 @@ public class PipeData : MonoBehaviour
 
         frameWait = 1;
 
-        Invoke("ScaleDown", 5f);
+        Invoke(nameof(ScaleDown), 5f);
     }
 
     private void _MainUpdate()

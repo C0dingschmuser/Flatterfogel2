@@ -12,18 +12,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c070d30c1c41b6b40854fdccf444c90b, type: 3}
   m_Name: 0
   m_EditorClassIdentifier: 
-  shieldName: Schild 0
-  shieldSprite: {fileID: 21300000, guid: c78489be88aedcb408e9a2ff77b76271, type: 3}
+  identifier: 
+  itemID: 0
+  rarity: 0
   purchased: 1
-  heatMultiplier: 1.25
-  shopScale: 1.75
-  id: 0
+  special: 0
+  salePercent: 0
   cost:
   - mineralID: 0
     amount: 0
   - mineralID: 1
     amount: 0
-  - mineralID: 3
+  - mineralID: 0
     amount: 0
   - mineralID: 5
     amount: 0
+  unlockLocale:
+    m_TableReference:
+      m_TableCollectionName: 
+    m_TableEntryReference:
+      m_KeyId: 0
+      m_Key: 
+  unlockString: 
+  animated: 0
+  animationSpeed: 0.25
+  shopTime: 0
+  shopStep: 0
+  shopScale: 1.75
+  shieldName: Schild 0
+  shieldSprite: {fileID: 21300000, guid: c78489be88aedcb408e9a2ff77b76271, type: 3}
+  heatMultiplier: 1.25
+  id: 0

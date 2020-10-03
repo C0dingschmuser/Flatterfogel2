@@ -13,7 +13,7 @@ public class BossHandler : MonoBehaviour
 
     private bool isActive = false, bossIdle = false, laserActive = false,
         fullReload = true, infoShowed = false, direction = false;
-    private float reloadTime, maxReloadTime = 5f, idleSpeed = 50f;
+    private float reloadTime, maxReloadTime = 5f, idleSpeed = 50f, intraClip = 0.3f, minusSpeed = 500f;
 
     private int shootCount = 0, laserAnCount = 0, attackMode = 0, diff = 0, maxShots = 3;
 
@@ -45,25 +45,31 @@ public class BossHandler : MonoBehaviour
         {
             diff = 0;
 
-            idleSpeed = 50f;
+            idleSpeed = 65f;
             maxReloadTime = 5f;
             maxShots = 3;
+            intraClip = 0.35f;
+            minusSpeed = 450f;
         }
         else if (score < 100)
         {
             diff = 1;
 
-            idleSpeed = 60f;
+            idleSpeed = 85f;
             maxReloadTime = 4f;
             maxShots = 3;
+            intraClip = 0.3f;
+            minusSpeed = 500f;
         }
         else if (score < 150)
         {
             diff = 2;
 
-            idleSpeed = 65f;
-            maxReloadTime = 4f;
+            idleSpeed = 100f;
+            maxReloadTime = 3.75f;
             maxShots = 4;
+            intraClip = 0.25f;
+            minusSpeed = 550f;
         }
         else
         {
@@ -72,6 +78,8 @@ public class BossHandler : MonoBehaviour
             idleSpeed = 70f;
             maxReloadTime = 3.5f;
             maxShots = 4;
+            intraClip = 0.2f;
+            minusSpeed = 600f;
         }
 
         currentBoss = mieserBoss;
@@ -89,6 +97,7 @@ public class BossHandler : MonoBehaviour
         currentBoss.transform.DOMoveX(-114, 2f);
 
         reloadTime = maxReloadTime;
+        shootCount = 0;
 
         attackMode = 0;//Random.Range(0, 2);
         fullReload = false;
@@ -316,6 +325,8 @@ public class BossHandler : MonoBehaviour
                             shootCount++;
                             if (shootCount == maxShots)
                             {
+                                Debug.Log("Max Shots reached: " + maxShots);
+
                                 fullReload = true;
                                 reloadTime = maxReloadTime;
                                 infoShowed = false;
@@ -323,7 +334,7 @@ public class BossHandler : MonoBehaviour
                             }
                             else
                             {
-                                reloadTime = 0.3f;
+                                reloadTime = intraClip;
                             }
                         }
                         else if (attackMode == 1)
